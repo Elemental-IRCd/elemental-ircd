@@ -24,7 +24,7 @@
   [?] +C (noctcp) channel/usermode
 [F] kline/xline/resv sync
 [F] make an ability of using bandb instead of .conf files as bans storage
-[ ] drop non-TS6 (legacy protocol) support
+[/] drop non-TS6 (legacy protocol) support
 [F] module engine rework
   [F] more beautiful way of adding new channel modes by module
   [F] make nick/user/host validation functions/match tables able to work in separated modules,
