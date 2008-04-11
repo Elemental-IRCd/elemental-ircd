@@ -374,12 +374,7 @@ struct exit_client_hook
  * ts stuff
  */
 #define TS_CURRENT	6
-
-#ifdef TS6_ONLY
 #define TS_MIN          6
-#else
-#define TS_MIN          3
-#endif
 
 #define TS_DOESTS       0x10000000
 #define DoesTS(x)       ((x)->tsinfo & TS_DOESTS)
