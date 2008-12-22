@@ -1,3 +1,11 @@
+androsyn    2008/12/22 00:52:25 UTC	(20081222_0-26353)
+  Log:
+  change a free case to rb_free
+
+  Modified:
+	libratbox/trunk/src/ratbox_lib.c (File Modified) 
+
+
 androsyn    2008/12/13 03:36:00 UTC	(20081213_1-26296)
   Log:
   fix a gnutls related double free

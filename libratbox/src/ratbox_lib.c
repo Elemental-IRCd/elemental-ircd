@@ -384,7 +384,7 @@ rb_base64_decode(const unsigned char *str, int length, int *ret)
     if(ch == base64_pad) {
         switch (i % 4) {
         case 1:
-            free(result);
+            rb_free(result);
             return NULL;
         case 2:
             k++;
