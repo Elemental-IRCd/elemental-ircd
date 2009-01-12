@@ -238,6 +238,8 @@ rb_select_sigio(long delay)
             } else
                 sig = sigtimedwait(&our_sigset, &si, &timeout);
 
+            rb_set_time();
+
             if(sig > 0) {
 
                 if(sig == SIGIO) {

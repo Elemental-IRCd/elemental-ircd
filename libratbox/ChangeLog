@@ -1,3 +1,11 @@
+androsyn    2009/01/12 03:55:33 UTC	(20090112_0-26393)
+  Log:
+  its useful if you actually *set* the time
+
+  Modified:
+	libratbox/trunk/src/sigio.c (File Modified) 
+
+
 androsyn    2008/12/22 00:52:25 UTC	(20081222_0-26353)
   Log:
   change a free case to rb_free
