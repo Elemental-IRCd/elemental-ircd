@@ -1,3 +1,12 @@
+androsyn    2009/03/10 18:54:50 UTC	(20090310_0-26475)
+  Log:
+  add the approriate shared library opening stuff for openssl
+
+  Modified:
+	libratbox/trunk/configure (File Modified) 
+	libratbox/trunk/configure.ac (File Modified) 
+
+
 androsyn    2009/01/12 03:55:33 UTC	(20090112_0-26393)
   Log:
   its useful if you actually *set* the time

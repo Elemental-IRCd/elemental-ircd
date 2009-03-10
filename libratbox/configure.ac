@@ -53,7 +53,7 @@ AC_PATH_PROG(MV, mv)
 AC_PATH_PROG(LN, ln)
 AC_PATH_PROG(TOUCH, touch)
 AC_LANG(C)
-
+AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
 
 LIBTOOL="$LIBTOOL --silent"
@@ -265,7 +265,7 @@ if test "$cf_enable_openssl" != "no" ; then
 	if test ! -z "$cf_openssl_basedir"; then
 		if test -f "${cf_openssl_basedir}/include/openssl/opensslv.h" ; then
 			SSL_CFLAGS="-I${cf_openssl_basedir}/include"
-			SSL_LIBS="-L${cf_openssl_basedir}/lib"
+			SSL_LIBS="-L${cf_openssl_basedir}/lib $lt_cv_dlopen_libs"
 		else
 		dnl OpenSSL wasn't found in the directory specified.  Naughty
 		dnl administrator...
@@ -334,7 +334,7 @@ fi
 if test "$cf_enable_openssl" != no; then
 	CPPFLAGS="$CPPFLAGS $SSL_LIBS"
 	AC_CHECK_LIB(ssl, SSL_read, 
-		[SSL_LIBS="$SSL_LIBS -lssl -lcrypto"],
+		[SSL_LIBS="$SSL_LIBS -lssl -lcrypto $lt_cv_dlopen_libs"],
 		[cf_enable_openssl=no], [-lcrypto])
 fi
 
