@@ -74,7 +74,12 @@ rb_init_netio_epoll(void)
     if(ep_info->ep < 0) {
         return -1;
     }
-    rb_open(ep_info->ep, RB_FD_UNKNOWN, "epoll file descriptor");
+
+	if(rb_open(ep_info->ep, RB_FD_UNKNOWN, "epoll file descriptor") == NULL)
+	{
+		rb_lib_log("Unable to rb_open epoll fd");
+		return -1;
+	}
     ep_info->pfd = rb_malloc(sizeof(struct epoll_event) * ep_info->pfd_size);
 
     return 0;

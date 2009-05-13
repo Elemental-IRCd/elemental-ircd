@@ -130,7 +130,7 @@ typedef struct timer_data {
 
 extern rb_dlink_list *rb_fd_table;
 
-static inline rb_fde_t *
+static inline __rb_must_check rb_fde_t *
 rb_find_fd(int fd)
 {
     rb_dlink_list *hlist;

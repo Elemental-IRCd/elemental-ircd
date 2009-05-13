@@ -145,7 +145,11 @@ rb_init_netio_devpoll(void)
     }
     maxfd = getdtablesize() - 2;	/* This makes more sense than HARD_FDLIMIT */
     fdmask = rb_malloc(sizeof(fdmask) * maxfd + 1);
-    rb_open(dpfd, RB_FD_UNKNOWN, "/dev/poll file descriptor");
+	if(rb_open(dpfd, RB_FD_UNKNOWN, "/dev/poll file descriptor") == NULL)
+	{
+		rb_lib_log("rb_init_netio_devpoll: Unable to rb_open /dev/poll fd");
+		return -1;
+	}
     return 0;
 }
 

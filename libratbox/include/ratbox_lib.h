@@ -17,6 +17,14 @@
 # include <linux/tcp.h>
 #endif
 
+#if __GNUC__ > 4 || (__GNUC__ >= 3 && __GNUC_MINOR__ >= 4)
+#undef __rb_must_check
+#define __rb_must_check            __attribute__((warn_unused_result))
+#else
+#undef __rb_must_check
+#define __rb_must_check
+#endif
+
 #ifdef __GNUC__
 #undef alloca
 #define alloca __builtin_alloca

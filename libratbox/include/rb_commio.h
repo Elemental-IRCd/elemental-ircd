@@ -85,7 +85,7 @@ struct rb_iovec {
 
 void rb_fdlist_init(int closeall, int maxfds, size_t heapsize);
 
-rb_fde_t *rb_open(int, uint8_t, const char *);
+rb_fde_t __rb_must_check *rb_open(int, uint8_t, const char *);
 void rb_close(rb_fde_t *);
 void rb_dump_fd(DUMPCB *, void *xdata);
 void rb_note(rb_fde_t *, const char *);
@@ -111,20 +111,20 @@ void rb_connect_tcp_ssl(rb_fde_t *, struct sockaddr *, struct sockaddr *, int, C
 int rb_connect_sockaddr(rb_fde_t *, struct sockaddr *addr, int len);
 
 const char *rb_errstr(int status);
-rb_fde_t *rb_socket(int family, int sock_type, int proto, const char *note);
-int rb_socketpair(int family, int sock_type, int proto, rb_fde_t **F1, rb_fde_t **F2,
+rb_fde_t __rb_must_check *rb_socket(int family, int sock_type, int proto, const char *note);
+int __rb_must_check rb_socketpair(int family, int sock_type, int proto, rb_fde_t **F1, rb_fde_t **F2,
                   const char *note);
 
 void rb_accept_tcp(rb_fde_t *, ACPRE * precb, ACCB * callback, void *data);
 ssize_t rb_write(rb_fde_t *, const void *buf, int count);
 ssize_t rb_writev(rb_fde_t *, struct rb_iovec *vector, int count);
 
-ssize_t rb_read(rb_fde_t *, void *buf, int count);
-int rb_pipe(rb_fde_t **, rb_fde_t **, const char *desc);
+ssize_t __rb_must_check rb_read(rb_fde_t *, void *buf, int count);
+int __rb_must_check rb_pipe(rb_fde_t **, rb_fde_t **, const char *desc);
 
-int rb_setup_ssl_server(const char *cert, const char *keyfile, const char *dhfile);
-int rb_ssl_listen(rb_fde_t *, int backlog, int defer_accept);
-int rb_listen(rb_fde_t *, int backlog, int defer_accept);
+int __rb_must_check rb_setup_ssl_server(const char *cert, const char *keyfile, const char *dhfile);
+int __rb_must_check rb_ssl_listen(rb_fde_t *, int backlog, int defer_accept);
+int __rb_must_check rb_listen(rb_fde_t *, int backlog, int defer_accept);
 
 const char *rb_inet_ntop(int af, const void *src, char *dst, unsigned int size);
 int rb_inet_pton(int af, const char *src, void *dst);

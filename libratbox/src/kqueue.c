@@ -145,7 +145,12 @@ rb_init_netio_kqueue(void)
     kqmax = getdtablesize();
     kqlst = rb_malloc(sizeof(struct kevent) * kqmax);
     kqout = rb_malloc(sizeof(struct kevent) * kqmax);
-    rb_open(kq, RB_FD_UNKNOWN, "kqueue fd");
+	if(rb_open(kq, RB_FD_UNKNOWN, "kqueue fd") == NULL)
+	{
+		rb_lib_log("rb_init_netio_kqueue: unable to rb_open kqueue fd");
+		return -1;
+	}
+	
     zero_timespec.tv_sec = 0;
     zero_timespec.tv_nsec = 0;
 
