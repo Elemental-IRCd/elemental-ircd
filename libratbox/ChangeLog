@@ -1,3 +1,13 @@
+androsyn    2009/05/13 01:46:48 UTC	(20090513_0-26513)
+  Log:
+  add checks for -fstack-protector support
+
+  Modified:
+	libratbox/trunk/acinclude.m4 (File Modified) 
+	libratbox/trunk/configure (File Modified) 
+	libratbox/trunk/configure.ac (File Modified) 
+
+
 androsyn    2009/03/10 18:54:50 UTC	(20090310_0-26475)
   Log:
   add the approriate shared library opening stuff for openssl
