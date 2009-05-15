@@ -1,3 +1,12 @@
+androsyn    2009/05/15 22:07:36 UTC	(20090515_0-26545)
+  Log:
+  remove check for libssp
+
+  Modified:
+	libratbox/trunk/configure (File Modified) 
+	libratbox/trunk/configure.ac (File Modified) 
+
+
 androsyn    2009/05/13 15:22:46 UTC	(20090513_2-26521)
   Log:
   add some logic to give warnings when certain functions return values are not checked and fix some cases of these values not being checked
