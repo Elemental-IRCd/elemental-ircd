@@ -293,7 +293,7 @@ rb_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
     char c;
     size_t idx;
     const char *s;
-
+    int saved_errno = errno;
     int flags;		/* flags to number() */
 
     int field_width;	/* width of output field */
@@ -405,7 +405,6 @@ repeat:
                 ++idx;
             }
             continue;
-
         case 's':
             s = va_arg(args, char *);
             if(s == NULL) {
@@ -432,7 +431,11 @@ repeat:
                 ++idx;
             }
             continue;
-
+        case 'm':
+            s = rb_strerror(saved_errno);
+            len = strlen(s);
+            goto process_string;
+            continue;
         case 'p':
             if(field_width == -1) {
                 field_width = 2 * sizeof(void *);

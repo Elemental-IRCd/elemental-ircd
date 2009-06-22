@@ -1,3 +1,14 @@
+androsyn    2009/06/22 03:28:05 UTC	(20090622_0-26602)
+  Log:
+  Add support for %m to sprintf and friends.  This basically does %s strerror(errno).  
+  Based on the GNU extension...gcc format string checking is already aware of it too so.
+  
+  
+
+  Modified:
+	libratbox/trunk/src/snprintf.c (File Modified) 
+
+
 androsyn    2009/05/15 22:07:36 UTC	(20090515_0-26545)
   Log:
   remove check for libssp
