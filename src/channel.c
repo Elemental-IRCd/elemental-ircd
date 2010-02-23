@@ -41,6 +41,7 @@
 #include "s_conf.h"		/* ConfigFileEntry, ConfigChannel */
 #include "s_newconf.h"
 #include "logger.h"
+#include "packet.h"
 
 struct config_channel_entry ConfigChannel;
 rb_dlink_list global_channel_list;
