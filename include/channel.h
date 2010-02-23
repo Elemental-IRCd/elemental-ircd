@@ -173,6 +173,7 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define MODE_DISFORWARD 0x2000  /* disable channel forwarding */
 #define MODE_NOCTCP     0x8000  /* Block CTCPs directed to this channel */
 #define MODE_NONOTICE	0x16000	/* Block notices directed to this channel */
+#define MODE_NOACTION	0x32000 /* Block CTCP ACTION directed to this channel */
 
 #define CHFL_BAN        0x10000000	/* ban channel flag */
 #define CHFL_EXCEPTION  0x20000000	/* exception to ban channel flag */

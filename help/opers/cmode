@@ -28,6 +28,8 @@ NO PARAMETERS:
               (however, new forwards can still be set subject to +F).
      +C     - Disable CTCP. All CTCP messages to the channel, except ACTION,
               are disallowed.
+     +D     - Disable CTCP ACTION. All CTCP ACTIONs to the channel will
+              be blocked.
      +T     - Disable notice. All notices to the channel are disallowed.
 
 WITH PARAMETERS:
