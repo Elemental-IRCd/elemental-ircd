@@ -271,7 +271,8 @@ extern int match_extban(const char *banstr, struct Client *client_p, struct Chan
 extern int valid_extban(const char *banstr, struct Client *client_p, struct Channel *chptr, long mode_type);
 const char * get_extban_string(void);
 
-extern struct Channel * check_forward(struct Client *source_p, struct Channel *chptr, char *key)
+extern struct Channel * check_forward(struct Client *source_p, struct Channel *chptr, char *key);
+extern void user_join(struct Client * source_p, char * channels, char * keys);
 
 
 #endif /* INCLUDED_channel_h */
