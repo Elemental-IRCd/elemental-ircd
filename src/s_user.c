@@ -591,6 +591,7 @@ introduce_client(struct Client *client_p, struct Client *source_p, struct User *
 	hook_data_umode_changed hdata;
 	hook_data_client hdata2;
 	char sockhost[HOSTLEN];
+	struct ConfItem *aconf;
 
 	if(MyClient(source_p))
 		send_umode(source_p, source_p, 0, 0, ubuf);
@@ -702,6 +703,17 @@ introduce_client(struct Client *client_p, struct Client *source_p, struct User *
 	hdata2.client = client_p;
 	hdata2.target = source_p;
 	call_hook(h_introduce_client, &hdata2);
+
+	/* Do all the auth::autojoin wizardry once we're connected */
+	if(MyConnect(source_p))
+	{
+		aconf = source_p->localClient->att_conf;
+
+		if(aconf->autojoin != NULL)
+		{
+			user_join(client_p, source_p, aconf->autojoin, NULL, 0);
+		}
+	}
 
 	return 0;
 }

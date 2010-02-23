@@ -64,6 +64,7 @@ struct ConfItem
 	char *host;		/* host part of user@host */
 	char *passwd;		/* doubles as kline reason *ugh* */
 	char *spasswd;		/* Password to send. */
+	char *autojoin;		/* channels for users to autojoin to on connect */
 	char *user;		/* user part of user@host */
 	int port;
 	time_t hold;		/* Hold action until this time (calendar time) */

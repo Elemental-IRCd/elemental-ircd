@@ -1018,6 +1018,15 @@ conf_set_auth_passwd(void *data)
 }
 
 static void
+conf_set_auth_autojoin(void *data)
+{
+	if(yy_aconf->autojoin)
+		memset(yy_aconf->autojoin, 0, strlen(yy_aconf->autojoin));
+	rb_free(yy_aconf->autojoin);
+	yy_aconf->autojoin = rb_strdup(data);
+}
+
+static void
 conf_set_auth_spoof(void *data)
 {
 	char *p;
@@ -2083,6 +2092,7 @@ static struct ConfEntry conf_auth_table[] =
 	{ "password",	CF_QSTRING, conf_set_auth_passwd,	0, NULL },
 	{ "class",	CF_QSTRING, conf_set_auth_class,	0, NULL },
 	{ "spoof",	CF_QSTRING, conf_set_auth_spoof,	0, NULL },
+	{ "autojoin",  CF_QSTRING, conf_set_auth_autojoin,		0, NULL },
 	{ "redirserv",	CF_QSTRING, conf_set_auth_redir_serv,	0, NULL },
 	{ "redirport",	CF_INT,     conf_set_auth_redir_port,	0, NULL },
 	{ "flags",	CF_STRING | CF_FLIST, conf_set_auth_flags,	0, NULL },
