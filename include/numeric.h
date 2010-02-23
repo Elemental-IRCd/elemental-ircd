@@ -319,6 +319,8 @@ extern const char *form_str(int);
 
 #define ERR_DISABLED         517 /* from ircu */
 
+#define ERR_NOKICK           519 /* from old shadow */
+
 #define ERR_HELPNOTFOUND     524
 
 #define RPL_WHOISSECURE      671 /* Unreal3.2 --nenolod */

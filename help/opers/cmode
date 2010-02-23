@@ -31,6 +31,8 @@ NO PARAMETERS:
      +D     - Disable CTCP ACTION. All CTCP ACTIONs to the channel will
               be blocked.
      +T     - Disable notice. All notices to the channel are disallowed.
+     +E     - No kicks. Chanops will not be able to use /kick on this
+              channel.
 
 WITH PARAMETERS:
      +f     - Forward.  Forwards users who cannot join because of +i,

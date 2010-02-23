@@ -540,7 +540,7 @@ static  const char *  replies[] = {
 /* 516 */	NULL,
 /* 517 ERR_DISABLED */		"%s :This command has been administratively disabled",
 /* 518 */	NULL,
-/* 519 */	NULL,
+/* 519 ERR_NOKICK */		"%s :You cannot kick users in this channel because +E is set",
 /* 520 */	NULL,
 /* 521 */	NULL,
 /* 522 */	NULL,
