@@ -84,45 +84,6 @@ static const char *para[MAXMODEPARAMS];
 static char *mbuf;
 static int pargs;
 
-/* Check what we will forward to, without sending any notices to the user
- * -- jilles
- */
-static struct Channel *
-check_forward(struct Client *source_p, struct Channel *chptr,
-		char *key)
-{
-	int depth = 0, i;
-
-	/* User is +Q */
-	if (IsNoForward(source_p))
-		return NULL;
-
-	while (depth < 16)
-	{
-		chptr = find_channel(chptr->mode.forward);
-		/* Can only forward to existing channels */
-		if (chptr == NULL)
-			return NULL;
-		/* Already on there, show original error message */
-		if (IsMember(source_p, chptr))
-			return NULL;
-		/* Juped. Sending a warning notice would be unfair */
-		if (hash_find_resv(chptr->chname))
-			return NULL;
-		/* Don't forward to +Q channel */
-		if (chptr->mode.mode & MODE_DISFORWARD)
-			return NULL;
-		i = can_join(source_p, chptr, key);
-		if (i == 0)
-			return chptr;
-		if (i != ERR_INVITEONLYCHAN && i != ERR_NEEDREGGEDNICK && i != ERR_THROTTLE && i != ERR_CHANNELISFULL)
-			return NULL;
-		depth++;
-	}
-
-	return NULL;
-}
-
 /*
  * m_join
  *      parv[1] = channel
