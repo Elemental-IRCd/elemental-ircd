@@ -28,7 +28,6 @@ CPPFLAGS	= ${INCLUDES} @CPPFLAGS@
 
 SRCS =                          \
   m_clearchan.c			\
-  m_force.c			\
   sno_channeljoin.c
 
 OBJS = ${SRCS:.c=.so}
