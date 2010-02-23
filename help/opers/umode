@@ -13,6 +13,7 @@ Usermodes: (* designates that the umode is oper only)
        * +l     - Can see oper locops (local wallops).
        * +s     - Can see server notices (see /quote help snomask).
        * +z     - Can see operwalls.
+         +C     - Prevents you from receiving CTCPs other than ACTION.
          +D     - Deaf - ignores all channel messages.
          +Q     - Prevents you from being affected by channel forwarding.
          +R     - Prevents non accept unidentified users from messaging you.
