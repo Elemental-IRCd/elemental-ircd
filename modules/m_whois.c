@@ -239,6 +239,8 @@ single_whois(struct Client *source_p, struct Client *target_p, int operspy)
 	hook_data_client hdata;
 	int visible;
 	int extra_space = 0;
+	int i;
+	char *m;
 
 	if(target_p->user == NULL)
 	{
@@ -330,7 +332,19 @@ single_whois(struct Client *source_p, struct Client *target_p, int operspy)
 		sendto_one_numeric(source_p, RPL_WHOISBOT,
 				form_str(RPL_WHOISBOT),
 				target_p->name);
-	
+
+	m = buf;
+	*m++ = '+';
+
+	for (i = 0; i < 128; i++) /* >= 127 is extended ascii */
+		if (target_p->umodes & user_modes[i])
+			*m++ = (char) i;
+			*m = '\0';
+
+	sendto_one_numeric(source_p, RPL_WHOISMODES,
+			form_str(RPL_WHOISMODES),
+			target_p->name, buf);
+
 	if(MyClient(target_p))
 	{
 		if (IsDynSpoof(target_p) && (IsOper(source_p) || source_p == target_p))

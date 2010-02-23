@@ -204,6 +204,8 @@ extern const char *form_str(int);
 #define RPL_ENDOFMOTD        376
 #define RPL_WHOISHOST        378
 
+#define RPL_WHOISMODES	     379
+
 #define RPL_YOUREOPER        381
 #define RPL_REHASHING        382
 #define RPL_MYPORTIS         384
