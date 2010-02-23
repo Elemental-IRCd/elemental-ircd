@@ -421,7 +421,7 @@ struct ListClient
 #define UMODE_DEAF	   0x0080
 #define UMODE_NOFORWARD    0x0100	/* don't forward */
 #define UMODE_REGONLYMSG   0x0200	/* only allow logged in users to msg */
-#define UMODE_NOCTCP	0x0400		/* block CTCPs except for ACTION */
+#define UMODE_NOCTCP	   0x0400	/* block CTCPs except for ACTION */
 #define UMODE_NOINVITE	   0x0800	/* block invites */
 
 /* user information flags, only settable by remote mode or local oper */

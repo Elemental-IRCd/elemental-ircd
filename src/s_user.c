@@ -69,7 +69,7 @@ int user_modes[256] = {
 	0,			/* @ */
 	0,			/* A */
 	0,			/* B */
-	UMODE_NOCTCP,	/* C */
+	UMODE_NOCTCP,		/* C */
 	UMODE_DEAF,		/* D */
 	0,			/* E */
 	0,			/* F */

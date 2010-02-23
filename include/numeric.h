@@ -298,7 +298,7 @@ extern const char *form_str(int);
 
 #define ERR_NOOPERHOST       491
 
-#define ERR_NOCTCP			492
+#define ERR_NOCTCP	     492
 
 #define ERR_UMODEUNKNOWNFLAG 501
 #define ERR_USERSDONTMATCH   502

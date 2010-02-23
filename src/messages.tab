@@ -513,7 +513,7 @@ static  const char *  replies[] = {
 /* 489 ERR_VOICENEEDED */	":%s 489 %s %s :You're neither voiced nor channel operator",
 /* 490 */       NULL,
 /* 491 ERR_NOOPERHOST, */       ":No appropriate operator blocks were found for your host",
-/* 492 ERR_NOCTCP */			 ":Can't send CTCP to %s (+C set)",
+/* 492 ERR_NOCTCP */		":Can't send CTCP to %s (+C set)",
 /* 493 */       NULL,
 /* 494 */       NULL,
 /* 495 */       NULL,
