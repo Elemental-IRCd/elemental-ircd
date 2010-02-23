@@ -583,7 +583,7 @@ register_local_user(struct Client *client_p, struct Client *source_p, const char
  *		  from a remote connect.
  */
 int
-introduce_client(struct Client *client_p, struct Client *source_p, struct User *user, struct ConfItem *aconf, const char *nick, int use_euid)
+introduce_client(struct Client *client_p, struct Client *source_p, struct User *user, const char *nick, int use_euid)
 {
 	static char ubuf[12];
 	struct Client *identifyservice_p;
@@ -591,6 +591,7 @@ introduce_client(struct Client *client_p, struct Client *source_p, struct User *
 	hook_data_umode_changed hdata;
 	hook_data_client hdata2;
 	char sockhost[HOSTLEN];
+	struct ConfItem *aconf;
 
 	if(MyClient(source_p))
 		send_umode(source_p, source_p, 0, 0, ubuf);
@@ -1288,10 +1289,11 @@ user_welcome(struct Client *source_p)
  * side effects	- opers up source_p using aconf for reference
  */
 int
-oper_up(struct Client *source_p, struct oper_conf *oper_p, struct ConfItem *aconf)
+oper_up(struct Client *source_p, struct oper_conf *oper_p)
 {
 	unsigned int old = source_p->umodes, oldsnomask = source_p->snomask;
 	hook_data_umode_changed hdata;
+	struct ConfItem *aconf;
 
 	SetOper(source_p);
 
