@@ -333,18 +333,20 @@ single_whois(struct Client *source_p, struct Client *target_p, int operspy)
 		sendto_one_numeric(source_p, RPL_WHOISBOT,
 				form_str(RPL_WHOISBOT),
 				target_p->name);
+	if(IsOper(source_p))
+	{
+		m = buf;
+		*m++ = '+';
 
-	m = buf;
-	*m++ = '+';
+		for (i = 0; i < 128; i++) /* >= 127 is extended ascii */
+			if (target_p->umodes & user_modes[i])
+				*m++ = (char) i;
+				*m = '\0';
 
-	for (i = 0; i < 128; i++) /* >= 127 is extended ascii */
-		if (target_p->umodes & user_modes[i])
-			*m++ = (char) i;
-			*m = '\0';
-
-	sendto_one_numeric(source_p, RPL_WHOISMODES,
-			form_str(RPL_WHOISMODES),
-			target_p->name, buf);
+		sendto_one_numeric(source_p, RPL_WHOISMODES,
+				form_str(RPL_WHOISMODES),
+				target_p->name, buf);
+	}
 
 	if(MyClient(target_p))
 	{
