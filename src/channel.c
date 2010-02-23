@@ -1409,8 +1409,6 @@ check_forward(struct Client *source_p, struct Channel *chptr,
  * output	- NONE
  * side effects	- Use has decided to join 0. This is legacy
  *		  from the days when channels were numbers not names. *sigh*
- *		  There is a bunch of evilness necessary here due to
- * 		  anti spambot code.
  */
 void
 do_join_0(struct Client *client_p, struct Client *source_p)
@@ -1425,12 +1423,12 @@ do_join_0(struct Client *client_p, struct Client *source_p)
 
 	sendto_server(client_p, NULL, CAP_TS6, NOCAPS, ":%s JOIN 0", use_id(source_p));
 
+	while((ptr = source_p->user->channel.head))
+	{
 	if(source_p->user->channel.head && MyConnect(source_p) &&
 	   !IsOper(source_p) && !IsExemptSpambot(source_p))
 		check_spambot_warning(source_p, NULL);
 
-	while((ptr = source_p->user->channel.head))
-	{
 		msptr = ptr->data;
 		chptr = msptr->chptr;
 		sendto_channel_local(ALL_MEMBERS, chptr, ":%s!%s@%s PART %s",
@@ -1443,26 +1441,36 @@ do_join_0(struct Client *client_p, struct Client *source_p)
 int
 check_channel_name_loc(struct Client *source_p, const char *name)
 {
+	const char *p;
+
 	s_assert(name != NULL);
 	if(EmptyString(name))
 		return 0;
 
 	if(ConfigFileEntry.disable_fake_channels && !IsOper(source_p))
 	{
-		for(; *name; ++name)
+		for(p = name; *p; ++p)
 		{
-			if(!IsChanChar(*name) || IsFakeChanChar(*name))
+			if(!IsChanChar(*p) || IsFakeChanChar(*p))
 				return 0;
 		}
 	}
 	else
 	{
-		for(; *name; ++name)
+		for(p = name; *p; ++p)
 		{
-			if(!IsChanChar(*name))
+			if(!IsChanChar(*p))
 				return 0;
 		}
 	}
+
+	if(ConfigChannel.only_ascii_channels)
+    {
+    	for(p = name; *p; ++p)
+			if(*p < 33 || *p > 126)
+    			return 0;
+    }
+
 
 	return 1;
 }
@@ -1479,7 +1487,6 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 	char *p = NULL, *p2 = NULL;
 	char *chanlist;
 	char *mykey;
-	int successful_join_count = 0;	/* Number of channels successfully joined */
 
 	jbuf[0] = '\0';
 
@@ -1613,13 +1620,8 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 		{
 			sendto_one(source_p, form_str(ERR_TOOMANYCHANNELS),
 				   me.name, source_p->name, name);
-			if(successful_join_count)
-				source_p->localClient->last_join_time = rb_current_time();
 			return;
 		}
-
-		if(flags == 0)	/* if channel doesn't exist, don't penalize */
-			successful_join_count++;
 
 		if(chptr == NULL)	/* If I already have a chptr, no point doing this */
 		{
@@ -1629,14 +1631,9 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 			{
 				sendto_one(source_p, form_str(ERR_UNAVAILRESOURCE),
 					   me.name, source_p->name, name);
-				if(successful_join_count > 0)
-					successful_join_count--;
 				continue;
 			}
 		}
-
-		if(!IsOper(source_p) && !IsExemptSpambot(source_p))
-			check_spambot_warning(source_p, name);
 
 		/* can_join checks for +i key, bans etc */
 		if((i = can_join(source_p, chptr, key)))
@@ -1651,13 +1648,15 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 				if(i != ERR_CUSTOM)
 					sendto_one(source_p, form_str(i), me.name, source_p->name, name);
 
-				if(successful_join_count > 0)
-					successful_join_count--;
 				continue;
 			}
 
 			sendto_one_numeric(source_p, ERR_LINKCHANNEL, form_str(ERR_LINKCHANNEL), name, chptr->chname);
 		}
+		
+		if(flags == 0 &&
+     					!IsOper(source_p) && !IsExemptSpambot(source_p))
+				check_spambot_warning(source_p, name);
 
 		/* add the user to the channel */
 		add_user_to_channel(chptr, source_p, flags);
@@ -1713,9 +1712,6 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 		}
 
 		channel_member_names(chptr, source_p, 1);
-
-		if(successful_join_count)
-			source_p->localClient->last_join_time = rb_current_time();
 
 		hook_info.client = source_p;
 		hook_info.chptr = chptr;
