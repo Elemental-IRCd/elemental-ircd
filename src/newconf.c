@@ -304,6 +304,7 @@ static struct mode_table umode_table[] = {
 	{"wallop",	UMODE_WALLOP	},
 	{"operwall",	UMODE_OPERWALL	},
 	{"noctcp",		UMODE_NOCTCP	},
+	{"noinvite",	UMODE_NOINVITE	},
 	{NULL, 0}
 };
 

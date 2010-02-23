@@ -468,7 +468,7 @@ static  const char *  replies[] = {
 /* 444 ERR_NOLOGIN, */		NULL,
 /* 445 ERR_SUMMONDISABLED, */	NULL,
 /* 446 ERR_USERSDISABLED, */	NULL,
-/* 447 */       NULL,
+/* 447 ERR_NOINVITE */       	":Can't send invite to %s (+V set)",
 /* 448 */       NULL,
 /* 449 */       NULL,
 /* 450 */       NULL,

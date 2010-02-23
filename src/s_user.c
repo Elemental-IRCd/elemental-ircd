@@ -88,7 +88,7 @@ int user_modes[256] = {
 	UMODE_SERVICE,		/* S */
 	0,			/* T */
 	0,			/* U */
-	0,			/* V */
+	UMODE_NOINVITE,		/* V */
 	0,			/* W */
 	0,			/* X */
 	0,			/* Y */

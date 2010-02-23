@@ -153,6 +153,14 @@ m_invite(struct Client *client_p, struct Client *source_p, int parc, const char 
 		return 0;
 	}
 
+	if (IsSetNoInvite(target_p))
+	{
+		sendto_one_numeric(source_p, ERR_NOINVITE,
+				form_str(ERR_NOINVITE),
+				target_p->name);
+		return 0;
+	}
+
 	/* store invites when they could affect the ability to join
 	 * for +l/+j just check if the mode is set, this varies over time
 	 */
