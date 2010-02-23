@@ -1401,7 +1401,72 @@ check_forward(struct Client *source_p, struct Channel *chptr,
 	return NULL;
 }
 
-void user_join(struct Client * source_p, char * channels, char * keys)
+/*
+ * do_join_0
+ *
+ * inputs	- pointer to client doing join 0
+ * output	- NONE
+ * side effects	- Use has decided to join 0. This is legacy
+ *		  from the days when channels were numbers not names. *sigh*
+ *		  There is a bunch of evilness necessary here due to
+ * 		  anti spambot code.
+ */
+void
+do_join_0(struct Client *client_p, struct Client *source_p)
+{
+	struct membership *msptr;
+	struct Channel *chptr = NULL;
+	rb_dlink_node *ptr;
+
+	/* Finish the flood grace period... */
+	if(MyClient(source_p) && !IsFloodDone(source_p))
+		flood_endgrace(source_p);
+
+	sendto_server(client_p, NULL, CAP_TS6, NOCAPS, ":%s JOIN 0", use_id(source_p));
+
+	if(source_p->user->channel.head && MyConnect(source_p) &&
+	   !IsOper(source_p) && !IsExemptSpambot(source_p))
+		check_spambot_warning(source_p, NULL);
+
+	while((ptr = source_p->user->channel.head))
+	{
+		msptr = ptr->data;
+		chptr = msptr->chptr;
+		sendto_channel_local(ALL_MEMBERS, chptr, ":%s!%s@%s PART %s",
+				     source_p->name,
+				     source_p->username, source_p->host, chptr->chname);
+		remove_user_from_channel(msptr);
+	}
+}
+
+int
+check_channel_name_loc(struct Client *source_p, const char *name)
+{
+	s_assert(name != NULL);
+	if(EmptyString(name))
+		return 0;
+
+	if(ConfigFileEntry.disable_fake_channels && !IsOper(source_p))
+	{
+		for(; *name; ++name)
+		{
+			if(!IsChanChar(*name) || IsFakeChanChar(*name))
+				return 0;
+		}
+	}
+	else
+	{
+		for(; *name; ++name)
+		{
+			if(!IsChanChar(*name))
+				return 0;
+		}
+	}
+
+	return 1;
+}
+
+void user_join(struct Client * client_p, struct Client * source_p, char * channels, char * keys)
 {
 	static char jbuf[BUFSIZE];
 	struct Channel *chptr = NULL;
