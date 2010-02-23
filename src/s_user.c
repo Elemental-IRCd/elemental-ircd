@@ -1364,7 +1364,7 @@ oper_up(struct Client *source_p, struct oper_conf *oper_p)
 		 * Plus this is post-umode being set so you'll pass +I $o or +O.
 		 * Hence why we're making this a normal clean join. --jdhore
 		 */
-		user_join(client_p, source_p, aconf->autojoin_opers, NULL, 0);
+		user_join(&me, source_p, aconf->autojoin_opers, NULL, 0);
 	}
 
 	return (1);
