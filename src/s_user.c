@@ -1293,6 +1293,7 @@ oper_up(struct Client *source_p, struct oper_conf *oper_p)
 {
 	unsigned int old = source_p->umodes, oldsnomask = source_p->snomask;
 	hook_data_umode_changed hdata;
+	struct ConfItem *aconf;
 
 	SetOper(source_p);
 
@@ -1353,6 +1354,18 @@ oper_up(struct Client *source_p, struct oper_conf *oper_p)
 	sendto_one_notice(source_p, ":*** Oper privilege set is %s", oper_p->privset->name);
 	sendto_one_notice(source_p, ":*** Oper privs are %s", oper_p->privset->privs);
 	send_oper_motd(source_p);
+
+	aconf = source_p->localClient->att_conf;
+
+	/* Do the auth::autojoin_opers wizardry here */
+	if(aconf->autojoin_opers != NULL)
+	{
+		/* opers should never be banned from the opers channel.
+		 * Plus this is post-umode being set so you'll pass +I $o or +O.
+		 * Hence why we're making this a normal clean join. --jdhore
+		 */
+		user_join(client_p, source_p, aconf->autojoin_opers, NULL, 0);
+	}
 
 	return (1);
 }
