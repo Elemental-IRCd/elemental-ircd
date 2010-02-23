@@ -43,6 +43,7 @@
 #include "modules.h"
 #include "hook.h"
 #include "s_newconf.h"
+#include "s_user.h"
 
 static void do_whois(struct Client *client_p, struct Client *source_p, int parc, const char *parv[]);
 static void single_whois(struct Client *source_p, struct Client *target_p, int operspy);
