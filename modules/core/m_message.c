@@ -519,7 +519,7 @@ msg_channel(int p_or_n, const char *command,
 						form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
 				return;
 			}
-			if (p_or_n != NOTICE && chptr->mode.mode & MODE_NOACTION)
+			if (p_or_n != NOTICE && chptr->mode.mode & MODE_NOACTION &&
 					!strncasecmp(text + 1, "ACTION", 6))
 			{
 				sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
