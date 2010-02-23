@@ -9,6 +9,7 @@ Usermodes:
          +i     - Designates this client 'invisible'.
          +g     - "caller id" mode only allow accept clients to message you
          +w     - Can see oper wallops.
+         +B     - Marks you as a bot in /whois.
          +C     - Prevents you from receiving CTCPs other than ACTION.
          +D     - Deaf - ignores all channel messages.
          +Q     - Prevents you from being affected by channel forwarding.

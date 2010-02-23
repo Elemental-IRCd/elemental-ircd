@@ -356,7 +356,7 @@ static  const char *  replies[] = {
 /* 332 RPL_TOPIC, */            ":%s 332 %s %s :%s",
 /* 333 RPL_TOPICWHOTIME, */     ":%s 333 %s %s %s %lu",
 /* 334 */       NULL,
-/* 335 */       NULL,
+/* 335 RPL_WHOISBOT */		"%s :is a bot",
 /* 336 */       NULL,
 /* 337 */       NULL,
 /* 338 RPL_WHOISACTUALLY, */	"%s %s :actually using host",
