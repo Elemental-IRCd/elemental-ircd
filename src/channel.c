@@ -1467,7 +1467,7 @@ check_channel_name_loc(struct Client *source_p, const char *name)
 	return 1;
 }
 
-void user_join(struct Client * client_p, struct Client * source_p, char * channels, char * keys)
+void user_join(struct Client * client_p, struct Client * source_p, const char * channels, const char * keys)
 {
 	static char jbuf[BUFSIZE];
 	struct Channel *chptr = NULL;
