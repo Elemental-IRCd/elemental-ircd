@@ -711,7 +711,7 @@ introduce_client(struct Client *client_p, struct Client *source_p, struct User *
 
 		if(aconf->autojoin != NULL)
 		{
-			user_join(client_p, source_p, aconf->autojoin, NULL, 0);
+			user_join(client_p, source_p, aconf->autojoin, NULL);
 		}
 	}
 
@@ -1364,7 +1364,7 @@ oper_up(struct Client *source_p, struct oper_conf *oper_p)
 		 * Plus this is post-umode being set so you'll pass +I $o or +O.
 		 * Hence why we're making this a normal clean join. --jdhore
 		 */
-		user_join(&me, source_p, aconf->autojoin_opers, NULL, 0);
+		user_join(&me, source_p, aconf->autojoin_opers, NULL);
 	}
 
 	return (1);
