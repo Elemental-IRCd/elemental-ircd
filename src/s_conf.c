@@ -755,6 +755,7 @@ set_default_conf(void)
 	ConfigChannel.max_bans = 25;
 	ConfigChannel.max_bans_large = 500;
 	ConfigChannel.only_ascii_channels = NO;
+	ConfigChannel.cycle_host_change = YES;
 	ConfigChannel.burst_topicwho = NO;
 	ConfigChannel.kick_on_split_riding = NO;
 

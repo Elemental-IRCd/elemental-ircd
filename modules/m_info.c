@@ -549,6 +549,12 @@ static struct InfoStruct info_table[] = {
 		"Controls whether non-ASCII is disabled for JOIN"
 	},
 	{
+		"cycle_host_change",
+		OUTPUT_BOOLEAN_YN,
+		&ConfigChannel.cycle_host_change,
+		"Controls if when a users' host changes, they cycle channels",
+	},
+	{
 		"use_except",
 		OUTPUT_BOOLEAN_YN,
 		&ConfigChannel.use_except,
