@@ -237,6 +237,7 @@ struct config_channel_entry
 	int kick_on_split_riding;
 	int only_ascii_channels;
 	int cycle_host_change;
+	int host_in_topic;
 	int resv_forcepart;
 };
 

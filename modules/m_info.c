@@ -555,6 +555,12 @@ static struct InfoStruct info_table[] = {
 		"Controls if when a users' host changes, they cycle channels",
 	},
 	{
+		"host_in_topic",
+		OUTPUT_BOOLEAN_YN,
+		&ConfigChannel.host_in_topic,
+		"Defines whether a topicsetters host or just nick is shown on TOPIC",
+	},
+	{
 		"use_except",
 		OUTPUT_BOOLEAN_YN,
 		&ConfigChannel.use_except,
