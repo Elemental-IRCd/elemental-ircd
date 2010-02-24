@@ -357,6 +357,12 @@ static struct InfoStruct info_table[] = {
 		"Remove accountability and some '!' requirement from non-channel operspy"
 	},
 	{
+		"secret_channels_in_whois",
+		OUTPUT_BOOLEAN,
+		&ConfigFileEntry.secret_channels_in_whois,
+		"Defines whether secret channels are always shown in whois to opers with oper:spy priv."
+	},
+	{
 		"pace_wait",
 		OUTPUT_DECIMAL,
 		&ConfigFileEntry.pace_wait,

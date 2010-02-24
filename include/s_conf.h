@@ -216,6 +216,7 @@ struct config_file_entry
 	int default_umodes;
 	int global_snotices;
 	int operspy_dont_care_user_info;
+	int secret_channels_in_whois;
 };
 
 struct config_channel_entry

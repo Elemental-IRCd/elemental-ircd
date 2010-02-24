@@ -735,6 +735,7 @@ set_default_conf(void)
 	ConfigFileEntry.collision_fnc = YES;
 	ConfigFileEntry.global_snotices = YES;
 	ConfigFileEntry.operspy_dont_care_user_info = NO;
+	ConfigFileEntry.secret_channels_in_whois = NO;
 
 #ifdef HAVE_LIBZ
 	ConfigFileEntry.compression_level = 4;

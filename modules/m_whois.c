@@ -242,6 +242,10 @@ single_whois(struct Client *source_p, struct Client *target_p, int operspy)
 	int extra_space = 0;
 	int i;
 	char *m;
+	int showsecret = 0;
+
+	if(ConfigFileEntry.secret_channels_in_whois && IsOperSpy(source_p))
+		showsecret = 1;
 
 	if(target_p->user == NULL)
 	{
@@ -281,7 +285,7 @@ single_whois(struct Client *source_p, struct Client *target_p, int operspy)
 
 			visible = ShowChannel(source_p, chptr);
 
-			if(visible || operspy)
+			if(visible || operspy || showsecret)
 			{
 				if((cur_len + strlen(chptr->chname) + 3) > (BUFSIZE - 5))
 				{
