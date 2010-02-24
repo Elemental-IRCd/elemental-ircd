@@ -44,6 +44,12 @@ m_omode.c      - OMODE - Allows an admin to do all sorts of evil upon a
 no_oper_invis.c - Disallow opers setting marking themselves as invisible
                   (+i) unless they have the hidden_oper flag.
 
+m_force.c        - Allows opers to FORCEJOIN users to any channel they
+                   so desire, regardless of bans or restricting modes
+                   that may be keeping them out. Similar to the SAJOIN
+                   command in other ircds.
+                   Syntax: FORCEJOIN <user> <channel>
+
 example_module.c - An example module to be used for creating your own.
                    Syntax: TEST
 
