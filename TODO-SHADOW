@@ -8,8 +8,6 @@ Todo list for Shadowircd 6.0
 * "soft" callerid umode (+G, only allows PM's from users in the same channel as you)
 * blockcaps cmode
 * norepeat cmode
-* Ability for opers to see secret channels that users are in in their whois
-  without needing to use /spywhois or what not.
 * kicknorejoin (+J in inspircd chmode)
 * operoverride umode (+p), steal this from ircd-seven
 * immune cmode (+M), steal this from ircd-seven too
