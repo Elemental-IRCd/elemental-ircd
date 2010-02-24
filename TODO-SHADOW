@@ -17,7 +17,6 @@ Todo list for Shadowircd 6.0
 * channel::exemptchanops config option
 * nonicks cmode
 * channel::host_in_topic option (can be a vector for idiots seeing host-in-topic)
-* channel::cycle_host_change option: I know this prevents client desyncs, but its annoying.
 * host-on-operup: vhost that gets applied to you on oper-up. A surprising number of people want this.
 * change *line duration to support "human-readable" format (ie: 3d6h5m)
 
