@@ -217,6 +217,7 @@ struct config_file_entry
 	int global_snotices;
 	int operspy_dont_care_user_info;
 	int secret_channels_in_whois;
+	int expire_override_time;
 };
 
 struct config_channel_entry
