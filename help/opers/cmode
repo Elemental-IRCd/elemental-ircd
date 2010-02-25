@@ -35,7 +35,7 @@ NO PARAMETERS:
               channel.
      +N     - No nickchanges. People on the channel will not be able to
               change nick.
-     +N     - Block messages in all caps. Messages that are more than
+     +G     - Block messages in all caps. Messages that are more than
               50% capital letters will be blocked.
 
 WITH PARAMETERS:
