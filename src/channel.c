@@ -1679,8 +1679,22 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 		if(flags & CHFL_CHANOP)
 		{
 			chptr->channelts = rb_current_time();
-			chptr->mode.mode |= MODE_TOPICLIMIT;
-			chptr->mode.mode |= MODE_NOPRIVMSGS;
+
+			/* autochanmodes stuff */
+			if(ConfigChannel.autochanmodes)
+			{
+				char * ch;
+				for(ch = ConfigChannel.autochanmodes; *ch; *ch++)
+				{
+					chptr->mode.mode |= chmode_table[*ch].mode_type;
+				}
+			}
+			else
+			{
+				chptr->mode.mode |= MODE_TOPICLIMIT;
+				chptr->mode.mode |= MODE_NOPRIVMSGS;
+			}
+
 			modes = channel_modes(chptr, &me);
 
 			sendto_channel_local(ONLY_CHANOPS, chptr, ":%s MODE %s %s",

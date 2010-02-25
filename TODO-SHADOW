@@ -2,7 +2,6 @@ Todo list for Shadowircd 6.0
 -----------------------------
 * swhois support
 * custom operstrings (?)
-* autochanmodes defined in the .conf (cmodes that are set on a channel on initial join.)
 * halfops - probably enabled/disabled via a configure switch on in the .conf
 * owner/+a prefix/cmode - see comment for halfops :D
 * "soft" callerid umode (+G, only allows PM's from users in the same channel as you)

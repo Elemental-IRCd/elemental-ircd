@@ -222,6 +222,7 @@ struct config_file_entry
 
 struct config_channel_entry
 {
+	char * autochanmodes;
 	int use_except;
 	int use_invex;
 	int use_knock;
