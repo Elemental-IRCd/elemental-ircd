@@ -758,7 +758,7 @@ static  const char *  replies[] = {
 /* 734 ERR_MONLISTFULL */	":%s 734 %s %d %s :Monitor list is full",
 /* 735 */	NULL,
 /* 736 */	NULL,
-/* 737 */	NULL,
+/* 737 ERR_NOCOMMONCHAN*/	"%s :is in +G mode (server-side ignore) and you do not share a common channel with them.",
 /* 738 */	NULL,
 /* 739 */	NULL,
 /* 740 */	":%s 740 %s :%s",

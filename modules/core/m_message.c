@@ -777,39 +777,46 @@ msg_client(int p_or_n, const char *command,
 					   source_p->name,
 					   source_p->username,
 					   source_p->host, command, target_p->name, text);
+				return;
 			}
-			else if (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])
+			if (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])
 			{
 				if (p_or_n != NOTICE)
 					sendto_one_numeric(source_p, ERR_NONONREG,
 							form_str(ERR_NONONREG),
 							target_p->name);
+				return;
 			}
-			else
+			if (IsSetSCallerId(target_p) && !source_p->user->suser[0])
 			{
-				/* check for accept, flag recipient incoming message */
+				if (p_or_n != NOTICE)
+					sendto_one_numeric(source_p, ERR_NOCOMMONCHAN,
+							form_str(ERR_NOCOMMONCHAN),
+							target_p->name);
+				return;
+			}
+			/* check for accept, flag recipient incoming message */
+			if(p_or_n != NOTICE)
+			{
+				sendto_one_numeric(source_p, ERR_TARGUMODEG,
+						   form_str(ERR_TARGUMODEG),
+						   target_p->name);
+			}
+
+			if((target_p->localClient->last_caller_id_time +
+			    ConfigFileEntry.caller_id_wait) < rb_current_time())
+			{
 				if(p_or_n != NOTICE)
-				{
-					sendto_one_numeric(source_p, ERR_TARGUMODEG,
-							   form_str(ERR_TARGUMODEG),
+					sendto_one_numeric(source_p, RPL_TARGNOTIFY,
+							   form_str(RPL_TARGNOTIFY),
 							   target_p->name);
-				}
 
-				if((target_p->localClient->last_caller_id_time +
-				    ConfigFileEntry.caller_id_wait) < rb_current_time())
-				{
-					if(p_or_n != NOTICE)
-						sendto_one_numeric(source_p, RPL_TARGNOTIFY,
-								   form_str(RPL_TARGNOTIFY),
-								   target_p->name);
+				add_reply_target(target_p, source_p);
+				sendto_one(target_p, form_str(RPL_UMODEGMSG),
+					   me.name, target_p->name, source_p->name,
+					   source_p->username, source_p->host);
 
-					add_reply_target(target_p, source_p);
-					sendto_one(target_p, form_str(RPL_UMODEGMSG),
-						   me.name, target_p->name, source_p->name,
-						   source_p->username, source_p->host);
-
-					target_p->localClient->last_caller_id_time = rb_current_time();
-				}
+				target_p->localClient->last_caller_id_time = rb_current_time();
 			}
 		}
 		else

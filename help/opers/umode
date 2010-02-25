@@ -6,6 +6,8 @@ Usermodes: (* designates that the umode is oper only)
 -----------------------------------------------------------------
          +i     - Designates this client 'invisible'.
          +g     - "caller id" mode only allow accept clients to message you
+         +G     - "soft caller id" mode - same as +g but automatically allows
+                  anyone who's in a common channel with you to message you.
          +w     - Can see oper and server wallops.
          +o     - Designates this client is an IRC Operator.
                   Use the /oper command to attain this.

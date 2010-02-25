@@ -424,6 +424,7 @@ struct ListClient
 #define UMODE_NOCTCP	   0x0400	/* block CTCPs except for ACTION */
 #define UMODE_NOINVITE	   0x0800	/* block invites */
 #define UMODE_BOT	   0x8000	/* mark as a bot in whois */
+#define UMODE_SCALLERID    0x40000	/* soft caller id */
 
 /* user information flags, only settable by remote mode or local oper */
 #define UMODE_OPER         0x1000	/* Operator */
@@ -523,6 +524,7 @@ struct ListClient
 #define IsSetNoCTCP(x)		((x)->umodes & UMODE_NOCTCP)
 #define IsSetNoInvite(x)	((x)->umodes & UMODE_NOINVITE)
 #define IsSetBot(x)		((x)->umodes & UMODE_BOT)
+#define IsSetSCallerId(x)	((x)->umodes & UMODE_SCALLERID)
 
 #define SetGotId(x)             ((x)->flags |= FLAGS_GOTID)
 #define IsGotId(x)              (((x)->flags & FLAGS_GOTID) != 0)

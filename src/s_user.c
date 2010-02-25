@@ -73,7 +73,7 @@ int user_modes[256] = {
 	UMODE_DEAF,		/* D */
 	0,			/* E */
 	0,			/* F */
-	0,			/* G */
+	UMODE_SCALLERID,	/* G */
 	0,			/* H */
 	0,			/* I */
 	0,			/* J */

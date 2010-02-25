@@ -295,6 +295,7 @@ struct mode_table
 /* *INDENT-OFF* */
 static struct mode_table umode_table[] = {
 	{"callerid",	UMODE_CALLERID	},
+	{"softcallerid", UMODE_SCALLERID	},
 	{"deaf",	UMODE_DEAF	},
 	{"invisible",	UMODE_INVISIBLE	},
 	{"locops",	UMODE_LOCOPS	},
