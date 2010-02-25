@@ -286,12 +286,6 @@ conf_set_modules_path(void *data)
 #endif
 }
 
-struct mode_table
-{
-	const char *name;
-	int mode;
-};
-
 /* *INDENT-OFF* */
 static struct mode_table umode_table[] = {
 	{"callerid",	UMODE_CALLERID	},
@@ -303,6 +297,7 @@ static struct mode_table umode_table[] = {
 	{"servnotice",	UMODE_SERVNOTICE},
 	{"wallop",	UMODE_WALLOP	},
 	{"operwall",	UMODE_OPERWALL	},
+	{"override",	UMODE_OVERRIDE	},
 	{"noctcp",	UMODE_NOCTCP	},
 	{"noinvite",	UMODE_NOINVITE	},
 	{"bot",		UMODE_BOT	},

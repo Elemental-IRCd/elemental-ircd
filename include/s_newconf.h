@@ -164,6 +164,7 @@ extern void cluster_generic(struct Client *, const char *, int cltype,
 #define IsOperSpy(x)            (HasPrivilege((x), "oper:spy"))
 #define IsOperInvis(x)          (HasPrivilege((x), "oper:hidden"))
 #define IsOperRemoteBan(x)	(HasPrivilege((x), "oper:remoteban"))
+#define IsOperOverride(x)       HasPrivilege(x, "oper:override")
 #define IsOperMassNotice(x)	(HasPrivilege((x), "oper:mass_notice"))
 
 extern struct oper_conf *make_oper_conf(void);
@@ -174,6 +175,20 @@ extern struct oper_conf *find_oper_conf(const char *username, const char *host,
 					const char *locip, const char *oname);
 
 extern const char *get_oper_privs(int flags);
+
+struct mode_table
+{
+   const char *name;
+   int mode;
+};
+
+struct oper_flags
+{
+   int flag;
+   const char *name;
+   char has;
+   char hasnt;
+};
 
 struct server_conf
 {
