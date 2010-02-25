@@ -484,6 +484,9 @@ msg_channel(int p_or_n, const char *command,
 {
 	int result;
 	char text2[BUFSIZE];
+	int contor;
+	int caps = 0;
+	int len = 0;
 
 	if(MyClient(source_p))
 	{
@@ -513,6 +516,21 @@ msg_channel(int p_or_n, const char *command,
 		if(result == CAN_SEND_OPV ||
 		   !flood_attack_channel(p_or_n, source_p, chptr, chptr->chname))
 		{
+			if (strlen(text) > 10 && chptr->mode.mode & MODE_NOCAPS)
+			{
+				for(contor=0; contor < strlen(text); contor++)
+				{
+					if(IsUpper(text[contor]) && !isdigit(text[contor]))
+						caps++; 
+					len++;
+				}
+				if(((caps*100)/(len)) >= 50)
+				{
+					sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
+							form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
+					return;
+				}
+			}
 			if (p_or_n != PRIVMSG && chptr->mode.mode & MODE_NONOTICE)
 			{
 				sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,

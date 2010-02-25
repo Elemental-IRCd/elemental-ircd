@@ -35,6 +35,8 @@ NO PARAMETERS:
               channel.
      +N     - No nickchanges. People on the channel will not be able to
               change nick.
+     +N     - Block messages in all caps. Messages that are more than
+              50% capital letters will be blocked.
 
 WITH PARAMETERS:
      +f     - Forward.  Forwards users who cannot join because of +i,
