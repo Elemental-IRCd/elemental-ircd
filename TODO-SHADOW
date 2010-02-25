@@ -5,7 +5,6 @@ Todo list for Shadowircd 6.0
 * halfops - probably enabled/disabled via a configure switch on in the .conf
 * owner/+a prefix/cmode - see comment for halfops :D
 * "soft" callerid umode (+G, only allows PM's from users in the same channel as you)
-* blockcaps cmode
 * norepeat cmode
 * kicknorejoin (+J in inspircd chmode)
 * operoverride umode (+p), steal this from ircd-seven
