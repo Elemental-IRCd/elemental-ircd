@@ -109,7 +109,7 @@ int user_modes[256] = {
 	0,			/* m */
 	0,			/* n */
 	UMODE_OPER,		/* o */
-	UMODE_OVERRIDE,		/* p */
+	0,			/* p */
 	0,			/* q */
 	0,			/* r */
 	UMODE_SERVNOTICE,	/* s */
@@ -882,15 +882,6 @@ report_and_set_user_flags(struct Client *source_p, struct ConfItem *aconf)
 }
 
 static void
-expire_umode_p(void *data)
-{
-	struct Client *source_p = data;
-	char *parv[4] = {source_p->name, source_p->name, "-p", NULL};
-	source_p->localClient->override_timeout_event = NULL;
-	user_mode(source_p, source_p, 3, parv);
-}
-
-static void
 show_other_user_mode(struct Client *source_p, struct Client *target_p)
 {
 	int i;
@@ -1147,12 +1138,6 @@ user_mode(struct Client *client_p, struct Client *source_p, int parc, const char
 		source_p->umodes &= ~UMODE_ADMIN;
 	}
 
-	if(MyConnect(source_p) && (source_p->umodes & UMODE_OVERRIDE) && (!IsOperOverride(source_p)))
-	{
-		sendto_one_notice(source_p, ":*** You need oper and the override flag for +p");
-		source_p->umodes &= ~UMODE_OVERRIDE;
-	}
-
 	/* let modules providing usermodes know that we've changed our usermode --nenolod */
 	hdata.client = source_p;
 	hdata.oldumodes = setflags;
@@ -1171,17 +1156,6 @@ user_mode(struct Client *client_p, struct Client *source_p, int parc, const char
 	if (showsnomask && MyConnect(source_p))
 		sendto_one_numeric(source_p, RPL_SNOMASK, form_str(RPL_SNOMASK),
 			construct_snobuf(source_p->snomask));
-
-	if(ConfigFileEntry.expire_override_time && MyClient(source_p) && (source_p->umodes & ~setflags) & UMODE_OVERRIDE)
-	{
-		source_p->localClient->override_timeout_event =
-			rb_event_addonce("expire_override", expire_umode_p, source_p, ConfigFileEntry.expire_override_time);
-	}
-	else if(MyClient(source_p) && source_p->localClient->override_timeout_event && (setflags & ~source_p->umodes) & UMODE_OVERRIDE)
-	{
-		rb_event_delete(source_p->localClient->override_timeout_event);
-		source_p->localClient->override_timeout_event = NULL;
-	}
 
 	return (0);
 }

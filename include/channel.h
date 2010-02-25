@@ -88,7 +88,6 @@ struct membership
 	unsigned int flags;
 
 	unsigned long bants;
-	unsigned long override_ts;
 };
 
 #define BANLEN 195
@@ -115,7 +114,6 @@ struct ChModeChange
 	int caps;
 	int nocaps;
 	int mems;
-	int override;
 	struct Client *client;
 };
 
@@ -173,7 +171,6 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define MODE_FREEINVITE 0x0800  /* allow free use of /invite */
 #define MODE_FREETARGET 0x1000  /* can be forwarded to without authorization */
 #define MODE_DISFORWARD 0x2000  /* disable channel forwarding */
-#define MODE_NOOPERKICK 0x4000  /* disallow kicking opers aka immune */
 #define MODE_NOCTCP     0x8000  /* Block CTCPs directed to this channel */
 #define MODE_NONOTICE	0x16000	/* Block notices directed to this channel */
 #define MODE_NOACTION	0x32000 /* Block CTCP ACTION directed to this channel */
@@ -196,8 +193,6 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 
 /* channel visible */
 #define ShowChannel(v,c)        (PubChannel(c) || IsMember((v),(c)))
-/* user visible in channel */
-#define ShowInChannel(v,t,c)    ((PubChannel(c) && !IsInvisible(t)) || IsMember((v),(c)))
 
 #define IsMember(who, chan) ((who && who->user && \
                 find_channel_membership(chan, who)) ? 1 : 0)
