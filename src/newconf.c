@@ -286,12 +286,6 @@ conf_set_modules_path(void *data)
 #endif
 }
 
-struct mode_table
-{
-	const char *name;
-	int mode;
-};
-
 /* *INDENT-OFF* */
 static struct mode_table umode_table[] = {
 	{"callerid",	UMODE_CALLERID	},
@@ -303,6 +297,7 @@ static struct mode_table umode_table[] = {
 	{"servnotice",	UMODE_SERVNOTICE},
 	{"wallop",	UMODE_WALLOP	},
 	{"operwall",	UMODE_OPERWALL	},
+	{"override",	UMODE_OVERRIDE	},
 	{"noctcp",	UMODE_NOCTCP	},
 	{"noinvite",	UMODE_NOINVITE	},
 	{"bot",		UMODE_BOT	},
@@ -2199,11 +2194,13 @@ static struct ConfEntry conf_general_table[] =
 	{ "ts_warn_delta",	CF_TIME,  NULL, 0, &ConfigFileEntry.ts_warn_delta	},
 	{ "use_whois_actually", CF_YESNO, NULL, 0, &ConfigFileEntry.use_whois_actually	},
 	{ "warn_no_nline",	CF_YESNO, NULL, 0, &ConfigFileEntry.warn_no_nline	},
+	{ "expire_override_time", CF_TIME, NULL, 0, &ConfigFileEntry.expire_override_time	},
 	{ "\0", 		0, 	  NULL, 0, NULL }
 };
 
 static struct ConfEntry conf_channel_table[] =
 {
+	{ "autochanmodes",	CF_QSTRING, NULL, 0, &ConfigChannel.autochanmodes	},
 	{ "default_split_user_count",	CF_INT,  NULL, 0, &ConfigChannel.default_split_user_count	 },
 	{ "default_split_server_count",	CF_INT,	 NULL, 0, &ConfigChannel.default_split_server_count },
 	{ "burst_topicwho",	CF_YESNO, NULL, 0, &ConfigChannel.burst_topicwho	},

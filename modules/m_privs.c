@@ -53,13 +53,6 @@ mapi_clist_av1 privs_clist[] = {
 	NULL
 };
 
-/* XXX this is a copy, not so nice */
-struct mode_table
-{
-	const char *name;
-	int mode;
-};
-
 /* there is no such table like this anywhere else */
 static struct mode_table auth_client_table[] = {
 	{"resv_exempt",		FLAGS2_EXEMPTRESV	},

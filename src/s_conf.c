@@ -746,6 +746,7 @@ set_default_conf(void)
 	ConfigFileEntry.oper_only_umodes = UMODE_SERVNOTICE;
 	ConfigFileEntry.oper_snomask = SNO_GENERAL;
 
+	ConfigChannel.autochanmodes = rb_strdup("nt");
 	ConfigChannel.use_except = YES;
 	ConfigChannel.use_invex = YES;
 	ConfigChannel.use_knock = YES;
@@ -783,6 +784,7 @@ set_default_conf(void)
 	ConfigFileEntry.reject_duration = 120;
 	ConfigFileEntry.throttle_count = 4;
 	ConfigFileEntry.throttle_duration = 60;
+	ConfigFileEntry.expire_override_time = 300;
 
 	ServerInfo.default_max_clients = MAXCONNECTIONS;
 
