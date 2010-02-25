@@ -281,8 +281,6 @@ struct LocalUser
 	struct ev_entry *event;			/* used for associated events */
 
 	struct PrivilegeSet *privset;		/* privset... */
-
-	struct rb_event_t *override_timeout_event;
 };
 
 struct PreClient
@@ -431,17 +429,6 @@ struct ListClient
 #define UMODE_OPER         0x1000	/* Operator */
 #define UMODE_ADMIN        0x2000	/* Admin on server */
 #define UMODE_SSLCLIENT    0x4000	/* using SSL */
-
-/* oper-controlled privledge umodes. */
-#define UMODE_OVERRIDE		0x20000
-
-/* umode/oper mode macros */
-#define IsOper(x)      ((x)->umodes & UMODE_OPER)
-#define IsAdmin(x)     ((x)->umodes & UMODE_ADMIN)
-#define IsHelper(x)        ((x)->umodes & UMODE_HELPER)
-#define IsAnyOper(x)       ((x)->umodes & (UMODE_OPER|UMODE_HELPER))
-
-#define IsOverride(x)      ((x)->umodes & UMODE_OVERRIDE)
 
 /* overflow flags */
 /* EARLIER FLAGS ARE IN s_newconf.h */

@@ -232,12 +232,6 @@ free_local_client(struct Client *client_p)
 	}
 
 	rb_free(client_p->localClient->auth_user);
-
-	if(client_p->localClient->override_timeout_event)
-	{
-		rb_event_delete(client_p->localClient->override_timeout_event);
-	}
-
 	rb_free(client_p->localClient->challenge);
 	rb_free(client_p->localClient->fullcaps);
 	rb_free(client_p->localClient->opername);
