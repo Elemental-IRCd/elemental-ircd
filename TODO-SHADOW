@@ -12,7 +12,6 @@ Todo list for Shadowircd 6.0
 * immune cmode (+M), steal this from ircd-seven too
 * config options to strip colours and bold and such from user PART and QUIT messages.
 * channel::exemptchanops config option
-* nonicks cmode
 * host-on-operup: vhost that gets applied to you on oper-up. A surprising number of people want this.
 * change *line duration to support "human-readable" format (ie: 3d6h5m)
 
