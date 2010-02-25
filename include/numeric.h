@@ -264,6 +264,8 @@ extern const char *form_str(int);
 
 #define ERR_NOINVITE	     447
 
+#define ERR_NONICK	     449
+
 #define ERR_NOTREGISTERED    451
 
 #define ERR_ACCEPTFULL       456

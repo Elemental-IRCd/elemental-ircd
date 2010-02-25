@@ -470,7 +470,7 @@ static  const char *  replies[] = {
 /* 446 ERR_USERSDISABLED, */	NULL,
 /* 447 ERR_NOINVITE */       	":Can't send invite to %s (+V set)",
 /* 448 */       NULL,
-/* 449 */       NULL,
+/* 449 ERR_NONICK */		"%s :Cannot change nickname while on channel (+N set)",
 /* 450 */       NULL,
 /* 451 ERR_NOTREGISTERED, */    ":%s 451 * :You have not registered",
 /* 452 */       NULL,

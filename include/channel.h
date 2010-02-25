@@ -175,6 +175,7 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define MODE_NONOTICE	0x16000	/* Block notices directed to this channel */
 #define MODE_NOACTION	0x32000 /* Block CTCP ACTION directed to this channel */
 #define MODE_NOKICK	0x64000 /* Disable /kick on this channel */
+#define MODE_NONICK	0x128000 /* Disable /nick for anyone on this channel */
 
 #define CHFL_BAN        0x10000000	/* ban channel flag */
 #define CHFL_EXCEPTION  0x20000000	/* exception to ban channel flag */
@@ -242,6 +243,8 @@ extern void del_invite(struct Channel *chptr, struct Client *who);
 const char *channel_modes(struct Channel *chptr, struct Client *who);
 
 extern struct Channel *find_bannickchange_channel(struct Client *client_p);
+
+extern struct Channel *find_nonickchange_channel(struct Client *client_p);
 
 extern void check_spambot_warning(struct Client *source_p, const char *name);
 

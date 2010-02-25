@@ -33,6 +33,8 @@ NO PARAMETERS:
      +T     - Disable notice. All notices to the channel are disallowed.
      +E     - No kicks. Chanops will not be able to use /kick on this
               channel.
+     +N     - No nickchanges. People on the channel will not be able to
+              change nick.
 
 WITH PARAMETERS:
      +f     - Forward.  Forwards users who cannot join because of +i,

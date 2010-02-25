@@ -904,6 +904,32 @@ find_bannickchange_channel(struct Client *client_p)
 	return NULL;
 }
 
+/* find_nonickchange_channel()
+ * Input: client to check
+ * Output: channel preventing nick change
+ */
+struct Channel *
+find_nonickchange_channel(struct Client *client_p)
+{
+	struct Channel *chptr;
+	struct membership *msptr;
+	rb_dlink_node *ptr;
+
+	if (!MyClient(client_p))
+		return NULL;
+
+	RB_DLINK_FOREACH(ptr, client_p->user->channel.head)
+	{
+		msptr = ptr->data;
+		chptr = msptr->chptr;
+		if (is_chanop_voiced(msptr))
+			continue;		
+		if (chptr->mode.mode & MODE_NONICK)
+			return chptr;
+	}
+	return NULL;
+}
+
 /* void check_spambot_warning(struct Client *source_p)
  * Input: Client to check, channel name or NULL if this is a part.
  * Output: none
