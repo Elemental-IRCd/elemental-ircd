@@ -11,7 +11,6 @@ Todo list for Shadowircd 6.0
 * immune cmode (+M), steal this from ircd-seven too
 * channel::exemptchanops config option
 * host-on-operup: vhost that gets applied to you on oper-up. A surprising number of people want this.
-* change *line duration to support "human-readable" format (ie: 3d6h5m)
 
 
 * Anything else we think of between now and release. :P
