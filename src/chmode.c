@@ -1406,7 +1406,7 @@ struct ChannelMode chmode_table[256] =
   {chm_simple,	MODE_NOCAPS },		/* G */
   {chm_nosuch,	0 },			/* H */
   {chm_ban,	CHFL_INVEX },           /* I */
-  {chm_nosuch,	0 },			/* J */
+  {chm_simple,	MODE_NOREJOIN },	/* J */
   {chm_nosuch,	0 },			/* K */
   {chm_staff,	MODE_EXLIMIT },		/* L */
   {chm_nosuch,	0 },			/* M */

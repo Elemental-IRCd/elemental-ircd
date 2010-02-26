@@ -37,6 +37,8 @@ NO PARAMETERS:
               change nick.
      +G     - Block messages in all caps. Messages that are more than
               50% capital letters will be blocked.
+     +J     - Prevent autorejoin on kick. Users will not be able to
+              rejoin immediately after being kicked. 
 
 WITH PARAMETERS:
      +f     - Forward.  Forwards users who cannot join because of +i,

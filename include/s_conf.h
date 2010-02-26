@@ -241,6 +241,7 @@ struct config_channel_entry
 	int cycle_host_change;
 	int host_in_topic;
 	int resv_forcepart;
+	int kick_no_rejoin_time;
 };
 
 struct config_server_hide

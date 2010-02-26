@@ -767,6 +767,7 @@ set_default_conf(void)
 	ConfigChannel.no_join_on_split = NO;
 	ConfigChannel.no_create_on_split = YES;
 	ConfigChannel.resv_forcepart = YES;
+	ConfigChannel.kick_no_rejoin_time = 30;
 
 	ConfigServerHide.flatten_links = 0;
 	ConfigServerHide.links_delay = 300;
