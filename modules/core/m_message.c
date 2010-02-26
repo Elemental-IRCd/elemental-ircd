@@ -767,7 +767,7 @@ msg_client(int p_or_n, const char *command,
 		}
 		/* XXX Controversial? allow opers always to send through a +g */
 		else if(!IsServer(source_p) && (IsSetCallerId(target_p) ||
-					(IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])))
+					(IsSetSCallerId(target_p) || (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0]))))
 		{
 			/* Here is the anti-flood bot/spambot code -db */
 			if(accept_message(source_p, target_p) || IsOper(source_p))
@@ -779,21 +779,24 @@ msg_client(int p_or_n, const char *command,
 					   source_p->host, command, target_p->name, text);
 				return;
 			}
-			if (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])
+			if (!IsSetCallerId(target_p))
 			{
-				if (p_or_n != NOTICE)
-					sendto_one_numeric(source_p, ERR_NONONREG,
-							form_str(ERR_NONONREG),
-							target_p->name);
-				return;
-			}
-			if (IsSetSCallerId(target_p) && !source_p->user->suser[0])
-			{
-				if (p_or_n != NOTICE)
-					sendto_one_numeric(source_p, ERR_NOCOMMONCHAN,
-							form_str(ERR_NOCOMMONCHAN),
-							target_p->name);
-				return;
+				if (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])
+				{
+					if (p_or_n != NOTICE)
+						sendto_one_numeric(source_p, ERR_NONONREG,
+								form_str(ERR_NONONREG),
+								target_p->name);
+					return;
+				}
+				if (IsSetSCallerId(target_p)&& !has_common_channel(source_p, target_p))
+				{
+					if (p_or_n != NOTICE)
+						sendto_one_numeric(source_p, ERR_NOCOMMONCHAN,
+								form_str(ERR_NOCOMMONCHAN),
+								target_p->name);
+					return;
+				}
 			}
 			/* check for accept, flag recipient incoming message */
 			if(p_or_n != NOTICE)
