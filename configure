@@ -10904,5 +10904,5 @@ Configuration:
 	Nickname length    : $NICKLEN
 	Topic length       : $TOPICLEN
 
-Use (g)make to compile Charybdis, then (g)make install to install it.
+Use (g)make to compile ShadowIRCd, then (g)make install to install it.
 "
