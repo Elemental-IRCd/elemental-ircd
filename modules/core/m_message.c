@@ -759,8 +759,14 @@ msg_client(int p_or_n, const char *command,
 
 	if(MyClient(target_p))
 	{
+		if (IsSetNoCTCP(target_p) && p_or_n != NOTICE && *text == '\001' && strncasecmp(text + 1, "ACTION", 6))
+		{   
+			    sendto_one_numeric(source_p, ERR_NOCTCP,
+			            form_str(ERR_NOCTCP),
+			            target_p->name);
+		}
 		/* XXX Controversial? allow opers always to send through a +g */
-		if(!IsServer(source_p) && (IsSetCallerId(target_p) ||
+		else if(!IsServer(source_p) && (IsSetCallerId(target_p) ||
 					(IsSetSCallerId(target_p) && !has_common_channel(source_p, target_p)) ||
 					(IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])))
 		{
