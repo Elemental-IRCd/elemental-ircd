@@ -759,15 +759,10 @@ msg_client(int p_or_n, const char *command,
 
 	if(MyClient(target_p))
 	{
-		if (IsSetNoCTCP(target_p) && p_or_n != NOTICE && *text == '\001' && strncasecmp(text + 1, "ACTION", 6))
-		{   
-			    sendto_one_numeric(source_p, ERR_NOCTCP,
-			            form_str(ERR_NOCTCP),
-			            target_p->name);
-		}
 		/* XXX Controversial? allow opers always to send through a +g */
-		else if(!IsServer(source_p) && (IsSetCallerId(target_p) ||
-					(IsSetSCallerId(target_p) || (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0]))))
+		if(!IsServer(source_p) && (IsSetCallerId(target_p) ||
+					(IsSetSCallerId(target_p) && !has_common_channel(source_p, target_p)) ||
+					(IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])))
 		{
 			/* Here is the anti-flood bot/spambot code -db */
 			if(accept_message(source_p, target_p) || IsOper(source_p))
@@ -777,49 +772,46 @@ msg_client(int p_or_n, const char *command,
 					   source_p->name,
 					   source_p->username,
 					   source_p->host, command, target_p->name, text);
-				return;
 			}
-			if (!IsSetCallerId(target_p))
+			else if (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])
 			{
-				if (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])
-				{
-					if (p_or_n != NOTICE)
-						sendto_one_numeric(source_p, ERR_NONONREG,
-								form_str(ERR_NONONREG),
-								target_p->name);
-					return;
-				}
-				if (IsSetSCallerId(target_p)&& !has_common_channel(source_p, target_p))
-				{
-					if (p_or_n != NOTICE)
-						sendto_one_numeric(source_p, ERR_NOCOMMONCHAN,
-								form_str(ERR_NOCOMMONCHAN),
-								target_p->name);
-					return;
-				}
+				if (p_or_n != NOTICE)
+					sendto_one_numeric(source_p, ERR_NONONREG,
+							form_str(ERR_NONONREG),
+							target_p->name);
 			}
-			/* check for accept, flag recipient incoming message */
-			if(p_or_n != NOTICE)
+			else if (IsSetSCallerId(target_p) && !has_common_channel(source_p, target_p))
 			{
-				sendto_one_numeric(source_p, ERR_TARGUMODEG,
-						   form_str(ERR_TARGUMODEG),
-						   target_p->name);
+				if (p_or_n != NOTICE)
+					sendto_one_numeric(source_p, ERR_NOCOMMONCHAN,
+							form_str(ERR_NOCOMMONCHAN),
+							target_p->name);
 			}
-
-			if((target_p->localClient->last_caller_id_time +
-			    ConfigFileEntry.caller_id_wait) < rb_current_time())
+			else
 			{
+				/* check for accept, flag recipient incoming message */
 				if(p_or_n != NOTICE)
-					sendto_one_numeric(source_p, RPL_TARGNOTIFY,
-							   form_str(RPL_TARGNOTIFY),
+				{
+					sendto_one_numeric(source_p, ERR_TARGUMODEG,
+							   form_str(ERR_TARGUMODEG),
 							   target_p->name);
+				}
 
-				add_reply_target(target_p, source_p);
-				sendto_one(target_p, form_str(RPL_UMODEGMSG),
-					   me.name, target_p->name, source_p->name,
-					   source_p->username, source_p->host);
+				if((target_p->localClient->last_caller_id_time +
+				    ConfigFileEntry.caller_id_wait) < rb_current_time())
+				{
+					if(p_or_n != NOTICE)
+						sendto_one_numeric(source_p, RPL_TARGNOTIFY,
+								   form_str(RPL_TARGNOTIFY),
+								   target_p->name);
 
-				target_p->localClient->last_caller_id_time = rb_current_time();
+					add_reply_target(target_p, source_p);
+					sendto_one(target_p, form_str(RPL_UMODEGMSG),
+						   me.name, target_p->name, source_p->name,
+						   source_p->username, source_p->host);
+
+					target_p->localClient->last_caller_id_time = rb_current_time();
+				}
 			}
 		}
 		else

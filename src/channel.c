@@ -1127,7 +1127,7 @@ has_common_channel(struct Client *client1, struct Client *client2)
 		if(IsMember(client2, ((struct membership *)ptr->data)->chptr))
 			return 1;
 	}
-	return;
+	return 0;
 }
 
 /* channel_modes()
