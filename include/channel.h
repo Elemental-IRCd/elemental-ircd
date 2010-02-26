@@ -243,6 +243,8 @@ extern void del_invite(struct Channel *chptr, struct Client *who);
 
 const char *channel_modes(struct Channel *chptr, struct Client *who);
 
+extern int has_common_channel(struct Client *client1, struct Client *client2);
+
 extern struct Channel *find_bannickchange_channel(struct Client *client_p);
 
 extern struct Channel *find_nonickchange_channel(struct Client *client_p);

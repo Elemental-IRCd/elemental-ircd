@@ -1110,6 +1110,26 @@ set_channel_topic(struct Channel *chptr, const char *topic, const char *topic_in
 	}
 }
 
+/* has_common_channel()
+ * 
+ * input	- pointer to client
+ *			- pointer to another client
+ * output	- 1 if the two have a channel in common, 0 elsewise
+ * side effects - none
+ */
+int
+has_common_channel(struct Client *client1, struct Client *client2)
+{
+	rb_dlink_node *ptr;
+
+	RB_DLINK_FOREACH(ptr, client1->user->channel.head)
+	{
+		if(IsMember(client2, ((struct membership *)ptr->data)->chptr))
+			return 1;
+	}
+	return;
+}
+
 /* channel_modes()
  *
  * inputs       - pointer to channel
