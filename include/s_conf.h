@@ -69,6 +69,7 @@ struct ConfItem
 	char *user;		/* user part of user@host */
 	int port;
 	time_t hold;		/* Hold action until this time (calendar time) */
+	time_t created;		/* Creation time (for klines etc) */
 	char *className;	/* Name of class */
 	struct Class *c_class;	/* Class of connection */
 	rb_patricia_node_t *pnode;	/* Our patricia node */
