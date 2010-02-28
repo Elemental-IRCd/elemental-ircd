@@ -1,4 +1,14 @@
 $Id: CREDITS 3133 2007-01-21 15:38:16Z jilles $
+
+ShadowIRCd 6 is a modern restart of the old ShadowIRCd project.
+ShadowIRCd 6 is based on Charybdis with a few additional features
+to make it appeal more to more users. We try to work as closely
+as possible with the Charybdis team.
+
+The ShadowIRCd team is listed in nick-alphabetical order:
+
+jdhore, JD Horelick <jdhore1 -at- gmail.com>
+Taros, Brett Greenham <taros34 -at- hotmail.com>
  
 Charybdis started as an evolution from ircd-ratbox. Its development
 is led by a team of dedicated developers who have put a lot of time
@@ -24,5 +34,5 @@ ThaPrince, Jon Christopherson <jon -at- vile.com>
 twincest, River Tarnell <river -at- attenuate.org>
 w00t, Robin Burchell <surreal.w00t -at- gmail.com>
  
-Visit the Charybdis website at: http://www.ircd-charybdis.net
-Visit us on IRC at: irc.staticbox.net #charybdis
+Visit the ShadowIRCd website at: http://www.shadowircd.net
+Visit us on IRC at: irc.thinstack.net #shadowircd
