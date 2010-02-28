@@ -86,6 +86,13 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 		return 0;
 	}
 
+	user = parv[2];		/* strtoken(&p2, parv[2], ","); */
+
+	if(!(who = find_chasing(source_p, user, &chasing)))
+	{
+		return 0;
+	}
+
 	if(!IsServer(source_p))
 	{
 		msptr = find_channel_membership(chptr, source_p);
@@ -97,7 +104,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 			return 0;
 		}
 
-		if(!can_kick_deop(msptr, find_channel_membership(chptr, client_p)) && !IsOverride(source_p))
+		if(!can_kick_deop(msptr, find_channel_membership(chptr, who)) && !IsOverride(source_p))
 		{
 			if(MyConnect(source_p))
 			{
@@ -139,13 +146,6 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 
 	if((p = strchr(parv[2], ',')))
 		*p = '\0';
-
-	user = parv[2];		/* strtoken(&p2, parv[2], ","); */
-
-	if(!(who = find_chasing(source_p, user, &chasing)))
-	{
-		return 0;
-	}
 
 	msptr = find_channel_membership(chptr, who);
 
