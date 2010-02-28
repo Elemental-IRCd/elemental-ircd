@@ -229,6 +229,7 @@ extern struct membership *find_channel_membership(struct Channel *, struct Clien
 extern const char *find_channel_status(struct membership *msptr, int combine);
 extern int is_any_op(struct membership *msptr);
 extern int is_chanop_voiced(struct membership *msptr);
+extern int can_kick_deop(struct membership *source, struct membership *target);
 extern void add_user_to_channel(struct Channel *, struct Client *, int flags);
 extern void remove_user_from_channel(struct membership *);
 extern void remove_user_from_channels(struct Client *);

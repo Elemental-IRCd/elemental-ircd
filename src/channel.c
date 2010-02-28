@@ -226,6 +226,22 @@ is_chanop_voiced(struct membership *msptr)
 		return 0;
 }
 
+/* can_kick_deop()
+ *
+ * input	- two memeberships
+ * output	- 1 if the first memebership can kick/deop the second, 0 elsewise
+ * side effects -
+ */
+int
+can_kick_deop(struct membership *source, struct membership *target)
+{
+	/* This does not do much yet. That will change when +ah is in. */
+	if(!is_any_op(source))
+		return 0;
+	else
+		return 1;
+}
+
 /* add_user_to_channel()
  *
  * input	- channel to add client to, client to add, channel flags
