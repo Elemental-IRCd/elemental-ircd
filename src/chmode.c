@@ -1176,7 +1176,7 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
 		if(MyClient(source_p) && !(targptr->mode.mode & MODE_FREETARGET))
 		{
 			if((msptr = find_channel_membership(targptr, source_p)) == NULL ||
-				get_channel_access(source_p, msptr) != CHFL_CHANOP)
+				is_any_op(msptr))
 			{
 				sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
 					   me.name, source_p->name, targptr->chname);
