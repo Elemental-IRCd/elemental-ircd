@@ -153,7 +153,6 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 
 #define is_chanop(x)	((x) && (x)->flags & CHFL_CHANOP)
 #define is_voiced(x)	((x) && (x)->flags & CHFL_VOICE)
-#define is_chanop_voiced(x) ((x) && (x)->flags & (CHFL_CHANOP|CHFL_VOICE))
 #define can_send_banned(x) ((x) && (x)->flags & (CHFL_BANNED|CHFL_QUIETED))
 
 /* channel modes ONLY */
@@ -229,6 +228,7 @@ extern int can_join(struct Client *source_p, struct Channel *chptr, char *key);
 extern struct membership *find_channel_membership(struct Channel *, struct Client *);
 extern const char *find_channel_status(struct membership *msptr, int combine);
 extern int is_any_op(struct membership *msptr);
+extern int is_chanop_voiced(struct membership *msptr);
 extern void add_user_to_channel(struct Channel *, struct Client *, int flags);
 extern void remove_user_from_channel(struct membership *);
 extern void remove_user_from_channels(struct Client *);

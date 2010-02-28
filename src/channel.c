@@ -200,12 +200,27 @@ find_channel_status(struct membership *msptr, int combine)
  * output	- 1 if the user is op, halfop, or owner, 0 elsewise
  * side effects - 
  */
-
 int
 is_any_op(struct membership *msptr)
 {
 	/* Checks for +ah will go here when +ah are implemented */
 	if(is_chanop(msptr))
+		return 1;
+	else
+		return 0;
+}
+
+/* is_chanop_voiced()
+ *
+ * input	- memebership to check for status
+ * output	- 1 if the user is op, halfop, owner, or voice, 0 elsewise
+ * side effects -
+ */
+int
+is_chanop_voiced(struct membership *msptr)
+{
+	/* Checks for +ah will go here when +ah are implemented */
+	if(is_chanop(msptr) || is_voiced(msptr))
 		return 1;
 	else
 		return 0;
