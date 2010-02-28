@@ -97,7 +97,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 			return 0;
 		}
 
-		if(!is_chanop(msptr) && !IsOverride(source_p))
+		if(!can_kick_deop(msptr, find_channel_membership(chptr, client_p)) && !IsOverride(source_p))
 		{
 			if(MyConnect(source_p))
 			{
