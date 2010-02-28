@@ -175,16 +175,30 @@ find_channel_membership(struct Channel *chptr, struct Client *client_p)
 const char *
 find_channel_status(struct membership *msptr, int combine)
 {
-	static char buffer[3];
+	static char buffer[5];
 	char *p;
 
 	p = buffer;
+
+	if(is_owner(msptr))
+	{
+		if(!combine)
+			return "!";
+		*p++ = '!';
+	}
 
 	if(is_chanop(msptr))
 	{
 		if(!combine)
 			return "@";
 		*p++ = '@';
+	}
+
+	if(is_halfop(msptr))
+	{
+		if(!combine)
+			return "%";
+		*p++ = '%';
 	}
 
 	if(is_voiced(msptr))
