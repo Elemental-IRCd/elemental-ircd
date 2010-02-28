@@ -194,6 +194,42 @@ find_channel_status(struct membership *msptr, int combine)
 	return buffer;
 }
 
+/* is_halfop()
+ *
+ * input    - membership to check for halfops
+ * output   - 1 if the user is halfopped, 0 if the user is not or halfop 
+ * is disabled.
+ * side effects - 
+ *
+ */
+int
+is_halfop(struct membership *msptr)
+{
+	/* will do something other than return 0 when owner is implemented */
+	if(!ConfigChannel.use_halfop)
+		return 0;
+	else
+		return 0;
+}
+
+/* is_owner()
+ *
+ * input    - membership to check for owner
+ * output   - 1 if the user is an owner, 0 if the user is not or owner 
+ * is disabled.
+ * side effects - 
+ *
+ */
+int
+is_owner(struct membership *msptr)
+{
+	/* will do something other than return 0 when owner is implemented */
+	if(!ConfigChannel.use_owner)
+		return 0;
+	else
+		return 0;
+}
+
 /* is_any_op()
  *
  * input	- membership to check for ops
@@ -203,8 +239,7 @@ find_channel_status(struct membership *msptr, int combine)
 int
 is_any_op(struct membership *msptr)
 {
-	/* Checks for +ah will go here when +ah are implemented */
-	if(is_chanop(msptr))
+	if(is_chanop(msptr) || is_halfop(msptr) || is_owner(msptr))
 		return 1;
 	else
 		return 0;
@@ -219,8 +254,7 @@ is_any_op(struct membership *msptr)
 int
 is_chanop_voiced(struct membership *msptr)
 {
-	/* Checks for +ah will go here when +ah are implemented */
-	if(is_chanop(msptr) || is_voiced(msptr))
+	if(is_chanop(msptr) || is_voiced(msptr) || is_halfop(msptr) || is_owner(msptr))
 		return 1;
 	else
 		return 0;
@@ -235,11 +269,14 @@ is_chanop_voiced(struct membership *msptr)
 int
 can_kick_deop(struct membership *source, struct membership *target)
 {
-	/* This does not do much yet. That will change when +ah is in. */
-	if(!is_any_op(source))
-		return 0;
-	else
+	if(is_chanop(source) && !is_owner(target))
 		return 1;
+	else if(is_halfop(source) && !is_any_op(target))
+		return 1;
+	else if(is_owner(source))
+		return 1;
+
+	return 0;
 }
 
 /* add_user_to_channel()
