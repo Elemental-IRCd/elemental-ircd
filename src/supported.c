@@ -253,6 +253,19 @@ isupport_chanlimit(const void *ptr)
 	return result;
 }
 
+static const char*
+isupport_prefix(const void *ptr)
+{
+	static char result[11];
+
+	rb_snprintf(result, sizeof result, "(%so%sv)%s@%s+",
+			ConfigChannel.use_owner ? "a" : "",
+			ConfigChannel.use_halfop ? "h" : "",
+			ConfigChannel.use_owner ? "!" : "",
+			ConfigChannel.use_halfop ? "%" : "");
+	return result;
+}
+
 static const char *
 isupport_maxlist(const void *ptr)
 {
@@ -302,7 +315,7 @@ init_isupport(void)
 	add_isupport("INVEX", isupport_boolean, &ConfigChannel.use_invex);
 	add_isupport("CHANMODES", isupport_chanmodes, NULL);
 	add_isupport("CHANLIMIT", isupport_chanlimit, NULL);
-	add_isupport("PREFIX", isupport_string, "(ov)@+");
+	add_isupport("PREFIX", isupport_prefix, NULL);
 	add_isupport("MAXLIST", isupport_maxlist, NULL);
 	add_isupport("MODES", isupport_intptr, &maxmodes);
 	add_isupport("NETWORK", isupport_stringptr, &ServerInfo.network_name);
