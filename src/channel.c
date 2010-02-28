@@ -219,9 +219,10 @@ find_channel_status(struct membership *msptr, int combine)
 int
 is_halfop(struct membership *msptr)
 {
-	/* will do something other than return 0 when owner is implemented */
 	if(!ConfigChannel.use_halfop)
 		return 0;
+	if(is_chmode_h(msptr))
+		return 1;
 	else
 		return 0;
 }
@@ -237,9 +238,10 @@ is_halfop(struct membership *msptr)
 int
 is_owner(struct membership *msptr)
 {
-	/* will do something other than return 0 when owner is implemented */
 	if(!ConfigChannel.use_owner)
 		return 0;
+	if(is_chmode_a(msptr))
+		return 1;
 	else
 		return 0;
 }
