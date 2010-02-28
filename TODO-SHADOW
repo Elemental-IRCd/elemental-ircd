@@ -2,8 +2,6 @@ Todo list for Shadowircd 6.0
 -----------------------------
 * swhois support
 * custom operstrings (?)
-* halfops - probably enabled/disabled via a configure switch on in the .conf
-* owner/+a prefix/cmode - see comment for halfops :D
 * norepeat cmode
 * kicknorejoin (+J in inspircd chmode)
 * operoverride umode (+p), steal this from ircd-seven
