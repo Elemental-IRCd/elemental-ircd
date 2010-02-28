@@ -123,7 +123,7 @@ part_one_client(struct Client *client_p, struct Client *source_p, char *name, ch
 	 *  Remove user from the old channel (if any)
 	 *  only allow /part reasons in -m chans
 	 */
-	if(reason[0] && (is_chanop(msptr) || !MyConnect(source_p) ||
+	if(reason[0] && (is_any_op(msptr) || !MyConnect(source_p) ||
 			 ((can_send(chptr, source_p, msptr) > 0 &&
 			   (source_p->localClient->firsttime +
 			    ConfigFileEntry.anti_spam_exit_message_time) < rb_current_time()))))

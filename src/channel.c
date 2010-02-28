@@ -194,6 +194,23 @@ find_channel_status(struct membership *msptr, int combine)
 	return buffer;
 }
 
+/* is_any_op()
+ *
+ * input	- membership to check for ops
+ * output	- 1 if the user is op, halfop, or owner, 0 elsewise
+ * side effects - 
+ */
+
+int
+is_any_op(struct membership *msptr)
+{
+	/* Checks for +ah will go here when +ah are implemented */
+	if(is_chanop(msptr))
+		return 1;
+	else
+		return 0;
+}
+
 /* add_user_to_channel()
  *
  * input	- channel to add client to, client to add, channel flags
@@ -928,7 +945,7 @@ find_nonickchange_channel(struct Client *client_p)
 	{
 		msptr = ptr->data;
 		chptr = msptr->chptr;
-		if (is_chanop_voiced(msptr))
+		if (is_any_op(msptr))
 			continue;		
 		if (chptr->mode.mode & MODE_NONICK)
 			return chptr;
