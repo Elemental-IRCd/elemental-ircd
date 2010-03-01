@@ -128,7 +128,7 @@ part_one_client(struct Client *client_p, struct Client *source_p, char *name, ch
 			   (source_p->localClient->firsttime +
 			    ConfigFileEntry.anti_spam_exit_message_time) < rb_current_time()))))
 	{
-		if(chptr->mode.mode & MODE_NOCOLOR)
+		if(chptr->mode.mode & MODE_NOCOLOR && (!ConfigChannel.exempt_cmode_c || !is_any_op(msptr)))
 		{
 			rb_strlcpy(reason2, reason, BUFSIZE);
 			strip_colour(reason2);

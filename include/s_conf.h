@@ -222,6 +222,7 @@ struct config_file_entry
 struct config_channel_entry
 {
 	char * autochanmodes;
+	char * exemptchanops;
 	int use_halfop;
 	int use_owner;
 	int use_except;
@@ -245,6 +246,14 @@ struct config_channel_entry
 	int host_in_topic;
 	int resv_forcepart;
 	int kick_no_rejoin_time;
+
+	int exempt_cmode_c;
+	int exempt_cmode_C;
+	int exempt_cmode_D;
+	int exempt_cmode_T;
+	int exempt_cmode_N;
+	int exempt_cmode_G;
+	int exempt_cmode_K;
 };
 
 struct config_server_hide

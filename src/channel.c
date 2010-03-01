@@ -1029,9 +1029,7 @@ find_nonickchange_channel(struct Client *client_p)
 	{
 		msptr = ptr->data;
 		chptr = msptr->chptr;
-		if (is_any_op(msptr))
-			continue;		
-		if (chptr->mode.mode & MODE_NONICK)
+		if (chptr->mode.mode & MODE_NONICK && (!ConfigChannel.exempt_cmode_N || !is_any_op(msptr)))
 			return chptr;
 	}
 	return NULL;

@@ -333,6 +333,12 @@ static struct InfoStruct info_table[] = {
 		"Channelmodes set on channel creation"
 	},
 	{
+		"exemptchanops",
+		OUTPUT_STRING,
+		&ConfigChannel.exemptchanops,
+		"Channelmodes that chanops are exempt from"
+	},
+	{
 		"nick_delay",
 		OUTPUT_DECIMAL,
 		&ConfigFileEntry.nick_delay,

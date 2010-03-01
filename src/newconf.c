@@ -2207,6 +2207,7 @@ static struct ConfEntry conf_general_table[] =
 static struct ConfEntry conf_channel_table[] =
 {
 	{ "autochanmodes",	CF_QSTRING, NULL, 0, &ConfigChannel.autochanmodes	},
+	{ "exemptchanops",	CF_QSTRING, NULL, 0, &ConfigChannel.exemptchanops	},
 	{ "default_split_user_count",	CF_INT,  NULL, 0, &ConfigChannel.default_split_user_count	 },
 	{ "default_split_server_count",	CF_INT,	 NULL, 0, &ConfigChannel.default_split_server_count },
 	{ "burst_topicwho",	CF_YESNO, NULL, 0, &ConfigChannel.burst_topicwho	},
@@ -2230,6 +2231,13 @@ static struct ConfEntry conf_channel_table[] =
 	{ "use_local_channels",	CF_YESNO, NULL, 0, &ConfigChannel.use_local_channels	},
 	{ "resv_forcepart",     CF_YESNO, NULL, 0, &ConfigChannel.resv_forcepart	},
 	{ "kick_no_rejoin_time", CF_INT,  NULL, 0, &ConfigChannel.kick_no_rejoin_time	},
+	{ "exempt_cmode_c",	CF_YESNO, NULL, 0, &ConfigChannel.exempt_cmode_c	},
+	{ "exempt_cmode_C",	CF_YESNO, NULL, 0, &ConfigChannel.exempt_cmode_C	},
+	{ "exempt_cmode_D",	CF_YESNO, NULL, 0, &ConfigChannel.exempt_cmode_D	},
+	{ "exempt_cmode_T",	CF_YESNO, NULL, 0, &ConfigChannel.exempt_cmode_T	},
+	{ "exempt_cmode_N",	CF_YESNO, NULL, 0, &ConfigChannel.exempt_cmode_N	},
+	{ "exempt_cmode_G",	CF_YESNO, NULL, 0, &ConfigChannel.exempt_cmode_G	},
+	{ "exempt_cmode_K",	CF_YESNO, NULL, 0, &ConfigChannel.exempt_cmode_K	},
 	{ "\0", 		0, 	  NULL, 0, NULL }
 };
 

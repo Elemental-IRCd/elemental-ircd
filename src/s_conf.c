@@ -747,6 +747,7 @@ set_default_conf(void)
 	ConfigFileEntry.oper_snomask = SNO_GENERAL;
 
 	ConfigChannel.autochanmodes = rb_strdup("nt");
+	ConfigChannel.exemptchanops = rb_strdup("");
 	ConfigChannel.use_halfop = YES;
 	ConfigChannel.use_owner = YES;
 	ConfigChannel.use_except = YES;
@@ -771,6 +772,14 @@ set_default_conf(void)
 	ConfigChannel.no_create_on_split = YES;
 	ConfigChannel.resv_forcepart = YES;
 	ConfigChannel.kick_no_rejoin_time = 30;
+
+	ConfigChannel.exempt_cmode_c = NO;
+	ConfigChannel.exempt_cmode_C = NO;
+	ConfigChannel.exempt_cmode_D = NO;
+	ConfigChannel.exempt_cmode_T = NO;
+	ConfigChannel.exempt_cmode_N = NO;
+	ConfigChannel.exempt_cmode_G = NO;
+	ConfigChannel.exempt_cmode_K = NO;
 
 	ConfigServerHide.flatten_links = 0;
 	ConfigServerHide.links_delay = 300;
@@ -865,6 +874,46 @@ validate_conf(void)
 		check_splitmode_ev = NULL;
 		splitmode = 0;
 		splitchecking = 0;
+	}
+
+	/* Parse the exemptchanops option and set the internal variables
+	 * that we will use. */
+	char * ech;
+
+	for(ech = ConfigChannel.exemptchanops; *ech; ech++)
+	{
+		if(*ech == 'c')
+		{
+			ConfigChannel.exempt_cmode_c = 1;
+			continue;
+		}
+		if(*ech == 'C')
+		{
+			ConfigChannel.exempt_cmode_C = 1;
+			continue;
+		}
+		if(*ech == 'D')
+		{
+			ConfigChannel.exempt_cmode_D = 1;
+			continue;
+		}
+		if(*ech == 'T')
+		{
+			ConfigChannel.exempt_cmode_T = 1;
+			continue;
+		}
+		if(*ech == 'N')
+		{
+			ConfigChannel.exempt_cmode_N = 1;
+			continue;
+		}
+		if(*ech == 'G')
+		{
+			ConfigChannel.exempt_cmode_G = 1;
+			continue;
+		}
+		if(*ech == 'K')
+			ConfigChannel.exempt_cmode_K = 1;
 	}
 }
 

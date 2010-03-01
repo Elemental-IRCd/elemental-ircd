@@ -6,7 +6,6 @@ Todo list for ShadowIRCd 6.0
 * kicknorejoin (+J in inspircd chmode)
 * operoverride umode (+p), steal this from ircd-seven
 * immune cmode (+M), steal this from ircd-seven too
-* channel::exemptchanops config option
 * host-on-operup: vhost that gets applied to you on oper-up. A surprising number of people want this.
 * Anything else we think of between now and release. :P
 

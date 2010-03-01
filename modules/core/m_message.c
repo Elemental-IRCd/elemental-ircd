@@ -487,6 +487,7 @@ msg_channel(int p_or_n, const char *command,
 	int contor;
 	int caps = 0;
 	int len = 0;
+	struct membership *msptr = find_channel_membership(chptr, source_p);
 
 	if(MyClient(source_p))
 	{
@@ -495,7 +496,7 @@ msg_channel(int p_or_n, const char *command,
 			source_p->localClient->last = rb_current_time();
 	}
 
-	if(chptr->mode.mode & MODE_NOCOLOR)
+	if(chptr->mode.mode & MODE_NOCOLOR && (!ConfigChannel.exempt_cmode_c || !is_any_op(msptr)))
 	{
 		rb_strlcpy(text2, text, BUFSIZE);
 		strip_colour(text2);
@@ -516,7 +517,7 @@ msg_channel(int p_or_n, const char *command,
 		if(result == CAN_SEND_OPV ||
 		   !flood_attack_channel(p_or_n, source_p, chptr, chptr->chname))
 		{
-			if (strlen(text) > 10 && chptr->mode.mode & MODE_NOCAPS)
+			if (strlen(text) > 10 && chptr->mode.mode & MODE_NOCAPS && (!ConfigChannel.exempt_cmode_G || !is_any_op(msptr)))
 			{
 				for(contor=0; contor < strlen(text); contor++)
 				{
@@ -531,14 +532,15 @@ msg_channel(int p_or_n, const char *command,
 					return;
 				}
 			}
-			if (p_or_n != PRIVMSG && chptr->mode.mode & MODE_NONOTICE)
+			if (p_or_n != PRIVMSG && chptr->mode.mode & MODE_NONOTICE && (!ConfigChannel.exempt_cmode_T || !is_any_op(msptr)))
 			{
 				sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
 						form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
 				return;
 			}
 			if (p_or_n != NOTICE && chptr->mode.mode & MODE_NOACTION &&
-					!strncasecmp(text + 1, "ACTION", 6))
+					!strncasecmp(text + 1, "ACTION", 6) &&
+					(!ConfigChannel.exempt_cmode_D || !is_any_op(msptr)))
 			{
 				sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
 						form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
@@ -547,7 +549,7 @@ msg_channel(int p_or_n, const char *command,
 			if (p_or_n != NOTICE && *text == '\001' &&
 					strncasecmp(text + 1, "ACTION", 6))
 			{
-				if (chptr->mode.mode & MODE_NOCTCP)
+				if (chptr->mode.mode & MODE_NOCTCP && (!ConfigChannel.exempt_cmode_C || !is_any_op(msptr)))
 				{
 					sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
 							   form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
