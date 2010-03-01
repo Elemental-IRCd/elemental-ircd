@@ -175,13 +175,13 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define MODE_FREETARGET 0x1000  /* can be forwarded to without authorization */
 #define MODE_DISFORWARD 0x2000  /* disable channel forwarding */
 #define MODE_NOCTCP     0x8000  /* Block CTCPs directed to this channel */
-#define MODE_NONOTICE	0x16000	/* Block notices directed to this channel */
-#define MODE_NOACTION	0x32000 /* Block CTCP ACTION directed to this channel */
-#define MODE_NOKICK	0x64000 /* Disable /kick on this channel */
-#define MODE_NONICK	0x128000 /* Disable /nick for anyone on this channel */
-#define MODE_NOCAPS	0x256000 /* Block messages in all capital letters */
-#define MODE_NOREJOIN	0x512000 /* Block rejoin immediately after kick */
-#define MODE_NOREPEAT	0x1024000 /* Block repeat messages */
+#define MODE_NONOTICE	0x10000	/* Block notices directed to this channel */
+#define MODE_NOACTION	0x20000 /* Block CTCP ACTION directed to this channel */
+#define MODE_NOKICK	0x40000 /* Disable /kick on this channel */
+#define MODE_NONICK	0x80000 /* Disable /nick for anyone on this channel */
+#define MODE_NOCAPS	0x100000 /* Block messages in all capital letters */
+#define MODE_NOREJOIN	0x200000 /* Block rejoin immediately after kick */
+#define MODE_NOREPEAT	0x400000 /* Block repeat messages */
 
 #define CHFL_BAN        0x10000000	/* ban channel flag */
 #define CHFL_EXCEPTION  0x20000000	/* exception to ban channel flag */
