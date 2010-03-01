@@ -1,5 +1,81 @@
-This is charybdis 3.2, Copyright (c) 2005-2010 Charybdis team.
+This is ShadowIRCd 6.0, Copyright (c) 2005-2010 ShadowIRCd team.
 See LICENSE for licensing details (GPL v2).
+
+-- shadowircd-6.0.0
+
+new modes
+- Add umode +C (no CTCP).
+- Add umode +V, users with this mode set will never recieve channel invites
+  from other users.
+- Add umode +B which identifies users as being bots.
+- Add umode +G which disallows users from messaging you unless you're both
+  on at least one channel together. This can be "overridden" with /accept.
+- Add cmode +T which blocks all notices to the channel.
+- Add cmode +D which blocks all actions (/me's) from being sent to the channel.
+- Add cmode +E which disallows channel ops from kicking users.
+- Add cmode +N which disallows users from changing their nick while they're on
+  a channel with this mode set.
+- Add cmode +K (norepeat) which will block repeated messages if a user sends
+  the same message multiple times before any other users send to the channel.
+- Add cmode +G which blocks messages containing 50% or more capital letters
+  from being sent to the channel.
+- Add cmode +J which disallows a kicked user from rejoining within 'X' seconds
+  of them being kicked, where 'X' is the variable of the channel::kick_no_rejoin_time
+  configuration option.
+- Add cmodes +a and +h (owner and halfop, respectively). There are 2 extra
+  prefixes to more finely-grain the status of staff members in your channels.
+  They can be enabled or disabled in the configuration file with the options
+  channel::use_halfop and channel::use_owner.
+
+new configuration options
+- auth::autojoin - This option will specify what channels users in a matching
+  auth {} block will automatically join on connect to your server/network.
+- auth::autojoin_opers - This option will specify what channels opers in a
+  matching auth {} block will automatically join on oper up (/oper).
+- channel::cycle_host_change - This option defines whether or not users
+  will cycle (part and rejoin) the channels they're in when their host changes.
+  This can be annoying to some people, but disabling it can cause client desyncs.
+- channel::host_in_topic - This option defines whether or not a host setter's
+  full host or just their nick will be shown on /TOPIC.
+- channel::use_local_channels - With this option, you can enable/disable
+  support for local channels on your server/network.
+- channel::exemptchanops - This option defines what channel modes channel
+  operators are exempt from, channel modes usable in this option are: cCDTNGK.
+- general::secret_channels_in_whois - This option defines whether or not opers
+  can see secret channels that a user is in when whoising them. Secret channels
+  will show up in the whois prefixed with *. If this option is disabled, opers
+  will still be able to see secret channels a user is in with the /SPYWHOIS 
+  command.
+- Enabled a few popular extensions by default, added a few extensions to the
+  example config files that were missing, add a few more services aliases
+  by default, enable ip_cloaking by default and get rid of all the old
+  ip_cloaking modules.
+
+opers
+- Users' umodes are shown when you whois them.
+- swhois support - Adds a mostly free-form line of text to opers' whois
+  if one is set in their operator {} block.
+- custom operstring - Instead of showing the IRC operator or IRC administrator
+  oper strings, you can customize what it shows by privset or 
+  for a specific operator.
+- host-on-oper - This will be a option settable in both privset block and
+  operator block that defines what host a operator gets upon oper-up.
+- operoverride - Oper override works very differently in ShadowIRCd compared
+  to all other IRCd's which support oper override. In ShadowIRCd, to be able
+  to override, you must have the oper:override privledge and you must then
+  set umode +p on yourself. The p umode will automatically expire and un-set
+  itself after a time set in the configuration option general::expire_override_time.
+- immune - Immune depends on the chm_no_oper_kick extension being enabled.
+  An oper can set +M on a channel (which that channel's ops and users can not
+  see, but other opers can), then when the oper joins that channel with override
+  (umode +p) set on themselves, the channel's ops will be unable to kick the oper
+  from the channel.
+
+other
+- Changed default NICKLEN to 31 (from 15) to fit more closely with other
+  IRCd's.
+- Rebrand many things from Charybdis to ShadowIRCd.
+- Move the m_force module to extensions.
 
 -- charybdis-3.2.0
 
