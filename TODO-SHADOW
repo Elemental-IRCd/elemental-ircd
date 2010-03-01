@@ -1,13 +1,19 @@
-Todo list for Shadowircd 6.0
+Todo list for ShadowIRCd 6.0
 -----------------------------
 * swhois support
-* custom operstrings (?)
+* custom operstrings
 * norepeat cmode
 * kicknorejoin (+J in inspircd chmode)
 * operoverride umode (+p), steal this from ircd-seven
 * immune cmode (+M), steal this from ircd-seven too
 * channel::exemptchanops config option
 * host-on-operup: vhost that gets applied to you on oper-up. A surprising number of people want this.
-
-
 * Anything else we think of between now and release. :P
+
+Todo list for ShadowIRCd 6.1
+-----------------------------
+* global/remote mod*/die/restart
+* update ojoin/omode/etc to use +ah
+* notice/message !#channel and %#channel
+* clean disable/removal of modes on rehash, if possible without being ugly
+
