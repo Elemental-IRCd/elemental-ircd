@@ -39,6 +39,8 @@ NO PARAMETERS:
               50% capital letters will be blocked.
      +J     - Prevent autorejoin on kick. Users will not be able to
               rejoin immediately after being kicked. 
+     +K     - No repeat messages. Messages that are the same as the
+              last message sent to the channel will be blocked.
 
 WITH PARAMETERS:
      +f     - Forward.  Forwards users who cannot join because of +i,
