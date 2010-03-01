@@ -1668,7 +1668,8 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 		}
 
 		/* check it begins with # or &, and local chans are disabled */
-		else if(!IsChannelName(name))
+                else if(!IsChannelName(name) ||
+                        ( !ConfigChannel.use_local_channels && name[0] == '&'))
 		{
 			sendto_one_numeric(source_p, ERR_NOSUCHCHANNEL,
 					   form_str(ERR_NOSUCHCHANNEL), name);
