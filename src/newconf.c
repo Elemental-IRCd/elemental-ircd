@@ -571,6 +571,10 @@ conf_end_oper(struct TopConf *tc)
 		yy_tmpoper->flags = yy_oper->flags;
 		yy_tmpoper->umodes = yy_oper->umodes;
 		yy_tmpoper->snomask = yy_oper->snomask;
+		if(valid_hostname(yy_oper->vhost))
+			yy_tmpoper->vhost = rb_strdup(yy_oper->vhost);
+		else
+			conf_report_error("Ignoring vhost setting for oper %s -- invalid hostmask.", yy_oper->name);
 		yy_tmpoper->privset = yy_oper->privset;
 
 #ifdef HAVE_LIBCRYPTO
@@ -698,6 +702,12 @@ static void
 conf_set_oper_snomask(void *data)
 {
 	yy_oper->snomask = parse_snobuf_to_mask(0, (const char *) data);
+}
+
+static void
+conf_set_oper_vhost(void *data)
+{
+	yy_oper->vhost = rb_strdup((char *) data);
 }
 
 static int
@@ -2066,6 +2076,7 @@ static struct ConfEntry conf_operator_table[] =
 	{ "umodes",	CF_STRING | CF_FLIST, conf_set_oper_umodes,	0, NULL },
 	{ "privset",	CF_QSTRING, conf_set_oper_privset,	0, NULL },
 	{ "snomask",    CF_QSTRING, conf_set_oper_snomask,      0, NULL },
+	{ "vhost",	CF_QSTRING, conf_set_oper_vhost,	0, NULL },
 	{ "user",	CF_QSTRING, conf_set_oper_user,		0, NULL },
 	{ "password",	CF_QSTRING, conf_set_oper_password,	0, NULL },
 	{ "fingerprint",	CF_QSTRING, conf_set_oper_fingerprint,	0, NULL },

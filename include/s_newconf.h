@@ -119,6 +119,8 @@ struct oper_conf
 
 	unsigned int snomask;
 
+	char *vhost;
+
 	struct PrivilegeSet *privset;
 
 #ifdef HAVE_LIBCRYPTO

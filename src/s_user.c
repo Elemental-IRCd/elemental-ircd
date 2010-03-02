@@ -1310,9 +1310,12 @@ oper_up(struct Client *source_p, struct oper_conf *oper_p)
 	else
 		source_p->umodes |= DEFAULT_OPER_UMODES;
 
-	if(!EmptyString(ConfigFileEntry.default_operhost))
+	if(oper_p->vhost || !EmptyString(ConfigFileEntry.default_operhost))
 	{
-		change_nick_user_host(source_p, source_p->name, source_p->username, ConfigFileEntry.default_operhost, 0, "Changing host");
+		if(oper_p->vhost)
+			change_nick_user_host(source_p, source_p->name, source_p->username, oper_p->vhost, 0, "Changing host");
+		else
+			change_nick_user_host(source_p, source_p->name, source_p->username, ConfigFileEntry.default_operhost, 0, "Changing host");
 		
 		sendto_one_numeric(source_p, RPL_HOSTHIDDEN, "%s :is now your hidden host (set by %s)", source_p->host, source_p->servptr->name);
 
