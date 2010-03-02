@@ -1310,6 +1310,23 @@ oper_up(struct Client *source_p, struct oper_conf *oper_p)
 	else
 		source_p->umodes |= DEFAULT_OPER_UMODES;
 
+	if(!EmptyString(ConfigFileEntry.default_operhost))
+	{
+		change_nick_user_host(source_p, source_p->name, source_p->username, ConfigFileEntry.default_operhost, 0, "Changing host");
+		
+		sendto_one_numeric(source_p, RPL_HOSTHIDDEN, "%s :is now your hidden host (set by %s)", source_p->host, source_p->servptr->name);
+
+		sendto_server(NULL, NULL,
+			CAP_EUID | CAP_TS6, NOCAPS, ":%s CHGHOST %s :%s",
+			use_id(&me), use_id(source_p), source_p->host);
+		sendto_server(NULL, NULL,
+			CAP_TS6, CAP_EUID, ":%s ENCAP * CHGHOST %s :%s",
+			use_id(&me), use_id(source_p), source_p->host);
+
+		if (!IsDynSpoof(source_p))
+			SetDynSpoof(source_p);
+	}
+
 	if (oper_p->snomask)
 	{
 		source_p->snomask |= oper_p->snomask;

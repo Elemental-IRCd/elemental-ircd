@@ -152,6 +152,12 @@ static struct InfoStruct info_table[] = {
 		"Default operstring at startup.",
 	},
 	{
+		"default_operhost",
+		OUTPUT_STRING,
+		&ConfigFileEntry.default_operhost,
+		"Default vhost for operators to receive upon opering up.",
+	},
+	{
 		"servicestring",
 		OUTPUT_STRING,
 		&ConfigFileEntry.servicestring,
