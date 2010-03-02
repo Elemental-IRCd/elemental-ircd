@@ -1018,7 +1018,7 @@ chm_halfop(struct Client *source_p, struct Channel *chptr,
 		return;
 	}
 
-	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
+	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER)
 	{
 		if(!(*errors & SM_ERR_NOOPS))
 			sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
