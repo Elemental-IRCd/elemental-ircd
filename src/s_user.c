@@ -905,6 +905,14 @@ show_other_user_mode(struct Client *source_p, struct Client *target_p)
 				target_p->name, buf);
 }
 
+static void
+expire_umode_p(void *data)
+{
+	struct Client *source_p = data;
+	char *parv[4] = {source_p->name, source_p->name, "-p", NULL};
+	user_mode(source_p, source_p, 3, parv);
+}
+
 /*
  * user_mode - set get current users mode
  *
@@ -978,6 +986,10 @@ user_mode(struct Client *client_p, struct Client *source_p, int parc, const char
 		if (source_p->snomask != 0)
 			sendto_one_numeric(source_p, RPL_SNOMASK, form_str(RPL_SNOMASK),
 				construct_snobuf(source_p->snomask));
+
+		/* If we're setting +p, expire it */
+		if(ConfigFileEntry.expire_override_time && (source_p->umodes & ~setflags) & UMODE_OVERRIDE)
+			rb_event_addonce("expire_override", expire_umode_p, source_p, ConfigFileEntry.expire_override_time);
 
 		return 0;
 	}
