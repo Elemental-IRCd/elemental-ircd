@@ -988,18 +988,6 @@ user_mode(struct Client *client_p, struct Client *source_p, int parc, const char
 			sendto_one_numeric(source_p, RPL_SNOMASK, form_str(RPL_SNOMASK),
 				construct_snobuf(source_p->snomask));
 
-		/* If we're setting +p, expire it, but only from local clients */
-		if(ConfigFileEntry.expire_override_time && MyClient(source_p) && (source_p->umodes & ~setflags) & UMODE_OVERRIDE)
-		{
-			source_p->localClient->override_timeout_event =
-				rb_event_addonce("expire_override", expire_umode_p, source_p, ConfigFileEntry.expire_override_time);
-		}
-		else if(MyClient(source_p) && source_p->localClient->override_timeout_event && (setflags & ~source_p->umodes) & UMODE_OVERRIDE)
-		{
-			rb_event_delete(source_p->localClient->override_timeout_event);
-			source_p->localClient->override_timeout_event = NULL;
-		}
-
 		return 0;
 	}
 
@@ -1183,6 +1171,19 @@ user_mode(struct Client *client_p, struct Client *source_p, int parc, const char
 	if (showsnomask && MyConnect(source_p))
 		sendto_one_numeric(source_p, RPL_SNOMASK, form_str(RPL_SNOMASK),
 			construct_snobuf(source_p->snomask));
+
+		/* If we're setting +p, expire it, but only from local clients */
+		if(ConfigFileEntry.expire_override_time && MyClient(source_p) && (source_p->umodes & ~setflags) & UMODE_OVERRIDE)
+		{
+			source_p->localClient->override_timeout_event =
+				rb_event_addonce("expire_override", expire_umode_p, source_p, ConfigFileEntry.expire_override_time);
+		}
+		else if(MyClient(source_p) && source_p->localClient->override_timeout_event && (setflags & ~source_p->umodes) & UMODE_OVERRIDE)
+		{
+			rb_event_delete(source_p->localClient->override_timeout_event);
+			source_p->localClient->override_timeout_event = NULL;
+		}
+
 
 	return (0);
 }
