@@ -1259,14 +1259,20 @@ chm_limit(struct Client *source_p, struct Channel *chptr,
 	const char *lstr;
 	static char limitstr[30];
 	int limit;
+	int override = 0;
 
 	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
 	{
-		if(!(*errors & SM_ERR_NOOPS))
-			sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
-				   me.name, source_p->name, chptr->chname);
-		*errors |= SM_ERR_NOOPS;
-		return;
+		if(IsOverride(source_p))
+			override = 1;
+		else
+		{
+			if(!(*errors & SM_ERR_NOOPS))
+				sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+						me.name, source_p->name, chptr->chname);
+			*errors |= SM_ERR_NOOPS;
+			return;
+		}
 	}
 
 	if(dir == MODE_QUERY)
@@ -1291,6 +1297,7 @@ chm_limit(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].nocaps = 0;
 		mode_changes[mode_count].mems = ALL_MEMBERS;
 		mode_changes[mode_count].id = NULL;
+		mode_changes[mode_count].override = override;
 		mode_changes[mode_count++].arg = limitstr;
 
 		chptr->mode.limit = limit;
@@ -1308,6 +1315,7 @@ chm_limit(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].nocaps = 0;
 		mode_changes[mode_count].mems = ALL_MEMBERS;
 		mode_changes[mode_count].id = NULL;
+		mode_changes[mode_count].override = override;
 		mode_changes[mode_count++].arg = NULL;
 	}
 }
@@ -1318,14 +1326,21 @@ chm_throttle(struct Client *source_p, struct Channel *chptr,
 	     const char **parv, int *errors, int dir, char c, long mode_type)
 {
 	int joins = 0, timeslice = 0;
+	int override = 0;
 
 	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
 	{
-		if(!(*errors & SM_ERR_NOOPS))
-			sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
-				   me.name, source_p->name, chptr->chname);
-		*errors |= SM_ERR_NOOPS;
-		return;
+		if(IsOverride(source_p))
+			override = 1;
+		else
+		{
+
+			if(!(*errors & SM_ERR_NOOPS))
+				sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+						me.name, source_p->name, chptr->chname);
+			*errors |= SM_ERR_NOOPS;
+			return;
+		}
 	}
 
 	if(dir == MODE_QUERY)
@@ -1347,6 +1362,7 @@ chm_throttle(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].nocaps = 0;
 		mode_changes[mode_count].mems = ALL_MEMBERS;
 		mode_changes[mode_count].id = NULL;
+		mode_changes[mode_count].override = override;
 		mode_changes[mode_count++].arg = parv[(*parn)];
 
 		(*parn)++;
@@ -1370,6 +1386,7 @@ chm_throttle(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].nocaps = 0;
 		mode_changes[mode_count].mems = ALL_MEMBERS;
 		mode_changes[mode_count].id = NULL;
+		mode_changes[mode_count].override = override;
 		mode_changes[mode_count++].arg = NULL;
 	}
 }
@@ -1382,6 +1399,7 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
 	struct Channel *targptr = NULL;
 	struct membership *msptr;
 	const char *forward;
+	int override = 0;
 
 	/* if +f is disabled, ignore local attempts to set it */
 	if(!ConfigChannel.use_forward && MyClient(source_p) &&
@@ -1404,11 +1422,16 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
 #ifndef FORWARD_OPERONLY
 	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
 	{
-		if(!(*errors & SM_ERR_NOOPS))
-			sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
-				   me.name, source_p->name, chptr->chname);
-		*errors |= SM_ERR_NOOPS;
-		return;
+		if(IsOverride(source_p))
+			override = 1;
+		else
+		{
+			if(!(*errors & SM_ERR_NOOPS))
+				sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+						me.name, source_p->name, chptr->chname);
+			*errors |= SM_ERR_NOOPS;
+			return;
+		}
 	}
 #else
 	if(!IsOper(source_p) && !IsServer(source_p))
@@ -1454,9 +1477,14 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
 			if((msptr = find_channel_membership(targptr, source_p)) == NULL ||
 				is_any_op(msptr))
 			{
-				sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
-					   me.name, source_p->name, targptr->chname);
-				return;
+				if(IsOverride(source_p))
+					override = 1;
+				else
+				{
+					sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+							me.name, source_p->name, targptr->chname);
+					return;
+				}
 			}
 		}
 
@@ -1468,6 +1496,7 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].nocaps = 0;
 		mode_changes[mode_count].mems = ConfigChannel.use_forward ? ALL_MEMBERS : ONLY_SERVERS;
 		mode_changes[mode_count].id = NULL;
+		mode_changes[mode_count].override = override;
 		mode_changes[mode_count++].arg = forward;
 	}
 	else if(dir == MODE_DEL)
@@ -1483,6 +1512,7 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].nocaps = 0;
 		mode_changes[mode_count].mems = ALL_MEMBERS;
 		mode_changes[mode_count].id = NULL;
+		mode_changes[mode_count].override = override;
 		mode_changes[mode_count++].arg = NULL;
 	}
 }
@@ -1493,14 +1523,20 @@ chm_key(struct Client *source_p, struct Channel *chptr,
 	const char **parv, int *errors, int dir, char c, long mode_type)
 {
 	char *key;
+	int override = 0;
 
 	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
 	{
-		if(!(*errors & SM_ERR_NOOPS))
-			sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
-				   me.name, source_p->name, chptr->chname);
-		*errors |= SM_ERR_NOOPS;
-		return;
+		if(IsOverride(source_p))
+			override = 1;
+		else
+		{
+			if(!(*errors & SM_ERR_NOOPS))
+				sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+						me.name, source_p->name, chptr->chname);
+			*errors |= SM_ERR_NOOPS;
+			return;
+		}
 	}
 
 	if(dir == MODE_QUERY)
@@ -1531,6 +1567,7 @@ chm_key(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].nocaps = 0;
 		mode_changes[mode_count].mems = ALL_MEMBERS;
 		mode_changes[mode_count].id = NULL;
+		mode_changes[mode_count].override = override;
 		mode_changes[mode_count++].arg = chptr->mode.key;
 	}
 	else if(dir == MODE_DEL)
@@ -1562,6 +1599,7 @@ chm_key(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].nocaps = 0;
 		mode_changes[mode_count].mems = ALL_MEMBERS;
 		mode_changes[mode_count].id = NULL;
+		mode_changes[mode_count].override = override;
 		mode_changes[mode_count++].arg = "*";
 	}
 }
@@ -1571,13 +1609,20 @@ chm_regonly(struct Client *source_p, struct Channel *chptr,
 	    int alevel, int parc, int *parn,
 	    const char **parv, int *errors, int dir, char c, long mode_type)
 {
+	int override = 0;
+
 	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
 	{
-		if(!(*errors & SM_ERR_NOOPS))
-			sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
-				   me.name, source_p->name, chptr->chname);
-		*errors |= SM_ERR_NOOPS;
-		return;
+		if(IsOverride(source_p))
+			override = 1;
+		else
+		{
+			if(!(*errors & SM_ERR_NOOPS))
+				sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+						me.name, source_p->name, chptr->chname);
+			*errors |= SM_ERR_NOOPS;
+			return;
+		}
 	}
 
 	if(dir == MODE_QUERY)
@@ -1601,6 +1646,7 @@ chm_regonly(struct Client *source_p, struct Channel *chptr,
 	mode_changes[mode_count].nocaps = 0;
 	mode_changes[mode_count].mems = ALL_MEMBERS;
 	mode_changes[mode_count].id = NULL;
+	mode_changes[mode_count].override = override;
 	mode_changes[mode_count++].arg = NULL;
 }
 
@@ -1911,6 +1957,8 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 
 	alevel = get_channel_access(source_p, msptr);
 
+	no_override_deop = 0;
+
 	/* Hide connecting server on netburst -- jilles */
 	if (ConfigServerHide.flatten_links && IsServer(source_p) && !has_id(source_p) && !HasSentEob(source_p))
 		fakesource_p = &me;
@@ -1953,12 +2001,16 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 	for (override = 0; override < (IsOverride(source_p) ? 2 : 1); ++override)
 	{
 		int was_on_chan = 0;
+
 		if(override)
 		{
 			if(msptr)
+			{
 				was_on_chan = 1;
+				msptr->flags |= CHFL_CHANOP;
+			}
 			else
-				add_user_to_channel(chptr, source_p, 0);
+				add_user_to_channel(chptr, source_p, CHFL_CHANOP);
 		}
 
 		for(j = 0, flags = ALL_MEMBERS; j < 2; j++, flags = ONLY_CHANOPS)
@@ -2036,8 +2088,13 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 				}
 			}
 
-			if(override && !was_on_chan)
-				remove_user_from_channel(find_channel_membership(chptr, source_p));
+			if(override)
+			{
+				if(!was_on_chan)
+					remove_user_from_channel(find_channel_membership(chptr, source_p));
+				else if (!no_override_deop)
+					msptr->flags &= ~CHFL_CHANOP;
+			}
 	}
 	/* only propagate modes originating locally, or if we're hubbing */
 	if(MyClient(source_p) || rb_dlink_list_length(&serv_list) > 1)
