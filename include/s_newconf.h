@@ -120,6 +120,8 @@ struct oper_conf
 	unsigned int snomask;
 
 	char *vhost;
+	char *swhois;
+	char *operstring;
 
 	struct PrivilegeSet *privset;
 

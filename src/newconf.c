@@ -571,10 +571,22 @@ conf_end_oper(struct TopConf *tc)
 		yy_tmpoper->flags = yy_oper->flags;
 		yy_tmpoper->umodes = yy_oper->umodes;
 		yy_tmpoper->snomask = yy_oper->snomask;
+
 		if(valid_hostname(yy_oper->vhost))
 			yy_tmpoper->vhost = rb_strdup(yy_oper->vhost);
 		else
 			conf_report_error("Ignoring vhost setting for oper %s -- invalid hostmask.", yy_oper->name);
+
+		if(strlen(yy_oper->swhois < 400))
+			yy_tmpoper->swhois = rb(strdup(yy_oper->swhois);
+		else
+			conf_report_error("Ignoring swhois setting for oper %s -- swhois too long.", yy_oper->name);
+
+		if(strlen(yy_oper->operstring < 400))
+			yy_tmpoper->operstring = rb(strdup(yy_oper->operstring);
+		else
+			conf_report_error("Ignoring operstring setting for oper %s -- operstring too long.", yy_oper->name);
+
 		yy_tmpoper->privset = yy_oper->privset;
 
 #ifdef HAVE_LIBCRYPTO
@@ -708,6 +720,18 @@ static void
 conf_set_oper_vhost(void *data)
 {
 	yy_oper->vhost = rb_strdup((char *) data);
+}
+
+static void
+conf_set_oper_swhois(void *data)
+{
+	yy_oper->swhois = rb_strdup((char *) data);
+}
+
+static void
+conf_set_oper_operstring(void *data)
+{
+	yy_oper->operstring = rb_strdup((char *) data);
 }
 
 static int
@@ -2077,6 +2101,8 @@ static struct ConfEntry conf_operator_table[] =
 	{ "privset",	CF_QSTRING, conf_set_oper_privset,	0, NULL },
 	{ "snomask",    CF_QSTRING, conf_set_oper_snomask,      0, NULL },
 	{ "vhost",	CF_QSTRING, conf_set_oper_vhost,	0, NULL },
+	{ "swhois",	CF_QSTRING, conf_set_oper_swhois,	0, NULL },
+	{ "operstring",	CF_QSTRING, conf_set_oper_operstring,	0, NULL },
 	{ "user",	CF_QSTRING, conf_set_oper_user,		0, NULL },
 	{ "password",	CF_QSTRING, conf_set_oper_password,	0, NULL },
 	{ "fingerprint",	CF_QSTRING, conf_set_oper_fingerprint,	0, NULL },
