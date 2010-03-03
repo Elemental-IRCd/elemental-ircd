@@ -783,7 +783,12 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
 				mode_type != CHFL_QUIET)
 		{
 			if(IsOverride(source_p))
-				override = 1;
+			{
+				sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+						"%s is overriding modes on %s: (%s list)",
+						get_oper_name(source_p), chptr->chname,
+						mode_type == CHFL_INVEX ? "invex" : "exempt");
+			}
 			else
 			{
 
@@ -967,8 +972,11 @@ chm_owner(struct Client *source_p, struct Channel *chptr,
 		if(targ_p == source_p)
 		{
 			no_override_deop = 1;
+			/* Don't reject modes from remote. It desyncs, and this is perfectly
+			 * legitimate from a remote override oper.
 			if(!override)
 				return;
+			*/
 		}
 
 		mode_changes[mode_count].letter = c;
@@ -1068,8 +1076,11 @@ chm_op(struct Client *source_p, struct Channel *chptr,
 		if(targ_p == source_p)
 		{
 			no_override_deop = 1;
+			/* Don't reject modes from remote. It desyncs, and this is perfectly
+			 * legitimate from a remote override oper.
 			if(!override)
 				return;
+			*/
 		}
 
 		mode_changes[mode_count].letter = c;
@@ -1178,8 +1189,11 @@ chm_halfop(struct Client *source_p, struct Channel *chptr,
 		if(targ_p == source_p)
 		{
 			no_override_deop = 1;
+			/* Don't reject modes from remote. It desyncs, and this is perfectly
+			 * legitimate from a remote override oper.
 			if(!override)
 				return;
+			*/
 		}
 
 		mode_changes[mode_count].letter = c;
@@ -2052,7 +2066,7 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 				  source_p->name, source_p->username,
 				  source_p->host, chptr->chname);
 
-	for (override = 0; override < (IsOverride(source_p) ? 2 : 1); ++override)
+	for (override = 0; override < (IsOverride(source_p) && alevel != CHFL_CHANOP ? 2 : 1); ++override)
 	{
 		int was_on_chan = 0;
 
