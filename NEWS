@@ -58,7 +58,7 @@ opers
 - custom operstring - Instead of showing the IRC operator or IRC administrator
   oper strings, you can customize what it shows by privset or 
   for a specific operator.
-- host-on-oper - This will be a option settable in both privset block and
+- host-on-oper - This will be a option settable in both general block and
   operator block that defines what host a operator gets upon oper-up.
 - operoverride - Oper override works very differently in ShadowIRCd compared
   to all other IRCd's which support oper override. In ShadowIRCd, to be able
@@ -70,12 +70,19 @@ opers
   see, but other opers can), then when the oper joins that channel with override
   (umode +p) set on themselves, the channel's ops will be unable to kick the oper
   from the channel.
+- OACCEPT/callerid override - In ShadowIRCd 6, opers no longer can simply PM
+  users that have umodes +g or +G set and the oper is not on their accept list.
+  To allow opers to still be able to PM users in this situation, OACCEPT has been
+  added. To use: /oaccept <user> and it will add you to that user's accept list
+  so you can PM them.
 
 other
 - Changed default NICKLEN to 31 (from 15) to fit more closely with other
   IRCd's.
 - Rebrand many things from Charybdis to ShadowIRCd.
 - Move the m_force module to extensions.
+- Add a metadata framework. Currently used for swhois, custom operstring and
+  OACCEPT.
 
 -- charybdis-3.2.0
 
