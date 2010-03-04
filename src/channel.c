@@ -105,7 +105,7 @@ allocate_channel(const char *chname)
 void
 free_channel(struct Channel *chptr)
 {
-	/* insert deletion of metadata here! */
+	channel_metadata_delete(chptr, "NOREPEAT", 0);
 	rb_free(chptr->chname);
 	rb_bh_free(channel_heap, chptr);
 }

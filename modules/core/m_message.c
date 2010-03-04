@@ -488,12 +488,30 @@ msg_channel(int p_or_n, const char *command,
 	int caps = 0;
 	int len = 0;
 	struct membership *msptr = find_channel_membership(chptr, source_p);
+	struct Metadata *md;
 
 	if(MyClient(source_p))
 	{
 		/* idle time shouldnt be reset by notices --fl */
 		if(p_or_n != NOTICE)
 			source_p->localClient->last = rb_current_time();
+	}
+
+	if(chptr->mode.mode & MODE_NOREPEAT)
+	{
+		md = channel_metadata_find(chptr, "NOREPEAT");
+		if(md && (!ConfigChannel.exempt_cmode_K || !is_any_op(msptr)))
+		{
+			if(!(strcmp(md->value, strip_colour(text))))
+			{
+				if(p_or_n != NOTICE)
+					sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
+							form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
+				return;
+			}
+		}
+		channel_metadata_delete(chptr, "NOREPEAT", 0);
+		channel_metadata_add(chptr, "NOREPEAT", strip_colour(text), 0);
 	}
 
 	if(chptr->mode.mode & MODE_NOCOLOR && (!ConfigChannel.exempt_cmode_c || !is_any_op(msptr)))
