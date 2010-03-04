@@ -1,11 +1,11 @@
 Todo list for ShadowIRCd 6.0
 -----------------------------
-* norepeat cmode
 * kicknorejoin (+J in inspircd chmode)
 * Anything else we think of between now and release. :P
 
 Todo list for ShadowIRCd 6.1
 -----------------------------
+* nice error messages for cmodes +K, +C, +D, etc.
 * global/remote mod*/die/restart
 * update ojoin/omode/etc to use +ah
 * notice/message !#channel and %#channel
