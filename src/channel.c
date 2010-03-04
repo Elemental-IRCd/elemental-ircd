@@ -42,6 +42,7 @@
 #include "s_newconf.h"
 #include "logger.h"
 #include "packet.h"
+#include "irc_dictionary.h"
 
 struct config_channel_entry ConfigChannel;
 rb_dlink_list global_channel_list;
@@ -92,14 +93,19 @@ struct Channel *
 allocate_channel(const char *chname)
 {
 	struct Channel *chptr;
+	struct Dictionary *c_metadata;
 	chptr = rb_bh_alloc(channel_heap);
 	chptr->chname = rb_strdup(chname);
+	
+	c_metadata = irc_dictionary_create(irccmp);
+	chptr->c_metadata = c_metadata;
 	return (chptr);
 }
 
 void
 free_channel(struct Channel *chptr)
 {
+	/* insert deletion of metadata here! */
 	rb_free(chptr->chname);
 	rb_bh_free(channel_heap, chptr);
 }
@@ -1890,4 +1896,82 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 	}
 
 	return;
+}
+
+/*
+ * channel_metadata_add
+ * 
+ * inputs	- pointer to channel struct
+ *		- name of metadata item you wish to add
+ *		- value of metadata item
+ *		- 1 if metadata should be propegated, 0 if not
+ * output	- none
+ * side effects - metadata is added to the channel in question
+ *		- metadata is propegated if propegate is set.
+ */
+struct Metadata *
+channel_metadata_add(struct Channel *target, const char *name, const char *value, int propegate)
+{
+	struct Metadata *md;
+
+	if(irc_dictionary_find(target->c_metadata, name) != NULL)
+		return NULL;
+
+	md = rb_malloc(sizeof(struct Metadata));
+	md->name = rb_strdup(name);
+	md->value = rb_strdup(value);
+
+	irc_dictionary_add(target->c_metadata, md->name, md);
+	
+	if(propegate)
+		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA ADD %s %s :%s",
+				target->chname, name, value);
+
+	return md;
+}
+
+/*
+ * channel_metadata_delete
+ * 
+ * inputs	- pointer to channel struct
+ *		- name of metadata item you wish to delete
+ * output	- none
+ * side effects - metadata is deleted from the channel in question
+ * 		- deletion is propegated if propegate is set
+ */
+void
+channel_metadata_delete(struct Channel *target, const char *name, int propegate)
+{
+	struct Metadata *md = channel_metadata_find(target, name);
+
+	if(!md)
+		return;
+
+	irc_dictionary_delete(target->c_metadata, md->name);
+
+	rb_free(md);
+
+	if(propegate)
+		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA DELETE %s %s",
+				target->chname, name);
+}
+
+/*
+ * channel_metadata_find
+ * 
+ * inputs	- pointer to channel struct
+ *		- name of metadata item you wish to read
+ * output	- the requested metadata, if it exists, elsewise null.
+ * side effects - 
+ */
+struct Metadata *
+channel_metadata_find(struct Channel *target, const char *name)
+{
+	if(!target)
+		return NULL;
+
+	if(!target->c_metadata)
+		return NULL;
+
+	return irc_dictionary_retrieve(target->c_metadata, name);
 }

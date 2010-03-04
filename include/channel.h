@@ -72,6 +72,8 @@ struct Channel
 	unsigned int join_count;  /* joins within delta */
 	unsigned int join_delta;  /* last ts of join */
 
+	struct Dictionary *c_metadata;
+
 	unsigned long bants;
 	time_t channelts;
 	char *chname;
@@ -88,6 +90,12 @@ struct membership
 	unsigned int flags;
 
 	unsigned long bants;
+};
+
+struct c_Metadata
+{
+	const char *name;
+	const char *value;
 };
 
 #define BANLEN 195
@@ -295,5 +303,9 @@ extern struct Channel * check_forward(struct Client *source_p, struct Channel *c
 extern void user_join(struct Client * client_p, struct Client * source_p, const char * channels, const char * keys);
 extern void do_join_0(struct Client *client_p, struct Client *source_p);
 extern int check_channel_name_loc(struct Client *source_p, const char *name);
+
+extern struct Metadata *channel_metadata_add(struct Channel *target, const char *name, const char *value, int propegate);
+extern void channel_metadata_delete(struct Channel *target, const char *name, int propegate);
+extern struct Metadata *channel_metadata_find(struct Channel *target, const char *name);
 
 #endif /* INCLUDED_channel_h */

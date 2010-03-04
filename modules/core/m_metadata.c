@@ -33,16 +33,32 @@ DECLARE_MODULE_AV1(metadata, NULL, NULL, metadata_clist, NULL, NULL, "$Revision$
 void
 me_metadata(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	struct Client *target_p;
+	if(parv[2][0] == '#')
+	{
+		struct Channel *chptr;
 
-	if((target_p = find_client(parv[2])) == NULL)
-		return;
+		if((chptr = find_channel(parv[2])) == NULL)
+			return;
 
-	if(!target_p->user)
-		return;
+		if(!strcmp(parv[1], "ADD") && parv[4] != NULL)
+			channel_metadata_add(chptr, parv[3], parv[4], 0);
+		if(!strcmp(parv[1], "DELETE") && parv[3] != NULL)
+			channel_metadata_delete(chptr, parv[3], 0);
+	}
 
-	if(!strcmp(parv[1], "ADD") && parv[4] != NULL)
-		user_metadata_add(target_p, parv[3], parv[4], 0);
-	if(!strcmp(parv[1], "DELETE") && parv[3] != NULL)
-		user_metadata_delete(target_p, parv[3], 0);
+	else
+	{
+		struct Client *target_p;
+
+		if((target_p = find_client(parv[2])) == NULL)
+			return;
+
+		if(!target_p->user)
+			return;
+
+		if(!strcmp(parv[1], "ADD") && parv[4] != NULL)
+			user_metadata_add(target_p, parv[3], parv[4], 0);
+		if(!strcmp(parv[1], "DELETE") && parv[3] != NULL)
+			user_metadata_delete(target_p, parv[3], 0);
+	}
 }
