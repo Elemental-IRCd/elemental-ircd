@@ -1914,9 +1914,6 @@ channel_metadata_add(struct Channel *target, const char *name, const char *value
 {
 	struct Metadata *md;
 
-	if(irc_dictionary_find(target->c_metadata, name) != NULL)
-		return NULL;
-
 	md = rb_malloc(sizeof(struct Metadata));
 	md->name = rb_strdup(name);
 	md->value = rb_strdup(value);
