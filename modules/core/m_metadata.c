@@ -1,0 +1,48 @@
+#include "stdinc.h"
+
+#include "send.h"
+#include "channel.h"
+#include "client.h"
+#include "common.h"
+#include "config.h"
+#include "ircd.h"
+#include "numeric.h"
+#include "s_conf.h"
+#include "s_newconf.h"
+#include "s_serv.h"
+#include "hash.h"
+#include "msg.h"
+#include "parse.h"
+#include "modules.h"
+#include "whowas.h"
+#include "monitor.h"
+
+void me_metadata(struct Client *, struct Client *, int, const char **);
+
+struct Message metadata_msgtab = {
+	"METADATA", 0, 0, 0, MFLG_SLOW,
+	{mg_ignore, mg_ignore, mg_ignore, mg_ignore, {me_metadata, 3}, mg_ignore}
+};
+
+mapi_clist_av1 metadata_clist[] = {
+	&metadata_msgtab, NULL
+};
+
+DECLARE_MODULE_AV1(metadata, NULL, NULL, metadata_clist, NULL, NULL, "$Revision$");
+
+void
+me_metadata(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
+{
+	struct Client *target_p;
+
+	if((target_p = find_client(parv[2])) == NULL)
+		return;
+
+	if(!target_p->user)
+		return;
+
+	if(!strcmp(parv[1], "ADD") && parv[4] != NULL)
+		user_metadata_add(target_p, parv[3], parv[4], 0);
+	if(!strcmp(parv[1], "DELETE") && parv[3] != NULL)
+		user_metadata_delete(target_p, parv[3], 0);
+}
