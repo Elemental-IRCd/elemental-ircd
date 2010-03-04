@@ -1340,6 +1340,9 @@ oper_up(struct Client *source_p, struct oper_conf *oper_p)
 	if(oper_p->swhois)
 		user_metadata_add(source_p, "SWHOIS", oper_p->swhois, 1);
 
+	if(oper_p->operstring)
+		user_metadata_add(source_p, "OPERSTRING", oper_p->operstring, 1);
+
 	if(oper_p->vhost || !EmptyString(ConfigFileEntry.default_operhost))
 	{
 		if(oper_p->vhost)
