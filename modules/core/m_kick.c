@@ -110,7 +110,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 		{
 			if(MyConnect(source_p))
 			{
-				if(IsOverride(source_p))
+				if(IsOverride(source_p) & !is_any_op(msptr))
 					is_override = 1;
 				else
 				{
