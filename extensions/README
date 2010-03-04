@@ -28,6 +28,10 @@ m_identify.c - Identifies to NickServ or ChanServ
 m_mkpasswd.c   - MKPASSWD - generate a DES or MD5 encryption of a password
                  Syntax:  MKPASSWD <plaintext> [MD5|DES]
 
+m_oaccept.c    - OACCEPT - Add metadata to a user that will allow you to
+                           message them even if they are +gGR.
+                 Syntax: OACCEPT <nick>
+
 m_ojoin.c      - OJOIN - Join a channel through any modes or limits with 
                          an optional status (@+)
                  Syntax: OJOIN [status]<channel>

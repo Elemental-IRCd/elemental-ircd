@@ -73,8 +73,8 @@ opers
 - OACCEPT/callerid override - In ShadowIRCd 6, opers no longer can simply PM
   users that have umodes +g or +G set and the oper is not on their accept list.
   To allow opers to still be able to PM users in this situation, OACCEPT has been
-  added. To use: /oaccept <user> and it will add you to that user's accept list
-  so you can PM them.
+  added. To use: /oaccept <user> and it will add a piece of metadata to that user
+  which will allow you to PM them.
 
 other
 - Changed default NICKLEN to 31 (from 15) to fit more closely with other
