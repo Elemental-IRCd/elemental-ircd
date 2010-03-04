@@ -11,3 +11,9 @@ Todo list for ShadowIRCd 6.1
 * notice/message !#channel and %#channel
 * clean disable/removal of modes on rehash, if possible without being ugly
 * Allow disabling of commands in auth {} blocks.
+
+Todo list for ShadowIRCd 6.2
+----------------------------
+* channel::disabledmodes
+* general::disabledumodes
+* pure TS6 compat mode for linking with charybdis/ratbox/etc.
