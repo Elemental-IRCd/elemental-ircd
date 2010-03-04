@@ -712,6 +712,7 @@ msg_client(int p_or_n, const char *command,
 	   struct Client *source_p, struct Client *target_p, const char *text)
 {
 	int do_floodcount = 0;
+	struct Metadata *md;
 
 	if(MyClient(source_p))
 	{
@@ -767,19 +768,32 @@ msg_client(int p_or_n, const char *command,
 			            form_str(ERR_NOCTCP),
 			            target_p->name);
 		}
-		/* XXX Controversial? allow opers always to send through a +g */
+		/* If opers want to go through +g, they should load oaccept.*/
 		else if(!IsServer(source_p) && (IsSetCallerId(target_p) ||
 					(IsSetSCallerId(target_p) && !has_common_channel(source_p, target_p)) ||
 					(IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])))
 		{
+			md = user_metadata_find(target_p, "OACCEPT");
 			/* Here is the anti-flood bot/spambot code -db */
-			if(accept_message(source_p, target_p) || IsOper(source_p))
+			if(accept_message(source_p, target_p))
 			{
 				add_reply_target(target_p, source_p);
 				sendto_one(target_p, ":%s!%s@%s %s %s :%s",
 					   source_p->name,
 					   source_p->username,
 					   source_p->host, command, target_p->name, text);
+			}
+			/* slightly ugly, meh. if anyone can think of a cleaner way to do this, by all means, do it. */
+			else if(md)
+			{
+				if(!strcmp(md->value, source_p->name))
+				{
+					add_reply_target(target_p, source_p);
+					sendto_one(target_p, ":%s!%s@%s %s %s :%s",
+						 source_p->name,
+						 source_p->username,
+					  	 source_p->host, command, target_p->name, text);
+				}
 			}
 			else if (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])
 			{

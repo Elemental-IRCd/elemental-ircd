@@ -54,9 +54,10 @@ SRCS =                          \
   m_42.c			\
   m_adminwall.c			\
   m_findforwards.c		\
-  m_force.c				\
+  m_force.c			\
   m_identify.c			\
   m_mkpasswd.c                  \
+  m_oaccept.c			\
   m_ojoin.c			\
   m_olist.c			\
   m_okick.c			\
