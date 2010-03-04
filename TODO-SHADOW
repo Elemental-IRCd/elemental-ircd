@@ -1,6 +1,5 @@
 Todo list for ShadowIRCd 6.0
 -----------------------------
-* swhois support
 * custom operstrings
 * norepeat cmode
 * kicknorejoin (+J in inspircd chmode)

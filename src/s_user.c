@@ -1337,6 +1337,9 @@ oper_up(struct Client *source_p, struct oper_conf *oper_p)
 	else
 		source_p->umodes |= DEFAULT_OPER_UMODES;
 
+	if(oper_p->swhois)
+		user_metadata_add(source_p, "SWHOIS", oper_p->swhois, 1);
+
 	if(oper_p->vhost || !EmptyString(ConfigFileEntry.default_operhost))
 	{
 		if(oper_p->vhost)
