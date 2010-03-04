@@ -84,6 +84,8 @@ struct User
 	char *away;		/* pointer to away message */
 	int refcnt;		/* Number of times this block is referenced */
 
+	struct Dictionary *metadata;
+
 	char suser[NICKLEN+1];
 };
 
@@ -309,6 +311,12 @@ struct ListClient
 	/* It would be nice to add other modifiers,
 	 * but not for 1.1 --nenolod
 	 */
+};
+
+struct Metadata
+{
+	const char *name;
+	const char *value;
 };
 
 /*
@@ -612,5 +620,9 @@ extern char *generate_uid(void);
 
 void allocate_away(struct Client *);
 void free_away(struct Client *);
+
+extern struct Metadata *user_metadata_add(struct Client *target, const char *name, const char *value, int propegate);
+extern void user_metadata_delete(struct Client *target, const char *name, int propegate);
+extern struct Metadata *user_metadata_find(struct Client *target, const char *name);
 
 #endif /* INCLUDED_client_h */

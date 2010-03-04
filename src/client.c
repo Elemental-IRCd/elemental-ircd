@@ -1659,6 +1659,7 @@ struct User *
 make_user(struct Client *client_p)
 {
 	struct User *user;
+	struct Dictionary *metadata;
 
 	user = client_p->user;
 	if(!user)
@@ -1666,6 +1667,9 @@ make_user(struct Client *client_p)
 		user = (struct User *) rb_bh_alloc(user_heap);
 		user->refcnt = 1;
 		client_p->user = user;
+
+		metadata = irc_dictionary_create(irccmp);
+		client_p->user->metadata = metadata;
 	}
 	return user;
 }
@@ -1705,10 +1709,19 @@ free_user(struct User *user, struct Client *client_p)
 {
 	free_away(client_p);
 
+	/* get rid of any metadata the user may have */
+	if(IsOper(client_p))
+	{
+		user_metadata_delete(client_p, "swhois", 0);
+		user_metadata_delete(client_p, "operstring", 0);
+	}
+	user_metadata_delete(client_p, "OACCEPT", 0);
+
 	if(--user->refcnt <= 0)
 	{
 		if(user->away)
 			rb_free((char *) user->away);
+		
 		/*
 		 * sanity check
 		 */
@@ -1923,4 +1936,82 @@ error_exit_client(struct Client *client_p, int error)
 		rb_snprintf(errmsg, sizeof(errmsg), "Read error: %s", strerror(current_error));
 
 	exit_client(client_p, client_p, &me, errmsg);
+}
+
+/*
+ * user_metadata_add
+ * 
+ * inputs	- pointer to client struct
+ *		- name of metadata item you wish to add
+ *		- value of metadata item
+ *		- 1 if metadata should be propegated, 0 if not
+ * output	- none
+ * side effects - metadata is added to the user in question
+ *		- metadata is propegated if propegate is set.
+ */
+struct Metadata *
+user_metadata_add(struct Client *target, const char *name, const char *value, int propegate)
+{
+	struct Metadata *md;
+
+	if(irc_dictionary_find(target->user->metadata, name) != NULL)
+		return NULL;
+
+	md = rb_malloc(sizeof(struct Metadata));
+	md->name = rb_strdup(name);
+	md->value = rb_strdup(value);
+
+	irc_dictionary_add(target->user->metadata, md->name, md);
+	
+	if(propegate)
+		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA ADD %s %s :%s",
+				target->name, name, value);
+
+	return md;
+}
+
+/*
+ * user_metadata_delete
+ * 
+ * inputs	- pointer to client struct
+ *		- name of metadata item you wish to delete
+ * output	- none
+ * side effects - metadata is deleted from the user in question
+ * 		- deletion is propegated if propegate is set
+ */
+void
+user_metadata_delete(struct Client *target, const char *name, int propegate)
+{
+	struct Metadata *md = user_metadata_find(target, name);
+
+	if(!md)
+		return;
+
+	irc_dictionary_delete(target->user->metadata, md->name);
+
+	rb_free(md);
+
+	if(propegate)
+		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA DELETE %s %s",
+				target->name, name);
+}
+
+/*
+ * user_metadata_find
+ * 
+ * inputs	- pointer to client struct
+ *		- name of metadata item you wish to read
+ * output	- the requested metadata, if it exists, elsewise null.
+ * side effects - 
+ */
+struct Metadata *
+user_metadata_find(struct Client *target, const char *name)
+{
+	if(!target->user)
+		return NULL;
+
+	if(!target->user->metadata)
+		return NULL;
+
+	return irc_dictionary_retrieve(target->user->metadata, name);
 }

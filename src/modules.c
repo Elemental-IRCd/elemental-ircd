@@ -63,6 +63,7 @@ static const char *core_module_table[] = {
 	"m_kick",
 	"m_kill",
 	"m_message",
+	"m_metadata",
 	"m_mode",
 	"m_nick",
 	"m_part",

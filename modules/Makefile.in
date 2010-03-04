@@ -42,6 +42,7 @@ CORE_SRCS = \
   core/m_kick.c \
   core/m_kill.c \
   core/m_message.c \
+  core/m_metadata.c \
   core/m_mode.c \
   core/m_nick.c \
   core/m_part.c \

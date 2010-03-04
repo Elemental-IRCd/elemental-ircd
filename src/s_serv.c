@@ -54,6 +54,7 @@
 #include "msg.h"
 #include "reject.h"
 #include "sslproc.h"
+#include "irc_dictionary.h"
 
 #ifndef INADDR_NONE
 #define INADDR_NONE ((unsigned int) 0xffffffff)
@@ -469,6 +470,8 @@ burst_TS6(struct Client *client_p)
 	char *t;
 	int tlen, mlen;
 	int cur_len = 0;
+	struct Metadata *md;
+	struct DictionaryIter iter;
 
 	hclientinfo.client = hchaninfo.client = client_p;
 
@@ -518,6 +521,12 @@ burst_TS6(struct Client *client_p)
 			if(!EmptyString(target_p->user->suser))
 				sendto_one(client_p, ":%s ENCAP * LOGIN %s",
 						use_id(target_p), target_p->user->suser);
+		}
+
+		DICTIONARY_FOREACH(md, &iter, target_p->user->metadata)
+		{
+			sendto_one(client_p, ":%s ENCAP * METADATA %s %s :%s",
+				   use_id(target_p), use_id(target_p), md->name, md->value);
 		}
 
 		if(ConfigFileEntry.burst_away && !EmptyString(target_p->user->away))
