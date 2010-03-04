@@ -2158,16 +2158,29 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 				}
 			}
 
-			if(override)
+			if(paralen && parabuf[paralen - 1] == ' ')
+				parabuf[paralen - 1] = '\0';
+
+			*mbuf = '\0';
+			if(cur_len > mlen)
 			{
-				if(!was_on_chan)
-					remove_user_from_channel(find_channel_membership(chptr, source_p));
-				else if (!no_override_deop)
-					msptr->flags &= ~CHFL_CHANOP;
+				sendto_channel_local(flags, chptr, "%s%s %s", cmdbuf, modebuf, parabuf);
+				if(override)
+					sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+							"%s is overriding modes on %s: %s %s",
+							get_oper_name(source_p), chptr->chname,
+							modebuf, parabuf);
 			}
+		}
+		if(override)
+		{
+			if(!was_on_chan)
+				remove_user_from_channel(find_channel_membership(chptr, source_p));
+			else if (!no_override_deop)
+				msptr->flags &= ~CHFL_CHANOP;
+		}
 	}
 	/* only propagate modes originating locally, or if we're hubbing */
 	if(MyClient(source_p) || rb_dlink_list_length(&serv_list) > 1)
 		send_cap_mode_changes(client_p, source_p, chptr, mode_changes, mode_count);
-	}
 }
