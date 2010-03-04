@@ -4,8 +4,6 @@ Todo list for ShadowIRCd 6.0
 * custom operstrings
 * norepeat cmode
 * kicknorejoin (+J in inspircd chmode)
-* operoverride umode (+p), steal this from ircd-seven
-* immune cmode (+M), steal this from ircd-seven too
 * Anything else we think of between now and release. :P
 
 Todo list for ShadowIRCd 6.1

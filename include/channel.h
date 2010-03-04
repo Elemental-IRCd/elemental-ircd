@@ -150,6 +150,7 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define ONLY_SERVERS		0x0020
 #define CHFL_HALFOP		0x0040
 #define CHFL_OWNER		0x0080
+#define	ONLY_OPERS		0x0100
 #define ALL_MEMBERS		CHFL_PEON
 #define ONLY_CHANOPS		CHFL_CHANOP
 #define ONLY_CHANOPSVOICED	(CHFL_CHANOP|CHFL_VOICE)
@@ -183,6 +184,7 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define MODE_NOCAPS	0x100000 /* Block messages in all capital letters */
 #define MODE_NOREJOIN	0x200000 /* Block rejoin immediately after kick */
 #define MODE_NOREPEAT	0x400000 /* Block repeat messages */
+#define MODE_NOOPERKICK	0x800000 /* disallow kicking opers */
 
 #define CHFL_BAN        0x10000000	/* ban channel flag */
 #define CHFL_EXCEPTION  0x20000000	/* exception to ban channel flag */
