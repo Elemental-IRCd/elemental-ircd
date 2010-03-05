@@ -439,9 +439,8 @@ burst_ban(struct Client *client_p)
 				oper = operbuf;
 			}
 		}
-		sendto_one(client_p, ":%s BAN %c %s %s %s %lu %d %d %s :%s%s%s",
+		sendto_one(client_p, ":%s BAN %s %s %s %lu %d %d %s :%s%s%s",
 				me.id,
-				aconf->status & CONF_ILLEGAL ? '-' : '+',
 				type,
 				aconf->user ? aconf->user : "*", aconf->host,
 				(unsigned long)aconf->created,
