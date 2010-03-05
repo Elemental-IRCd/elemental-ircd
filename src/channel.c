@@ -1954,17 +1954,19 @@ channel_metadata_add(struct Channel *target, const char *name, const char *value
  * inputs	- pointer to channel struct
  *		- name of metadata item you wish to add
  *		- time_t you wish to add
+ *		- value you wish to add
  * output	- none
  * side effects - metadata is added to the channel in question
  */
 struct Metadata *
-channel_metadata_time_add(struct Channel *target, const char *name, time_t value)
+channel_metadata_time_add(struct Channel *target, const char *name, time_t timevalue, const char *value)
 {
 	struct Metadata *md;
 
 	md = rb_malloc(sizeof(struct Metadata));
 	md->name = rb_strdup(name);
-	md->timevalue = value;
+	md->value = rb_strdup(value);
+	md->timevalue = timevalue;
 
 	irc_dictionary_add(target->metadata, md->name, md);
 

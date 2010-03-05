@@ -303,7 +303,7 @@ extern void channel_metadata_delete(struct Channel *target, const char *name, in
 extern struct Metadata *channel_metadata_find(struct Channel *target, const char *name);
 
 extern struct Metadata *channel_metadata_add(struct Channel *target, const char *name, const char *value, int propegate);
-extern struct Metadata *channel_metadata_time_add(struct Channel *target, const char *name, time_t value);
+extern struct Metadata *channel_metadata_time_add(struct Channel *target, const char *name, time_t timevalue, const char *value);
 extern void channel_metadata_delete(struct Channel *target, const char *name, int propegate);
 extern struct Metadata *channel_metadata_find(struct Channel *target, const char *name);
 extern void channel_metadata_clear(struct Channel *target);
