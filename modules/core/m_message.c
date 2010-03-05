@@ -733,6 +733,7 @@ msg_client(int p_or_n, const char *command,
 	int do_floodcount = 0;
 	struct Metadata *md;
 	struct DictionaryIter iter;
+	int oaccept = 0;
 
 	if(MyClient(source_p))
 	{
@@ -793,29 +794,25 @@ msg_client(int p_or_n, const char *command,
 					(IsSetSCallerId(target_p) && !has_common_channel(source_p, target_p)) ||
 					(IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])))
 		{
+			if (IsOper(source_p))
+			{
+				DICTIONARY_FOREACH(md, &iter, target_p->user->metadata)
+				{
+					if(!strcmp(md->value, source_p->id))
+					{
+						oaccept = 1;
+						break;
+					}
+				}
+			}
 			/* Here is the anti-flood bot/spambot code -db */
-			if(accept_message(source_p, target_p))
+			if(accept_message(source_p, target_p) || oaccept)
 			{
 				add_reply_target(target_p, source_p);
 				sendto_one(target_p, ":%s!%s@%s %s %s :%s",
 					   source_p->name,
 					   source_p->username,
 					   source_p->host, command, target_p->name, text);
-			}
-			else if (IsOper(source_p))
-			{
-				DICTIONARY_FOREACH(md, &iter, target_p->user->metadata)
-				{
-					if(!strcmp(md->value, source_p->id))
-					{
-						add_reply_target(target_p, source_p);
-						sendto_one(target_p, ":%s!%s@%s %s %s :%s",
-							 source_p->name,
-							 source_p->username,
-					  		 source_p->host, command, target_p->name, text);
-						break;
-					}
-				}
 			}
 			else if (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])
 			{
