@@ -31,13 +31,13 @@ mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const cha
 	/* Don't allow someone to pointlessly fill up someone's metadata
 	 * with identical OACCEPT entries. */
 	if((md = user_metadata_find(target_p, "OACCEPT")))
-		if(!strcmp(source_p->name, md->value))
+		if(!strcmp(source_p->id, md->value))
 		{
 			sendto_one_notice(source_p, ":You're already on %s's OACCEPT list", target_p->name);
 			return;
 		}
 
-	user_metadata_add(target_p, "OACCEPT", source_p->name, 1);
+	user_metadata_add(target_p, "OACCEPT", source_p->id, 1);
 
 	sendto_wallops_flags(UMODE_WALLOP, &me,
 			     "OACCEPT called for %s by %s!%s@%s",

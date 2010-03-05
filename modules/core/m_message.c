@@ -806,7 +806,7 @@ msg_client(int p_or_n, const char *command,
 			{
 				DICTIONARY_FOREACH(md, &iter, target_p->user->metadata)
 				{
-					if(!strcmp(md->value, source_p->name))
+					if(!strcmp(md->value, source_p->id))
 					{
 						add_reply_target(target_p, source_p);
 						sendto_one(target_p, ":%s!%s@%s %s %s :%s",
