@@ -591,7 +591,7 @@ burst_TS6(struct Client *client_p)
 		{
 			/* don't bother bursting +J metadata */
 			if(!(md->name[0] == 'K'))
-				sendto_one(client_p, ":%s ENCAP * METADATA ADD %s %s :%s",
+				sendto_one(&me, ":%s ENCAP * METADATA ADD %s %s :%s",
 					   use_id(target_p), use_id(target_p), md->name, md->value);
 		}
 

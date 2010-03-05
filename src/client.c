@@ -1710,12 +1710,7 @@ free_user(struct User *user, struct Client *client_p)
 	free_away(client_p);
 
 	/* get rid of any metadata the user may have */
-	if(IsOper(client_p))
-	{
-		user_metadata_delete(client_p, "swhois", 0);
-		user_metadata_delete(client_p, "operstring", 0);
-	}
-	user_metadata_delete(client_p, "OACCEPT", 0);
+	user_metadata_clear(client_p);
 
 	if(--user->refcnt <= 0)
 	{
@@ -2014,4 +2009,22 @@ user_metadata_find(struct Client *target, const char *name)
 		return NULL;
 
 	return irc_dictionary_retrieve(target->user->metadata, name);
+}
+/*
+ * user_metadata_clear
+ * 
+ * inputs	- pointer to user struct
+ * output	- none
+ * side effects - metadata is cleared from the user in question
+ */
+void
+user_metadata_clear(struct Client *target)
+{
+	struct Metadata *md;
+	struct DictionaryIter iter;
+	
+	DICTIONARY_FOREACH(md, &iter, target->user->metadata)
+	{
+		user_metadata_delete(target, md->name, 0);
+	}
 }

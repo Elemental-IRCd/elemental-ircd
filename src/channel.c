@@ -105,7 +105,7 @@ allocate_channel(const char *chname)
 void
 free_channel(struct Channel *chptr)
 {
-	channel_metadata_delete(chptr, "NOREPEAT", 0);
+	channel_metadata_clear(chptr);
 	rb_free(chptr->chname);
 	rb_bh_free(channel_heap, chptr);
 }
@@ -2015,4 +2015,23 @@ channel_metadata_find(struct Channel *target, const char *name)
 		return NULL;
 
 	return irc_dictionary_retrieve(target->c_metadata, name);
+}
+
+/*
+ * channel_metadata_clear
+ * 
+ * inputs	- pointer to channel struct
+ * output	- none
+ * side effects - metadata is cleared from the channel in question
+ */
+void
+channel_metadata_clear(struct Channel *chptr)
+{
+	struct Metadata *md;
+	struct DictionaryIter iter;
+	
+	DICTIONARY_FOREACH(md, &iter, chptr->c_metadata)
+	{
+		channel_metadata_delete(chptr, md->name, 0);
+	}
 }

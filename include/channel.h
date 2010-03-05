@@ -313,6 +313,7 @@ extern struct Metadata *channel_metadata_add(struct Channel *target, const char 
 extern struct Metadata *channel_metadata_time_add(struct Channel *target, const char *name, time_t value);
 extern void channel_metadata_delete(struct Channel *target, const char *name, int propegate);
 extern struct Metadata *channel_metadata_find(struct Channel *target, const char *name);
+extern void channel_metadata_clear(struct Channel *target);
 
 
 #endif /* INCLUDED_channel_h */
