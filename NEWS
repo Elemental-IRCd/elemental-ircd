@@ -16,7 +16,7 @@ new modes
 - Add cmode +N which disallows users from changing their nick while they're on
   a channel with this mode set.
 - Add cmode +K (norepeat) which will block repeated messages, regardless of
-- who they're from.
+  who they're from.
 - Add cmode +G which blocks messages containing 50% or more capital letters
   from being sent to the channel.
 - Add cmode +J which disallows a kicked user from rejoining within 'X' seconds
