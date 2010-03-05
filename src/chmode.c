@@ -2108,6 +2108,7 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 			for(i = 0; i < mode_count; i++)
 			{
 				if(mode_changes[i].letter == 0 || mode_changes[i].mems != flags)
+					continue;
 
 				if(mode_changes[i].override != override)
 					continue;
@@ -2126,15 +2127,15 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 				 * bufsize (4 == +/-,modechar,two spaces) send now.
 				 */
 				if(mode_changes[i].arg != NULL &&
-						((paracount == MAXMODEPARAMSSERV) ||
-						 ((cur_len + paralen + arglen + 4) > (BUFSIZE - 3))))
+				   ((paracount == MAXMODEPARAMSSERV) ||
+				    ((cur_len + paralen + arglen + 4) > (BUFSIZE - 3))))
 				{
 					*mbuf = '\0';
 
 					if(cur_len > mlen)
 					{
 						sendto_channel_local(flags, chptr, "%s%s %s",
-								cmdbuf, modebuf, parabuf);
+								     cmdbuf, modebuf, parabuf);
 						if(override)
 							sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
 									"%s is overriding modes on %s: %s %s",
@@ -2193,6 +2194,7 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 				msptr->flags &= ~CHFL_CHANOP;
 		}
 	}
+
 	/* only propagate modes originating locally, or if we're hubbing */
 	if(MyClient(source_p) || rb_dlink_list_length(&serv_list) > 1)
 		send_cap_mode_changes(client_p, source_p, chptr, mode_changes, mode_count);
