@@ -93,12 +93,12 @@ struct Channel *
 allocate_channel(const char *chname)
 {
 	struct Channel *chptr;
-	struct Dictionary *c_metadata;
+	struct Dictionary *metadata;
 	chptr = rb_bh_alloc(channel_heap);
 	chptr->chname = rb_strdup(chname);
 	
-	c_metadata = irc_dictionary_create(irccmp);
-	chptr->c_metadata = c_metadata;
+	metadata = irc_dictionary_create(irccmp);
+	chptr->metadata = metadata;
 	return (chptr);
 }
 
@@ -829,7 +829,7 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 	int use_althost = 0;
 	int i = 0;
 	hook_data_channel moduledata;
-	struct c_Metadata *md;
+	struct Metadata *md;
 	struct DictionaryIter iter;
 	char *text = rb_strdup("");
 
@@ -869,7 +869,7 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 			return ERR_KICKNOREJOIN;
 		}
 		/* cleanup the channel's kicknorejoin metadata. */
-		DICTIONARY_FOREACH(md, &iter, chptr->c_metadata)
+		DICTIONARY_FOREACH(md, &iter, chptr->metadata)
 		{
 			text = rb_strdup(md->name);
 			if((text[0] == 'K') && (md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time()))  
@@ -1933,13 +1933,13 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 struct Metadata *
 channel_metadata_add(struct Channel *target, const char *name, const char *value, int propegate)
 {
-	struct c_Metadata *md;
+	struct Metadata *md;
 
 	md = rb_malloc(sizeof(struct Metadata));
 	md->name = rb_strdup(name);
 	md->value = rb_strdup(value);
 
-	irc_dictionary_add(target->c_metadata, md->name, md);
+	irc_dictionary_add(target->metadata, md->name, md);
 	
 	if(propegate)
 		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA ADD %s %s :%s",
@@ -1960,13 +1960,13 @@ channel_metadata_add(struct Channel *target, const char *name, const char *value
 struct Metadata *
 channel_metadata_time_add(struct Channel *target, const char *name, time_t value)
 {
-	struct c_Metadata *md;
+	struct Metadata *md;
 
-	md = rb_malloc(sizeof(struct c_Metadata));
+	md = rb_malloc(sizeof(struct Metadata));
 	md->name = rb_strdup(name);
 	md->timevalue = value;
 
-	irc_dictionary_add(target->c_metadata, md->name, md);
+	irc_dictionary_add(target->metadata, md->name, md);
 
 	return md;
 }
@@ -1983,12 +1983,12 @@ channel_metadata_time_add(struct Channel *target, const char *name, time_t value
 void
 channel_metadata_delete(struct Channel *target, const char *name, int propegate)
 {
-	struct c_Metadata *md = channel_metadata_find(target, name);
+	struct Metadata *md = channel_metadata_find(target, name);
 
 	if(!md)
 		return;
 
-	irc_dictionary_delete(target->c_metadata, md->name);
+	irc_dictionary_delete(target->metadata, md->name);
 
 	rb_free(md);
 
@@ -2011,10 +2011,10 @@ channel_metadata_find(struct Channel *target, const char *name)
 	if(!target)
 		return NULL;
 
-	if(!target->c_metadata)
+	if(!target->metadata)
 		return NULL;
 
-	return irc_dictionary_retrieve(target->c_metadata, name);
+	return irc_dictionary_retrieve(target->metadata, name);
 }
 
 /*
@@ -2030,7 +2030,7 @@ channel_metadata_clear(struct Channel *chptr)
 	struct Metadata *md;
 	struct DictionaryIter iter;
 	
-	DICTIONARY_FOREACH(md, &iter, chptr->c_metadata)
+	DICTIONARY_FOREACH(md, &iter, chptr->metadata)
 	{
 		channel_metadata_delete(chptr, md->name, 0);
 	}

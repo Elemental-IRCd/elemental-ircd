@@ -313,12 +313,6 @@ struct ListClient
 	 */
 };
 
-struct Metadata
-{
-	const char *name;
-	const char *value;
-};
-
 /*
  * status macros.
  */

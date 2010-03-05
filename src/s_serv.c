@@ -587,7 +587,7 @@ burst_TS6(struct Client *client_p)
 		}
 		sendto_one(client_p, "%s", buf);
 
-		DICTIONARY_FOREACH(md, &iter, chptr->c_metadata)
+		DICTIONARY_FOREACH(md, &iter, chptr->metadata)
 		{
 			/* don't bother bursting +J metadata */
 			if(!(md->name[0] == 'K'))

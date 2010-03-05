@@ -72,7 +72,7 @@ struct Channel
 	unsigned int join_count;  /* joins within delta */
 	unsigned int join_delta;  /* last ts of join */
 
-	struct Dictionary *c_metadata;
+	struct Dictionary *metadata;
 
 	unsigned long bants;
 	time_t channelts;
@@ -90,13 +90,6 @@ struct membership
 	unsigned int flags;
 
 	unsigned long bants;
-};
-
-struct c_Metadata
-{
-	const char *name;
-	const char *value;
-	time_t timevalue;
 };
 
 #define BANLEN 195
