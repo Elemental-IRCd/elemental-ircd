@@ -45,6 +45,7 @@
 #include "s_stats.h"
 #include "tgchange.h"
 #include "inline/stringops.h"
+#include "irc_dictionary.h"
 
 static int m_message(int, const char *, struct Client *, struct Client *, int, const char **);
 static int m_privmsg(struct Client *, struct Client *, int, const char **);
@@ -731,6 +732,7 @@ msg_client(int p_or_n, const char *command,
 {
 	int do_floodcount = 0;
 	struct Metadata *md;
+	struct DictionaryIter iter;
 
 	if(MyClient(source_p))
 	{
@@ -791,7 +793,6 @@ msg_client(int p_or_n, const char *command,
 					(IsSetSCallerId(target_p) && !has_common_channel(source_p, target_p)) ||
 					(IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])))
 		{
-			md = user_metadata_find(target_p, "OACCEPT");
 			/* Here is the anti-flood bot/spambot code -db */
 			if(accept_message(source_p, target_p))
 			{
@@ -801,16 +802,19 @@ msg_client(int p_or_n, const char *command,
 					   source_p->username,
 					   source_p->host, command, target_p->name, text);
 			}
-			/* slightly ugly, meh. if anyone can think of a cleaner way to do this, by all means, do it. */
-			else if(md)
+			else if (IsOper(source_p))
 			{
-				if(!strcmp(md->value, source_p->name))
+				DICTIONARY_FOREACH(md, &iter, target_p->user->metadata)
 				{
-					add_reply_target(target_p, source_p);
-					sendto_one(target_p, ":%s!%s@%s %s %s :%s",
-						 source_p->name,
-						 source_p->username,
-					  	 source_p->host, command, target_p->name, text);
+					if(!strcmp(md->value, source_p->name))
+					{
+						add_reply_target(target_p, source_p);
+						sendto_one(target_p, ":%s!%s@%s %s %s :%s",
+							 source_p->name,
+							 source_p->username,
+					  		 source_p->host, command, target_p->name, text);
+						break;
+					}
 				}
 			}
 			else if (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])

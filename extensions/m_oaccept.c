@@ -28,9 +28,14 @@ mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const cha
 		return;
 	}
 
-	/* only allow one OACCEPT entry per user, so if there's an old one clear it */
-	if(!(md = user_metadata_find(target_p, "OACCEPT")))
-		user_metadata_delete(target_p, "OACCEPT", 1);
+	/* Don't allow someone to pointlessly fill up someone's metadata
+	 * with identical OACCEPT entries. */
+	if((md = user_metadata_find(target_p, "OACCEPT")))
+		if(!strcmp(source_p->name, md->value))
+		{
+			sendto_one_notice(source_p, ":You're already on %s's OACCEPT list", target_p->name);
+			return;
+		}
 
 	user_metadata_add(target_p, "OACCEPT", source_p->name, 1);
 
