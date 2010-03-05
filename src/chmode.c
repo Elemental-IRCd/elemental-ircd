@@ -42,6 +42,7 @@
 #include "s_newconf.h"
 #include "logger.h"
 #include "chmode.h"
+#include "irc_dictionary.h";
 
 /* bitmasks for error returns, so we send once per call */
 #define SM_ERR_NOTS             0x00000001	/* No TS on channel */
@@ -501,6 +502,8 @@ chm_simple(struct Client *source_p, struct Channel *chptr,
 {
 
 	int override = 0;
+	struct Metadata *md;
+	struct DictionaryIter iter;
 	
 	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
 	{
@@ -540,6 +543,16 @@ chm_simple(struct Client *source_p, struct Channel *chptr,
 	}
 	else if((dir == MODE_DEL) && (chptr->mode.mode & mode_type))
 	{
+		/* cleanup KICKNOREJOIN metadata on -J */
+		if(c == 'J')
+		{
+			DICTIONARY_FOREACH(md, &iter, chptr->metadata)
+			{
+				if(!strcmp(md->name, "KICKNOREJOIN"))  
+					channel_metadata_delete(chptr, md->name, 0);
+			}
+		}
+
 		chptr->mode.mode &= ~mode_type;
 
 		mode_changes[mode_count].letter = c;

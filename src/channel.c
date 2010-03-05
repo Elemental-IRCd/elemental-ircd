@@ -831,7 +831,6 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 	hook_data_channel moduledata;
 	struct Metadata *md;
 	struct DictionaryIter iter;
-	char *text = rb_strdup("");
 
 	s_assert(source_p->localClient != NULL);
 
@@ -860,22 +859,13 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 	if((is_banned(chptr, source_p, NULL, src_host, src_iphost)) == CHFL_BAN)
 		return (ERR_BANNEDFROMCHAN);
 
-	rb_sprintf(text, "K%s",source_p->name);
-
-	if(md = channel_metadata_find(chptr, text))
+	DICTIONARY_FOREACH(md, &iter, chptr->metadata)
 	{
-		if(md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time())
-		{
+		if(!strcmp(md->name, "KICKNOREJOIN") && !strcmp(md->value, source_p->id) && (md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time()))
 			return ERR_KICKNOREJOIN;
-		}
-		/* cleanup the channel's kicknorejoin metadata. */
-		DICTIONARY_FOREACH(md, &iter, chptr->metadata)
-		{
-			text = rb_strdup(md->name);
-			if((text[0] == 'K') && (md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time()))  
-				channel_metadata_delete(chptr, md->name, 1);
-		}
-			
+		/* cleanup any stale KICKNOREJOIN metadata we find while we're at it */
+		if(!strcmp(md->name, "KICKNOREJOIN") && !(md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time()))  
+			channel_metadata_delete(chptr, md->name, 0);
 	}
 
 	if(chptr->mode.mode & MODE_INVITEONLY)
