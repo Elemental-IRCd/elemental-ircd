@@ -1949,9 +1949,6 @@ user_metadata_add(struct Client *target, const char *name, const char *value, in
 {
 	struct Metadata *md;
 
-	if(irc_dictionary_find(target->user->metadata, name) != NULL)
-		return NULL;
-
 	md = rb_malloc(sizeof(struct Metadata));
 	md->name = rb_strdup(name);
 	md->value = rb_strdup(value);
