@@ -7,7 +7,7 @@ new modes
 - Add umode +C (no CTCP).
 - Add umode +V, users with this mode set will never recieve channel invites
   from other users.
-- Add umode +B which identifies users as being bots.
+- Add umode +B which identifies users as being bots in /whois.
 - Add umode +G which disallows users from messaging you unless you're both
   on at least one channel together. This can be "overridden" with /accept.
 - Add cmode +T which blocks all notices to the channel.
@@ -15,8 +15,8 @@ new modes
 - Add cmode +E which disallows channel ops from kicking users.
 - Add cmode +N which disallows users from changing their nick while they're on
   a channel with this mode set.
-- Add cmode +K (norepeat) which will block repeated messages if a user sends
-  the same message multiple times before any other users send to the channel.
+- Add cmode +K (norepeat) which will block repeated messages, regardless of
+- who they're from.
 - Add cmode +G which blocks messages containing 50% or more capital letters
   from being sent to the channel.
 - Add cmode +J which disallows a kicked user from rejoining within 'X' seconds
@@ -56,33 +56,32 @@ opers
 - swhois support - Adds a mostly free-form line of text to opers' whois
   if one is set in their operator {} block.
 - custom operstring - Instead of showing the IRC operator or IRC administrator
-  oper strings, you can customize what it shows by privset or 
-  for a specific operator.
-- host-on-oper - This will be a option settable in both general block and
-  operator block that defines what host a operator gets upon oper-up.
+  oper strings, you can customize what it shows in each oper's operator {}
+  block.
+- host-on-oper - Give a vhost to operators upon oper up. Can be defined
+  generally, then the general option may be overridden by each operator {}
+  block.
 - operoverride - Oper override works very differently in ShadowIRCd compared
   to all other IRCd's which support oper override. In ShadowIRCd, to be able
   to override, you must have the oper:override privledge and you must then
   set umode +p on yourself. The p umode will automatically expire and un-set
   itself after a time set in the configuration option general::expire_override_time.
-- immune - Immune depends on the chm_no_oper_kick extension being enabled.
-  An oper can set +M on a channel (which that channel's ops and users can not
-  see, but other opers can), then when the oper joins that channel with override
-  (umode +p) set on themselves, the channel's ops will be unable to kick the oper
-  from the channel.
+- immune - Adds cmode +M. Opers can set this on a channel (even if they don't 
+  have ops) without the channel's ops or other users seeing (only opers see 
+  this mode at all.) It disallows anyone in the channel from kicking opers.
 - OACCEPT/callerid override - In ShadowIRCd 6, opers no longer can simply PM
   users that have umodes +g or +G set and the oper is not on their accept list.
   To allow opers to still be able to PM users in this situation, OACCEPT has been
-  added. To use: /oaccept <user> and it will add a piece of metadata to that user
-  which will allow you to PM them.
+  added. OACCEPT is a new extension that enables the command /oaccept <user> 
+  which adds a piece of metadata to that use which will allow you to PM them.
 
 other
 - Changed default NICKLEN to 31 (from 15) to fit more closely with other
   IRCd's.
 - Rebrand many things from Charybdis to ShadowIRCd.
 - Move the m_force module to extensions.
-- Add a metadata framework. Currently used for swhois, custom operstring and
-  OACCEPT.
+- Add a metadata framework. Currently used for swhois, custom operstring, 
+  OACCEPT, cmode +J, cmode +K.
 
 -- charybdis-3.2.0
 
