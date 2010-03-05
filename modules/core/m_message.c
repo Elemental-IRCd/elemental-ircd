@@ -789,7 +789,7 @@ msg_client(int p_or_n, const char *command,
 			            target_p->name);
 		}
 		/* If opers want to go through +g, they should load oaccept.*/
-		else if(!IsServer(source_p) && (IsSetCallerId(target_p) ||
+		else if(!IsServer(source_p) && !IsService(source_p) && (IsSetCallerId(target_p) ||
 					(IsSetSCallerId(target_p) && !has_common_channel(source_p, target_p)) ||
 					(IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])))
 		{
