@@ -829,6 +829,9 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 	int use_althost = 0;
 	int i = 0;
 	hook_data_channel moduledata;
+	struct c_Metadata *md;
+	struct DictionaryIter iter;
+	char *text = rb_strdup("");
 
 	s_assert(source_p->localClient != NULL);
 
@@ -856,6 +859,24 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 
 	if((is_banned(chptr, source_p, NULL, src_host, src_iphost)) == CHFL_BAN)
 		return (ERR_BANNEDFROMCHAN);
+
+	rb_sprintf(text, "K%s",source_p->name);
+
+	if(md = channel_metadata_find(chptr, text))
+	{
+		if(md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time())
+		{
+			return ERR_KICKNOREJOIN;
+		}
+		/* cleanup the channel's kicknorejoin metadata. */
+		DICTIONARY_FOREACH(md, &iter, chptr->c_metadata)
+		{
+			text = rb_strdup(md->name);
+			if((text[0] == 'K') && (md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time()))  
+				channel_metadata_delete(chptr, md->name, 1);
+		}
+			
+	}
 
 	if(chptr->mode.mode & MODE_INVITEONLY)
 	{
@@ -1912,7 +1933,7 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 struct Metadata *
 channel_metadata_add(struct Channel *target, const char *name, const char *value, int propegate)
 {
-	struct Metadata *md;
+	struct c_Metadata *md;
 
 	md = rb_malloc(sizeof(struct Metadata));
 	md->name = rb_strdup(name);
@@ -1923,6 +1944,29 @@ channel_metadata_add(struct Channel *target, const char *name, const char *value
 	if(propegate)
 		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA ADD %s %s :%s",
 				target->chname, name, value);
+
+	return md;
+}
+
+/*
+ * channel_metadata_time_add
+ * 
+ * inputs	- pointer to channel struct
+ *		- name of metadata item you wish to add
+ *		- time_t you wish to add
+ * output	- none
+ * side effects - metadata is added to the channel in question
+ */
+struct Metadata *
+channel_metadata_time_add(struct Channel *target, const char *name, time_t value)
+{
+	struct c_Metadata *md;
+
+	md = rb_malloc(sizeof(struct c_Metadata));
+	md->name = rb_strdup(name);
+	md->timevalue = value;
+
+	irc_dictionary_add(target->c_metadata, md->name, md);
 
 	return md;
 }
@@ -1939,7 +1983,7 @@ channel_metadata_add(struct Channel *target, const char *name, const char *value
 void
 channel_metadata_delete(struct Channel *target, const char *name, int propegate)
 {
-	struct Metadata *md = channel_metadata_find(target, name);
+	struct c_Metadata *md = channel_metadata_find(target, name);
 
 	if(!md)
 		return;

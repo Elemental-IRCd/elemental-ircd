@@ -68,6 +68,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 	char *comment;
 	const char *name;
 	char *p = NULL;
+	char *text = rb_strdup("");
 	const char *user;
 	static char buf[BUFSIZE];
 	int is_override = 0;
@@ -228,6 +229,12 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 			      ":%s KICK %s %s :%s",
 			      use_id(source_p), chptr->chname, use_id(who), comment);
 		remove_user_from_channel(msptr);
+
+		rb_sprintf(text, "K%s",who->name);
+
+		/* we don't need to track NOKICK stuff unless it's our client being kicked */
+		if(MyClient(source_p) && chptr->mode.mode & MODE_NOREJOIN)
+			channel_metadata_time_add(chptr, text, rb_current_time());
 	}
 	else if (MyClient(source_p))
 		sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,

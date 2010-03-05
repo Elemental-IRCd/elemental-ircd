@@ -96,6 +96,7 @@ struct c_Metadata
 {
 	const char *name;
 	const char *value;
+	time_t timevalue;
 };
 
 #define BANLEN 195
@@ -307,5 +308,11 @@ extern int check_channel_name_loc(struct Client *source_p, const char *name);
 extern struct Metadata *channel_metadata_add(struct Channel *target, const char *name, const char *value, int propegate);
 extern void channel_metadata_delete(struct Channel *target, const char *name, int propegate);
 extern struct Metadata *channel_metadata_find(struct Channel *target, const char *name);
+
+extern struct Metadata *channel_metadata_add(struct Channel *target, const char *name, const char *value, int propegate);
+extern struct Metadata *channel_metadata_time_add(struct Channel *target, const char *name, time_t value);
+extern void channel_metadata_delete(struct Channel *target, const char *name, int propegate);
+extern struct Metadata *channel_metadata_find(struct Channel *target, const char *name);
+
 
 #endif /* INCLUDED_channel_h */

@@ -516,7 +516,7 @@ static  const char *  replies[] = {
 /* 492 ERR_NOCTCP */		":Can't send CTCP to %s (+C set)",
 /* 493 */       NULL,
 /* 494 */       NULL,
-/* 495 */       NULL,
+/* 495 ERR_KICKNOREJOIN */       ":%s 495 %s %s :Cannot rejoin channel so soon after being kicked (+J set)",
 /* 496 */       NULL,
 /* 497 */       NULL,
 /* 498 */       NULL,

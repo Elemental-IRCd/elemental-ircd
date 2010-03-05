@@ -589,8 +589,10 @@ burst_TS6(struct Client *client_p)
 
 		DICTIONARY_FOREACH(md, &iter, chptr->c_metadata)
 		{
-			sendto_one(client_p, ":%s ENCAP * METADATA ADD %s %s :%s",
-				   use_id(target_p), use_id(target_p), md->name, md->value);
+			/* don't bother bursting +J metadata */
+			if(!(md->name[0] == 'K'))
+				sendto_one(client_p, ":%s ENCAP * METADATA ADD %s %s :%s",
+					   use_id(target_p), use_id(target_p), md->name, md->value);
 		}
 
 		if(rb_dlink_list_length(&chptr->banlist) > 0)
