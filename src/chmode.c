@@ -553,7 +553,7 @@ chm_simple(struct Client *source_p, struct Channel *chptr,
 			}
 		}
 		if(c == 'K')
-			channel_metadata_delete(chptr, md->name, 0);
+			channel_metadata_delete(chptr, "NOREPEAT", 0);
 
 		chptr->mode.mode &= ~mode_type;
 
