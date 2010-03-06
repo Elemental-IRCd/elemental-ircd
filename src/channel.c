@@ -835,7 +835,12 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 	s_assert(source_p->localClient != NULL);
 
 	if(IsOverride(source_p))
+	{
+		sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+				"%s is overriding JOIN to [%s]",
+				get_oper_name(source_p), chptr->chname);
 		return 0;
+	}
 
 	rb_sprintf(src_host, "%s!%s@%s", source_p->name, source_p->username, source_p->host);
 	rb_sprintf(src_iphost, "%s!%s@%s", source_p->name, source_p->username, source_p->sockhost);
