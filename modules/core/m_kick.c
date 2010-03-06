@@ -230,7 +230,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 		remove_user_from_channel(msptr);
 
 		/* we don't need to track NOREJOIN stuff unless it's our client being kicked */
-		if(MyClient(source_p) && chptr->mode.mode & MODE_NOREJOIN)
+		if(MyClient(who) && chptr->mode.mode & MODE_NOREJOIN)
 			channel_metadata_time_add(chptr, "KICKNOREJOIN", rb_current_time(), who->id);
 	}
 	else if (MyClient(source_p))
