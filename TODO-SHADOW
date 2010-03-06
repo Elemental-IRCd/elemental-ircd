@@ -8,6 +8,7 @@ Todo list for ShadowIRCd 6.1
 * clean disable/removal of modes on rehash, if possible without being ugly
 * Allow disabling of commands in auth {} blocks.
 * Add default_operhost to /set
+* /cycle
 
 Todo list for ShadowIRCd 6.2
 ----------------------------
