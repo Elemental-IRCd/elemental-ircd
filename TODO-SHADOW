@@ -7,6 +7,7 @@ Todo list for ShadowIRCd 6.1
 * notice/message !#channel and %#channel
 * clean disable/removal of modes on rehash, if possible without being ugly
 * Allow disabling of commands in auth {} blocks.
+* Add default_operhost to /set
 
 Todo list for ShadowIRCd 6.2
 ----------------------------
