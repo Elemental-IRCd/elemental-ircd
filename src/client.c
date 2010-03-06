@@ -1146,6 +1146,9 @@ exit_generic_client(struct Client *client_p, struct Client *source_p, struct Cli
 	if(IsOper(source_p))
 		rb_dlinkFindDestroy(source_p, &oper_list);
 
+	/* get rid of any metadata the user may have */
+	user_metadata_clear(source_p);
+
 	sendto_common_channels_local(source_p, ":%s!%s@%s QUIT :%s",
 				     source_p->name,
 				     source_p->username, source_p->host, comment);
@@ -1708,9 +1711,6 @@ void
 free_user(struct User *user, struct Client *client_p)
 {
 	free_away(client_p);
-
-	/* get rid of any metadata the user may have */
-	user_metadata_clear(client_p);
 
 	if(--user->refcnt <= 0)
 	{
