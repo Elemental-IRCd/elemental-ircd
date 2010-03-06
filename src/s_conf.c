@@ -30,6 +30,7 @@
 #include "s_newconf.h"
 #include "newconf.h"
 #include "s_serv.h"
+#include "s_user.h"
 #include "s_stats.h"
 #include "channel.h"
 #include "class.h"
