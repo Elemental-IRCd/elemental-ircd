@@ -543,7 +543,7 @@ chm_simple(struct Client *source_p, struct Channel *chptr,
 	}
 	else if((dir == MODE_DEL) && (chptr->mode.mode & mode_type))
 	{
-		/* cleanup KICKNOREJOIN metadata on -J */
+		/* cleanup metadata when the related mode is removed */
 		if(c == 'J')
 		{
 			DICTIONARY_FOREACH(md, &iter, chptr->metadata)
@@ -552,6 +552,8 @@ chm_simple(struct Client *source_p, struct Channel *chptr,
 					channel_metadata_delete(chptr, md->name, 0);
 			}
 		}
+		if(c == 'K')
+			channel_metadata_delete(chptr, md->name, 0);
 
 		chptr->mode.mode &= ~mode_type;
 
