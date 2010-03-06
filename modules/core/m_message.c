@@ -500,10 +500,12 @@ msg_channel(int p_or_n, const char *command,
 
 	if(chptr->mode.mode & MODE_NOREPEAT)
 	{
+		rb_strlcpy(text2, text, BUFSIZE);
+		strip_colour(text2);
 		md = channel_metadata_find(chptr, "NOREPEAT");
 		if(md && (!ConfigChannel.exempt_cmode_K || !is_any_op(msptr)))
 		{
-			if(!(strcmp(md->value, strip_colour(text))))
+			if(!(strcmp(md->value, text2)))
 			{
 				if(p_or_n != NOTICE)
 					sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
@@ -512,7 +514,7 @@ msg_channel(int p_or_n, const char *command,
 			}
 		}
 		channel_metadata_delete(chptr, "NOREPEAT", 0);
-		channel_metadata_add(chptr, "NOREPEAT", strip_colour(text), 0);
+		channel_metadata_add(chptr, "NOREPEAT", text2, 0);
 	}
 
 	if(chptr->mode.mode & MODE_NOCOLOR && (!ConfigChannel.exempt_cmode_c || !is_any_op(msptr)))
