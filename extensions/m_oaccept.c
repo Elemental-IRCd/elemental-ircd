@@ -4,6 +4,7 @@
 #include "modules.h"
 #include "send.h"
 #include "numeric.h"
+#include "hash.h"
 
 void mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const char *parv[]);
 
