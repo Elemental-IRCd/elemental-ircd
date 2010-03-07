@@ -27,7 +27,7 @@
  * auth {
  *   user = "webirc@<cgiirc ip>"; # if identd used, put ident username instead
  *   password = "<password>"; # encryption possible
- *   spoof = "webirc."
+ *   spoof = "webirc.";
  *   class = "users";
  * };
  * Possible flags:
