@@ -508,8 +508,7 @@ msg_channel(int p_or_n, const char *command,
 			if(!(strcmp(md->value, text2)))
 			{
 				if(p_or_n != NOTICE)
-					sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
-							form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
+					sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - Message blocked due to repeating (+K set)", chptr->chname);
 				return;
 			}
 		}
@@ -548,23 +547,20 @@ msg_channel(int p_or_n, const char *command,
 				}
 				if(((caps*100)/(len)) >= 50)
 				{
-					sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
-							form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
+					sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - Your message contains mostly capital letters (+G set)", chptr->chname);
 					return;
 				}
 			}
 			if (p_or_n != PRIVMSG && chptr->mode.mode & MODE_NONOTICE && (!ConfigChannel.exempt_cmode_T || !is_any_op(msptr)))
 			{
-				sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
-						form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
+				sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - Notices are disallowed (+T set)", chptr->chname);
 				return;
 			}
 			if (p_or_n != NOTICE && chptr->mode.mode & MODE_NOACTION &&
 					!strncasecmp(text + 1, "ACTION", 6) &&
 					(!ConfigChannel.exempt_cmode_D || !is_any_op(msptr)))
 			{
-				sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
-						form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
+				sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - ACTIONs are disallowed (+D set)", chptr->chname);
 				return;
 			}
 			if (p_or_n != NOTICE && *text == '\001' &&
@@ -572,8 +568,7 @@ msg_channel(int p_or_n, const char *command,
 			{
 				if (chptr->mode.mode & MODE_NOCTCP && (!ConfigChannel.exempt_cmode_C || !is_any_op(msptr)))
 				{
-					sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
-							   form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
+					sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - CTCPs to this channel are disallowed (+C set)", chptr->chname);
 					return;
 				}
 				else if (rb_dlink_list_length(&chptr->locmembers) > (unsigned)(GlobalSetOptions.floodcount / 2))
