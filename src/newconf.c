@@ -572,20 +572,29 @@ conf_end_oper(struct TopConf *tc)
 		yy_tmpoper->umodes = yy_oper->umodes;
 		yy_tmpoper->snomask = yy_oper->snomask;
 
-		if(valid_hostname(yy_oper->vhost))
-			yy_tmpoper->vhost = rb_strdup(yy_oper->vhost);
-		else
-			conf_report_error("Ignoring vhost setting for oper %s -- invalid hostmask.", yy_oper->name);
+		if(!EmptyString(yy_oper->vhost))
+		{
+			if(valid_hostname(yy_oper->vhost))
+				yy_tmpoper->vhost = rb_strdup(yy_oper->vhost);
+			else if(!EmptyString(yy_oper->vhost))
+				conf_report_error("Ignoring vhost setting for oper %s -- invalid hostmask.", yy_oper->name);
+		}
 
-		if(strlen(yy_oper->swhois) < 400)
-			yy_tmpoper->swhois = rb_strdup(yy_oper->swhois);
-		else
-			conf_report_error("Ignoring swhois setting for oper %s -- swhois too long.", yy_oper->name);
+		if(!EmptyString(yy_oper->swhois))
+		{
+			if(strlen(yy_oper->swhois) < 400)
+				yy_tmpoper->swhois = rb_strdup(yy_oper->swhois);
+			else 
+				conf_report_error("Ignoring swhois setting for oper %s -- swhois too long.", yy_oper->name);
+		}
 
-		if(strlen(yy_oper->operstring) < 400)
-			yy_tmpoper->operstring = rb_strdup(yy_oper->operstring);
-		else
-			conf_report_error("Ignoring operstring setting for oper %s -- operstring too long.", yy_oper->name);
+		if(!EmptyString(yy_oper->operstring))
+		{
+			if(strlen(yy_oper->operstring) < 400)
+				yy_tmpoper->operstring = rb_strdup(yy_oper->operstring);
+			else
+				conf_report_error("Ignoring operstring setting for oper %s -- operstring too long.", yy_oper->name);
+		}
 
 		yy_tmpoper->privset = yy_oper->privset;
 
