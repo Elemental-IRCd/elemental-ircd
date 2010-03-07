@@ -826,6 +826,7 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 	char src_host[NICKLEN + USERLEN + HOSTLEN + 6];
 	char src_iphost[NICKLEN + USERLEN + HOSTLEN + 6];
 	char src_althost[NICKLEN + USERLEN + HOSTLEN + 6];
+	char *text = rb_strdup("");
 	int use_althost = 0;
 	int i = 0;
 	hook_data_channel moduledata;
@@ -864,12 +865,14 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 	if((is_banned(chptr, source_p, NULL, src_host, src_iphost)) == CHFL_BAN)
 		return (ERR_BANNEDFROMCHAN);
 
+	rb_sprintf(text, "K%s", source_p->id);
+
 	DICTIONARY_FOREACH(md, &iter, chptr->metadata)
 	{
-		if(!strcmp(md->name, "KICKNOREJOIN") && !strcmp(md->value, source_p->id) && (md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time()))
+		if(!strcmp(md->value, "KICKNOREJOIN") && !strcmp(md->name, text) && (md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time()))
 			return ERR_KICKNOREJOIN;
 		/* cleanup any stale KICKNOREJOIN metadata we find while we're at it */
-		if(!strcmp(md->name, "KICKNOREJOIN") && !(md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time()))  
+		if(!strcmp(md->value, "KICKNOREJOIN") && !(md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time()))  
 			channel_metadata_delete(chptr, md->name, 0);
 	}
 

@@ -21,7 +21,9 @@ void
 mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
 	struct Metadata *md;
+	struct DictionaryIter iter;
 	struct Client *target_p;
+	char *text = rb_strdup("");
 
 	if(!(target_p = find_client(parv[1])))
 	{
@@ -29,16 +31,20 @@ mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const cha
 		return;
 	}
 
+	rb_sprintf(text, "O%s", source_p->id);
+
 	/* Don't allow someone to pointlessly fill up someone's metadata
 	 * with identical OACCEPT entries. */
-	if((md = user_metadata_find(target_p, "OACCEPT")))
-		if(!strcmp(source_p->id, md->value))
+	DICTIONARY_FOREACH(md, &iter, target_p->user->metadata)
+	{
+		if(!strcmp(md->value, "OACCEPT") && !strcmp(md->name, text))
 		{
 			sendto_one_notice(source_p, ":You're already on %s's OACCEPT list", target_p->name);
 			return;
 		}
+	}
 
-	user_metadata_add(target_p, "OACCEPT", source_p->id, 1);
+	user_metadata_add(target_p, text, "OACCEPT", 1);
 
 	sendto_wallops_flags(UMODE_WALLOP, &me,
 			     "OACCEPT called for %s by %s!%s@%s",

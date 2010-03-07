@@ -548,7 +548,7 @@ chm_simple(struct Client *source_p, struct Channel *chptr,
 		{
 			DICTIONARY_FOREACH(md, &iter, chptr->metadata)
 			{
-				if(!strcmp(md->name, "KICKNOREJOIN"))  
+				if(!strcmp(md->value, "KICKNOREJOIN"))  
 					channel_metadata_delete(chptr, md->name, 0);
 			}
 		}
