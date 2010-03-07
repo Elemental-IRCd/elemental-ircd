@@ -1,7 +1,6 @@
 Todo list for ShadowIRCd 6.1
 -----------------------------
 * pretty error messages for +ah stuff
-* nice error messages for cmodes +K, +C, +D, etc.
 * global/remote mod*/die/restart
 * update ojoin/omode/etc to use +ah
 * notice/message !#channel and %#channel
