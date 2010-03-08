@@ -1031,8 +1031,6 @@ user_mode(struct Client *client_p, struct Client *source_p, int parc, const char
 
 				Count.oper--;
 
-				/* Do we need to propegate these? I'm not 100% sure
-				 * so we should test it when we have a testnet */
 				user_metadata_delete(source_p, "OPERSTRING", 1);
 				user_metadata_delete(source_p, "SWHOIS", 1);
 

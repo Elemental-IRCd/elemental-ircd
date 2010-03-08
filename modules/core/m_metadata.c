@@ -50,7 +50,7 @@ me_metadata(struct Client *client_p, struct Client *source_p, int parc, const ch
 	{
 		struct Client *target_p;
 
-		if((target_p = find_client(parv[2])) == NULL)
+		if((target_p = find_id(parv[2])) == NULL)
 			return;
 
 		if(!target_p->user)

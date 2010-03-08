@@ -1957,7 +1957,7 @@ user_metadata_add(struct Client *target, const char *name, const char *value, in
 	
 	if(propegate)
 		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA ADD %s %s :%s",
-				target->name, name, value);
+				target->id, name, value);
 
 	return md;
 }
@@ -1985,7 +1985,7 @@ user_metadata_delete(struct Client *target, const char *name, int propegate)
 
 	if(propegate)
 		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA DELETE %s %s",
-				target->name, name);
+				target->id, name);
 }
 
 /*
