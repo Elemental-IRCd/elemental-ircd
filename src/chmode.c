@@ -530,7 +530,7 @@ chm_simple(struct Client *source_p, struct Channel *chptr,
 		return;
 
 	/* setting + */
-	if((dir == MODE_ADD) && !(chptr->mode.mode & mode_type))
+	if((dir == MODE_ADD) && !(chptr->mode.mode & mode_type) && !(chptr->mode_lock.off_mode & mode_type))
 	{
 		/* if +f is disabled, ignore an attempt to set +QF locally */
 		if(!ModuleModes.MODE_FORWARD && MyClient(source_p) &&
@@ -595,7 +595,7 @@ chm_orphaned(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].mems = ALL_MEMBERS;
 		mode_changes[mode_count++].arg = NULL;
 	}
-	else if((dir == MODE_DEL) && (chptr->mode.mode & mode_type))
+	else if((dir == MODE_DEL) && (chptr->mode.mode & mode_type) && !(chptr->mode_lock.mode & mode_type))
 	{
 		chptr->mode.mode &= ~mode_type;
 
