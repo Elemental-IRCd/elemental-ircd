@@ -505,7 +505,7 @@ ms_sjoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 		{
 			if(*s == '!')
 			{
-				fl |= CHFL_OWNER;
+				fl |= CHFL_ADMIN;
 				s++;
 			}
 			else if(*s == '@')
@@ -543,7 +543,7 @@ ms_sjoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 
 		if(keep_new_modes)
 		{
-			if(fl & CHFL_OWNER)
+			if(fl & CHFL_ADMIN)
 			{
 				*ptr_uid++ = '!';
 				len_nick++;
@@ -589,7 +589,7 @@ ms_sjoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 		/* If anyone can think of a way to do this that doesn't make babies cry
 		 * I would love to hear it - Taros */
 
-		if(fl & CHFL_OWNER)
+		if(fl & CHFL_ADMIN)
 		{
 			*mbuf++ = 'a';
 			para[pargs++] = target_p->name;
@@ -985,9 +985,9 @@ remove_our_modes(struct Channel *chptr, struct Client *source_p)
 		/* If anyone can think of a way to do this that doesn't make babies cry
 		 * I would love to hear it - Taros */
 
-		if(is_owner(msptr))
+		if(is_admin(msptr))
 		{
-			msptr->flags &= ~CHFL_OWNER;
+			msptr->flags &= ~CHFL_ADMIN;
 			lpara[count++] = msptr->client_p->name;
 			*mbuf++ = 'a';
 

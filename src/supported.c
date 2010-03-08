@@ -267,9 +267,9 @@ isupport_prefix(const void *ptr)
 	static char result[11];
 
 	rb_snprintf(result, sizeof result, "(%so%sv)%s@%s+",
-			ConfigChannel.use_owner ? "a" : "",
+			ConfigChannel.use_admin ? "a" : "",
 			ConfigChannel.use_halfop ? "h" : "",
-			ConfigChannel.use_owner ? "!" : "",
+			ConfigChannel.use_admin ? "!" : "",
 			ConfigChannel.use_halfop ? "%" : "");
 	return result;
 }

@@ -597,10 +597,10 @@ static struct InfoStruct info_table[] = {
 		"Enable chanmode +h (halfop)",
 	},
 	{
-		"use_owner",
+		"use_admin",
 		OUTPUT_BOOLEAN_YN,
-		&ConfigChannel.use_owner,
-		"Enable chanmode +a (owner)",
+		&ConfigChannel.use_admin,
+		"Enable chanmode +a (admin)",
 	},
 	{
 		"use_except",

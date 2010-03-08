@@ -22,10 +22,10 @@ new modes
 - Add cmode +J which disallows a kicked user from rejoining within 'X' seconds
   of them being kicked, where 'X' is the variable of the channel::kick_no_rejoin_time
   configuration option.
-- Add cmodes +a and +h (owner and halfop, respectively). There are 2 extra
+- Add cmodes +a and +h (admin and halfop, respectively). There are 2 extra
   prefixes to more finely-grain the status of staff members in your channels.
   They can be enabled or disabled in the configuration file with the options
-  channel::use_halfop and channel::use_owner.
+  channel::use_halfop and channel::use_admin.
 
 new configuration options
 - auth::autojoin - This option will specify what channels users in a matching

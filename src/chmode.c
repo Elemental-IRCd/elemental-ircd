@@ -91,7 +91,7 @@ construct_noparam_modes(void)
 			!(chmode_table[i].set_func == chm_throttle) &&
                         !(chmode_table[i].set_func == chm_key) &&
                         !(chmode_table[i].set_func == chm_limit) &&
-			!(chmode_table[i].set_func == chm_owner) &&
+			!(chmode_table[i].set_func == chm_admin) &&
                         !(chmode_table[i].set_func == chm_op) &&
 			!(chmode_table[i].set_func == chm_halfop) &&
                         !(chmode_table[i].set_func == chm_voice))
@@ -179,8 +179,8 @@ find_cflag_slot(void)
 static int
 get_channel_access(struct Client *source_p, struct membership *msptr)
 {
-	if(!MyClient(source_p) || is_owner(msptr))
-		return CHFL_OWNER;
+	if(!MyClient(source_p) || is_admin(msptr))
+		return CHFL_ADMIN;
 	else if(is_chanop(msptr))
 		return CHFL_CHANOP;
 	else if(is_halfop(msptr))
@@ -505,7 +505,7 @@ chm_simple(struct Client *source_p, struct Channel *chptr,
 	struct Metadata *md;
 	struct DictionaryIter iter;
 	
-	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
+	if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN && alevel != CHFL_HALFOP)
 	{
 		if (IsOverride(source_p))
 			override = 1;
@@ -794,7 +794,7 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
 		*errors |= errorval;
 
 		/* non-ops cant see +eI lists.. */
-		if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP && mode_type != CHFL_BAN &&
+		if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN && alevel != CHFL_HALFOP && mode_type != CHFL_BAN &&
 				mode_type != CHFL_QUIET)
 		{
 			if(IsOverride(source_p))
@@ -831,7 +831,7 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
 		return;
 	}
 
-	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
+	if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN && alevel != CHFL_HALFOP)
 	{
 		if(IsOverride(source_p))
 			override = 1;
@@ -919,16 +919,16 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
 }
 
 void
-chm_owner(struct Client *source_p, struct Channel *chptr,
+chm_admin(struct Client *source_p, struct Channel *chptr,
        int alevel, int parc, int *parn,
        const char **parv, int *errors, int dir, char c, long mode_type)
 {
 	struct membership *mstptr;
-	const char *ownernick;
+	const char *adminnick;
 	struct Client *targ_p;
 	int override = 0;
 
-	if(!ConfigChannel.use_owner)
+	if(!ConfigChannel.use_admin)
 	{
 		if(*errors & SM_ERR_UNKNOWN)
 			return;
@@ -937,7 +937,7 @@ chm_owner(struct Client *source_p, struct Channel *chptr,
 		return;
 	}
 
-	if(alevel != CHFL_OWNER)
+	if(alevel != CHFL_ADMIN)
 	{
 		if(IsOverride(source_p))
 			override = 1;
@@ -954,17 +954,17 @@ chm_owner(struct Client *source_p, struct Channel *chptr,
 	if((dir == MODE_QUERY) || (parc <= *parn))
 		return;
 
-	ownernick = parv[(*parn)];
+	adminnick = parv[(*parn)];
 	(*parn)++;
 
 	/* empty nick */
-	if(EmptyString(ownernick))
+	if(EmptyString(adminnick))
 	{
 		sendto_one_numeric(source_p, ERR_NOSUCHNICK, form_str(ERR_NOSUCHNICK), "*");
 		return;
 	}
 
-	if((targ_p = find_chasing(source_p, ownernick, NULL)) == NULL)
+	if((targ_p = find_chasing(source_p, adminnick, NULL)) == NULL)
 	{
 		return;
 	}
@@ -975,7 +975,7 @@ chm_owner(struct Client *source_p, struct Channel *chptr,
 	{
 		if(!(*errors & SM_ERR_NOTONCHANNEL) && MyClient(source_p))
 			sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
-					   form_str(ERR_USERNOTINCHANNEL), ownernick, chptr->chname);
+					   form_str(ERR_USERNOTINCHANNEL), adminnick, chptr->chname);
 		*errors |= SM_ERR_NOTONCHANNEL;
 		return;
 	}
@@ -1005,7 +1005,7 @@ chm_owner(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].override = override;
 		mode_changes[mode_count++].client = targ_p;
 
-		mstptr->flags |= CHFL_OWNER;
+		mstptr->flags |= CHFL_ADMIN;
 	}
 	else
 	{
@@ -1026,7 +1026,7 @@ chm_owner(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].override = override;
 		mode_changes[mode_count++].client = targ_p;
 
-		mstptr->flags &= ~CHFL_OWNER;
+		mstptr->flags &= ~CHFL_ADMIN;
 	}
 }
 
@@ -1040,7 +1040,7 @@ chm_op(struct Client *source_p, struct Channel *chptr,
 	struct Client *targ_p;
 	int override = 0;
 
-	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER)
+	if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN)
 	{
 		if(IsOverride(source_p))
 			override = 1;
@@ -1153,7 +1153,7 @@ chm_halfop(struct Client *source_p, struct Channel *chptr,
 		return;
 	}
 
-	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER)
+	if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN)
 	{
 		if(IsOverride(source_p))
 			override = 1;
@@ -1257,7 +1257,7 @@ chm_voice(struct Client *source_p, struct Channel *chptr,
 	struct Client *targ_p;
 	int override = 0;
 
-	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
+	if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN && alevel != CHFL_HALFOP)
 	{
 		if(IsOverride(source_p))
 			override = 1;
@@ -1344,7 +1344,7 @@ chm_limit(struct Client *source_p, struct Channel *chptr,
 	int limit;
 	int override = 0;
 
-	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
+	if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN && alevel != CHFL_HALFOP)
 	{
 		if(IsOverride(source_p))
 			override = 1;
@@ -1411,7 +1411,7 @@ chm_throttle(struct Client *source_p, struct Channel *chptr,
 	int joins = 0, timeslice = 0;
 	int override = 0;
 
-	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
+	if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN && alevel != CHFL_HALFOP)
 	{
 		if(IsOverride(source_p))
 			override = 1;
@@ -1503,7 +1503,7 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
 	}
 
 #ifndef FORWARD_OPERONLY
-	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
+	if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN && alevel != CHFL_HALFOP)
 	{
 		if(IsOverride(source_p))
 			override = 1;
@@ -1608,7 +1608,7 @@ chm_key(struct Client *source_p, struct Channel *chptr,
 	char *key;
 	int override = 0;
 
-	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
+	if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN && alevel != CHFL_HALFOP)
 	{
 		if(IsOverride(source_p))
 			override = 1;
@@ -1694,7 +1694,7 @@ chm_regonly(struct Client *source_p, struct Channel *chptr,
 {
 	int override = 0;
 
-	if(alevel != CHFL_CHANOP && alevel != CHFL_OWNER && alevel != CHFL_HALFOP)
+	if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN && alevel != CHFL_HALFOP)
 	{
 		if(IsOverride(source_p))
 			override = 1;
@@ -1834,7 +1834,7 @@ struct ChannelMode chmode_table[256] =
   {chm_nosuch,	0 },
   {chm_nosuch,	0 },
   {chm_nosuch,	0 },
-  {chm_owner,	0 },			/* a */
+  {chm_admin,	0 },			/* a */
   {chm_ban,	CHFL_BAN },		/* b */
   {chm_simple,	MODE_NOCOLOR },		/* c */
   {chm_nosuch,	0 },			/* d */

@@ -2271,7 +2271,7 @@ static struct ConfEntry conf_channel_table[] =
 	{ "cycle_host_change",	CF_YESNO, NULL, 0, &ConfigChannel.cycle_host_change },
 	{ "host_in_topic",	CF_YESNO, NULL, 0, &ConfigChannel.host_in_topic	},
 	{ "use_halfop",		CF_YESNO, NULL, 0, &ConfigChannel.use_halfop		},
-	{ "use_owner",		CF_YESNO, NULL, 0, &ConfigChannel.use_owner		},
+	{ "use_admin",		CF_YESNO, NULL, 0, &ConfigChannel.use_admin		},
 	{ "use_except",		CF_YESNO, NULL, 0, &ConfigChannel.use_except		},
 	{ "use_invex",		CF_YESNO, NULL, 0, &ConfigChannel.use_invex		},
 	{ "use_knock",		CF_YESNO, NULL, 0, &ConfigChannel.use_knock		},

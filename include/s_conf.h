@@ -226,7 +226,7 @@ struct config_channel_entry
 	char * autochanmodes;
 	char * exemptchanops;
 	int use_halfop;
-	int use_owner;
+	int use_admin;
 	int use_except;
 	int use_invex;
 	int use_knock;

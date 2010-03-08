@@ -69,7 +69,7 @@ extern void chm_limit(struct Client *source_p, struct Channel *chptr,
 extern void chm_regonly(struct Client *source_p, struct Channel *chptr,
 	   int alevel, int parc, int *parn,
 	   const char **parv, int *errors, int dir, char c, long mode_type);
-extern void chm_owner(struct Client *source_p, struct Channel *chptr,
+extern void chm_admin(struct Client *source_p, struct Channel *chptr,
 	   int alevel, int parc, int *parn,
 	   const char **parv, int *errors, int dir, char c, long mode_type);
 extern void chm_op(struct Client *source_p, struct Channel *chptr,
