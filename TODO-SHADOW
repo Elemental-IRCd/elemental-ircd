@@ -8,8 +8,6 @@ Todo list for ShadowIRCd 6.1
 * Allow disabling of commands in auth {} blocks.
 * Add default_operhost to /set
 * /cycle
-* Ability to set topiclen in the ircd.conf . See ratbox's conf/option
-  for ideas.
 
 Todo list for ShadowIRCd 6.2
 ----------------------------
