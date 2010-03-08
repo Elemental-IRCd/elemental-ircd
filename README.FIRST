@@ -17,11 +17,6 @@ If you don't read this first, we won't help you.
 ******************************* REQUIREMENTS **********************************
 
 New Features - A short introduction:
-- charybdis-3.x now has several major changes over previous version that you
-  will notice right away.
-  o SSL Client support.
-  o Connection Throttling. 
-
 - Please see NEWS for more detailed changes.
 
 
@@ -37,6 +32,9 @@ Necessary Requirements:
   appears to be broken, on this system flex
   should be used.
 
+- A working parser/generator. bison is
+  recommended on most platforms.
+
 
 Feature Specific Requirements:
 
@@ -47,10 +45,10 @@ Feature Specific Requirements:
 
 *******************************************************************************
 
-- To report bugs in charybdis, visit us at irc.atheme.org #charybdis
+- To report bugs in ShadowIRCd, visit us at irc.thinstack.net #shadowircd
 
 - See the INSTALL document for info on configuring and compiling
-  charybdis.
+  ShadowIRCd.
 
 - Please read doc/index.txt to get an overview of the current documentation.
 
@@ -73,11 +71,12 @@ Feature Specific Requirements:
   flags for cc(1) prior to that point to produce shared modules.
 
 - SUPPORTED PLATFORMS: this code should compile without any warnings on:
-    FreeBSD 6.x/7.x,
+    FreeBSD 6.x/7.x/8.x,
     Gentoo & Gentoo Hardened ~x86/~amd64/~fbsd
     Fedora 8/9 / CentOS 4/5 / Redhat Enterprise 5
-    Debian Etch, 
+    Debian Etch/Lenny/Squeeze, 
     OpenSuSE 10/11,
+	ArchLinux,
     OpenSolaris 2008.x?
     Solaris 10 sparc.
   
@@ -86,8 +85,8 @@ Feature Specific Requirements:
 
 - TESTED PLATFORMS:  The code has been tested on the following platforms, and
   is known to run properly.
-  FreeBSD 6.x/7.x
-  Linux glibc-2.6, glibc-2.7
+  FreeBSD 6.x/7.x/8.x
+  Linux glibc-2.6, glibc-2.7, glibc-2.8, glibc-2.10, glibc-2.11
   Solaris 2.6/7/8
   OpenBSD 2.8
   NetBSD 1.4
@@ -95,7 +94,7 @@ Feature Specific Requirements:
 
 - Please read NEWS for information about what is in this release
 
-- Other files recommended for reading: BUGS, INSTALL
+- Other files recommended for reading: INSTALL
 
 --------------------------------------------------------------------------------
 $Id$

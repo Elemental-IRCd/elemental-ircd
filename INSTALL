@@ -1,10 +1,11 @@
-                           Charybdis INSTALL Document
+                           ShadowIRCd INSTALL Document
 
    $Id: INSTALL 3384 2007-04-03 22:45:04Z jilles $
 
    Copyright (c) 2001 by ircd-hybrid team
    Copyright (c) 2002-2004 ircd-ratbox development team
    Copyright (c) 2005-2008 charybdis development team
+   Copyright (c) 2010 by ShadowIRCd development team
 
      ----------------------------------------------------------------------
 
@@ -17,7 +18,7 @@
    1. 
 
        Read the NEWS file to find out about the exciting new features in
-       this version. Other good reads are BUGS, doc/example.conf, and
+       this version. Other good reads are doc/example.conf, and
        README.FIRST.
 
    2. 
@@ -25,7 +26,7 @@
        Run the configure script. It will create include/setup.h and the
        Makefiles to match your system. In ircd-ratbox, the paths are now handled
        with the --prefix option to configure, not in config.h.
-       /usr/local/ircd is the default if no prefix is specified.
+       $HOME/ircd is the default if no prefix is specified.
 
        ./configure --prefix="/usr/local/ircd"
 
@@ -136,16 +137,12 @@
 
                                 HOW TO GET HELP
 
-   Send Check or Money Order to... just kidding! You're on your own for
-   support. Try asking other ircd-ratbox admins on EFnet if you can't fix it
-   yourself. If you do fix anything, however, please send context or unified
-   diffs to ircd-ratbox@lists.ratbox.org so the fixes can be incorporated into
-   the next release of ircd-hybrid. If ratbox crashes on you, PLEASE contact
-   ircd-ratbox@lists.ratbox.org ASAP with a backtrace of the core.
+	The best way to get help regarding bugs and such is by asking on our
+	IRC channel which is at irc.thinstack.net #shadowircd . Bugs can also
+	be filed on our bugtracker at: 
+	
+	http://bitbucket.org/uranium/shadowircd/issues/?status=new&status=open
 
-   DISCUSSION: There is a mailing list for discussion of ratbox issues,
-    To subscribe, visit:
-       http://lists.ratbox.org/cgi-bin/mailman/listinfo/ircd-ratbox
        
      ----------------------------------------------------------------------
 
