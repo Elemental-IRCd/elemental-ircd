@@ -155,7 +155,7 @@ m_invite(struct Client *client_p, struct Client *source_p, int parc, const char 
 					get_oper_name(source_p), target_p->name, chptr->chname);
 			sendto_server(NULL, chptr, NOCAPS, NOCAPS,
 					":%s WALLOPS :%s is overriding INVITE [%s] on [%s]",
-					use_id(source_p), get_oper_name(source_p), target_p->name, chptr->chname);
+					me.name, get_oper_name(source_p), target_p->name, chptr->chname);
 		}
 		else
 		{

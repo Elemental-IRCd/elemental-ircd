@@ -1818,7 +1818,7 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 					get_oper_name(source_p), chptr->chname);
 				sendto_server(NULL, chptr, NOCAPS, NOCAPS,
 						":%s WALLOPS :%s is overriding JOIN to [%s]",
-						use_id(source_p), get_oper_name(source_p), chptr->chname);
+						me.name, get_oper_name(source_p), chptr->chname);
 			}
 			else if ((i != ERR_NEEDREGGEDNICK && i != ERR_THROTTLE && i != ERR_INVITEONLYCHAN && i != ERR_CHANNELISFULL) ||
 			    (!ConfigChannel.use_forward || (chptr = check_forward(source_p, chptr, key)) == NULL))

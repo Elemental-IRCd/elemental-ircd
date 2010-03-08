@@ -211,7 +211,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 					get_oper_name(source_p), who->name, chptr->chname, comment);
 			sendto_server(NULL, chptr, NOCAPS, NOCAPS,
 					":%s WALLOPS :%s is overriding KICK [%s] on [%s] [%s]",
-					use_id(source_p), get_oper_name(source_p), who->name, chptr->chname, comment);
+					me.name, get_oper_name(source_p), who->name, chptr->chname, comment);
 		}
 
 		/* jdc

@@ -125,7 +125,7 @@ m_topic(struct Client *client_p, struct Client *source_p, int parc, const char *
 						get_oper_name(source_p), chptr->chname);
 				sendto_server(NULL, chptr, NOCAPS, NOCAPS,
 						":%s WALLOPS :%s is overriding TOPIC on [%s]",
-						use_id(source_p), get_oper_name(source_p), chptr->chname);
+						me.name, get_oper_name(source_p), chptr->chname);
 			}
 			else
 			{

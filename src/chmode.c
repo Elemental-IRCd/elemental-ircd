@@ -804,7 +804,7 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
 						get_oper_name(source_p), chptr->chname, mode_type == CHFL_INVEX ? "invex" : "exempt");
 				sendto_server(NULL, chptr, NOCAPS, NOCAPS,
 						":%s WALLOPS :%s is overriding modes on %s: (%s list)",
-						use_id(source_p), get_oper_name(source_p), chptr->chname, mode_type == CHFL_INVEX ? "invex" : "exempt");
+						me.name, get_oper_name(source_p), chptr->chname, mode_type == CHFL_INVEX ? "invex" : "exempt");
 			}
 			else
 			{
@@ -2146,7 +2146,7 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 									get_oper_name(source_p), chptr->chname, modebuf, parabuf);
 							sendto_server(NULL, chptr, NOCAPS, NOCAPS,
 									":%s WALLOPS :%s is overriding modes on %s: %s %s",
-									use_id(source_p), get_oper_name(source_p), chptr->chname, modebuf, parabuf);
+									me.name, get_oper_name(source_p), chptr->chname, modebuf, parabuf);
 						}
 					}
 					else
@@ -2193,7 +2193,7 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 							get_oper_name(source_p), chptr->chname, modebuf, parabuf);
 					sendto_server(NULL, chptr, NOCAPS, NOCAPS,
 							":%s WALLOPS :%s is overriding modes on %s: %s %s",
-							use_id(source_p), get_oper_name(source_p), chptr->chname, modebuf, parabuf);
+							me.name, get_oper_name(source_p), chptr->chname, modebuf, parabuf);
 				}
 			}
 		}
