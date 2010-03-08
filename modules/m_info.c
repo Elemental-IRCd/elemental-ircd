@@ -626,22 +626,22 @@ static struct InfoStruct info_table[] = {
 		&ConfigChannel.use_knock,
 		"Enable /KNOCK",
 	},
-        {
-                "use_local_channels",
-                OUTPUT_BOOLEAN_YN,
-                &ConfigChannel.use_local_channels,
-                "Enable local channels (&channels)"
-        },
+    {
+        "use_local_channels",
+        OUTPUT_BOOLEAN_YN,
+        &ConfigChannel.use_local_channels,
+        "Enable local channels (&channels)"
+    },
 	{
 		"resv_forcepart",
 		OUTPUT_BOOLEAN_YN,
-		{ &ConfigChannel.resv_forcepart },
+		&ConfigChannel.resv_forcepart,
 		"Force-part local users on channel RESV"
 	},
 	{
 		"kick_no_rejoin_time",
 		OUTPUT_DECIMAL,
-		{ &ConfigChannel.kick_no_rejoin_time },
+		&ConfigChannel.kick_no_rejoin_time,
 		"The amount of time that a user cannot rejoin a +J channel for after being kicked."
 	},
 	{
