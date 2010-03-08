@@ -835,17 +835,6 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 
 	s_assert(source_p->localClient != NULL);
 
-	if(IsOverride(source_p))
-	{
-		sendto_wallops_flags(UMODE_WALLOP, &me,
-				"%s is overriding JOIN to [%s]",
-				get_oper_name(source_p), chptr->chname);
-		sendto_server(NULL, chptr, NOCAPS, NOCAPS,
-				":%s WALLOPS :%s is overriding JOIN to [%s]",
-				use_id(source_p), get_oper_name(source_p), chptr->chname);
-		return 0;
-	}
-
 	rb_sprintf(src_host, "%s!%s@%s", source_p->name, source_p->username, source_p->host);
 	rb_sprintf(src_iphost, "%s!%s@%s", source_p->name, source_p->username, source_p->sockhost);
 	if(source_p->localClient->mangledhost != NULL)
@@ -1822,7 +1811,16 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 		/* can_join checks for +i key, bans etc */
 		if((i = can_join(source_p, chptr, key)))
 		{
-			if ((i != ERR_NEEDREGGEDNICK && i != ERR_THROTTLE && i != ERR_INVITEONLYCHAN && i != ERR_CHANNELISFULL) ||
+			if(IsOverride(source_p))
+			{
+				sendto_wallops_flags(UMODE_WALLOP, &me,
+						"%s is overriding JOIN to [%s]",
+					get_oper_name(source_p), chptr->chname);
+				sendto_server(NULL, chptr, NOCAPS, NOCAPS,
+						":%s WALLOPS :%s is overriding JOIN to [%s]",
+						use_id(source_p), get_oper_name(source_p), chptr->chname);
+			}
+			else if ((i != ERR_NEEDREGGEDNICK && i != ERR_THROTTLE && i != ERR_INVITEONLYCHAN && i != ERR_CHANNELISFULL) ||
 			    (!ConfigChannel.use_forward || (chptr = check_forward(source_p, chptr, key)) == NULL))
 			{
 				/* might be wrong, but is there any other better location for such?
@@ -1834,8 +1832,8 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 
 				continue;
 			}
-
-			sendto_one_numeric(source_p, ERR_LINKCHANNEL, form_str(ERR_LINKCHANNEL), name, chptr->chname);
+			else
+				sendto_one_numeric(source_p, ERR_LINKCHANNEL, form_str(ERR_LINKCHANNEL), name, chptr->chname);
 		}
 		
 		if(flags == 0 &&
