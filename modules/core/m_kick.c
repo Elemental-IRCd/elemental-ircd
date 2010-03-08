@@ -205,9 +205,14 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 			comment[REASONLEN] = '\0';
 
 		if(is_override)
-			sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+		{
+			sendto_wallops_flags(UMODE_WALLOP, &me,
 					"%s is overriding KICK [%s] on [%s] [%s]",
 					get_oper_name(source_p), who->name, chptr->chname, comment);
+			sendto_server(NULL, chptr, NOCAPS, NOCAPS,
+					":%s WALLOPS :%s is overriding KICK [%s] on [%s] [%s]",
+					use_id(source_p), get_oper_name(source_p), who->name, chptr->chname, comment);
+		}
 
 		/* jdc
 		 * - In the case of a server kicking a user (i.e. CLEARCHAN),

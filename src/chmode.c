@@ -799,10 +799,12 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
 		{
 			if(IsOverride(source_p))
 			{
-				sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+				sendto_wallops_flags(UMODE_WALLOP, &me,
 						"%s is overriding modes on %s: (%s list)",
-						get_oper_name(source_p), chptr->chname,
-						mode_type == CHFL_INVEX ? "invex" : "exempt");
+						get_oper_name(source_p), chptr->chname, mode_type == CHFL_INVEX ? "invex" : "exempt");
+				sendto_server(NULL, chptr, NOCAPS, NOCAPS,
+						":%s WALLOPS :%s is overriding modes on %s: (%s list)",
+						use_id(source_p), get_oper_name(source_p), chptr->chname, mode_type == CHFL_INVEX ? "invex" : "exempt");
 			}
 			else
 			{
@@ -2138,10 +2140,14 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 						sendto_channel_local(flags, chptr, "%s%s %s",
 								     cmdbuf, modebuf, parabuf);
 						if(override)
-							sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+						{
+							sendto_wallops_flags(UMODE_WALLOP, &me,
 									"%s is overriding modes on %s: %s %s",
-									get_oper_name(source_p), chptr->chname,
-									modebuf, parabuf);
+									get_oper_name(source_p), chptr->chname, modebuf, parabuf);
+							sendto_server(NULL, chptr, NOCAPS, NOCAPS,
+									":%s WALLOPS :%s is overriding modes on %s: %s %s",
+									use_id(source_p), get_oper_name(source_p), chptr->chname, modebuf, parabuf);
+						}
 					}
 					else
 						continue;
@@ -2181,10 +2187,14 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 			{
 				sendto_channel_local(flags, chptr, "%s%s %s", cmdbuf, modebuf, parabuf);
 				if(override)
-					sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+				{
+					sendto_wallops_flags(UMODE_WALLOP, &me,
 							"%s is overriding modes on %s: %s %s",
-							get_oper_name(source_p), chptr->chname,
-							modebuf, parabuf);
+							get_oper_name(source_p), chptr->chname, modebuf, parabuf);
+					sendto_server(NULL, chptr, NOCAPS, NOCAPS,
+							":%s WALLOPS :%s is overriding modes on %s: %s %s",
+							use_id(source_p), get_oper_name(source_p), chptr->chname, modebuf, parabuf);
+				}
 			}
 		}
 		if(override)

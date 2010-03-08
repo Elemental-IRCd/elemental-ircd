@@ -149,9 +149,14 @@ m_invite(struct Client *client_p, struct Client *source_p, int parc, const char 
 			!(chptr->mode.mode & MODE_FREEINVITE))
 	{
 		if(IsOverride(source_p))
-			sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+		{
+			sendto_wallops_flags(UMODE_WALLOP, &me,
 					"%s is overriding INVITE [%s] on [%s]",
 					get_oper_name(source_p), target_p->name, chptr->chname);
+			sendto_server(NULL, chptr, NOCAPS, NOCAPS,
+					":%s WALLOPS :%s is overriding INVITE [%s] on [%s]",
+					use_id(source_p), get_oper_name(source_p), target_p->name, chptr->chname);
+		}
 		else
 		{
 			sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),

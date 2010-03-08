@@ -837,9 +837,12 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 
 	if(IsOverride(source_p))
 	{
-		sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+		sendto_wallops_flags(UMODE_WALLOP, &me,
 				"%s is overriding JOIN to [%s]",
 				get_oper_name(source_p), chptr->chname);
+		sendto_server(NULL, chptr, NOCAPS, NOCAPS,
+				":%s WALLOPS :%s is overriding JOIN to [%s]",
+				use_id(source_p), get_oper_name(source_p), chptr->chname);
 		return 0;
 	}
 
