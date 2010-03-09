@@ -15,7 +15,7 @@ struct Message oaccept_msgtab = {
 
 mapi_clist_av1 oaccept_clist[] = { &oaccept_msgtab, NULL };
 
-DECLARE_MODULE_AV1(omode, NULL, NULL, oaccept_clist, NULL, NULL, "$Id $");
+DECLARE_MODULE_AV1(oaccept, NULL, NULL, oaccept_clist, NULL, NULL, "$Id $");
 
 void
 mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
