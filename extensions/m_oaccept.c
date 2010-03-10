@@ -50,4 +50,8 @@ mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const cha
 			     "OACCEPT called for %s by %s!%s@%s",
 			     target_p->name,
 			     source_p->name, source_p->username, source_p->host);
+		sendto_server(NULL, NULL, NOCAPS, NOCAPS, 
+			      ":%s WALLOPS :OACCEPT called for %s by %s!%s@%s",
+			      me.name, target_p->name, source_p->name, source_p->username,
+			      source_p->host);
 }
