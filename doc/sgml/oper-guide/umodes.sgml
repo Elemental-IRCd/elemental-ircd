@@ -43,8 +43,9 @@
 	  wishes to speak to them.
 	</para>
 	<para>
-	  Network operators are not affected by the callerid whitelist system in the event
-	  that they need to speak to users who have it enabled.
+	  If a network operator needs to speak to a user who has +g set,
+	  the operator can use the OACCEPT command to be able to speak to
+	  the user.
 	</para>
 	<para>
 	  Support of this umode is indicated by the CALLERID token in

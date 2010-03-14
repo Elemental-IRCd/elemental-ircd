@@ -109,6 +109,14 @@
 	  (In both cases all opers with +w set will be notified.)
 	</para>
       </sect2>
+	  <sect2>
+	<title>oper:override, operator access in all channels</title>
+	<para>
+	  This allows the operator to have implicit operator access
+	  in all channels. It is enabled by setting user mode +p which
+	  will automatically expire after a period of time set in the
+	  configuration file.
+	</para>
       <sect2>
 	<title>oper:spy, use operspy</title>
 	<para>

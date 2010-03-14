@@ -4,7 +4,7 @@
       <title>Scope of this document</title>
       <para>
 	This document describes the commands and functions available to operators in
-	the charybdis ircd, as used on <ulink url="http://www.atheme.net">AthemeNet</ulink>.
+	shadowircd, as used on <ulink url="http://www.thinstack.net">Thinstack</ulink>.
       </para>
       <para>
         This document, and various ideas for features of charybdis, have
@@ -16,9 +16,9 @@
 	it is intended as a reference for network staff.
       </para>
       <para>
-	Charybdis is based on ircd-ratbox 2.1.4, although much has changed.
-	<ulink url="http://www.ircd-ratbox.org">ircd-ratbox</ulink> is commonly used
-	on efnet, and some other networks.
+	ShadowIRCd is based on Charybdis which is based on ircd-ratbox 3.0.0, 
+	although much has changed. <ulink url="http://www.ircd-ratbox.org">ircd-ratbox</ulink> 
+	is commonly used on efnet, and some other networks.
       </para>
     </sect1>
   </chapter>
