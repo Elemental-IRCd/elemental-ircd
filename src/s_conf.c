@@ -682,6 +682,7 @@ set_default_conf(void)
 	ConfigFileEntry.default_operstring = rb_strdup("is an IRC operator");
 	ConfigFileEntry.default_adminstring = rb_strdup("is a Server Administrator");
 	ConfigFileEntry.default_operhost = rb_strdup("");
+	ConfigFileEntry.static_quit = rb_strdup("");
 	ConfigFileEntry.servicestring = rb_strdup("is a Network Service");
 
 	ConfigFileEntry.default_umodes = UMODE_INVISIBLE;	

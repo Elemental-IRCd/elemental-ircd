@@ -158,6 +158,12 @@ static struct InfoStruct info_table[] = {
 		"Default vhost for operators to receive upon opering up.",
 	},
 	{
+		"static_quit",
+		OUTPUT_STRING,
+		&ConfigFileEntry.static_quit,
+		"Quit message to show for all users.",
+	},
+	{
 		"servicestring",
 		OUTPUT_STRING,
 		&ConfigFileEntry.servicestring,
