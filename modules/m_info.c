@@ -110,6 +110,12 @@ static struct InfoStruct info_table[] = {
 		"Duration a client must be connected for to have an exit message"
 	},
 	{
+		"use_part_messages",
+		OUTPUT_BOOLEAN_YN,
+		&ConfigFileEntry.use_part_messages,
+		"Whether or not the server should allow users to show messages on PART"
+	},
+	{
 		"caller_id_wait",
 		OUTPUT_DECIMAL,
 		&ConfigFileEntry.caller_id_wait,

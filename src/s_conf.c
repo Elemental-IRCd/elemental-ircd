@@ -696,6 +696,7 @@ set_default_conf(void)
 	ConfigFileEntry.nick_delay = 900;	/* 15 minutes */
 	ConfigFileEntry.target_change = YES;
 	ConfigFileEntry.anti_spam_exit_message_time = 0;
+	ConfigFileEntry.use_part_messages = YES;
 	ConfigFileEntry.ts_warn_delta = TS_WARN_DELTA_DEFAULT;
 	ConfigFileEntry.ts_max_delta = TS_MAX_DELTA_DEFAULT;
 	ConfigFileEntry.client_exit = YES;

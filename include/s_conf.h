@@ -161,6 +161,7 @@ struct config_file_entry
 	int dots_in_ident;
 	int failed_oper_notice;
 	int anti_nick_flood;
+	int use_part_messages;
 	int anti_spam_exit_message_time;
 	int max_accept;
 	int max_monitor;

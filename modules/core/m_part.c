@@ -124,7 +124,7 @@ part_one_client(struct Client *client_p, struct Client *source_p, char *name, ch
 	 *  only allow /part reasons in -m chans
 	 */
 	if(reason[0] && (is_any_op(msptr) || !MyConnect(source_p) ||
-			 ((can_send(chptr, source_p, msptr) > 0 &&
+			 ((can_send(chptr, source_p, msptr) > 0 && ConfigFileEntry.use_part_messages &&
 			   (source_p->localClient->firsttime +
 			    ConfigFileEntry.anti_spam_exit_message_time) < rb_current_time()))))
 	{
