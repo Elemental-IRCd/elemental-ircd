@@ -8,6 +8,9 @@ new configuration options
 - general::no_part_messages - If this option is set to no, the ircd will not
   display PART messages/reasons from users.
 
+new commands
+- /CYCLE - server-side /CYCLE, also called /HOP in some clients/servers.
+
 -- shadowircd-6.0.0
 
 new modes

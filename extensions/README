@@ -19,6 +19,9 @@ m_42.c         - The Answer to Life, the Universe, and Everything.
 m_adminwall.c  - Sends a message to all admins network-wide (umode +a)
                  Syntax: ADMINWALL :<message>
 
+m_cycle - Server-side /CYCLE (also called /HOP in some clients/servers).
+          Syntax: CYCLE <#channel>
+
 m_findforwards.c - Find channels that forward (+f) to a given channel.
                    Syntax: FINDFORWARDS <channel>
 
