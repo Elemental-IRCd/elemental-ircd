@@ -299,10 +299,6 @@ extern void do_join_0(struct Client *client_p, struct Client *source_p);
 extern int check_channel_name_loc(struct Client *source_p, const char *name);
 
 extern struct Metadata *channel_metadata_add(struct Channel *target, const char *name, const char *value, int propegate);
-extern void channel_metadata_delete(struct Channel *target, const char *name, int propegate);
-extern struct Metadata *channel_metadata_find(struct Channel *target, const char *name);
-
-extern struct Metadata *channel_metadata_add(struct Channel *target, const char *name, const char *value, int propegate);
 extern struct Metadata *channel_metadata_time_add(struct Channel *target, const char *name, time_t timevalue, const char *value);
 extern void channel_metadata_delete(struct Channel *target, const char *name, int propegate);
 extern struct Metadata *channel_metadata_find(struct Channel *target, const char *name);
