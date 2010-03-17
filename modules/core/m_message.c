@@ -485,7 +485,7 @@ msg_channel(int p_or_n, const char *command,
 {
 	int result;
 	char text2[BUFSIZE];
-	int contor;
+	size_t contor;
 	int caps = 0;
 	int len = 0;
 	struct membership *msptr = find_channel_membership(chptr, source_p);
