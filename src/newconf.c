@@ -1231,7 +1231,7 @@ conf_set_shared_oper(void *data)
 
 	if((p = strchr(args->v.string, '@')) == NULL)
 	{
-		conf_report_error("Ignoring shard::oper -- oper is not a user@host");
+		conf_report_error("Ignoring shared::oper -- oper is not a user@host");
 		return;
 	}
 
