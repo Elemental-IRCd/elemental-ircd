@@ -6,7 +6,7 @@
 #include "numeric.h"
 #include "hash.h"
 
-void mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const char *parv[]);
+static int mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const char *parv[]);
 
 struct Message oaccept_msgtab = {
 	"OACCEPT", 0, 0, 0, MFLG_SLOW,
@@ -17,7 +17,7 @@ mapi_clist_av1 oaccept_clist[] = { &oaccept_msgtab, NULL };
 
 DECLARE_MODULE_AV1(oaccept, NULL, NULL, oaccept_clist, NULL, NULL, "$Id $");
 
-void
+static int
 mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
 	struct Metadata *md;
@@ -28,7 +28,7 @@ mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const cha
 	if(!(target_p = find_client(parv[1])))
 	{
 		sendto_one(source_p, form_str(ERR_NOSUCHNICK), parv[1]);
-		return;
+		return 0;
 	}
 
 	rb_sprintf(text, "O%s", source_p->id);
@@ -40,7 +40,7 @@ mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const cha
 		if(!strcmp(md->value, "OACCEPT") && !strcmp(md->name, text))
 		{
 			sendto_one_notice(source_p, ":You're already on %s's OACCEPT list", target_p->name);
-			return;
+			return 0;
 		}
 	}
 
@@ -54,4 +54,5 @@ mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const cha
 			      ":%s WALLOPS :OACCEPT called for %s by %s!%s@%s",
 			      me.name, target_p->name, source_p->name, source_p->username,
 			      source_p->host);
+	return 0;
 }
