@@ -11,6 +11,13 @@ new configuration options
 new commands
 - /CYCLE - server-side /CYCLE, also called /HOP in some clients/servers.
 
+opers
+- Override no longer alows overriding opers to talk through +q, +m, etc.
+  If you need to talk through one of these modes, its recommended to remove
+  the offending mode or give yourself voice/ops.
+- OLIST now shows channel modes so opers can easily see which channels are
+  +s and see which channels have oper-only channel modes set.
+
 -- shadowircd-6.0.0
 
 new modes
