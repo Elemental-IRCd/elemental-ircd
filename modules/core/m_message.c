@@ -501,7 +501,7 @@ msg_channel(int p_or_n, const char *command,
 	if(chptr->mode.mode & MODE_NOREPEAT)
 	{
 		rb_strlcpy(text2, text, BUFSIZE);
-		strip_colour(text2);
+		strip_unprintable(text2);
 		md = channel_metadata_find(chptr, "NOREPEAT");
 		if(md && (!ConfigChannel.exempt_cmode_K || !is_any_op(msptr)))
 		{
@@ -539,9 +539,11 @@ msg_channel(int p_or_n, const char *command,
 		{
 			if (strlen(text) > 10 && chptr->mode.mode & MODE_NOCAPS && (!ConfigChannel.exempt_cmode_G || !is_any_op(msptr)))
 			{
-				for(contor=0; contor < strlen(text); contor++)
+				rb_strlcpy(text2, text, BUFSIZE);
+				strip_unprintable(text2);
+				for(contor=0; contor < strlen(text2); contor++)
 				{
-					if(IsUpper(text[contor]) && !isdigit(text[contor]))
+					if(IsUpper(text2[contor]) && !isdigit(text2[contor]))
 						caps++; 
 					len++;
 				}
