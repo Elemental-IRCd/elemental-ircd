@@ -99,7 +99,12 @@ parse_client_queued(struct Client *client_p)
 	{
 
 		if(IsOper(client_p) && ConfigFileEntry.no_oper_flood)
-			checkflood = 0;
+		{
+			if (ConfigFileEntry.true_no_oper_flood)
+				checkflood = -1;
+			else
+				checkflood = 0;
+		}
 		/*
 		 * Handle flood protection here - if we exceed our flood limit on
 		 * messages in this loop, we simply drop out of the loop prematurely.
@@ -129,7 +134,7 @@ parse_client_queued(struct Client *client_p)
 			/* allow opers 4 times the amount of messages as users. why 4?
 			 * why not. :) --fl_
 			 */
-			else if(client_p->localClient->sent_parsed >= (4 * client_p->localClient->allow_read))
+			else if(client_p->localClient->sent_parsed >= (4 * client_p->localClient->allow_read) && checkflood != -1)
 				break;
 
 			dolen = rb_linebuf_get(&client_p->localClient->

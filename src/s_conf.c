@@ -720,6 +720,7 @@ set_default_conf(void)
 	ConfigFileEntry.pace_wait_simple = 1;
 	ConfigFileEntry.short_motd = NO;
 	ConfigFileEntry.no_oper_flood = NO;
+	ConfigFileEntry.true_no_oper_flood = NO;
 	ConfigFileEntry.fname_userlog = NULL;
 	ConfigFileEntry.fname_fuserlog = NULL;
 	ConfigFileEntry.fname_operlog = NULL;

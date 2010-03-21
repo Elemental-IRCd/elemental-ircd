@@ -375,6 +375,12 @@ static struct InfoStruct info_table[] = {
 		"Disable flood control for operators",
 	},
 	{
+		"true_no_oper_flood",
+		OUTPUT_BOOLEAN,
+		&ConfigFileEntry.true_no_oper_flood,
+		"Really disable flood control for opers, not just make it very high",
+	},
+	{
 		"non_redundant_klines",
 		OUTPUT_BOOLEAN,
 		&ConfigFileEntry.non_redundant_klines,
