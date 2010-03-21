@@ -887,7 +887,7 @@ flood_attack_client(int p_or_n, struct Client *source_p, struct Client *target_p
 	 * and msg user@server.
 	 * -- jilles
 	 */
-	if(GlobalSetOptions.floodcount && IsClient(source_p) && source_p != target_p && !IsService(target_p))
+	if(GlobalSetOptions.floodcount && IsClient(source_p) && source_p != target_p && !IsService(target_p) && (!IsOper(source_p) || !ConfigFileEntry.true_no_oper_flood))
 	{
 		if((target_p->first_received_message_time + 1) < rb_current_time())
 		{
@@ -942,7 +942,7 @@ flood_attack_channel(int p_or_n, struct Client *source_p, struct Channel *chptr,
 {
 	int delta;
 
-	if(GlobalSetOptions.floodcount && MyClient(source_p))
+	if(GlobalSetOptions.floodcount && MyClient(source_p) && (!IsOper(source_p) || !ConfigFileEntry.true_no_oper_flood))
 	{
 		if((chptr->first_received_message_time + 1) < rb_current_time())
 		{
