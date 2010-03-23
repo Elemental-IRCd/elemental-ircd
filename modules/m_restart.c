@@ -111,12 +111,6 @@ do_restart(struct Client *source_p, const char *servername)
 	rb_dlink_node *ptr;
 	struct Client *target_p;
 
-	if(irccmp(servername, me.name))
-	{
-		sendto_one_notice(source_p, ":Mismatch on /restart %s", me.name);
-		return 0;
-        }
-
 	RB_DLINK_FOREACH(ptr, lclient_list.head)
 	{
 		target_p = ptr->data;
