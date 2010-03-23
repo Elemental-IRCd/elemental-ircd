@@ -353,6 +353,7 @@ static struct mode_table cluster_table[] = {
 	{ "xline",	SHARED_PXLINE	},
 	{ "txline",	SHARED_TXLINE	},
 	{ "unxline",	SHARED_UNXLINE	},
+	{ "die",	SHARED_DIE		},
 	{ "resv",	SHARED_PRESV	},
 	{ "tresv",	SHARED_TRESV	},
 	{ "unresv",	SHARED_UNRESV	},
