@@ -353,7 +353,6 @@ static struct mode_table cluster_table[] = {
 	{ "xline",	SHARED_PXLINE	},
 	{ "txline",	SHARED_TXLINE	},
 	{ "unxline",	SHARED_UNXLINE	},
-	{ "die",	SHARED_DIE		},
 	{ "resv",	SHARED_PRESV	},
 	{ "tresv",	SHARED_TRESV	},
 	{ "unresv",	SHARED_UNRESV	},
@@ -378,6 +377,7 @@ static struct mode_table shared_table[] =
 	{ "unresv",	SHARED_UNRESV	},
 	{ "locops",	SHARED_LOCOPS	},
 	{ "rehash",	SHARED_REHASH	},
+	{ "die",	SHARED_DIE		},
 	{ "all",	SHARED_ALL	},
 	{ "none",	0		},
 	{NULL, 0}
