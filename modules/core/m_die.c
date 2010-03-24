@@ -104,6 +104,13 @@ me_die(struct Client *client_p __unused, struct Client *source_p, int parc, cons
 static int
 do_die(struct Client *source_p, const char *servername)
 {
+	/* this makes sure both servernames match otherwise weirdness will occur */
+	if(irccmp(servername, me.name))
+	{
+		sendto_one_notice(source_p, ":Mismatch on /die %s", me.name);
+		return 0;
+	}
+
 	ircd_shutdown(get_client_name(source_p, HIDE_IP));
 
 	return 0;
