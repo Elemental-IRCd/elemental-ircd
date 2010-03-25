@@ -115,7 +115,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 					is_override = 1;
 				else
 				{
-					sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+					sendto_one(source_p, ":%s 482 %s %s :You do not have the proper privledges to kick this user",
 							me.name, source_p->name, name);
 					return 0;
 				}
