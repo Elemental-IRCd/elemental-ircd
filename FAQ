@@ -1,0 +1,8 @@
+ShadowIRCd FAQ
+--------------
+
+Q: Why does ShadowIRCd not have remote includes?
+A: Remote Includes are a possible security risk due to possible MITM attacks
+   and such and do not prevent server owners making changes that you do not
+   want them to so they have little point. It is recommended to use rsync or
+   a git/hg cron job to pull in remote configuration files.
