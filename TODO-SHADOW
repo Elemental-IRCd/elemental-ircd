@@ -1,7 +1,6 @@
 Todo list for ShadowIRCd 6.1
 -----------------------------
 * pretty error messages for +ah stuff
-* global/remote mod*/die/restart
 * update ojoin/omode/etc to use +ah
 * notice/message !#channel and %#channel
 * clean disable/removal of modes on rehash, if possible without being ugly
