@@ -7,6 +7,10 @@ new configuration options
 - general::static_quit - Quit message to display for all users (not opers).
 - general::no_part_messages - If this option is set to no, the ircd will not
   display PART messages/reasons from users.
+- general::true_no_oper_flood - Turns off *ALL* flood protection for opers.
+  Instead of command flooding being 4x what it is for a user with no_oper_flood,
+  there is no limit at all. This option also allows opers to flood channels/users
+  so if you do set it, be extremely careful.
 
 new commands
 - /CYCLE - server-side /CYCLE, also called /HOP in some clients/servers.
@@ -17,6 +21,15 @@ opers
   the offending mode or give yourself voice/ops.
 - OLIST now shows channel modes so opers can easily see which channels are
   +s and see which channels have oper-only channel modes set.
+- RESTART and DIE now can be executed remotely. See the appropriate helpfiles
+  for details.
+- All module management commands (MODLOAD, MODLIST, MODUNLOAD, MODRELOAD and
+  MODRESTART) can be executed remotely. See the appropriate helpfile for
+  details.
+
+other
+- Added a strip_unprintable function to make evasion of cmodes +G and +K
+  less trivial.
 
 -- shadowircd-6.0.0
 
