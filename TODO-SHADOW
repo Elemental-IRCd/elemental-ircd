@@ -2,7 +2,6 @@ Todo list for ShadowIRCd 6.1
 -----------------------------
 * update ojoin/omode/etc to use +ah
 * notice/message !#channel and %#channel
-* clean disable/removal of modes on rehash, if possible without being ugly
 * Add a disable_oper option to auth {} to not allow users in that auth block
   to use OPER.
 * Add default_operhost to /set
@@ -12,3 +11,5 @@ Todo list for ShadowIRCd 6.2
 * channel::disabledmodes
 * general::disabledumodes
 * pure TS6 compat mode for linking with charybdis/ratbox/etc.
+* TBAN equivalent (like a extban?) (?)
+* ELINE - command to make users kline/dline/xline exempt on-the-fly
