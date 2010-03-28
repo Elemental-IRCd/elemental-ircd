@@ -11,6 +11,10 @@ new configuration options
   Instead of command flooding being 4x what it is for a user with no_oper_flood,
   there is no limit at all. This option also allows opers to flood channels/users
   so if you do set it, be extremely careful.
+- serverinfo::helpchan and helpurl - These are 2 config options that tell users,
+  when they do /quote help (with no extra parameters) the official network help
+  channel and a special URL for help. If these options are disabled, the users
+  will just get the help index and that's it on /quote help.
 
 new commands
 - /CYCLE - server-side /CYCLE, also called /HOP in some clients/servers.
@@ -30,6 +34,10 @@ opers
 other
 - Added a strip_unprintable function to make evasion of cmodes +G and +K
   less trivial.
+- Massive helpfile updates.
+- Added BAN stuff (propogated bans on burst) from charybdis trunk. This
+  can be disabled and the old behavior can be used by setting the
+  general::use_propogated_bans option to no.
 
 -- shadowircd-6.0.0
 
