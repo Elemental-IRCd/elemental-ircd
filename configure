@@ -1348,7 +1348,7 @@ Optional Features:
   --enable-iodebug        Enable IO Debugging hooks
   --enable-profile        Enable profiling
   --disable-balloc        Disable the block allocator.
-  --enable-small-net      Enable small network support.
+  --disable-small-net     Disable small network support.
   --enable-warnings       Enable all sorts of warnings for debugging.
 
 Optional Packages:
@@ -7732,7 +7732,7 @@ fi
 if test "${enable_small_net+set}" = set; then :
   enableval=$enable_small_net; small_net=$enableval
 else
-  small_net=no
+  small_net=yes
 fi
 
 

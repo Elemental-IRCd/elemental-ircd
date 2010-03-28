@@ -819,8 +819,8 @@ if test "$balloc" = no; then
 fi
 
 AC_ARG_ENABLE(small-net,
-AC_HELP_STRING([--enable-small-net],[Enable small network support.]),
-[small_net=$enableval], [small_net=no])
+AC_HELP_STRING([--disable-small-net],[Disable small network support.]),
+[small_net=$enableval], [small_net=yes])
 
 if test "$small_net" = yes; then
 dnl	AC_DEFINE([HASHSIZE], 4096, [Max number of buckets in hash tables.])
