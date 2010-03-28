@@ -1,7 +1,7 @@
 MODRELOAD <module.so> [server.name]
 
--- Reoad a module in the ircd
-Use just the module name, the path is not needed
+-- Reload a module in the ircd
+Use just the module name, the path is not needed.
 
 A server name may also be provided to reload a module
 on a remote server if you have the modules shared priv 
