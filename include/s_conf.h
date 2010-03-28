@@ -56,11 +56,14 @@ extern char conf_line_in[256];
 
 struct ConfItem
 {
-	struct ConfItem *next;	/* list node pointer */
 	unsigned int status;	/* If CONF_ILLEGAL, delete when no clients */
 	unsigned int flags;
 	int clients;		/* Number of *LOCAL* clients using this */
-	char *name;		/* IRC name, nick, server name, or original u@h */
+	union
+	{
+		char *name;	/* IRC name, nick, server name, or original u@h */
+		const char *oper;
+	} info;
 	char *host;		/* host part of user@host */
 	char *passwd;		/* doubles as kline reason *ugh* */
 	char *spasswd;		/* Password to send. */
@@ -69,6 +72,8 @@ struct ConfItem
 	char *user;		/* user part of user@host */
 	int port;
 	time_t hold;		/* Hold action until this time (calendar time) */
+	time_t created;		/* Creation time (for klines etc) */
+	time_t lifetime;	/* Propagated lines: remember until this time */
 	char *className;	/* Name of class */
 	struct Class *c_class;	/* Class of connection */
 	rb_patricia_node_t *pnode;	/* Our patricia node */
@@ -92,6 +97,7 @@ struct ConfItem
 /* Generic flags... */
 #define CONF_FLAGS_TEMPORARY            0x00800000
 #define CONF_FLAGS_NEED_SSL		0x00000002
+#define CONF_FLAGS_MYOPER		0x00080000 /* need to rewrite info.oper on burst */
 /* auth{} flags... */
 #define CONF_FLAGS_NO_TILDE             0x00000004
 #define CONF_FLAGS_NEED_IDENTD          0x00000008
@@ -111,6 +117,9 @@ struct ConfItem
 
 
 /* Macros for struct ConfItem */
+#define IsConfBan(x)		((x)->status & (CONF_KILL|CONF_XLINE|CONF_DLINE|\
+						CONF_RESV_CHANNEL|CONF_RESV_NICK))
+
 #define IsNoTilde(x)            ((x)->flags & CONF_FLAGS_NO_TILDE)
 #define IsNeedIdentd(x)         ((x)->flags & CONF_FLAGS_NEED_IDENTD)
 #define IsConfExemptKline(x)    ((x)->flags & CONF_FLAGS_EXEMPTKLINE)
@@ -220,6 +229,7 @@ struct config_file_entry
 	int default_umodes;
 	int global_snotices;
 	int operspy_dont_care_user_info;
+	int use_propagated_bans;
 	int secret_channels_in_whois;
 	int expire_override_time;
 };
@@ -320,6 +330,8 @@ extern struct admin_info AdminInfo;	/* defined in ircd.c */
 
 extern rb_dlink_list service_list;
 
+extern rb_dlink_list prop_bans;
+
 typedef enum temp_list
 {
 	TEMP_MIN,
@@ -337,6 +349,10 @@ extern void init_s_conf(void);
 extern struct ConfItem *make_conf(void);
 extern void free_conf(struct ConfItem *);
 
+extern rb_dlink_node *find_prop_ban(unsigned int status, const char *user, const char *host);
+extern void deactivate_conf(struct ConfItem *, rb_dlink_node *);
+extern void replace_old_ban(struct ConfItem *);
+
 extern void read_conf_files(int cold);
 
 extern int attach_conf(struct Client *, struct ConfItem *);
@@ -348,6 +364,7 @@ extern struct ConfItem *find_tkline(const char *, const char *, struct sockaddr 
 extern char *show_iline_prefix(struct Client *, struct ConfItem *, char *);
 extern void get_printable_conf(struct ConfItem *,
 			       char **, char **, char **, char **, int *, char **);
+extern char *get_user_ban_reason(struct ConfItem *aconf);
 extern void get_printable_kline(struct Client *, struct ConfItem *,
 				char **, char **, char **, char **);
 
@@ -355,6 +372,7 @@ extern void yyerror(const char *);
 extern int conf_yy_fatal_error(const char *);
 extern int conf_fgets(char *, int, FILE *);
 
+extern int valid_wild_card(const char *, const char *);
 extern void add_temp_kline(struct ConfItem *);
 extern void add_temp_dline(struct ConfItem *);
 extern void report_temp_klines(struct Client *);

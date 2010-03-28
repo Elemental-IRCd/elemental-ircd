@@ -952,8 +952,8 @@ conf_end_auth(struct TopConf *tc)
 	rb_dlink_node *ptr;
 	rb_dlink_node *next_ptr;
 
-	if(EmptyString(yy_aconf->name))
-		yy_aconf->name = rb_strdup("NOMATCH");
+	if(EmptyString(yy_aconf->info.name))
+		yy_aconf->info.name = rb_strdup("NOMATCH");
 
 	/* didnt even get one ->host? */
 	if(EmptyString(yy_aconf->host))
@@ -987,7 +987,7 @@ conf_end_auth(struct TopConf *tc)
 			yy_tmp->spasswd = rb_strdup(yy_aconf->spasswd);
 		
 		/* this will always exist.. */
-		yy_tmp->name = rb_strdup(yy_aconf->name);
+		yy_tmp->info.name = rb_strdup(yy_aconf->info.name);
 
 		if(yy_aconf->className)
 			yy_tmp->className = rb_strdup(yy_aconf->className);
@@ -1138,8 +1138,8 @@ conf_set_auth_spoof(void *data)
 		return;
 	}
 
-	rb_free(yy_aconf->name);
-	yy_aconf->name = rb_strdup(data);
+	rb_free(yy_aconf->info.name);
+	yy_aconf->info.name = rb_strdup(data);
 	yy_aconf->flags |= CONF_FLAGS_SPOOF_IP;
 }
 
@@ -1155,8 +1155,8 @@ static void
 conf_set_auth_redir_serv(void *data)
 {
 	yy_aconf->flags |= CONF_FLAGS_REDIR;
-	rb_free(yy_aconf->name);
-	yy_aconf->name = rb_strdup(data);
+	rb_free(yy_aconf->info.name);
+	yy_aconf->info.name = rb_strdup(data);
 }
 
 static void
@@ -2253,6 +2253,7 @@ static struct ConfEntry conf_general_table[] =
 	{ "ts_warn_delta",	CF_TIME,  NULL, 0, &ConfigFileEntry.ts_warn_delta	},
 	{ "use_whois_actually", CF_YESNO, NULL, 0, &ConfigFileEntry.use_whois_actually	},
 	{ "warn_no_nline",	CF_YESNO, NULL, 0, &ConfigFileEntry.warn_no_nline	},
+	{ "use_propagated_bans",CF_YESNO, NULL, 0, &ConfigFileEntry.use_propagated_bans	},
 	{ "expire_override_time",	CF_TIME, NULL, 0, &ConfigFileEntry.expire_override_time},
 	{ "\0", 		0, 	  NULL, 0, NULL }
 };

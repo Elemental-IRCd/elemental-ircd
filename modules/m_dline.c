@@ -43,6 +43,7 @@
 #include "parse.h"
 #include "modules.h"
 #include "bandbi.h"
+#include "operhash.h"
 
 static int mo_dline(struct Client *, struct Client *, int, const char **);
 static int me_dline(struct Client *, struct Client *, int, const char **);
@@ -213,8 +214,6 @@ apply_dline(struct Client *source_p, const char *dlhost, int tdline_time, char *
 {
 	struct ConfItem *aconf;
 	char *oper_reason;
-	char dlbuffer[IRCD_BUFSIZE];
-	const char *current_date;
 	struct rb_sockaddr_storage daddr;
 	int t = AF_INET, ty, b;
 	const char *creason;
@@ -285,11 +284,13 @@ apply_dline(struct Client *source_p, const char *dlhost, int tdline_time, char *
 	}
 
 	rb_set_time();
-	current_date = smalldate();
 
 	aconf = make_conf();
 	aconf->status = CONF_DLINE;
+	aconf->created = rb_current_time();
 	aconf->host = rb_strdup(dlhost);
+	aconf->passwd = rb_strdup(reason);
+	aconf->info.oper = operhash_add(get_oper_name(source_p));
 
 	/* Look for an oper reason */
 	if((oper_reason = strchr(reason, '|')) != NULL)
@@ -303,10 +304,6 @@ apply_dline(struct Client *source_p, const char *dlhost, int tdline_time, char *
 
 	if(tdline_time > 0)
 	{
-		rb_snprintf(dlbuffer, sizeof(dlbuffer),
-			    "Temporary D-line %d min. - %s (%s)",
-			    (int) (tdline_time / 60), reason, current_date);
-		aconf->passwd = rb_strdup(dlbuffer);
 		aconf->hold = rb_current_time() + tdline_time;
 		add_temp_dline(aconf);
 
@@ -335,8 +332,6 @@ apply_dline(struct Client *source_p, const char *dlhost, int tdline_time, char *
 	}
 	else
 	{
-		rb_snprintf(dlbuffer, sizeof(dlbuffer), "%s (%s)", reason, current_date);
-		aconf->passwd = rb_strdup(dlbuffer);
 		add_conf_by_address(aconf->host, CONF_DLINE, NULL, NULL, aconf);
 
 		bandb_add(BANDB_DLINE, source_p, aconf->host, NULL,
