@@ -1,6 +1,7 @@
 MODE <nick> <+|-><modes>
 
-Usermodes:
+Usermodes: (? designates that the umode is provided by an extension
+            and may not be present on this server) 
 
      USERMODE     DESCRIPTION
 -----------------------------------------------------------------
@@ -11,6 +12,7 @@ Usermodes:
          +G     - "soft caller id" mode - same as +g but automatically allows
                   anyone who's in a common channel with you to message you.
          +w     - Can see oper wallops.
+       ? +x     - Has a cloaked host.
          +B     - Marks you as a bot in /whois.
          +C     - Prevents you from receiving CTCPs other than ACTION.
          +D     - Deaf - ignores all channel messages.
