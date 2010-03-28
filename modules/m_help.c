@@ -97,7 +97,15 @@ dohelp(struct Client *source_p, int flags, const char *topic)
 	rb_dlink_node *fptr;
 
 	if(EmptyString(topic))
+	{
 		topic = ntopic;
+		if(!EmptyString(ServerInfo.helpchan))
+			sendto_one(source_p, ":%s 525 %s :Official Help Channel: %s",
+					me.name, source_p->name, ServerInfo.helpchan);
+		if(!EmptyString(ServerInfo.helpurl))
+			sendto_one(source_p, ":%s 526 %s :Official Help URL: %s",
+					me.name, source_p->name, ServerInfo.helpurl);
+	}
 
 	hptr = irc_dictionary_retrieve(flags & HELP_OPER ? help_dict_oper : help_dict_user, topic);
 

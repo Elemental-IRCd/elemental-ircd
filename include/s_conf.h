@@ -286,6 +286,8 @@ struct server_info
 	char *description;
 	char *network_name;
 	char *network_desc;
+	char *helpchan;
+	char *helpurl;
 	int hub;
 	struct sockaddr_in ip;
 	int default_max_clients;

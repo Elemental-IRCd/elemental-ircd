@@ -674,6 +674,8 @@ set_default_conf(void)
 	ServerInfo.description = NULL;
 	ServerInfo.network_name = rb_strdup(NETWORK_NAME_DEFAULT);
 	ServerInfo.network_desc = rb_strdup(NETWORK_DESC_DEFAULT);
+	ServerInfo.helpchan = rb_strdup("");
+	ServerInfo.helpurl = rb_strdup("");
 
 	memset(&ServerInfo.ip, 0, sizeof(ServerInfo.ip));
 	ServerInfo.specific_ipv4_vhost = 0;
@@ -1473,6 +1475,10 @@ clear_out_old_conf(void)
 	ServerInfo.network_name = NULL;
 	rb_free(ServerInfo.network_desc);
 	ServerInfo.network_desc = NULL;
+	rb_free(ServerInfo.helpchan);
+	ServerInfo.helpchan = NULL;
+	rb_free(ServerInfo.helpurl);
+	ServerInfo.helpurl = NULL;
 
 	ServerInfo.ssld_count = 1;
 

@@ -2063,6 +2063,8 @@ static struct ConfEntry conf_serverinfo_table[] =
 {
 	{ "description", 	CF_QSTRING, NULL, 0, &ServerInfo.description	},
 	{ "network_desc", 	CF_QSTRING, NULL, 0, &ServerInfo.network_desc	},
+	{ "helpchan",		CF_QSTRING, NULL, 0, &ServerInfo.helpchan		},
+	{ "helpurl",		CF_QSTRING, NULL, 0, &ServerInfo.helpurl		},
 	{ "hub", 		CF_YESNO,   NULL, 0, &ServerInfo.hub		},
 
 	{ "network_name", 	CF_QSTRING, conf_set_serverinfo_network_name,	0, NULL },
