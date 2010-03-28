@@ -1,5 +1,5 @@
 FORCEPART <nick> <#channel>
 
---Forces a user to part the specified channel.
+-- Forces a user to part the specified channel.
 
 Requires oper priv: oper:admin

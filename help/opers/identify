@@ -1,6 +1,6 @@
 IDENTIFY <password>
 
---Allows easy identification to NickServ
+-- Allows easy identification to NickServ.
 This command is basically the equivalent of:
   /msg nickserv identify <password>
 but made simpler and with protections if
