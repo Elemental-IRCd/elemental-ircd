@@ -41,9 +41,6 @@ NO PARAMETERS:
               rejoin immediately after being kicked. 
      +K     - No repeat messages. Messages that are the same as the
               last message sent to the channel will be blocked.
-     +M     - Immune. Opers cannot be kicked from the channel. May
-              be set by opers regardless of channel status. Users
-              will not see this mode at all.
 
 WITH PARAMETERS:
      +f     - Forward.  Forwards users who cannot join because of +i,
