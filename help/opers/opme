@@ -1,0 +1,9 @@
+OPME <#channel>
+
+-- Allows a oper to gain ops in a opless channel
+This command simply allows a oper to gein ops in a opless channel.
+This is especially useful if all users in a channel don't have ops,
+the channel is unregistered and you don't want to clear the channel
+to get a user to get ops back.
+
+Oper priv required: oper:admin

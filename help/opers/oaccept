@@ -1,0 +1,6 @@
+OACCEPT <nick>
+
+-- Allows a oper to message a user through usermodes +gGR
+This command allows opers to messages users who have usermodes
++g,+G or +R set on themselves. It adds a piece of metadata to
+the user which is deleted when the user disconnects.

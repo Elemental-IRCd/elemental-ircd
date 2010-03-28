@@ -1,0 +1,9 @@
+SENDBANS <server>
+
+-- Sends permanent resv's and xline's to the specified server.
+If you do not have propogated bans enabled, and you add a server
+in the future or a server is down when a xline or resv is set,
+this command will allow you to send those xlines or resv's to
+the specified server.
+
+oper privs required: oper:xline, oper:resv, oper:remoteban

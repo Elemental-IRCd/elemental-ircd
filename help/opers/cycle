@@ -1,0 +1,5 @@
+CYCLE <#channel>
+
+-- IRCd-side /hop
+This command parts you and rejoins you to whatever
+channel you specify.

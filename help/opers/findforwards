@@ -1,0 +1,6 @@
+FINDFORWARDS <#channel>
+
+--Find channels that forward to the specified channel.
+If you are an op in the specified channel, this command
+will tell you all channels that forward to the specified
+one.

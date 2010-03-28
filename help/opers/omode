@@ -1,0 +1,6 @@
+OMODE <#channel> <mode(s)> [parameters]
+
+-- Allows opers to arbitrarily set modes on channels.
+This command allows opers to set/change modes on channels
+that they do not have ops in. This command fails if a oper
+uses it on a channel they do have ops in.

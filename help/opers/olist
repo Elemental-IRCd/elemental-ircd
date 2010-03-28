@@ -1,0 +1,6 @@
+OLIST [#channel]
+
+-- Allows opers to view all channels on the network.
+This command allows opers to view all channels in a list, including
+secret channels. This command also shows channelmodes for each channel
+unlike LIST.

@@ -1,0 +1,5 @@
+OKICK <#channel> <nick> [reason]
+
+-- Allows a oper to kick a user from a channel.
+This command allows a oper to kick a user from a channel
+where the oper doesn't have ops.
