@@ -1359,7 +1359,7 @@ Optional Packages:
   --with-logdir=DIR       Directory where to write logfiles.
   --with-helpdir=DIR      Directory to install help files.
   --with-moduledir=DIR    Directory to install modules.
-  --with-nicklen=LENGTH   Set the nick length to LENGTH (default 15, max 50)
+  --with-nicklen=LENGTH   Set the nick length to LENGTH (default 31, max 50)
   --with-topiclen=NUMBER  Set the max topic length to NUMBER (default 390, max
                           390)
 

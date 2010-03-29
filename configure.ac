@@ -862,7 +862,7 @@ dnl so enable small net unless you really need this much support
 fi
 
 AC_ARG_WITH(nicklen,
-AC_HELP_STRING([--with-nicklen=LENGTH],[Set the nick length to LENGTH (default 15, max 50)]),
+AC_HELP_STRING([--with-nicklen=LENGTH],[Set the nick length to LENGTH (default 31, max 50)]),
 [
   if ! expr "$withval" + 0 >/dev/null 2>&1; then 
 	AC_ERROR([NICKLEN must be a numeric value])
