@@ -1,0 +1,18 @@
+Extbans are all provided by extensions, some may not be present on this
+server.
+
+EXTBAN - DESCRIPTION
+------------------------------------------------------------------------
+     $o         Oper extban. Affects all operators.
+     $z         SSL extban. Affects all users connected via SSL.
+     $a[:mask]  Account extban. Affects anyone with an account that
+                matches. If the mask is omitted, it affects everyone
+                who is logged into services.
+     $j:mask    Banned from another channel extban. Affects anyone who
+                is banned from the specified channel.
+     $c:mask    Other channel extban. Affects anyone who is on the 
+                specified channel.
+     $x:mask    Extended extban. Matches a user's entire n!u@h gecos.
+     $r:mask    GECOS extban. Affects anyone with the realname/gecos
+                specified.
+     $s:mask    Server extban. Affects anyone on the specified server.
