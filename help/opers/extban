@@ -15,4 +15,4 @@ EXTBAN - DESCRIPTION
      $x:mask    Extended extban. Matches a user's entire n!u@h gecos.
      $r:mask    GECOS extban. Affects anyone with the realname/gecos
                 specified.
-     $s:mask    Server exban. Affects anyone on the specified server.
+     $s:mask    Server extban. Affects anyone on the specified server.
