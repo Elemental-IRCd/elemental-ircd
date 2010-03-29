@@ -1077,7 +1077,7 @@ static void
 conf_set_auth_autojoin_opers(void *data)
 {
 	if(yy_aconf->autojoin_opers)
-		memset(yy_aconf->autojoin_opers, 0, strlen(yy_aconf->autojoin));
+		memset(yy_aconf->autojoin_opers, 0, strlen(yy_aconf->autojoin_opers));
 	rb_free(yy_aconf->autojoin_opers);
 	yy_aconf->autojoin_opers = rb_strdup(data);
 }
