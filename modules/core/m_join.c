@@ -43,12 +43,18 @@
 #include "chmode.h"
 
 static int m_join(struct Client *, struct Client *, int, const char **);
+static int me_svsjoin(struct Client *, struct Client *, int, const char **);
 static int ms_join(struct Client *, struct Client *, int, const char **);
 static int ms_sjoin(struct Client *, struct Client *, int, const char **);
 
 struct Message join_msgtab = {
 	"JOIN", 0, 0, 0, MFLG_SLOW,
 	{mg_unreg, {m_join, 2}, {ms_join, 2}, mg_ignore, mg_ignore, {m_join, 2}}
+};
+
+struct Message svsjoin_msgtab = {
+	"SVSJOIN", 0, 0, 0, MFLG_SLOW,
+	{mg_ignore, mg_ignore, mg_ignore, mg_ignore, {me_svsjoin, 3}, mg_ignore}
 };
 
 struct Message sjoin_msgtab = {
@@ -83,6 +89,26 @@ m_join(struct Client *client_p, struct Client *source_p, int parc, const char *p
 {
 	user_join(client_p, source_p, parv[1], parc > 2 ? parv[2] : NULL); /* channel.c */
 
+	return 0;
+}
+
+/*
+ * me_svsjoin - small function to allow services to forcejoin clients, mainly for ns_ajoin
+ *		parv[1] = user to act on (join to a channel)
+ *		parv[2] = channel
+ */
+static int
+me_svsjoin(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
+{
+	struct Client *target_p;
+
+	if(!(source_p->flags & FLAGS_SERVICE))
+		return 0;
+
+	if((target_p = find_person(parv[1])) == NULL)
+		return 0;
+
+	user_join(&me, target_p, parv[2], NULL);
 	return 0;
 }
 
