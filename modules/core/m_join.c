@@ -62,7 +62,7 @@ struct Message sjoin_msgtab = {
 	{mg_unreg, mg_ignore, mg_ignore, {ms_sjoin, 4}, mg_ignore, mg_ignore}
 };
 
-mapi_clist_av1 join_clist[] = { &join_msgtab, &sjoin_msgtab, NULL };
+mapi_clist_av1 join_clist[] = { &join_msgtab, &svsjoin_msgtab, &sjoin_msgtab, NULL };
 
 DECLARE_MODULE_AV1(join, NULL, NULL, join_clist, NULL, NULL, "$Revision: 3494 $");
 
