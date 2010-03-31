@@ -96,6 +96,10 @@ m_join(struct Client *client_p, struct Client *source_p, int parc, const char *p
  * me_svsjoin - small function to allow services to forcejoin clients, mainly for ns_ajoin
  *		parv[1] = user to act on (join to a channel)
  *		parv[2] = channel
+ * This does allow opers to "forcejoin" users to channels with operserv/raw or by writing a
+ * custom module (where they can make it not log anything), but the former bitches that it's
+ * being used and the latter...Can probably be done anyway with enough hackyness if this
+ * command didn't exist so it's not all that bad.
  */
 static int
 me_svsjoin(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
