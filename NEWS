@@ -48,6 +48,7 @@ other
 - The --enable-small-net configure option is now enabled by default.
   If you wish to disable small net mode, pass --disable-small-net to
   configure.
+- New channel mode adding API has been added from charybdis trunk.
 
 -- shadowircd-6.0.0
 
