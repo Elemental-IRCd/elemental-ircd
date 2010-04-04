@@ -1,6 +1,5 @@
 Todo list for ShadowIRCd 6.1
 -----------------------------
-* update ojoin/omode/etc to use +ah
 * notice/message !#channel and %#channel
 * Add a disable_oper option to auth {} to not allow users in that auth block
   to use OPER.

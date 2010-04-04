@@ -671,6 +671,8 @@ chm_staff(struct Client *source_p, struct Channel *chptr,
 	  int alevel, int parc, int *parn,
 	  const char **parv, int *errors, int dir, char c, long mode_type)
 {
+	int override = 0;
+
 	if(!IsOper(source_p) && !IsServer(source_p))
 	{
 		if(!(*errors & SM_ERR_NOPRIVS))
@@ -687,6 +689,20 @@ chm_staff(struct Client *source_p, struct Channel *chptr,
 		return;
 	}
 
+	if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN && alevel != CHFL_HALFOP)
+	{
+		if (IsOverride(source_p))
+			override = 1;
+		else
+		{
+			if(!(*errors & SM_ERR_NOOPS))
+				sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+						me.name, source_p->name, chptr->chname);
+			*errors |= SM_ERR_NOOPS;
+			return;
+		}
+	}
+
 	if(MyClient(source_p) && (++mode_limit_simple > MAXMODES_SIMPLE))
 		return;
 
@@ -701,7 +717,7 @@ chm_staff(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].nocaps = 0;
 		mode_changes[mode_count].id = NULL;
 		mode_changes[mode_count].mems = ALL_MEMBERS;
-		mode_changes[mode_count].override = 0;
+		mode_changes[mode_count].override = override;
 		mode_changes[mode_count++].arg = NULL;
 	}
 	else if((dir == MODE_DEL) && (chptr->mode.mode & mode_type))
@@ -713,7 +729,7 @@ chm_staff(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].caps = 0;
 		mode_changes[mode_count].nocaps = 0;
 		mode_changes[mode_count].mems = ALL_MEMBERS;
-		mode_changes[mode_count].override = 0;
+		mode_changes[mode_count].override = override;
 		mode_changes[mode_count].id = NULL;
 		mode_changes[mode_count++].arg = NULL;
 	}

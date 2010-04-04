@@ -17,7 +17,9 @@ new configuration options
   will just get the help index and that's it on /quote help.
 
 new commands
-- /CYCLE - server-side /CYCLE, also called /HOP in some clients/servers.
+- CYCLE #channel - server-side CYCLE, also called HOP in some clients/servers.
+  Parts the user from the given channel, then joins them to it immediately after.
+  Enabled by loading extensions/m_cycle.
 
 opers
 - Override no longer alows overriding opers to talk through +q, +m, etc.
@@ -30,14 +32,22 @@ opers
 - All module management commands (MODLOAD, MODLIST, MODUNLOAD, MODRELOAD and
   MODRESTART) can be executed remotely. See the appropriate helpfile for
   details.
+- OMODE can now set and unset +ah.
+- OJOIN now works with !#channel and %#channel.
+- Staff channelmodes (+AO) now require chanops to set.
 
 other
 - Added a strip_unprintable function to make evasion of cmodes +G and +K
   less trivial.
 - Massive helpfile updates.
+- Added SVSJOIN s2s command. This allows things like atheme's ns_ajoin
+  to work on shadowircd.
 - Added BAN stuff (propogated bans on burst) from charybdis trunk. This
   can be disabled and the old behavior can be used by setting the
   general::use_propogated_bans option to no.
+- The --enable-small-net configure option is now enabled by default.
+  If you wish to disable small net mode, pass --disable-small-net to
+  configure.
 
 -- shadowircd-6.0.0
 
