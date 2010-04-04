@@ -12,3 +12,4 @@ Todo list for ShadowIRCd 6.2
 * pure TS6 compat mode for linking with charybdis/ratbox/etc.
 * TBAN equivalent (like a extban?) (?)
 * ELINE - command to make users kline/dline/xline exempt on-the-fly
+* Add a configuration option to set the ident_timeout time.
