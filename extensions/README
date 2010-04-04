@@ -36,7 +36,7 @@ m_oaccept.c    - OACCEPT - Add metadata to a user that will allow you to
                  Syntax: OACCEPT <nick>
 
 m_ojoin.c      - OJOIN - Join a channel through any modes or limits with 
-                         an optional status (@+)
+                         an optional status (!@%+)
                  Syntax: OJOIN [status]<channel>
 
 m_olist.c      - OLIST - Lists channels like LIST, but shows hidden
