@@ -1,8 +1,6 @@
 Todo list for ShadowIRCd 6.1
 -----------------------------
 * notice/message !#channel and %#channel
-* Add a disable_oper option to auth {} to not allow users in that auth block
-  to use OPER.
 * Add default_operhost to /set
 
 Todo list for ShadowIRCd 6.2
@@ -12,3 +10,4 @@ Todo list for ShadowIRCd 6.2
 * pure TS6 compat mode for linking with charybdis/ratbox/etc.
 * TBAN equivalent (like a extban?) (?)
 * ELINE - command to make users kline/dline/xline exempt on-the-fly
+* implementation to change other users' umodes (if you're a oper of course)
