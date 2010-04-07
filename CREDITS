@@ -10,6 +10,13 @@ The ShadowIRCd team is listed in nick-alphabetical order:
 jdhore, JD Horelick <jdhore1 -at- gmail.com>
 Taros, Brett Greenham <taros34 -at- hotmail.com>
  
+Some ShadowIRCd 6 features such as the oper-override and remote
+RESTART, DIE and MOD* commands were borrowed from ircd-seven.
+ 
+ircd-seven is written by:
+ 
+spb, Stephen Bennett <spb -at- attenuate.org>
+ 
 Charybdis started as an evolution from ircd-ratbox. Its development
 is led by a team of dedicated developers who have put a lot of time
 into the project, and it has seen use on a variety of different
