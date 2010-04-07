@@ -15,6 +15,8 @@ new configuration options
   when they do /quote help (with no extra parameters) the official network help
   channel and a special URL for help. If these options are disabled, the users
   will just get the help index and that's it on /quote help.
+- general::default_ident_timeout - Allows you to set the default ident timeout
+  in the ircd.conf instead of it being hardcoded and only settable with /SET.
 
 new commands
 - CYCLE #channel - server-side CYCLE, also called HOP in some clients/servers.
