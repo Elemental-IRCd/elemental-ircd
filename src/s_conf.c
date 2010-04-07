@@ -895,7 +895,7 @@ validate_conf(void)
 		splitchecking = 0;
 	}
 
-	if(!valid_hostname(ConfigFileEntry.default_operhost))
+	if(!valid_hostname(ConfigFileEntry.default_operhost) && !EmptyString(ConfigFileEntry.default_operhost))
 	{
 		conf_report_error("Warning -- invalid default_operhost specified, ignoring.");
 		ConfigFileEntry.default_operhost = rb_strdup("");
