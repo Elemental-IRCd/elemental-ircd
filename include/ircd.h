@@ -43,6 +43,7 @@ struct SetOptions
 	int spam_num;
 	int spam_time;
 
+	char operhost[REALLEN];
 	char operstring[REALLEN];
 	char adminstring[REALLEN];
 };

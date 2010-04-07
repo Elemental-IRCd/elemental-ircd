@@ -36,6 +36,7 @@
 #include "common.h"
 #include "channel.h"
 #include "s_conf.h"
+#include "s_user.h"
 #include "s_newconf.h"
 #include "msg.h"
 #include "parse.h"
@@ -71,6 +72,7 @@ static void quote_floodcount(struct Client *, const char *, int);
 static void quote_identtimeout(struct Client *, const char *, int);
 static void quote_max(struct Client *, const char *, int);
 static void quote_operstring(struct Client *, const char *, int);
+static void quote_operhost(struct Client *, const char *, int);
 static void quote_spamnum(struct Client *, const char *, int);
 static void quote_spamtime(struct Client *, const char *, int);
 static void quote_splitmode(struct Client *, const char *, int);
@@ -98,6 +100,7 @@ static struct SetStruct set_cmd_table[] = {
 	{"IDENTTIMEOUT", quote_identtimeout,	0,	1	},
 	{"MAX", 	quote_max, 		0,	1	},
 	{"MAXCLIENTS",	quote_max,		0,	1	},
+	{"OPERHOST",	quote_operhost,		1,	0	},
 	{"OPERSTRING",	quote_operstring,	1,	0	},
 	{"SPAMNUM", 	quote_spamnum, 		0,	1	},
 	{"SPAMTIME", 	quote_spamtime, 	0,	1	},
@@ -244,6 +247,29 @@ quote_max(struct Client *source_p, const char *arg, int newval)
 	{
 		sendto_one_notice(source_p, ":Current Maxclients = %d (%lu)",
 			   GlobalSetOptions.maxclients, rb_dlink_list_length(&lclient_list));
+	}
+}
+
+/* SET OPERHOST */
+static void
+quote_operhost(struct Client *source_p, const char *arg, int newval)
+{
+	if(EmptyString(arg))
+	{
+		sendto_one_notice(source_p, ":OPERHOST is currently '%s'", GlobalSetOptions.operhost);
+	}
+	else if(!valid_hostname(arg))
+	{
+		sendto_one_notice(source_p, "Invalid hostmask.");
+	}
+	else
+	{
+		rb_strlcpy(GlobalSetOptions.operhost, arg,
+			sizeof(GlobalSetOptions.operhost));
+		
+		sendto_realops_snomask(SNO_GENERAL, L_ALL,
+				     "%s has changed OPERHOST to '%s'",
+				     get_oper_name(source_p), arg);
 	}
 }
 

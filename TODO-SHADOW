@@ -1,7 +1,6 @@
 Todo list for ShadowIRCd 6.1
 -----------------------------
 * notice/message !#channel and %#channel
-* Add default_operhost to /set
 
 Todo list for ShadowIRCd 6.2
 ----------------------------

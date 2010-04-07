@@ -329,6 +329,13 @@ initialize_global_set_options(void)
 	else
 		GlobalSetOptions.ident_timeout = IDENT_TIMEOUT;
 
+	if(ConfigFileEntry.default_operhost)
+		rb_strlcpy(GlobalSetOptions.operhost,
+			ConfigFileEntry.default_operhost,
+			sizeof(GlobalSetOptions.operhost));
+	else
+		rb_strlcpy(GlobalSetOptions.operhost, "", sizeof(GlobalSetOptions.operhost));
+
 	rb_strlcpy(GlobalSetOptions.operstring,
 		ConfigFileEntry.default_operstring,
 		sizeof(GlobalSetOptions.operstring));

@@ -1341,12 +1341,12 @@ oper_up(struct Client *source_p, struct oper_conf *oper_p)
 	if(oper_p->operstring)
 		user_metadata_add(source_p, "OPERSTRING", oper_p->operstring, 1);
 
-	if(oper_p->vhost || !EmptyString(ConfigFileEntry.default_operhost))
+	if(oper_p->vhost || !EmptyString(GlobalSetOptions.operhost))
 	{
 		if(oper_p->vhost)
 			change_nick_user_host(source_p, source_p->name, source_p->username, oper_p->vhost, 0, "Changing host");
 		else
-			change_nick_user_host(source_p, source_p->name, source_p->username, ConfigFileEntry.default_operhost, 0, "Changing host");
+			change_nick_user_host(source_p, source_p->name, source_p->username, GlobalSetOptions.operhost, 0, "Changing host");
 		
 		sendto_one_numeric(source_p, RPL_HOSTHIDDEN, "%s :is now your hidden host (set by %s)", source_p->host, source_p->servptr->name);
 
