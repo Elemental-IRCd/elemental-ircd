@@ -35,6 +35,10 @@ opers
 - OMODE can now set and unset +ah.
 - OJOIN now works with !#channel and %#channel.
 - Staff channelmodes (+AO) now require chanops to set.
+- OPERHOST option added to SET. You can now use SET to change the default
+  operhost that operators get upon opering up, though like the 
+  general::default_operhost config option it will not override the 
+  operator::vhost config option.
 
 other
 - Added a strip_unprintable function to make evasion of cmodes +G and +K
@@ -49,6 +53,8 @@ other
   If you wish to disable small net mode, pass --disable-small-net to
   configure.
 - New channel mode adding API has been added from charybdis trunk.
+- NOTICE/PRIVMSG @#channel and +#channel now go to admin/halfop as well
+  as chanop.
 
 -- shadowircd-6.0.0
 
