@@ -156,8 +156,8 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define CHFL_ADMIN		0x0080
 #define	ONLY_OPERS		0x0100
 #define ALL_MEMBERS		CHFL_PEON
-#define ONLY_CHANOPS		CHFL_CHANOP
-#define ONLY_CHANOPSVOICED	(CHFL_CHANOP|CHFL_VOICE)
+#define ONLY_CHANOPS		(CHFL_ADMIN|CHFL_CHANOP|CHFL_HALFOP)
+#define ONLY_CHANOPSVOICED	(CHFL_ADMIN|CHFL_CHANOP|CHFL_HALFOP|CHFL_VOICE)
 
 #define is_chmode_h(x)	((x) && (x)->flags & CHFL_HALFOP) /* does not check if halfop is enabled, should typically not be used */
 #define is_chmode_a(x)	((x) && (x)->flags & CHFL_ADMIN) /* does not check if admin is enabled, should typically not be used */

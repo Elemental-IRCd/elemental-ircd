@@ -1,7 +1,3 @@
-Todo list for ShadowIRCd 6.1
------------------------------
-* notice/message !#channel and %#channel
-
 Todo list for ShadowIRCd 6.2
 ----------------------------
 * channel::disabledmodes
