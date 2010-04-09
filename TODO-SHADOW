@@ -3,6 +3,7 @@ Todo list for ShadowIRCd 6.2
 * channel::disabledmodes
 * general::disabledumodes
 * pure TS6 compat mode for linking with charybdis/ratbox/etc.
+* global/remote SET, via shared block flag.
 * TBAN equivalent (like a extban?) (?)
-* ELINE - command to make users kline/dline/xline exempt on-the-fly
+* ELINE - command to make users kline/dline/xline exempt on-the-fly (?)
 * implementation to change other users' umodes (if you're a oper of course)
