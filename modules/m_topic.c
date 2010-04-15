@@ -116,7 +116,7 @@ m_topic(struct Client *client_p, struct Client *source_p, int parc, const char *
 			return 0;
 		}
 
-		if(MyClient(source_p) && (chptr->mode.mode & MODE_TOPICLIMIT) && !is_any_op(msptr))
+		if(MyClient(source_p) && (chptr->mode.mode & MODE_TOPICLIMIT) && !is_any_op(msptr) && !can_send(chptr, source_p, msptr))
 		{
 			if(IsOverride(source_p))
 			{
