@@ -307,8 +307,6 @@ extern const char *form_str(int);
 
 #define ERR_NOCTCP	     492
 
-#define ERR_KICKNOREJOIN     495
-
 #define ERR_UMODEUNKNOWNFLAG 501
 #define ERR_USERSDONTMATCH   502
 

@@ -186,9 +186,8 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define MODE_NOKICK	0x40000 /* Disable /kick on this channel */
 #define MODE_NONICK	0x80000 /* Disable /nick for anyone on this channel */
 #define MODE_NOCAPS	0x100000 /* Block messages in all capital letters */
-#define MODE_NOREJOIN	0x200000 /* Block rejoin immediately after kick */
-#define MODE_NOREPEAT	0x400000 /* Block repeat messages */
-#define MODE_NOOPERKICK	0x800000 /* disallow kicking opers */
+#define MODE_NOREPEAT	0x200000 /* Block repeat messages */
+#define MODE_NOOPERKICK	0x400000 /* disallow kicking opers */
 
 #define CHFL_BAN        0x10000000	/* ban channel flag */
 #define CHFL_EXCEPTION  0x20000000	/* exception to ban channel flag */

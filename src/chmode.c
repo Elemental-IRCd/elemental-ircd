@@ -555,14 +555,6 @@ chm_simple(struct Client *source_p, struct Channel *chptr,
 	else if((dir == MODE_DEL) && (chptr->mode.mode & mode_type))
 	{
 		/* cleanup metadata when the related mode is removed */
-		if(c == 'J')
-		{
-			DICTIONARY_FOREACH(md, &iter, chptr->metadata)
-			{
-				if(!strcmp(md->value, "KICKNOREJOIN"))  
-					channel_metadata_delete(chptr, md->name, 0);
-			}
-		}
 		if(c == 'K')
 			channel_metadata_delete(chptr, "NOREPEAT", 0);
 
@@ -1835,7 +1827,7 @@ struct ChannelMode chmode_table[256] =
   {chm_simple,	MODE_NOCAPS },		/* G */
   {chm_nosuch,	0 },			/* H */
   {chm_ban,	CHFL_INVEX },           /* I */
-  {chm_simple,	MODE_NOREJOIN },	/* J */
+  {chm_simple,	0 },	/* J */
   {chm_simple,	MODE_NOREPEAT },	/* K */
   {chm_staff,	MODE_EXLIMIT },		/* L */
   {chm_hidden,	MODE_NOOPERKICK },	/* M */
