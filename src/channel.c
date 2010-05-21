@@ -861,10 +861,10 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 
 	DICTIONARY_FOREACH(md, &iter, chptr->metadata)
 	{
-		if(!strcmp(md->value, "KICKNOREJOIN") && !strcmp(md->name, text) && (md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time()))
+		if(!strcmp(md->value, "KICKNOREJOIN") && !strcmp(md->name, text) && (md->timevalue + 2 > rb_current_time()))
 			return ERR_KICKNOREJOIN;
 		/* cleanup any stale KICKNOREJOIN metadata we find while we're at it */
-		if(!strcmp(md->value, "KICKNOREJOIN") && !(md->timevalue + ConfigChannel.kick_no_rejoin_time > rb_current_time()))  
+		if(!strcmp(md->value, "KICKNOREJOIN") && !(md->timevalue + 2 > rb_current_time()))  
 			channel_metadata_delete(chptr, md->name, 0);
 	}
 

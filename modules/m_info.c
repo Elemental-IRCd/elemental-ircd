@@ -669,12 +669,6 @@ static struct InfoStruct info_table[] = {
 		"Force-part local users on channel RESV"
 	},
 	{
-		"kick_no_rejoin_time",
-		OUTPUT_DECIMAL,
-		&ConfigChannel.kick_no_rejoin_time,
-		"The amount of time that a user cannot rejoin a +J channel for after being kicked."
-	},
-	{
 		"disable_hidden",
 		OUTPUT_BOOLEAN_YN,
 		&ConfigServerHide.disable_hidden,

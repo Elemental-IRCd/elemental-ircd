@@ -1,5 +1,11 @@
-This is ShadowIRCd 6.1, Copyright (c) 2005-2010 ShadowIRCd team.
+This is ShadowIRCd 6.2, Copyright (c) 2005-2010 ShadowIRCd team.
 See LICENSE for licensing details (GPL v2).
+
+-- shadowircd-6.2.0
+
+other changes
+- change kicknorejoin to not be a config option and be hardcoded to 2 seconds
+  because a longer time is kind of pointless.
 
 -- shadowircd-6.1.0
 
