@@ -826,7 +826,7 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 	char src_host[NICKLEN + USERLEN + HOSTLEN + 6];
 	char src_iphost[NICKLEN + USERLEN + HOSTLEN + 6];
 	char src_althost[NICKLEN + USERLEN + HOSTLEN + 6];
-	char *text = rb_strdup("");
+	char text[10];
 	int use_althost = 0;
 	int i = 0;
 	hook_data_channel moduledata;
@@ -857,7 +857,7 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 	if((is_banned(chptr, source_p, NULL, src_host, src_iphost)) == CHFL_BAN)
 		return (ERR_BANNEDFROMCHAN);
 
-	rb_sprintf(text, "K%s", source_p->id);
+	rb_snprintf(text, sizeof(text), "K%s", source_p->id);
 
 	DICTIONARY_FOREACH(md, &iter, chptr->metadata)
 	{

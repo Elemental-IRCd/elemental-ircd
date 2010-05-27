@@ -23,7 +23,7 @@ mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const cha
 	struct Metadata *md;
 	struct DictionaryIter iter;
 	struct Client *target_p;
-	char *text = rb_strdup("");
+	char text[10];
 
 	if(!(target_p = find_client(parv[1])))
 	{
@@ -31,10 +31,10 @@ mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const cha
 		return 0;
 	}
 
-	rb_sprintf(text, "O%s", source_p->id);
+	rb_snprintf(text, sizeof(text), "O%s", source_p->id);
 
-	/* Don't allow someone to pointlessly fill up someone's metadata
-	 * with identical OACCEPT entries. */
+	/* Provide a nice error message if you try to OACCEPT someone
+	 * who you've already OACCEPTed. */
 	DICTIONARY_FOREACH(md, &iter, target_p->user->metadata)
 	{
 		if(!strcmp(md->value, "OACCEPT") && !strcmp(md->name, text))

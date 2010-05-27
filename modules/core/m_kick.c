@@ -68,7 +68,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 	char *comment;
 	const char *name;
 	char *p = NULL;
-	char *text = rb_strdup("");
+	char text[10];
 	const char *user;
 	static char buf[BUFSIZE];
 	int is_override = 0;
@@ -235,7 +235,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 			      use_id(source_p), chptr->chname, use_id(who), comment);
 		remove_user_from_channel(msptr);
 
-		rb_sprintf(text, "K%s", who->id);
+		rb_snprintf(text, sizeof(text), "K%s", who->id);
 
 		/* we don't need to track NOREJOIN stuff unless it's our client being kicked */
 		if(MyClient(who) && chptr->mode.mode & MODE_NOREJOIN)
