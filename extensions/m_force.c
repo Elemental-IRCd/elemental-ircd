@@ -26,7 +26,6 @@
  *  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: m_force.c 3297 2007-03-28 14:49:48Z jilles $
  */
 
 #include "stdinc.h"

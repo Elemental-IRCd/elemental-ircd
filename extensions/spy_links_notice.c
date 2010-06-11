@@ -19,7 +19,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: spy_links_notice.c 498 2006-01-15 16:40:33Z jilles $
  */
 #include "stdinc.h"
 #include "modules.h"

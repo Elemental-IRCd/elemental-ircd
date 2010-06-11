@@ -21,7 +21,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: m_wallops.c 1377 2006-05-20 13:48:37Z jilles $
  */
 
 #include "stdinc.h"

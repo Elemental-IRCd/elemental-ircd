@@ -23,7 +23,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *  USA
  *
- *  $Id: epoll.c 26294 2008-12-13 03:01:19Z androsyn $
  */
 #define _GNU_SOURCE 1
 

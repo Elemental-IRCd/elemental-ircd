@@ -5,7 +5,6 @@
  * of all clients.
  * -- jilles
  *
- * $Id: sno_farconnect.c 1869 2006-08-27 14:24:25Z jilles $
  */
 
 #include "stdinc.h"

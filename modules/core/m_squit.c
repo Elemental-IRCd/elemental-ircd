@@ -21,7 +21,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: m_squit.c 3161 2007-01-25 07:23:01Z nenolod $
  */
 
 #include "stdinc.h"

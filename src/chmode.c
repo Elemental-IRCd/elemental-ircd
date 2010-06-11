@@ -22,7 +22,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: chmode.c 3580 2007-11-07 23:45:14Z jilles $
  */
 
 #include "stdinc.h"

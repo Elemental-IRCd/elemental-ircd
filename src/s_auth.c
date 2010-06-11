@@ -21,7 +21,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: s_auth.c 3354 2007-04-03 09:21:31Z nenolod $ */
 
 /*
  * Changes:

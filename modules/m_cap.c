@@ -27,7 +27,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: m_cap.c 676 2006-02-03 20:05:09Z gxti $
  */
 
 #include "stdinc.h"

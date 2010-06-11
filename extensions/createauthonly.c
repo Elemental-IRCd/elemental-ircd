@@ -5,7 +5,6 @@
  * problems. It will return ERR_NEEDREGGEDNICK on failure.
  *    -- nenolod
  *
- * $Id: createauthonly.c 833 2006-02-15 00:27:59Z jilles $
  */
 
 #include "stdinc.h"

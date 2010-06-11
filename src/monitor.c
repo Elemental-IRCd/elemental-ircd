@@ -29,7 +29,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: monitor.c 3520 2007-06-30 22:15:35Z jilles $
  */
 #include "stdinc.h"
 #include "client.h"

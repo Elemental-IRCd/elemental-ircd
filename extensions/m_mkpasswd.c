@@ -6,7 +6,6 @@
  *
  *  You can use this code in any way as long as these names remain.
  *
- *  $Id: m_mkpasswd.c 3161 2007-01-25 07:23:01Z nenolod $
  */
 
 /* List of ircd includes from ../include/ */

@@ -26,7 +26,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: m_signon.c 1192 2006-04-21 16:21:02Z jilles $
  */
 
 #include "stdinc.h"

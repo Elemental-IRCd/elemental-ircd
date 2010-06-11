@@ -26,7 +26,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: m_services.c 1907 2006-08-29 19:18:15Z jilles $
  */
 
 #include "stdinc.h"

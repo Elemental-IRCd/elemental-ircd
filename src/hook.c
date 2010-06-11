@@ -34,7 +34,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: hook.c 712 2006-02-06 04:42:14Z gxti $
  */
 #include "stdinc.h"
 #include "hook.h"

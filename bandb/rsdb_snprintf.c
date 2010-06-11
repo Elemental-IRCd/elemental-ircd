@@ -6,7 +6,6 @@
  * do so under the terms of the GNU General Public License under which
  * this library is distributed.
  *
- * $Id: rsdb_snprintf.c 26094 2008-09-19 15:33:46Z androsyn $
  */
 #include "stdinc.h"
 #include "rsdb.h"

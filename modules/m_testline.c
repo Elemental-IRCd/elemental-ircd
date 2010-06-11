@@ -27,7 +27,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: m_testline.c 3303 2007-03-28 15:22:49Z jilles $
  */
 #include "stdinc.h"
 #include "send.h"

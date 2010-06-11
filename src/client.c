@@ -22,7 +22,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: client.c 3514 2007-06-06 16:25:21Z nenolod $
  */
 #include "stdinc.h"
 #include "config.h"

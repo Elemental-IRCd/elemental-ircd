@@ -3,7 +3,6 @@
  * specified channel.
  *    -- nenolod/jilles
  *
- * $Id: extb_canjoin.c 1841 2006-08-22 17:30:03Z jilles $
  */
 
 #include "stdinc.h"

@@ -21,7 +21,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: hash.c 3177 2007-02-01 00:19:14Z jilles $
  */
 
 #include "stdinc.h"

@@ -21,7 +21,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: m_webirc.c 3458 2007-05-18 19:51:22Z jilles $
  */
 /* Usage:
  * auth {

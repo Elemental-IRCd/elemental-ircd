@@ -23,7 +23,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: m_olist.c 6 2005-09-10 01:02:21Z nenolod $
  */
 
 #include "stdinc.h"

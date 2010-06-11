@@ -6,7 +6,6 @@
  * Yes, this is a hack, but it is simple and avoids sending
  * more data across servers -- jilles
  *
- * $Id: sno_globalkline.c 613 2006-01-29 03:03:02Z nenolod $
  */
 
 #include "stdinc.h"

@@ -21,7 +21,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: m_mode.c 1006 2006-03-09 15:32:14Z nenolod $
  */
 
 #include "stdinc.h"

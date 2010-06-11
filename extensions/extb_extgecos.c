@@ -3,7 +3,6 @@
  * Requested by Lockwood.
  *  - nenolod
  *
- * $Id: extb_realname.c 1339 2006-05-17 00:45:40Z nenolod $
  */
 
 #include "stdinc.h"

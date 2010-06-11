@@ -28,7 +28,6 @@
  *  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- *  $Id: sno_routing.c 1172 2006-04-18 13:49:18Z jilles $
  */
 
 #include "stdinc.h"

@@ -30,7 +30,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: blacklist.c 2743 2006-11-10 15:15:00Z jilles $
  */
 
 #include "stdinc.h"

@@ -25,7 +25,6 @@
  *  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: convertilines.c 6 2005-09-10 01:02:21Z nenolod $
  */
 
 #include <stdio.h>

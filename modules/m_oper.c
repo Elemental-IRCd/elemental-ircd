@@ -21,7 +21,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: m_oper.c 1483 2006-05-27 18:58:12Z jilles $
  */
 
 #include "stdinc.h"

@@ -5,7 +5,6 @@
  * To be discussed:
  *    + part notices?
  *
- * $Id: sno_channeljoin.c 3478 2007-05-24 15:10:06Z jilles $
  */
 
 #include "stdinc.h"

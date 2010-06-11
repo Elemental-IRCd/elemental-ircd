@@ -20,7 +20,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *  USA
  *
- *  $Id: tools.c 26170 2008-10-26 20:59:07Z androsyn $
  *
  *  Here is the original header:
  *

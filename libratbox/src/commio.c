@@ -21,7 +21,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *  USA
  *
- *  $Id: commio.c 26254 2008-12-10 04:04:38Z androsyn $
  */
 #include <libratbox_config.h>
 #include <ratbox_lib.h>

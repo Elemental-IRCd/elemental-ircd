@@ -21,7 +21,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: m_kill.c 3408 2007-04-14 20:58:56Z jilles $
  */
 
 #include "stdinc.h"

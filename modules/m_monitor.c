@@ -27,7 +27,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: m_monitor.c 312 2005-11-07 10:47:33Z jilles $
  */
 
 #include "stdinc.h"

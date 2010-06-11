@@ -26,7 +26,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: m_sasl.c 1409 2006-05-21 14:46:17Z jilles $
  */
 
 #include "stdinc.h"
