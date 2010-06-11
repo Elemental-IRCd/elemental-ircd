@@ -116,4 +116,3 @@ See also http://sasl.charybdis.be/ and
 http://wiki.atheme.net/index.php/PR:SASL_Authentication (these links are
 currently dead but may be resurrected in the future).
 
-$Id: sasl.txt 3169 2007-01-28 22:13:18Z jilles $

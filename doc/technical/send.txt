@@ -250,4 +250,3 @@ sendto_wallops_flags()
 -- Diane Bruce 
 Updated Jan 2006 by jilles with ratbox and late hybrid7 changes
 
-$Id: send.txt 587 2006-01-27 19:45:11Z jilles $

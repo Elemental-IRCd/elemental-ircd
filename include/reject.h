@@ -21,7 +21,6 @@
  *  USA
  *
  *
- *  $Id: reject.h 25056 2008-02-06 20:47:40Z androsyn $
  */
 #ifndef INCLUDED_reject_h
 #define INCLUDED_reject_h

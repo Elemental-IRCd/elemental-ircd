@@ -21,7 +21,6 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
  *  USA
  *
- *  $Id: whowas.h 1717 2006-07-04 14:41:11Z jilles $
  */
 #ifndef INCLUDED_whowas_h
 #define INCLUDED_whowas_h

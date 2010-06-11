@@ -29,7 +29,6 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: s_newconf.h 1747 2006-07-25 21:22:45Z jilles $
  */
 
 #ifndef INCLUDED_s_newconf_h

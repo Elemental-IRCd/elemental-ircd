@@ -29,7 +29,6 @@
  *  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *
- *  $Id: supported.h 1887 2006-08-29 13:42:56Z jilles $
  */
 
 #ifndef INCLUDED_supported_h

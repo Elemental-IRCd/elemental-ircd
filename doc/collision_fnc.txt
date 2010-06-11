@@ -44,4 +44,3 @@ nick changes their nick but is collided again (the server detecting the
 collision will not propagate the nick change further).
 
 -- 
-$Id: collision_fnc.txt 3422 2007-04-22 14:35:28Z jilles $

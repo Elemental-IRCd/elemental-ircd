@@ -1,5 +1,4 @@
 /*
- * $Id: ratbox_lib.h 26256 2008-12-10 04:05:26Z androsyn $
  */
 
 #ifndef RB_LIB_H

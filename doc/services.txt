@@ -60,4 +60,3 @@ following features to ircd:
    Gives numeric 486 to users sending a PRIVMSG who are not logged in:
    :<server> 486 <nick> <targetnick> :You must log in with services to message this user
 
-# $Id: services.txt 6 2005-09-10 01:02:21Z nenolod $
