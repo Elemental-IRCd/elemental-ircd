@@ -451,6 +451,11 @@ register_local_user(struct Client *client_p, struct Client *source_p, const char
 			sendto_one_notice(source_p, ":*** Your IP address %s is listed in %s",
 					source_p->sockhost, source_p->preClient->dnsbl_listed->host);
 			source_p->preClient->dnsbl_listed->hits++;
+
+			sendto_realops_snomask(SNO_GENERAL, L_ALL,
+					"%s [%s] is being disconnected due to being listed in DNS Blacklist %s",
+					source_p->name, source_p->sockhost, source_p->preClient->dnsbl_listed->host);
+
 			add_reject(source_p, NULL, NULL);
 			exit_client(client_p, source_p, &me, "*** Banned (DNS blacklist)");
 			return CLIENT_EXITED;
