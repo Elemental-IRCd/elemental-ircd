@@ -39,6 +39,8 @@
 #include "s_conf.h"
 #include "hook.h"
 
+struct module_modes ModuleModes;
+
 static int m_kick(struct Client *, struct Client *, int, const char **);
 #define mg_kick { m_kick, 3 }
 
@@ -165,7 +167,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 			return 0;
 		}
 
-		if(MyClient(source_p) && chptr->mode.mode & MODE_NOKICK)
+		if(MyClient(source_p) && chptr->mode.mode & ModuleModes.MODE_NOKICK)
 		{
 			sendto_one_numeric(source_p, ERR_NOKICK,
 					form_str(ERR_NOKICK),
@@ -173,7 +175,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 			return 0;
 		}
 
-		if (MyClient(source_p) && chptr->mode.mode & MODE_NOOPERKICK && IsOper(who))
+		if (MyClient(source_p) && chptr->mode.mode & ModuleModes.MODE_NOOPERKICK && IsOper(who))
 		{
 			sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
 					"Overriding KICK from %s on %s in %s (channel is +M)",
@@ -237,7 +239,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 		rb_snprintf(text, sizeof(text), "K%s", who->id);
 
 		/* we don't need to track NOREJOIN stuff unless it's our client being kicked */
-		if(MyClient(who) && chptr->mode.mode & MODE_NOREJOIN)
+		if(MyClient(who) && chptr->mode.mode & ModuleModes.MODE_NOREJOIN)
 			channel_metadata_time_add(chptr, text, rb_current_time(), "KICKNOREJOIN");
 	}
 	else if (MyClient(source_p))

@@ -71,6 +71,8 @@ char cflagsmyinfo[256];
 
 int chmode_flags[256];
 
+struct module_modes ModuleModes;
+
 /* OPTIMIZE ME! -- dwr */
 void
 construct_cflags_strings(void)
@@ -101,28 +103,23 @@ construct_cflags_strings(void)
 			chmode_flags[i] = 0;
 		}
                 
-		switch (chmode_flags[i])
+		if(chmode_flags[i] == ModuleModes.MODE_DISFORWARD)
 		{
-		    case MODE_EXLIMIT:
-		    case MODE_DISFORWARD:
-			if(ConfigChannel.use_forward)
+			if (ModuleModes.MODE_FORWARD)
 			{
-			    *ptr++ = (char) i;
+				*ptr++ = (char) i;
 			}
-			
-			break;
-		    case MODE_REGONLY:
-			if(rb_dlink_list_length(&service_list))
+		}
+		else if(chmode_flags[i] == ModuleModes.MODE_REGONLY)
+		{
+			if (rb_dlink_list_length(&service_list))
 			{
-			    *ptr++ = (char) i;
+				*ptr++ = (char) i;
 			}
-
-			break;
-		    default:
-			if(chmode_flags[i] != 0)
-			{
-			    *ptr++ = (char) i;
-			}
+		}
+		else if(chmode_flags[i] != ModuleModes.MODE_EXLIMIT && chmode_flags[i] != 0)
+		{
+			*ptr++ = (char) i;
 		}
 		
 		/* Should we leave orphaned check here? -- dwr */
@@ -219,7 +216,7 @@ add_id(struct Client *source_p, struct Channel *chptr, const char *banid,
 	 */
 	if(MyClient(source_p))
 	{
-		if((rb_dlink_list_length(&chptr->banlist) + rb_dlink_list_length(&chptr->exceptlist) + rb_dlink_list_length(&chptr->invexlist) + rb_dlink_list_length(&chptr->quietlist)) >= (chptr->mode.mode & MODE_EXLIMIT ? ConfigChannel.max_bans_large : ConfigChannel.max_bans))
+		if((rb_dlink_list_length(&chptr->banlist) + rb_dlink_list_length(&chptr->exceptlist) + rb_dlink_list_length(&chptr->invexlist) + rb_dlink_list_length(&chptr->quietlist)) >= (chptr->mode.mode & ModuleModes.MODE_EXLIMIT ? ConfigChannel.max_bans_large : ConfigChannel.max_bans))
 		{
 			sendto_one(source_p, form_str(ERR_BANLISTFULL),
 				   me.name, source_p->name, chptr->chname, realban);
@@ -256,7 +253,7 @@ add_id(struct Client *source_p, struct Channel *chptr, const char *banid,
 	rb_dlinkAdd(actualBan, &actualBan->node, list);
 
 	/* invalidate the can_send() cache */
-	if(mode_type == CHFL_BAN || mode_type == CHFL_QUIET || mode_type == CHFL_EXCEPTION)
+	if(mode_type == CHFL_BAN || mode_type == ModuleModes.CHFL_QUIET || mode_type == CHFL_EXCEPTION)
 		chptr->bants++;
 
 	return 1;
@@ -287,7 +284,7 @@ del_id(struct Channel *chptr, const char *banid, rb_dlink_list * list, long mode
 			free_ban(banptr);
 
 			/* invalidate the can_send() cache */
-			if(mode_type == CHFL_BAN || mode_type == CHFL_QUIET || mode_type == CHFL_EXCEPTION)
+			if(mode_type == CHFL_BAN || mode_type == ModuleModes.CHFL_QUIET || mode_type == CHFL_EXCEPTION)
 				chptr->bants++;
 
 			return 1;
@@ -536,7 +533,7 @@ chm_simple(struct Client *source_p, struct Channel *chptr,
 	if((dir == MODE_ADD) && !(chptr->mode.mode & mode_type))
 	{
 		/* if +f is disabled, ignore an attempt to set +QF locally */
-		if(!ConfigChannel.use_forward && MyClient(source_p) &&
+		if(!ModuleModes.MODE_FORWARD && MyClient(source_p) &&
 		   (c == 'Q' || c == 'F'))
 			return;
 
@@ -751,18 +748,17 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
 	int mems;
 	int override = 0;
 
-	switch (mode_type)
+	if(mode_type == CHFL_BAN)
 	{
-	case CHFL_BAN:
 		list = &chptr->banlist;
 		errorval = SM_ERR_RPL_B;
 		rpl_list = RPL_BANLIST;
 		rpl_endlist = RPL_ENDOFBANLIST;
 		mems = ALL_MEMBERS;
 		caps = 0;
-		break;
-
-	case CHFL_EXCEPTION:
+	}
+	else if(mode_type == CHFL_EXCEPTION)
+	{
 		/* if +e is disabled, allow all but +e locally */
 		if(!ConfigChannel.use_except && MyClient(source_p) &&
 		   ((dir == MODE_ADD) && (parc > *parn)))
@@ -778,9 +774,9 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
 			mems = ONLY_CHANOPS;
 		else
 			mems = ONLY_SERVERS;
-		break;
-
-	case CHFL_INVEX:
+	}
+	else if(mode_type == CHFL_INVEX)
+	{
 		/* if +I is disabled, allow all but +I locally */
 		if(!ConfigChannel.use_invex && MyClient(source_p) &&
 		   (dir == MODE_ADD) && (parc > *parn))
@@ -796,21 +792,20 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
 			mems = ONLY_CHANOPS;
 		else
 			mems = ONLY_SERVERS;
-		break;
-
-	case CHFL_QUIET:
+	}
+	else if(mode_type == ModuleModes.CHFL_QUIET)
+	{
 		list = &chptr->quietlist;
 		errorval = SM_ERR_RPL_Q;
 		rpl_list = RPL_QUIETLIST;
 		rpl_endlist = RPL_ENDOFQUIETLIST;
 		mems = ALL_MEMBERS;
 		caps = 0;
-		break;
-
-	default:
+	}
+	else
+	{
 		sendto_realops_snomask(SNO_GENERAL, L_ALL, "chm_ban() called with unknown type!");
 		return;
-		break;
 	}
 
 	if(dir == 0 || parc <= *parn)
@@ -821,7 +816,7 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
 
 		/* non-ops cant see +eI lists.. */
 		if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN && alevel != CHFL_HALFOP && mode_type != CHFL_BAN &&
-				mode_type != CHFL_QUIET)
+				mode_type != ModuleModes.CHFL_QUIET)
 		{
 			if(IsOverride(source_p))
 			{
@@ -1508,7 +1503,7 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
 	int override = 0;
 
 	/* if +f is disabled, ignore local attempts to set it */
-	if(!ConfigChannel.use_forward && MyClient(source_p) &&
+	if(!ModuleModes.MODE_FORWARD && MyClient(source_p) &&
 	   (dir == MODE_ADD) && (parc > *parn))
 		return;
 
@@ -1578,10 +1573,10 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
 					   form_str(ERR_NOSUCHCHANNEL), forward);
 			return;
 		}
-		if(MyClient(source_p) && !(targptr->mode.mode & MODE_FREETARGET))
+		if(MyClient(source_p) && !(targptr->mode.mode & ModuleModes.MODE_FREETARGET))
 		{
 			if((msptr = find_channel_membership(targptr, source_p)) == NULL ||
-				is_any_op(msptr))
+				!is_any_op(msptr))
 			{
 				if(IsOverride(source_p))
 					override = 1;
@@ -1600,7 +1595,7 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].dir = MODE_ADD;
 		mode_changes[mode_count].caps = 0;
 		mode_changes[mode_count].nocaps = 0;
-		mode_changes[mode_count].mems = ConfigChannel.use_forward ? ALL_MEMBERS : ONLY_SERVERS;
+		mode_changes[mode_count].mems = ModuleModes.MODE_FORWARD ? ALL_MEMBERS : ONLY_SERVERS;
 		mode_changes[mode_count].id = NULL;
 		mode_changes[mode_count].override = override;
 		mode_changes[mode_count++].arg = forward;
@@ -1757,6 +1752,9 @@ chm_regonly(struct Client *source_p, struct Channel *chptr,
 }
 
 /* *INDENT-OFF* */
+/* Only RFC and ircd-ratbox modes are held in this table
+ * All other modes are added via loading modules in shadowircd/modes
+ * Such is documented in the comments for each mode, ex: C - NOCTCP. */
 struct ChannelMode chmode_table[256] =
 {
   {chm_nosuch,  0 },			/* 0x00 */
@@ -1827,24 +1825,24 @@ struct ChannelMode chmode_table[256] =
   {chm_nosuch,	0 },			/* @ */
   {chm_nosuch,	0 },			/* A */
   {chm_nosuch,	0 },			/* B */
-  {chm_simple,	MODE_NOCTCP },		/* C */
-  {chm_simple,	MODE_NOACTION },	/* D */
-  {chm_simple,	MODE_NOKICK },		/* E */
-  {chm_simple,	MODE_FREETARGET },	/* F */
-  {chm_simple,	MODE_NOCAPS },		/* G */
+  {chm_nosuch,	0 },			/* C - MODE_NOCTCP */
+  {chm_nosuch,	0 },			/* D - MODE_NOACTION */
+  {chm_nosuch,	0 },			/* E - MODE_NOKICK */
+  {chm_nosuch,	0 },			/* F - MODE_FREETARGET */
+  {chm_nosuch,	0 },			/* G - MODE_NOCAPS */
   {chm_nosuch,	0 },			/* H */
   {chm_ban,	CHFL_INVEX },           /* I */
-  {chm_simple,	MODE_NOREJOIN },	/* J */
-  {chm_simple,	MODE_NOREPEAT },	/* K */
-  {chm_staff,	MODE_EXLIMIT },		/* L */
-  {chm_hidden,	MODE_NOOPERKICK },	/* M */
-  {chm_simple,	MODE_NONICK },		/* N */
+  {chm_nosuch,	0 },			/* J - MODE_NOREJOIN */
+  {chm_nosuch,	0 },			/* K - MODE_NOREPEAT */
+  {chm_nosuch,	0 },			/* L - MODE_EXLIMIT */
+  {chm_nosuch,	0 },			/* M - MODE_NOOPERKICK */
+  {chm_nosuch,	0 },			/* N - MODE_NONICK */
   {chm_nosuch,	0 },			/* O */
-  {chm_staff,	MODE_PERMANENT },	/* P */
-  {chm_simple,	MODE_DISFORWARD },	/* Q */
+  {chm_nosuch,	0 },			/* P - MODE_PERMANENT */
+  {chm_nosuch,	0 },			/* Q - MODE_DISFORWARD */
   {chm_nosuch,	0 },			/* R */
   {chm_nosuch,	0 },			/* S */
-  {chm_simple,	MODE_NONOTICE },	/* T */
+  {chm_nosuch,	0 },			/* T - MODE_NONOTICE */
   {chm_nosuch,	0 },			/* U */
   {chm_nosuch,	0 },			/* V */
   {chm_nosuch,	0 },			/* W */
@@ -1859,22 +1857,22 @@ struct ChannelMode chmode_table[256] =
   {chm_nosuch,	0 },
   {chm_admin,	0 },			/* a */
   {chm_ban,	CHFL_BAN },		/* b */
-  {chm_simple,	MODE_NOCOLOR },		/* c */
+  {chm_nosuch,	0 },			/* c - MODE_NOCOLOR */
   {chm_nosuch,	0 },			/* d */
   {chm_ban,	CHFL_EXCEPTION },	/* e */
-  {chm_forward,	0 },			/* f */
-  {chm_simple,	MODE_FREEINVITE },	/* g */
+  {chm_nosuch,	0 },			/* f - MODE_FORWARD */
+  {chm_nosuch,	0 },			/* g - MODE_FREEINVITE */
   {chm_halfop,	0 },			/* h */
   {chm_simple,	MODE_INVITEONLY },	/* i */
-  {chm_throttle, 0 },			/* j */
+  {chm_nosuch, 0 },			/* j - MODE_THROTTLE */
   {chm_key,	0 },			/* k */
   {chm_limit,	0 },			/* l */
   {chm_simple,	MODE_MODERATED },	/* m */
   {chm_simple,	MODE_NOPRIVMSGS },	/* n */
   {chm_op,	0 },			/* o */
   {chm_simple,	MODE_PRIVATE },		/* p */
-  {chm_ban,	CHFL_QUIET },		/* q */
-  {chm_regonly, MODE_REGONLY },		/* r */
+  {chm_nosuch,	0 },			/* q - CHFL_QUIET */
+  {chm_nosuch,	0 },			/* r - MODE_REGONLY */
   {chm_simple,	MODE_SECRET },		/* s */
   {chm_simple,	MODE_TOPICLIMIT },	/* t */
   {chm_nosuch,	0 },			/* u */
@@ -1882,7 +1880,7 @@ struct ChannelMode chmode_table[256] =
   {chm_nosuch,	0 },			/* w */
   {chm_nosuch,	0 },			/* x */
   {chm_nosuch,	0 },			/* y */
-  {chm_simple,	MODE_OPMODERATE },	/* z */
+  {chm_nosuch,	0 },			/* z - MODE_OPMODERATE */
 
   {chm_nosuch,  0 },			/* 0x7b */
   {chm_nosuch,  0 },			/* 0x7c */

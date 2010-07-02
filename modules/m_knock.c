@@ -36,6 +36,8 @@
 #include "modules.h"
 #include "s_serv.h"
 
+struct module_modes ModuleModes;
+
 static int m_knock(struct Client *, struct Client *, int, const char **);
 
 struct Message knock_msgtab = {
@@ -157,7 +159,7 @@ m_knock(struct Client *client_p, struct Client *source_p, int parc, const char *
 	chptr->last_knock = rb_current_time();
 
 	if(ConfigChannel.use_knock)
-		sendto_channel_local(chptr->mode.mode & MODE_FREEINVITE ? ALL_MEMBERS : ONLY_CHANOPS,
+		sendto_channel_local(chptr->mode.mode & ModuleModes.MODE_FREEINVITE ? ALL_MEMBERS : ONLY_CHANOPS,
 				     chptr, form_str(RPL_KNOCK),
 				     me.name, name, name, source_p->name,
 				     source_p->username, source_p->host);

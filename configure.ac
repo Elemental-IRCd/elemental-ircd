@@ -10,7 +10,7 @@ AC_PREREQ(2.57)
 dnl Sneaky way to get an Id tag into the configure script
 AC_COPYRIGHT([$Id: configure.ac 3516 2007-06-10 16:14:03Z jilles $])
 
-AC_INIT([shadowircd],[6.1.0])
+AC_INIT([shadowircd],[6.2.0])
 
 AC_CONFIG_HEADER(include/setup.h)
 
@@ -1160,6 +1160,7 @@ AC_CONFIG_FILES(			\
 	bandb/Makefile			\
 	ssld/Makefile			\
 	extensions/Makefile		\
+	modes/Makefile			\
 	unsupported/Makefile		\
 	src/Makefile			\
 	modules/Makefile		\
