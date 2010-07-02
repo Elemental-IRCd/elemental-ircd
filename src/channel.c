@@ -66,6 +66,8 @@ static int h_can_join;
 static int h_can_create_channel;
 static int h_channel_join;
 
+struct module_modes ModuleModes;
+
 /* init_channels()
  *
  * input	-
@@ -84,6 +86,40 @@ init_channels(void)
 	h_channel_join = register_hook("channel_join");
 	h_can_create_channel = register_hook("can_create_channel");
 }
+
+/* is this the best place to put this? */
+/* init_module_modes()
+ *
+ * input	-
+ * output	-
+ * side effects - various MODE_ values are set to 0
+ */
+void
+init_module_modes()
+{
+	ModuleModes.MODE_REGONLY = 0;
+	ModuleModes.MODE_NOCTCP = 0;
+	ModuleModes.MODE_NOCOLOR = 0;
+	ModuleModes.MODE_EXLIMIT = 0;
+	ModuleModes.MODE_PERMANENT = 0;
+	ModuleModes.MODE_OPMODERATE = 0;
+	ModuleModes.MODE_FREEINVITE = 0;
+	ModuleModes.MODE_FREETARGET = 0;
+	ModuleModes.MODE_DISFORWARD = 0;
+	ModuleModes.MODE_THROTTLE = 0;
+	ModuleModes.MODE_FORWARD = 0;
+	ModuleModes.MODE_NONOTICE = 0;
+	ModuleModes.MODE_NOACTION = 0;
+	ModuleModes.MODE_NOKICK = 0;
+	ModuleModes.MODE_NONICK = 0;
+	ModuleModes.MODE_NOCAPS = 0;
+	ModuleModes.MODE_NOREJOIN = 0;
+	ModuleModes.MODE_NOREPEAT = 0;
+	ModuleModes.MODE_NOOPERKICK = 0;
+
+	ModuleModes.CHFL_QUIET = 0;
+}
+
 
 /*
  * allocate_channel - Allocates a channel
@@ -352,7 +388,7 @@ remove_user_from_channel(struct membership *msptr)
 	if(client_p->servptr == &me)
 		rb_dlinkDelete(&msptr->locchannode, &chptr->locmembers);
 
-	if(!(chptr->mode.mode & MODE_PERMANENT) && rb_dlink_list_length(&chptr->members) <= 0)
+	if(!(chptr->mode.mode & ModuleModes.MODE_PERMANENT) && rb_dlink_list_length(&chptr->members) <= 0)
 		destroy_channel(chptr);
 
 	rb_bh_free(member_heap, msptr);
@@ -387,7 +423,7 @@ remove_user_from_channels(struct Client *client_p)
 		if(client_p->servptr == &me)
 			rb_dlinkDelete(&msptr->locchannode, &chptr->locmembers);
 
-		if(!(chptr->mode.mode & MODE_PERMANENT) && rb_dlink_list_length(&chptr->members) <= 0)
+		if(!(chptr->mode.mode & ModuleModes.MODE_PERMANENT) && rb_dlink_list_length(&chptr->members) <= 0)
 			destroy_channel(chptr);
 
 		rb_bh_free(member_heap, msptr);
@@ -723,6 +759,10 @@ is_quieted(struct Channel *chptr, struct Client *who, struct membership *msptr,
 	struct Ban *actualBan = NULL;
 	struct Ban *actualExcept = NULL;
 
+	/* check to make sure quiets even exist on this server first */
+	if(ModuleModes.CHFL_QUIET == 0)
+		return 0;
+
 	if(!MyClient(who))
 		return 0;
 
@@ -758,7 +798,7 @@ is_quieted(struct Channel *chptr, struct Client *who, struct membership *msptr,
 		if(match(actualBan->banstr, s) ||
 		   match(actualBan->banstr, s2) ||
 		   match_cidr(actualBan->banstr, s2) ||
-		   match_extban(actualBan->banstr, who, chptr, CHFL_QUIET) ||
+		   match_extban(actualBan->banstr, who, chptr, ModuleModes.CHFL_QUIET) ||
 		   (s3 != NULL && match(actualBan->banstr, s3)))
 			break;
 		else
@@ -899,15 +939,19 @@ can_join(struct Client *source_p, struct Channel *chptr, char *key)
 	if(chptr->mode.limit &&
 	   rb_dlink_list_length(&chptr->members) >= (unsigned long) chptr->mode.limit)
 		i = ERR_CHANNELISFULL;
-	if(chptr->mode.mode & MODE_REGONLY && EmptyString(source_p->user->suser))
+	if(chptr->mode.mode & ModuleModes.MODE_REGONLY && EmptyString(source_p->user->suser))
 		i = ERR_NEEDREGGEDNICK;
 	/* join throttling stuff --nenolod */
-	else if(chptr->mode.join_num > 0 && chptr->mode.join_time > 0)
+	/* only check for throttles if they exist on this server --Taros */
+	else if(ModuleModes.MODE_THROTTLE)
 	{
-		if ((rb_current_time() - chptr->join_delta <= 
-			chptr->mode.join_time) && (chptr->join_count >=
-			chptr->mode.join_num))
-			i = ERR_THROTTLE;
+		if(chptr->mode.join_num > 0 && chptr->mode.join_time > 0)
+		{
+			if ((rb_current_time() - chptr->join_delta <= 
+				chptr->mode.join_time) && (chptr->join_count >=
+				chptr->mode.join_num))
+				i = ERR_THROTTLE;
+		}
 	}
 
 	/* allow /invite to override +l/+r/+j also -- jilles */
@@ -1042,7 +1086,7 @@ find_nonickchange_channel(struct Client *client_p)
 	{
 		msptr = ptr->data;
 		chptr = msptr->chptr;
-		if (chptr->mode.mode & MODE_NONICK && (!ConfigChannel.exempt_cmode_N || !is_any_op(msptr)))
+		if (chptr->mode.mode & ModuleModes.MODE_NONICK && (!ConfigChannel.exempt_cmode_N || !is_any_op(msptr)))
 			return chptr;
 	}
 	return NULL;
@@ -1297,7 +1341,7 @@ channel_modes(struct Channel *chptr, struct Client *client_p)
 					   chptr->mode.join_time);
 	}
 
-	if(*chptr->mode.forward && (ConfigChannel.use_forward || !IsClient(client_p)))
+	if(*chptr->mode.forward && (ModuleModes.MODE_FORWARD || !IsClient(client_p)))
 	{
 		*mbuf++ = 'f';
 
@@ -1608,7 +1652,7 @@ check_forward(struct Client *source_p, struct Channel *chptr,
 		if (hash_find_resv(chptr->chname))
 			return NULL;
 		/* Don't forward to +Q channel */
-		if (chptr->mode.mode & MODE_DISFORWARD)
+		if (chptr->mode.mode & ModuleModes.MODE_DISFORWARD)
 			return NULL;
 		i = can_join(source_p, chptr, key);
 		if (i == 0)
@@ -1868,7 +1912,7 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 						me.name, get_oper_name(source_p), chptr->chname);
 			}
 			else if ((i != ERR_NEEDREGGEDNICK && i != ERR_THROTTLE && i != ERR_INVITEONLYCHAN && i != ERR_CHANNELISFULL) ||
-			    (!ConfigChannel.use_forward || (chptr = check_forward(source_p, chptr, key)) == NULL))
+			    (!ModuleModes.MODE_FORWARD || (chptr = check_forward(source_p, chptr, key)) == NULL))
 			{
 				/* might be wrong, but is there any other better location for such?
 				 * see extensions/chm_operonly.c for other comments on this

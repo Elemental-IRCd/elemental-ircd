@@ -54,6 +54,8 @@
 #include "substitution.h"
 #include "chmode.h"
 
+struct module_modes ModuleModes;
+
 static void report_and_set_user_flags(struct Client *, struct ConfItem *);
 void user_welcome(struct Client *source_p);
 
@@ -1101,7 +1103,7 @@ user_mode(struct Client *client_p, struct Client *source_p, int parc, const char
 			}
 			/* FALLTHROUGH */
 		default:
-			if (MyConnect(source_p) && *pm == 'Q' && !ConfigChannel.use_forward) {
+			if (MyConnect(source_p) && *pm == 'Q' && !ModuleModes.MODE_FORWARD) {
 				badflag = YES;
 				break;
 			}

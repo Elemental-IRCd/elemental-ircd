@@ -136,6 +136,32 @@ struct ChannelMode
 	long mode_type;
 };
 
+/* modes added by the module files in modes/ */
+struct module_modes
+{
+	unsigned int MODE_REGONLY; 
+	unsigned int MODE_NOCTCP; /* Block CTCPs directed to this channel */
+	unsigned int MODE_NOCOLOR;
+	unsigned int MODE_EXLIMIT; /* exempt from list limits, +b/+e/+I/+q */
+	unsigned int MODE_PERMANENT; /* permanant channel, +P */
+	unsigned int MODE_OPMODERATE; /* send rejected messages to ops */
+	unsigned int MODE_FREEINVITE; /* allow free use of /invite */
+	unsigned int MODE_FREETARGET; /* can be forwarded to without authorization */
+	unsigned int MODE_DISFORWARD; /* disable channel forwarding */
+	unsigned int MODE_THROTTLE; /* throttle joins */
+	unsigned int MODE_FORWARD;
+	unsigned int MODE_NONOTICE; /* Block notices directed to this channel */
+	unsigned int MODE_NOACTION; /* Block CTCP ACTION directed to this channel */
+	unsigned int MODE_NOKICK; /* Disable /kick on this channel */
+	unsigned int MODE_NONICK; /* Disable /nick for anyone on this channel */
+	unsigned int MODE_NOCAPS; /* Block messages in all capital letters */
+	unsigned int MODE_NOREJOIN; /* Block rejoin immediately after kick */
+	unsigned int MODE_NOREPEAT; /* Block repeat messages */
+	unsigned int MODE_NOOPERKICK; /* disallow kicking opers */
+
+	unsigned int CHFL_QUIET;
+};
+
 typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 		struct Channel *chptr, long mode_type);
 
@@ -171,28 +197,10 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define MODE_TOPICLIMIT 0x0008
 #define MODE_INVITEONLY 0x0010
 #define MODE_NOPRIVMSGS 0x0020
-#define MODE_REGONLY	0x0040
-#define MODE_NOCOLOR	0x0080
-#define MODE_EXLIMIT	0x0100  /* exempt from list limits, +b/+e/+I/+q */
-#define MODE_PERMANENT  0x0200  /* permanant channel, +P */
-#define MODE_OPMODERATE 0x0400  /* send rejected messages to ops */
-#define MODE_FREEINVITE 0x0800  /* allow free use of /invite */
-#define MODE_FREETARGET 0x1000  /* can be forwarded to without authorization */
-#define MODE_DISFORWARD 0x2000  /* disable channel forwarding */
-#define MODE_NOCTCP     0x8000  /* Block CTCPs directed to this channel */
-#define MODE_NONOTICE	0x10000	/* Block notices directed to this channel */
-#define MODE_NOACTION	0x20000 /* Block CTCP ACTION directed to this channel */
-#define MODE_NOKICK	0x40000 /* Disable /kick on this channel */
-#define MODE_NONICK	0x80000 /* Disable /nick for anyone on this channel */
-#define MODE_NOCAPS	0x100000 /* Block messages in all capital letters */
-#define MODE_NOREJOIN	0x200000 /* Block rejoin immediately after kick */
-#define MODE_NOREPEAT	0x400000 /* Block repeat messages */
-#define MODE_NOOPERKICK	0x800000 /* disallow kicking opers */
 
 #define CHFL_BAN        0x10000000	/* ban channel flag */
 #define CHFL_EXCEPTION  0x20000000	/* exception to ban channel flag */
 #define CHFL_INVEX      0x40000000
-#define CHFL_QUIET      0x80000000
 
 /* mode flags for direction indication */
 #define MODE_QUERY     0
@@ -219,6 +227,7 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 
 extern rb_dlink_list global_channel_list;
 void init_channels(void);
+void init_module_modes(void);
 
 struct Channel *allocate_channel(const char *chname);
 void free_channel(struct Channel *chptr);

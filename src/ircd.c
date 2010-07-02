@@ -641,6 +641,7 @@ main(int argc, char *argv[])
 
 	seed_random(NULL);
 
+	init_module_modes();
 	init_main_logfile();
 	newconf_init();
 	init_s_conf();

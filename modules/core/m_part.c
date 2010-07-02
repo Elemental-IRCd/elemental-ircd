@@ -39,6 +39,7 @@
 #include "s_conf.h"
 #include "packet.h"
 #include "inline/stringops.h"
+#include "channel.h"
 
 static int m_part(struct Client *, struct Client *, int, const char **);
 
@@ -54,6 +55,7 @@ DECLARE_MODULE_AV1(part, NULL, NULL, part_clist, NULL, NULL, "$Revision: 98 $");
 static void part_one_client(struct Client *client_p,
 			    struct Client *source_p, char *name, char *reason);
 
+struct module_modes ModuleModes;
 
 /*
 ** m_part
@@ -127,7 +129,7 @@ part_one_client(struct Client *client_p, struct Client *source_p, char *name, ch
 			   (source_p->localClient->firsttime +
 			    ConfigFileEntry.anti_spam_exit_message_time) < rb_current_time()))))
 	{
-		if(chptr->mode.mode & MODE_NOCOLOR && (!ConfigChannel.exempt_cmode_c || !is_any_op(msptr)))
+		if(chptr->mode.mode & ModuleModes.MODE_NOCOLOR && (!ConfigChannel.exempt_cmode_c || !is_any_op(msptr)))
 		{
 			rb_strlcpy(reason2, reason, BUFSIZE);
 			strip_colour(reason2);
