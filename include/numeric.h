@@ -308,6 +308,8 @@ extern const char *form_str(int);
 
 #define ERR_KICKNOREJOIN     495
 
+#define ERR_OWNMODE          494 /* from bahamut -- jilles */
+
 #define ERR_UMODEUNKNOWNFLAG 501
 #define ERR_USERSDONTMATCH   502
 

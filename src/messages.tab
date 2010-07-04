@@ -515,7 +515,7 @@ static  const char *  replies[] = {
 /* 491 ERR_NOOPERHOST, */       ":No appropriate operator blocks were found for your host",
 /* 492 ERR_NOCTCP */		":Can't send CTCP to %s (+C set)",
 /* 493 */       NULL,
-/* 494 */       NULL,
+/* 494 ERR_OWNMODE, */          "%s :cannot answer you while you are %s, your message was not sent",
 /* 495 ERR_KICKNOREJOIN */       ":%s 495 %s %s :Cannot rejoin channel so soon after being kicked (+J set)",
 /* 496 */       NULL,
 /* 497 */       NULL,
