@@ -152,8 +152,8 @@ static int mo_list(struct Client *client_p, struct Client *source_p, int parc, c
 		return 0;
 	}
 
-	/* XXX rather arbitrary -- jilles */
-	params.users_min = 3;
+	/* Let the user set it */
+	params.users_min = ConfigFileEntry.hide_channel_below_users;
 	params.users_max = INT_MAX;
 
 	if (parc > 1 && parv[1] != NULL && !IsChannelName(parv[1]))

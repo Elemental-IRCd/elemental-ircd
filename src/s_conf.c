@@ -698,6 +698,7 @@ set_default_conf(void)
 	ConfigFileEntry.failed_oper_notice = YES;
 	ConfigFileEntry.anti_nick_flood = NO;
 	ConfigFileEntry.disable_fake_channels = NO;
+	ConfigFileEntry.hide_channel_below_users = 3;
 	ConfigFileEntry.max_nick_time = 20;
 	ConfigFileEntry.max_nick_changes = 5;
 	ConfigFileEntry.max_accept = 20;

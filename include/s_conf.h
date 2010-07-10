@@ -166,6 +166,7 @@ struct config_file_entry
 
 	unsigned char compression_level;
 	int disable_fake_channels;
+	int hide_channel_below_users;
 	int dots_in_ident;
 	int failed_oper_notice;
 	int anti_nick_flood;
