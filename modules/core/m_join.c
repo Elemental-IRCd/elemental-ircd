@@ -532,7 +532,7 @@ ms_sjoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 	{
 		fl = 0;
 
-		for (i = 0; i < 2; i++)
+		for (i = 0; i < 4; i++)
 		{
 			if(*s == '!')
 			{
@@ -692,7 +692,7 @@ ms_sjoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 				para[pargs++] = target_p->name;
 			}
 		}
-		if(fl & CHFL_CHANOP)
+		else if(fl & CHFL_CHANOP)
 		{
 			*mbuf++ = 'o';
 			para[pargs++] = target_p->name;
@@ -742,7 +742,7 @@ ms_sjoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 				para[pargs++] = target_p->name;
 			}
 		}
-		if(fl & CHFL_HALFOP)
+		else if(fl & CHFL_HALFOP)
 		{
 			*mbuf++ = 'h';
 			para[pargs++] = target_p->name;
