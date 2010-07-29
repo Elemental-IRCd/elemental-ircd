@@ -1873,7 +1873,10 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 				continue;
 			}
 
-			flags = CHFL_CHANOP;
+			if(ConfigChannel.admin_on_channel_create)
+				flags = CHFL_ADMIN | CHFL_CHANOP;
+			else
+				flags = CHFL_CHANOP;
 		}
 
 		if((rb_dlink_list_length(&source_p->user->channel) >=

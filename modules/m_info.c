@@ -626,6 +626,12 @@ static struct InfoStruct info_table[] = {
 		"Defines whether a topicsetters host or just nick is shown on TOPIC",
 	},
 	{
+		"admin_on_channel_create",
+		OUTPUT_BOOLEAN_YN,
+		&ConfigChannel.admin_on_channel_create,
+		"Give users +ao on channel create",
+	},
+	{
 		"use_halfop",
 		OUTPUT_BOOLEAN_YN,
 		&ConfigChannel.use_halfop,

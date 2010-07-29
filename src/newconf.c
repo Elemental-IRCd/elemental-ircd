@@ -2279,6 +2279,7 @@ static struct ConfEntry conf_channel_table[] =
 	{ "only_ascii_channels", CF_YESNO, NULL, 0, &ConfigChannel.only_ascii_channels },
 	{ "cycle_host_change",	CF_YESNO, NULL, 0, &ConfigChannel.cycle_host_change },
 	{ "host_in_topic",	CF_YESNO, NULL, 0, &ConfigChannel.host_in_topic	},
+	{ "admin_on_channel_create", CF_YESNO, NULL, 0, &ConfigChannel.admin_on_channel_create },
 	{ "use_halfop",		CF_YESNO, NULL, 0, &ConfigChannel.use_halfop		},
 	{ "use_admin",		CF_YESNO, NULL, 0, &ConfigChannel.use_admin		},
 	{ "use_except",		CF_YESNO, NULL, 0, &ConfigChannel.use_except		},

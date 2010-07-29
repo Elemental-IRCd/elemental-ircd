@@ -764,6 +764,7 @@ set_default_conf(void)
 
 	ConfigChannel.autochanmodes = rb_strdup("nt");
 	ConfigChannel.exemptchanops = rb_strdup("");
+	ConfigChannel.admin_on_channel_create = NO;
 	ConfigChannel.use_halfop = YES;
 	ConfigChannel.use_admin = YES;
 	ConfigChannel.use_except = YES;
