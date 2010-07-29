@@ -1582,7 +1582,7 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
 		if(MyClient(source_p) && !(targptr->mode.mode & MODE_FREETARGET))
 		{
 			if((msptr = find_channel_membership(targptr, source_p)) == NULL ||
-				is_any_op(msptr))
+				!is_any_op(msptr))
 			{
 				if(IsOverride(source_p))
 					override = 1;
