@@ -2201,6 +2201,7 @@ static struct ConfEntry conf_general_table[] =
 	{ "anti_spam_exit_message_time", CF_TIME,  NULL, 0, &ConfigFileEntry.anti_spam_exit_message_time },
 	{ "use_part_messages",		CF_YESNO, NULL, 0, &ConfigFileEntry.use_part_messages	},
 	{ "disable_fake_channels",	 CF_YESNO, NULL, 0, &ConfigFileEntry.disable_fake_channels },
+	{ "hide_channel_below_users", CF_INT, NULL, 0, &ConfigFileEntry.hide_channel_below_users },
 	{ "min_nonwildcard_simple",	 CF_INT,   NULL, 0, &ConfigFileEntry.min_nonwildcard_simple },
 	{ "non_redundant_klines",	 CF_YESNO, NULL, 0, &ConfigFileEntry.non_redundant_klines },
 	{ "tkline_expire_notices",	 CF_YESNO, NULL, 0, &ConfigFileEntry.tkline_expire_notices },

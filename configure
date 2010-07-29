@@ -7852,7 +7852,7 @@ $as_echo "$as_me: WARNING: NICKLEN has a hard limit of 50. Setting NICKLEN=50" >
   fi
 
 else
-  NICKLEN=31
+  NICKLEN=30
 fi
 
 

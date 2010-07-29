@@ -151,6 +151,12 @@ static struct InfoStruct info_table[] = {
 		"Startup value of FLOODCOUNT",
 	},
 	{
+		"hide_channel_below_users",
+		OUTPUT_DECIMAL,
+		&ConfigFileEntry.hide_channel_below_users,
+		"Hide channels below this many users in standard /LIST output",
+	},
+	{
 		"default_adminstring",
 		OUTPUT_STRING,
 		&ConfigFileEntry.default_adminstring,
