@@ -317,7 +317,7 @@ single_whois(struct Client *source_p, struct Client *target_p, int operspy)
 
 	if(IsOper(target_p))
 	{
-		if(md = user_metadata_find(target_p, "OPERSTRING"))
+		if(md == user_metadata_find(target_p, "OPERSTRING"))
 			sendto_one_numeric(source_p, 313, "%s :%s", target_p->name, md->value);
 		else
 			sendto_one_numeric(source_p, RPL_WHOISOPERATOR, form_str(RPL_WHOISOPERATOR),
@@ -325,7 +325,7 @@ single_whois(struct Client *source_p, struct Client *target_p, int operspy)
 					IsService(target_p) ? ConfigFileEntry.servicestring :
 				  	(IsAdmin(target_p) ? GlobalSetOptions.adminstring :
 				  	GlobalSetOptions.operstring));
-		if(md = user_metadata_find(target_p, "SWHOIS"))
+		if(md == user_metadata_find(target_p, "SWHOIS"))
 			sendto_one_numeric(source_p, 320, "%s :%s", target_p->name, md->value);
 	}
 
