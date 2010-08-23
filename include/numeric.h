@@ -377,6 +377,8 @@ extern const char *form_str(int);
 
 #define ERR_NOCOMMONCHAN	737
 
+#define ERR_MLOCKRESTRICTED	735
+
 #define RPL_RSACHALLENGE2       740
 #define RPL_ENDOFRSACHALLENGE2  741
 
