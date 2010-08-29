@@ -2287,6 +2287,7 @@ static struct ConfEntry conf_channel_table[] =
 	{ "use_knock",		CF_YESNO, NULL, 0, &ConfigChannel.use_knock		},
 	{ "use_local_channels",	CF_YESNO, NULL, 0, &ConfigChannel.use_local_channels	},
 	{ "resv_forcepart",     CF_YESNO, NULL, 0, &ConfigChannel.resv_forcepart	},
+	{ "channel_target_change", CF_YESNO, NULL, 0, &ConfigChannel.channel_target_change  },
 	{ "exempt_cmode_c",	CF_YESNO, NULL, 0, &ConfigChannel.exempt_cmode_c	},
 	{ "exempt_cmode_C",	CF_YESNO, NULL, 0, &ConfigChannel.exempt_cmode_C	},
 	{ "exempt_cmode_D",	CF_YESNO, NULL, 0, &ConfigChannel.exempt_cmode_D	},

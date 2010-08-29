@@ -261,6 +261,7 @@ struct config_channel_entry
 	int cycle_host_change;
 	int host_in_topic;
 	int resv_forcepart;
+	int channel_target_change;
 
 	int exempt_cmode_c;
 	int exempt_cmode_C;

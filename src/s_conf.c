@@ -787,6 +787,7 @@ set_default_conf(void)
 	ConfigChannel.no_join_on_split = NO;
 	ConfigChannel.no_create_on_split = YES;
 	ConfigChannel.resv_forcepart = YES;
+	ConfigChannel.channel_target_change = YES;
 
 	ConfigChannel.exempt_cmode_c = NO;
 	ConfigChannel.exempt_cmode_C = NO;
