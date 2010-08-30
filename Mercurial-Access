@@ -1,9 +1,9 @@
 The ShadowIRCd Mercurial repository can be checked out using the following command:
-	hg clone http://bitbucket.org/uranium/shadowircd/ shadowircd-devel
+	hg clone http://hg.atheme.org/unofficial/shadowircd/ shadowircd-devel
 
 The stable version can be checked out using the following command:
 	hg clone http://bitbucket.org/uranium/shadowircd-stable/ shadowircd-stable
 
 ShadowIRCd's Mercurial repository depot can be browsed over the internet at 
 the following address:
-	http://bitbucket.org/uranium/shadowircd/
+	http://hg.atheme.org/unofficial/shadowircd/
