@@ -113,6 +113,9 @@ me_svsjoin(struct Client *client_p, struct Client *source_p, int parc, const cha
 	if((target_p = find_person(parv[1])) == NULL)
 		return 0;
 
+	if(!MyClient(target_p))
+		return 0;
+
 	user_join(&me, target_p, parv[2], NULL);
 	return 0;
 }
