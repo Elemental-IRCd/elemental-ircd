@@ -554,7 +554,8 @@ msg_channel(int p_or_n, const char *command,
 						caps++; 
 					len++;
 				}
-				if(((caps*100)/(len)) >= 50)
+				/* Added divide by 0 check --alxbl */
+				if(len != 0 && ((caps*100)/(len)) >= 50)
 				{
 					sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - Your message contains mostly capital letters (+G set)", chptr->chname);
 					return;
