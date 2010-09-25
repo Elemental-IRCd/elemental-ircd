@@ -1,3 +1,11 @@
+androsyn    2010/09/25 20:47:43 UTC	(20100925_0-27080)
+  Log:
+  add rb_dlinkMoveListTail which rserv will need
+
+  Modified:
+	libratbox/trunk/include/rb_tools.h (File Modified) 
+
+
 androsyn    2009/06/22 03:28:05 UTC	(20090622_0-26602)
   Log:
   Add support for %m to sprintf and friends.  This basically does %s strerror(errno).  
