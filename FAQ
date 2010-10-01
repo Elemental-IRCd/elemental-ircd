@@ -27,4 +27,11 @@ A: The ShadowIRCd team highly recommends Atheme IRC Services (www.atheme.net),
    package overall. ShadowIRCd may work with Anope 1.8.x using the charybdis 
    protocol module and 1.9.x using the ratbox protocol module, but it is not 
    recommended and it has not been tested by the ShadowIRCd developers. 
-   
+
+Q: I've got two servers linked and users on one are getting constant flood notices
+   when trying to send to channels. HELP!!!!
+A: Has your server's clock gone backwards massively recently? (probably due to it
+   being incorrect). If so, you have two options. You can either wait for the real
+   time to be what the incorrect time was, or you can restart the affected server.
+   If that does not fix the problem, please file a bug at:
+       http://jira.atheme.org/browse/SHAD
