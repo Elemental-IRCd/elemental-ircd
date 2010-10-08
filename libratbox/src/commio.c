@@ -1804,24 +1804,6 @@ try_devpoll(void)
 }
 
 static int
-try_sigio(void)
-{
-    if(!rb_init_netio_sigio()) {
-        setselect_handler = rb_setselect_sigio;
-        select_handler = rb_select_sigio;
-        setup_fd_handler = rb_setup_fd_sigio;
-        io_sched_event = rb_sigio_sched_event;
-        io_unsched_event = rb_sigio_unsched_event;
-        io_supports_event = rb_sigio_supports_event;
-        io_init_event = rb_sigio_init_event;
-
-        rb_strlcpy(iotype, "sigio", sizeof(iotype));
-        return 0;
-    }
-    return -1;
-}
-
-static int
 try_poll(void)
 {
     if(!rb_init_netio_poll()) {
@@ -1929,9 +1911,6 @@ rb_init_netio(void)
         } else if(!strcmp("devpoll", ioenv)) {
             if(!try_devpoll())
                 return;
-        } else if(!strcmp("sigio", ioenv)) {
-            if(!try_sigio())
-                return;
         } else if(!strcmp("select", ioenv)) {
             if(!try_select())
                 return;
@@ -1950,8 +1929,6 @@ rb_init_netio(void)
     if(!try_ports())
         return;
     if(!try_devpoll())
-        return;
-    if(!try_sigio())
         return;
     if(!try_poll())
         return;

@@ -186,17 +186,6 @@ int rb_init_netio_devpoll(void);
 int rb_select_devpoll(long);
 int rb_setup_fd_devpoll(rb_fde_t *F);
 
-/* sigio versions */
-void rb_setselect_sigio(rb_fde_t *F, unsigned int type, PF * handler, void *client_data);
-int rb_init_netio_sigio(void);
-int rb_select_sigio(long);
-int rb_setup_fd_sigio(rb_fde_t *F);
-
-void rb_sigio_init_event(void);
-int rb_sigio_sched_event(struct ev_entry *event, int when);
-void rb_sigio_unsched_event(struct ev_entry *event);
-int rb_sigio_supports_event(void);
-
 
 /* ports versions */
 void rb_setselect_ports(rb_fde_t *F, unsigned int type, PF * handler, void *client_data);

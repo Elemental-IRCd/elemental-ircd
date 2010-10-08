@@ -1,3 +1,14 @@
+androsyn    2010/10/08 13:33:44 UTC	(20101008_0-27106)
+  Log:
+  Remove rtsigio code.  It was always just buggy enough to cause issues.
+  
+  
+
+  Modified:
+	libratbox/trunk/src/commio.c (File Modified) 
+	libratbox/trunk/src/sigio.c (File Deleted) 
+
+
 androsyn    2010/09/25 20:47:43 UTC	(20100925_0-27080)
   Log:
   add rb_dlinkMoveListTail which rserv will need
