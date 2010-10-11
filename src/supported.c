@@ -87,9 +87,6 @@
 #include "s_conf.h"
 #include "supported.h"
 #include "chmode.h"
-#include "channel.h"
-
-struct module_modes ModuleModes;
 
 rb_dlink_list isupportlist;
 
@@ -241,7 +238,7 @@ isupport_chanmodes(const void *ptr)
 	rb_snprintf(result, sizeof result, "%s%sbq,k,%slj,%s",
 			ConfigChannel.use_except ? "e" : "",
 			ConfigChannel.use_invex ? "I" : "",
-			ModuleModes.MODE_FORWARD ? "f" : "",
+			ConfigChannel.use_forward ? "f" : "",
 			cflagsbuf);
 	return result;
 }

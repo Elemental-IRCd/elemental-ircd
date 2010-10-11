@@ -39,9 +39,6 @@
 #include "modules.h"
 #include "packet.h"
 #include "tgchange.h"
-#include "channel.h"
-
-struct module_modes ModuleModes;
 
 static int m_invite(struct Client *, struct Client *, int, const char **);
 
@@ -148,7 +145,7 @@ m_invite(struct Client *client_p, struct Client *source_p, int parc, const char 
 	/* unconditionally require ops, unless the channel is +g */
 	/* treat remote clients as chanops */
 	if(MyClient(source_p) && !is_any_op(msptr) &&
-			!(chptr->mode.mode & ModuleModes.MODE_FREEINVITE))
+			!(chptr->mode.mode & MODE_FREEINVITE))
 	{
 		if(IsOverride(source_p))
 		{
@@ -179,7 +176,7 @@ m_invite(struct Client *client_p, struct Client *source_p, int parc, const char 
 	 * for +l/+j just check if the mode is set, this varies over time
 	 */
 	if(chptr->mode.mode & MODE_INVITEONLY ||
-			(chptr->mode.mode & ModuleModes.MODE_REGONLY && EmptyString(target_p->user->suser)) ||
+			(chptr->mode.mode & MODE_REGONLY && EmptyString(target_p->user->suser)) ||
 			chptr->mode.limit || chptr->mode.join_num)
 		store_invite = 1;
 

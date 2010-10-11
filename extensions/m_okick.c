@@ -37,8 +37,6 @@
 #include "s_conf.h"
 #include "s_serv.h"
 
-struct module_modes ModuleModes;
-
 static int mo_okick(struct Client *client_p, struct Client *source_p, int parc, const char *parv[]);
 
 
@@ -142,7 +140,7 @@ mo_okick(struct Client *client_p, struct Client *source_p, int parc, const char 
 	rb_snprintf(text, sizeof(text), "K%s", who->id);
 
 	/* we don't need to track NOREJOIN stuff unless it's our client being kicked */
-	if(MyClient(who) && chptr->mode.mode & ModuleModes.MODE_NOREJOIN)
+	if(MyClient(who) && chptr->mode.mode & MODE_NOREJOIN)
 		channel_metadata_time_add(chptr, text, rb_current_time(), "KICKNOREJOIN");
 	return 0;
 }

@@ -46,8 +46,6 @@ static int me_svsjoin(struct Client *, struct Client *, int, const char **);
 static int ms_join(struct Client *, struct Client *, int, const char **);
 static int ms_sjoin(struct Client *, struct Client *, int, const char **);
 
-struct module_modes ModuleModes;
-
 struct Message join_msgtab = {
 	"JOIN", 0, 0, 0, MFLG_SLOW,
 	{mg_unreg, {m_join, 2}, {ms_join, 2}, mg_ignore, mg_ignore, {m_join, 2}}
@@ -821,7 +819,7 @@ ms_sjoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 				     CheckEmpty(para[2]), CheckEmpty(para[3]));
 	}
 
-	if(!joins && !(chptr->mode.mode & ModuleModes.MODE_PERMANENT) && isnew)
+	if(!joins && !(chptr->mode.mode & MODE_PERMANENT) && isnew)
 	{
 		destroy_channel(chptr);
 
@@ -972,7 +970,7 @@ set_final_mode(struct Mode *mode, struct Mode *oldmode)
 		len = rb_sprintf(pbuf, "%d:%d ", mode->join_num, mode->join_time);
 		pbuf += len;
 	}
-	if(mode->forward[0] && strcmp(oldmode->forward, mode->forward) && ModuleModes.MODE_FORWARD)
+	if(mode->forward[0] && strcmp(oldmode->forward, mode->forward) && ConfigChannel.use_forward)
 	{
 		if(dir != MODE_ADD)
 		{

@@ -45,7 +45,6 @@
 #include "tgchange.h"
 #include "inline/stringops.h"
 #include "irc_dictionary.h"
-#include "channel.h"
 
 static int m_message(int, const char *, struct Client *, struct Client *, int, const char **);
 static int m_privmsg(struct Client *, struct Client *, int, const char **);
@@ -53,8 +52,6 @@ static int m_notice(struct Client *, struct Client *, int, const char **);
 
 static void expire_tgchange(void *unused);
 static struct ev_entry *expire_tgchange_event;
-
-struct module_modes ModuleModes;
 
 static int
 modinit(void)
@@ -500,7 +497,7 @@ msg_channel(int p_or_n, const char *command,
 			source_p->localClient->last = rb_current_time();
 	}
 
-	if(chptr->mode.mode & ModuleModes.MODE_NOREPEAT)
+	if(chptr->mode.mode & MODE_NOREPEAT)
 	{
 		rb_strlcpy(text2, text, BUFSIZE);
 		strip_unprintable(text2);
@@ -518,7 +515,7 @@ msg_channel(int p_or_n, const char *command,
 		channel_metadata_add(chptr, "NOREPEAT", text2, 0);
 	}
 
-	if(chptr->mode.mode & ModuleModes.MODE_NOCOLOR && (!ConfigChannel.exempt_cmode_c || !is_any_op(msptr)))
+	if(chptr->mode.mode & MODE_NOCOLOR && (!ConfigChannel.exempt_cmode_c || !is_any_op(msptr)))
 	{
 		rb_strlcpy(text2, text, BUFSIZE);
 		strip_colour(text2);
@@ -539,7 +536,7 @@ msg_channel(int p_or_n, const char *command,
 		if(result == CAN_SEND_OPV ||
 		   !flood_attack_channel(p_or_n, source_p, chptr, chptr->chname))
 		{
-			if (strlen(text) > 10 && chptr->mode.mode & ModuleModes.MODE_NOCAPS && (!ConfigChannel.exempt_cmode_G || !is_any_op(msptr)))
+			if (strlen(text) > 10 && chptr->mode.mode & MODE_NOCAPS && (!ConfigChannel.exempt_cmode_G || !is_any_op(msptr)))
 			{
 				rb_strlcpy(text2, text, BUFSIZE);
 				strip_unprintable(text2);
@@ -555,12 +552,12 @@ msg_channel(int p_or_n, const char *command,
 					return;
 				}
 			}
-			if (p_or_n != PRIVMSG && chptr->mode.mode & ModuleModes.MODE_NONOTICE && (!ConfigChannel.exempt_cmode_T || !is_any_op(msptr)))
+			if (p_or_n != PRIVMSG && chptr->mode.mode & MODE_NONOTICE && (!ConfigChannel.exempt_cmode_T || !is_any_op(msptr)))
 			{
 				sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - Notices are disallowed (+T set)", chptr->chname);
 				return;
 			}
-			if (p_or_n != NOTICE && chptr->mode.mode & ModuleModes.MODE_NOACTION &&
+			if (p_or_n != NOTICE && chptr->mode.mode & MODE_NOACTION &&
 					!strncasecmp(text + 1, "ACTION", 6) &&
 					(!ConfigChannel.exempt_cmode_D || !is_any_op(msptr)))
 			{
@@ -570,7 +567,7 @@ msg_channel(int p_or_n, const char *command,
 			if (p_or_n != NOTICE && *text == '\001' &&
 					strncasecmp(text + 1, "ACTION", 6))
 			{
-				if (chptr->mode.mode & ModuleModes.MODE_NOCTCP && (!ConfigChannel.exempt_cmode_C || !is_any_op(msptr)))
+				if (chptr->mode.mode & MODE_NOCTCP && (!ConfigChannel.exempt_cmode_C || !is_any_op(msptr)))
 				{
 					sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - CTCPs to this channel are disallowed (+C set)", chptr->chname);
 					return;
@@ -582,7 +579,7 @@ msg_channel(int p_or_n, const char *command,
 					     "%s %s :%s", command, chptr->chname, text);
 		}
 	}
-	else if(chptr->mode.mode & ModuleModes.MODE_OPMODERATE &&
+	else if(chptr->mode.mode & MODE_OPMODERATE &&
 			(!(chptr->mode.mode & MODE_NOPRIVMSGS) ||
 			 IsMember(source_p, chptr)))
 	{
@@ -619,7 +616,7 @@ msg_channel_opmod(int p_or_n, const char *command,
 {
 	char text2[BUFSIZE];
 
-	if(chptr->mode.mode & ModuleModes.MODE_NOCOLOR)
+	if(chptr->mode.mode & MODE_NOCOLOR)
 	{
 		rb_strlcpy(text2, text, BUFSIZE);
 		strip_colour(text2);
@@ -634,7 +631,7 @@ msg_channel_opmod(int p_or_n, const char *command,
 		}
 	}
 
-	if(chptr->mode.mode & ModuleModes.MODE_OPMODERATE &&
+	if(chptr->mode.mode & MODE_OPMODERATE &&
 			(!(chptr->mode.mode & MODE_NOPRIVMSGS) ||
 			 IsMember(source_p, chptr)))
 	{

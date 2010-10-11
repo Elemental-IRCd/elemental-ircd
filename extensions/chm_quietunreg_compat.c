@@ -9,9 +9,6 @@
 #include "hook.h"
 #include "ircd.h"
 #include "chmode.h"
-#include "channel.h"
-
-struct module_modes ModuleModes;
 
 static int _modinit(void);
 static void _moddeinit(void);
@@ -47,7 +44,7 @@ chm_quietunreg(struct Client *source_p, struct Channel *chptr,
 
 	if (MyClient(source_p))
 		chm_ban(source_p, chptr, alevel, 1, &newparn, newparv,
-				errors, dir, 'q', ModuleModes.CHFL_QUIET);
+				errors, dir, 'q', CHFL_QUIET);
 	else
 		chm_nosuch(source_p, chptr, alevel, parc, parn, parv,
 				errors, dir, c, mode_type);

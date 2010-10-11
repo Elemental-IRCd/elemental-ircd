@@ -41,8 +41,6 @@
 #include "packet.h"
 #include "s_newconf.h"
 
-struct module_modes ModuleModes;
-
 static int m_mode(struct Client *, struct Client *, int, const char **);
 static int ms_mode(struct Client *, struct Client *, int, const char **);
 static int ms_tmode(struct Client *, struct Client *, int, const char **);
@@ -260,7 +258,7 @@ ms_bmask(struct Client *client_p, struct Client *source_p, int parc, const char 
 
 	case 'q':
 		banlist = &chptr->quietlist;
-		mode_type = ModuleModes.CHFL_QUIET;
+		mode_type = CHFL_QUIET;
 		mems = ALL_MEMBERS;
 		break;
 
