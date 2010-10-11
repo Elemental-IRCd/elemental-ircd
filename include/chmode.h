@@ -87,5 +87,6 @@ extern void cflag_orphan(char c);
 extern void construct_cflags_strings(void);
 extern char cflagsbuf[256];
 extern char cflagsmyinfo[256];
+extern char cflagsparaminfo[256];
 
 #endif

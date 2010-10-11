@@ -1005,19 +1005,19 @@ validate_conf(void)
 			if(*dm == 'I')
 			{
 				cflag_orphan('I');
-				ConfigChannel.use_invex = "NO";
+				ConfigChannel.use_invex = 0;
 				continue;
 			}
 			if(*dm == 'e')
 			{
 				cflag_orphan('e');
-				ConfigChannel.use_except = "NO";
+				ConfigChannel.use_except = 0;
 				continue;
 			}
 			if(*dm == 'f')
 			{
 				cflag_orphan('f');
-				ConfigChannel.use_forward = "NO";
+				ConfigChannel.use_forward = 0;
 				continue;
 			}
 			if(*dm == 'j')
@@ -1067,6 +1067,7 @@ validate_conf(void)
 			}
 		}
 	}
+	construct_cflag_param_string();
 	startup = 0;
 }
 

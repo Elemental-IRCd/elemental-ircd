@@ -43,6 +43,7 @@
 #include "chmode.h"
 #include "irc_dictionary.h"
 
+
 /* bitmasks for error returns, so we send once per call */
 #define SM_ERR_NOTS             0x00000001	/* No TS on channel */
 #define SM_ERR_NOOPS            0x00000002	/* No chan ops */
@@ -69,6 +70,7 @@ static int no_override_deop;
 
 char cflagsbuf[256];
 char cflagsmyinfo[256];
+char cflagsparaminfo[256];
 
 int chmode_flags[256];
 
@@ -120,14 +122,17 @@ construct_cflags_strings(void)
 
 			break;
 		    default:
-			if(chmode_flags[i] != 0)
+			if(chmode_flags[i] != 0 && !(chmode_table[i].set_func == chm_orphaned))
 			{
 			    *ptr++ = (char) i;
 			}
 		}
 		
 		/* Should we leave orphaned check here? -- dwr */
-		if(!(chmode_table[i].set_func == chm_nosuch) && !(chmode_table[i].set_func == chm_orphaned))
+		if( !(chmode_table[i].set_func == chm_nosuch) && 
+			!(chmode_table[i].set_func == chm_orphaned) && 
+			!(chmode_table[i].set_func == chm_admin && !ConfigChannel.use_admin) && 
+			!(chmode_table[i].set_func == chm_halfop && !ConfigChannel.use_halfop))
 		{
 		    *ptr2++ = (char) i;
 		}
@@ -135,6 +140,21 @@ construct_cflags_strings(void)
         
         *ptr++ = '\0';
 	*ptr2++ = '\0';
+}
+
+void
+construct_cflag_param_string(void)
+{
+
+	*cflagsparaminfo = '\0';
+	rb_snprintf(cflagsparaminfo, sizeof cflagsparaminfo, "%sb%s%s%s%sklov%s%s",
+			ConfigChannel.use_admin ? "a" : "",
+			ConfigChannel.use_except ? "e" : "",
+			ConfigChannel.use_forward ? "f" : "",
+			ConfigChannel.use_halfop ? "h" : "",
+			strcasecmp(ConfigChannel.disabledmodes, "j") ? "" : "j",
+			strcasecmp(ConfigChannel.disabledmodes, "q") ? "" : "q",
+			ConfigChannel.use_invex ? "I" : "");
 }
 
 /*
