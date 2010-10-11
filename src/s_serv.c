@@ -89,6 +89,7 @@ struct Capability captab[] = {
 	{ "EUID",	CAP_EUID },
 	{ "EOPMOD",	CAP_EOPMOD },
 	{ "BAN",	CAP_BAN },
+	{ "MLOCK",	CAP_MLOCK },
 	{0, 0}
 };
 
@@ -676,6 +677,11 @@ burst_TS6(struct Client *client_p)
 				   ConfigChannel.burst_topicwho ? chptr->topic_info : "",
 				   ConfigChannel.burst_topicwho ? " " : "",
 				   chptr->topic);
+
+		if(IsCapable(client_p, CAP_MLOCK))
+			sendto_one(client_p, ":%s MLOCK %ld %s :%s",
+				   me.id, (long) chptr->channelts, chptr->chname,
+				   EmptyString(chptr->mode_lock) ? "" : chptr->mode_lock);
 
 		hchaninfo.chptr = chptr;
 		call_hook(h_burst_channel, &hchaninfo);

@@ -106,6 +106,7 @@ free_channel(struct Channel *chptr)
 {
 	channel_metadata_clear(chptr);
 	rb_free(chptr->chname);
+	rb_free(chptr->mode_lock);
 	rb_bh_free(channel_heap, chptr);
 }
 
@@ -1829,7 +1830,10 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 				continue;
 			}
 
-			flags = CHFL_CHANOP;
+			if(ConfigChannel.admin_on_channel_create && ConfigChannel.use_admin)
+				flags = CHFL_ADMIN | CHFL_CHANOP;
+			else
+				flags = CHFL_CHANOP;
 		}
 
 		if((rb_dlink_list_length(&source_p->user->channel) >=

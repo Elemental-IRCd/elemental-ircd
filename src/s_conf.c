@@ -698,6 +698,7 @@ set_default_conf(void)
 	ConfigFileEntry.failed_oper_notice = YES;
 	ConfigFileEntry.anti_nick_flood = NO;
 	ConfigFileEntry.disable_fake_channels = NO;
+	ConfigFileEntry.hide_channel_below_users = 3;
 	ConfigFileEntry.max_nick_time = 20;
 	ConfigFileEntry.max_nick_changes = 5;
 	ConfigFileEntry.max_accept = 20;
@@ -763,6 +764,7 @@ set_default_conf(void)
 
 	ConfigChannel.autochanmodes = rb_strdup("nt");
 	ConfigChannel.exemptchanops = rb_strdup("");
+	ConfigChannel.admin_on_channel_create = NO;
 	ConfigChannel.use_halfop = YES;
 	ConfigChannel.use_admin = YES;
 	ConfigChannel.use_except = YES;
@@ -786,6 +788,7 @@ set_default_conf(void)
 	ConfigChannel.no_join_on_split = NO;
 	ConfigChannel.no_create_on_split = YES;
 	ConfigChannel.resv_forcepart = YES;
+	ConfigChannel.channel_target_change = YES;
 
 	ConfigChannel.exempt_cmode_c = NO;
 	ConfigChannel.exempt_cmode_C = NO;

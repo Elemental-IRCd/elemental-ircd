@@ -166,6 +166,7 @@ struct config_file_entry
 
 	unsigned char compression_level;
 	int disable_fake_channels;
+	int hide_channel_below_users;
 	int dots_in_ident;
 	int failed_oper_notice;
 	int anti_nick_flood;
@@ -238,6 +239,7 @@ struct config_channel_entry
 {
 	char * autochanmodes;
 	char * exemptchanops;
+	int admin_on_channel_create;
 	int use_halfop;
 	int use_admin;
 	int use_except;
@@ -260,6 +262,7 @@ struct config_channel_entry
 	int cycle_host_change;
 	int host_in_topic;
 	int resv_forcepart;
+	int channel_target_change;
 
 	int exempt_cmode_c;
 	int exempt_cmode_C;

@@ -454,6 +454,24 @@ parameters: server mask, hunted
 
 Remote LUSERS request. Most servers ignore the server mask, treating it as '*'.
 
+MLOCK
+charybdis TS6
+source: services server
+parameters: channelTS, channel, mode letters
+propagation: broadcast (restricted)
+
+Propagates a channel mode lock change.
+
+If the channelTS is greater (newer) than the current TS of the channel, drop
+the message.
+
+The final parameter is a list of mode letters that may not be changed by local
+users. This applies to setting or unsetting simple modes, and changing or
+removing mode parameters.
+
+An MLOCK message with no modes disables the MLOCK, therefore the MLOCK message
+always contains the literal MLOCK for simplicity.
+
 MODE
 1.
 source: user

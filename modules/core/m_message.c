@@ -533,6 +533,14 @@ msg_channel(int p_or_n, const char *command,
 	/* chanops and voiced can flood their own channel with impunity */
 	if((result = can_send(chptr, source_p, NULL)))
 	{
+		if(result != CAN_SEND_OPV && MyClient(source_p) &&
+		   !IsOper(source_p) &&
+		   !add_channel_target(source_p, chptr))
+		{
+			sendto_one(source_p, form_str(ERR_TARGCHANGE),
+				   me.name, source_p->name, chptr->chname);
+			return;
+		}
 		if(result == CAN_SEND_OPV ||
 		   !flood_attack_channel(p_or_n, source_p, chptr, chptr->chname))
 		{
@@ -583,6 +591,13 @@ msg_channel(int p_or_n, const char *command,
 			(!(chptr->mode.mode & MODE_NOPRIVMSGS) ||
 			 IsMember(source_p, chptr)))
 	{
+		if(MyClient(source_p) && !IsOper(source_p) &&
+		   !add_channel_target(source_p, chptr))
+		{
+			sendto_one(source_p, form_str(ERR_TARGCHANGE),
+				   me.name, source_p->name, chptr->chname);
+			return;
+		}
 		if(!flood_attack_channel(p_or_n, source_p, chptr, chptr->chname))
 		{
 			sendto_channel_opmod(client_p, source_p, chptr,
@@ -736,6 +751,32 @@ msg_client(int p_or_n, const char *command,
 
 	if(MyClient(source_p))
 	{
+		/*
+		 * XXX: Controversial? Allow target users to send replies
+		 * through a +g.  Rationale is that people can presently use +g
+		 * as a way to taunt users, e.g. harass them and hide behind +g
+		 * as a way of griefing.  --nenolod
+		 */
+		if(p_or_n != NOTICE && MyClient(source_p) &&
+				IsSetCallerId(source_p) &&
+				IsSetSCallerId(source_p) &&
+				!accept_message(target_p, source_p))
+		{
+			if(rb_dlink_list_length(&source_p->localClient->allow_list) <
+					ConfigFileEntry.max_accept)
+			{
+				rb_dlinkAddAlloc(target_p, &source_p->localClient->allow_list);
+				rb_dlinkAddAlloc(source_p, &target_p->on_allow_list);
+			}
+			else
+			{
+				sendto_one_numeric(source_p, ERR_OWNMODE,
+						form_str(ERR_OWNMODE),
+						target_p->name, "+g");
+				return;
+			}
+		}
+
 		/* reset idle time for message only if its not to self 
 		 * and its not a notice */
 		if(p_or_n != NOTICE)

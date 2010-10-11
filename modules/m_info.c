@@ -151,6 +151,12 @@ static struct InfoStruct info_table[] = {
 		"Startup value of FLOODCOUNT",
 	},
 	{
+		"hide_channel_below_users",
+		OUTPUT_DECIMAL,
+		&ConfigFileEntry.hide_channel_below_users,
+		"Hide channels below this many users in standard /LIST output",
+	},
+	{
 		"default_adminstring",
 		OUTPUT_STRING,
 		&ConfigFileEntry.default_adminstring,
@@ -618,6 +624,12 @@ static struct InfoStruct info_table[] = {
 		OUTPUT_BOOLEAN_YN,
 		&ConfigChannel.host_in_topic,
 		"Defines whether a topicsetters host or just nick is shown on TOPIC",
+	},
+	{
+		"admin_on_channel_create",
+		OUTPUT_BOOLEAN_YN,
+		&ConfigChannel.admin_on_channel_create,
+		"Give users +ao on channel create",
 	},
 	{
 		"use_halfop",

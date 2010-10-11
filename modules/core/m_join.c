@@ -111,6 +111,9 @@ me_svsjoin(struct Client *client_p, struct Client *source_p, int parc, const cha
 	if((target_p = find_person(parv[1])) == NULL)
 		return 0;
 
+	if(!MyClient(target_p))
+		return 0;
+
 	user_join(&me, target_p, parv[2], NULL);
 	return 0;
 }
@@ -227,6 +230,9 @@ ms_join(struct Client *client_p, struct Client *source_p, int parc, const char *
 					source_p->servptr->name,
 					chptr->chname, modebuf, parabuf);
 		*omodebuf = *modebuf = *parabuf = '\0';
+
+		/* since we're dropping our modes, we want to clear the mlock as well. --nenolod */
+		set_channel_mlock(client_p, source_p, chptr, NULL, FALSE);
 	}
 
 	if(!IsMember(source_p, chptr))
@@ -488,6 +494,9 @@ ms_sjoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 		/* Update capitalization in channel name, this makes the
 		 * capitalization timestamped like modes are -- jilles */
 		strcpy(chptr->chname, parv[2]);
+
+		/* since we're dropping our modes, we want to clear the mlock as well. --nenolod */
+		set_channel_mlock(client_p, source_p, chptr, NULL, FALSE);
 	}
 
 	if(*modebuf != '\0')
@@ -530,7 +539,7 @@ ms_sjoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 	{
 		fl = 0;
 
-		for (i = 0; i < 2; i++)
+		for (i = 0; i < 4; i++)
 		{
 			if(*s == '!')
 			{
@@ -690,7 +699,7 @@ ms_sjoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 				para[pargs++] = target_p->name;
 			}
 		}
-		if(fl & CHFL_CHANOP)
+		else if(fl & CHFL_CHANOP)
 		{
 			*mbuf++ = 'o';
 			para[pargs++] = target_p->name;
@@ -740,7 +749,7 @@ ms_sjoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 				para[pargs++] = target_p->name;
 			}
 		}
-		if(fl & CHFL_HALFOP)
+		else if(fl & CHFL_HALFOP)
 		{
 			*mbuf++ = 'h';
 			para[pargs++] = target_p->name;

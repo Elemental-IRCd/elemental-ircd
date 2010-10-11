@@ -453,8 +453,8 @@ register_local_user(struct Client *client_p, struct Client *source_p, const char
 			source_p->preClient->dnsbl_listed->hits++;
 
 			sendto_realops_snomask(SNO_REJ, L_ALL,
-					"%s [%s] is being disconnected due to being listed in DNS Blacklist %s",
-					source_p->name, source_p->sockhost, source_p->preClient->dnsbl_listed->host);
+					"%s (%s@%s) is being disconnected due to being listed in DNS Blacklist %s",
+					source_p->name, source_p->username, source_p->sockhost, source_p->preClient->dnsbl_listed->host);
 
 			add_reject(source_p, NULL, NULL);
 			exit_client(client_p, source_p, &me, "*** Banned (DNS blacklist)");
@@ -913,7 +913,7 @@ static void
 expire_umode_p(void *data)
 {
 	struct Client *source_p = data;
-	char *parv[4] = {source_p->name, source_p->name, "-p", NULL};
+	const char *parv[4] = {source_p->name, source_p->name, "-p", NULL};
 	source_p->localClient->override_timeout_event = NULL;
 	user_mode(source_p, source_p, 3, parv);
 }
