@@ -1,6 +1,5 @@
 Todo list for ShadowIRCd 6.2
 ----------------------------
-* modesetize umodes
 * global/remote SET, via shared block flag.
 * on the fly dnsbl exceptions (?)
 * evaluate snotes and possibly make a lot more netwide.

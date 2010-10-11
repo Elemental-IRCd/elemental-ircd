@@ -51,6 +51,7 @@
 #include "sslproc.h"
 #include "bandbi.h"
 #include "operhash.h"
+#include "chmode.h"
 
 struct config_server_hide ConfigServerHide;
 
@@ -84,6 +85,8 @@ extern char yytext[];
 
 static int verify_access(struct Client *client_p, const char *username);
 static int attach_iline(struct Client *, struct ConfItem *);
+
+int startup = 1;
 
 void
 init_s_conf(void)
@@ -764,6 +767,7 @@ set_default_conf(void)
 
 	ConfigChannel.autochanmodes = rb_strdup("nt");
 	ConfigChannel.exemptchanops = rb_strdup("");
+	ConfigChannel.disabledmodes = rb_strdup("");
 	ConfigChannel.admin_on_channel_create = NO;
 	ConfigChannel.use_halfop = YES;
 	ConfigChannel.use_admin = YES;
@@ -940,6 +944,130 @@ validate_conf(void)
 		if(*ech == 'K')
 			ConfigChannel.exempt_cmode_K = 1;
 	}
+
+	/* orphan any modes specified in channel::disabledmodes */
+	char * dm;
+
+	if(startup && !EmptyString(ConfigChannel.disabledmodes))
+	{
+		for(dm = ConfigChannel.disabledmodes; *dm; dm++)
+		{
+			if(*dm == 'C')
+			{
+				cflag_orphan('C');
+				continue;
+			}
+			if(*dm == 'r')
+			{
+				cflag_orphan('r');
+				continue;
+			}
+			if(*dm == 'c')
+			{
+				cflag_orphan('c');
+				continue;
+			}
+			if(*dm == 'L')
+			{
+				cflag_orphan('L');
+				continue;
+			}
+			if(*dm == 'P')
+			{
+				cflag_orphan('P');
+				continue;
+			}
+			if(*dm == 'z')
+			{
+				cflag_orphan('z');
+				continue;
+			}
+			if(*dm == 'g')
+			{
+				cflag_orphan('g');
+				continue;
+			}
+			if(*dm == 'F')
+			{
+				cflag_orphan('F');
+				continue;
+			}
+			if(*dm == 'Q')
+			{
+				cflag_orphan('Q');
+				continue;
+			}
+			if(*dm == 'q')
+			{
+				cflag_orphan('q');
+				continue;
+			}
+			if(*dm == 'I')
+			{
+				cflag_orphan('I');
+				ConfigChannel.use_invex = "NO";
+				continue;
+			}
+			if(*dm == 'e')
+			{
+				cflag_orphan('e');
+				ConfigChannel.use_except = "NO";
+				continue;
+			}
+			if(*dm == 'f')
+			{
+				cflag_orphan('f');
+				ConfigChannel.use_forward = "NO";
+				continue;
+			}
+			if(*dm == 'j')
+			{
+				cflag_orphan('j');
+				continue;
+			}
+			if(*dm == 'T')
+			{
+				cflag_orphan('T');
+				continue;
+			}
+			if(*dm == 'D')
+			{
+				cflag_orphan('D');
+				continue;
+			}
+			if(*dm == 'E')
+			{
+				cflag_orphan('E');
+				continue;
+			}
+			if(*dm == 'N')
+			{
+				cflag_orphan('N');
+				continue;
+			}
+			if(*dm == 'G')
+			{
+				cflag_orphan('G');
+				continue;
+			}
+			if(*dm == 'J')
+			{
+				cflag_orphan('J');
+				continue;
+			}
+			if(*dm == 'K')
+			{
+				cflag_orphan('K');
+				continue;
+			}
+			if(*dm == 'M')
+			{
+				cflag_orphan('M');
+				continue;
+			}
+		}
+	}
+	startup = 0;
 }
 
 /* add_temp_kline()

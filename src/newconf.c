@@ -2265,6 +2265,7 @@ static struct ConfEntry conf_channel_table[] =
 {
 	{ "autochanmodes",	CF_QSTRING, NULL, 0, &ConfigChannel.autochanmodes	},
 	{ "exemptchanops",	CF_QSTRING, NULL, 0, &ConfigChannel.exemptchanops	},
+	{ "disabledmodes",	CF_QSTRING, NULL, 0, &ConfigChannel.disabledmodes	},
 	{ "default_split_user_count",	CF_INT,  NULL, 0, &ConfigChannel.default_split_user_count	 },
 	{ "default_split_server_count",	CF_INT,	 NULL, 0, &ConfigChannel.default_split_server_count },
 	{ "burst_topicwho",	CF_YESNO, NULL, 0, &ConfigChannel.burst_topicwho	},

@@ -239,6 +239,7 @@ struct config_channel_entry
 {
 	char * autochanmodes;
 	char * exemptchanops;
+	char * disabledmodes;
 	int admin_on_channel_create;
 	int use_halfop;
 	int use_admin;
