@@ -585,7 +585,10 @@ chm_orphaned(struct Client *source_p, struct Channel *chptr,
 	   const char **parv, int *errors, int dir, char c, long mode_type)
 {
 	if(MyClient(source_p))
+	{
+		sendto_one_numeric(source_p, 469, "Mode %c is disabled.", c);
 		return;
+	}
         
 	if((dir == MODE_ADD) && !(chptr->mode.mode & mode_type))
 	{
