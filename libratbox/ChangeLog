@@ -1,3 +1,17 @@
+androsyn    2010/10/14 18:46:35 UTC	(20101014_0-27110)
+  Log:
+  Rerun libtoolize/autoconf and make autoconf check for /bin/cp
+  
+
+  Modified:
+	libratbox/trunk/Makefile.in (File Modified) 
+	libratbox/trunk/aclocal.m4 (File Modified) 
+	libratbox/trunk/configure (File Modified) 
+	libratbox/trunk/configure.ac (File Modified) 
+	libratbox/trunk/ltmain.sh (File Modified) 
+	libratbox/trunk/src/Makefile.in (File Modified) 
+
+
 androsyn    2010/10/08 13:33:44 UTC	(20101008_0-27106)
   Log:
   Remove rtsigio code.  It was always just buggy enough to cause issues.
