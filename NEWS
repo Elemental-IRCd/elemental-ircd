@@ -64,6 +64,52 @@ other
 - NOTICE/PRIVMSG @#channel and +#channel now go to admin/halfop as well
   as chanop.
 
+-- charybdis-3.3.0
+
+server protocol
+- Add new BAN command, for propagated network-wide bans (K/X:lines and RESVs).
+  These will burst to new servers as they are introduced, and will stay in sync
+  across the whole network (new BAN capab).
+- Add new MLOCK command, to implement ircd-side channel mode locks. This allows
+  services to send out a list of mode letters for a given channel which may not
+  be changed, preventing mode fights between services and client bots (new MLOCK
+  capab).
+user
+- New RPL_QUIETLIST(728) and RPL_ENDOFQUIETLIST(729) numerics are used for the
+  quiet (+q) list, instead of overloading the ban list numerics.
+- Users may no longer change the topic of a -t channel if they cannot send to
+  it.
+- Add help for EXTBAN, describing the syntax of extended bans in general, as
+  well as the most common types.
+- Changed AWAY messages are now propagated to other servers. Previously, AWAY
+  was only propagated when the user was not already away.
+- Channel mode +c (and other places that disallow colour codes) now also strip
+  ASCII 29 (mIRC 7 italics).
+- Add auto-accept for user mode +g (callerid): Messaging a user while set +g
+  will automatically add them to your accept list.
+- Add target change for channels.  It applies to unopped, unvoiced and unopered
+  users.  This has the effect of stopping spambots which join, message and part
+  many channels at a time.
+- Show RPL_WHOISLOGGEDIN in /whowas as well as in /whois entries.  This adds at
+  most an additional 0.5MB of memory usage.
+oper
+config
+- Add general::use_propagated_bans to switch the new BAN system on or off.
+- Add general::default_ident_timeout, to control the timeout for identd (auth)
+  connections.
+- Add channel::channel_target_change to switch the new channel target change limits
+  on or off.
+- Fix class::number_per_ident so that it also applies to connections without
+  identd.
+- Change the example sslport option to 6697, which is more standard than 9999.
+misc
+- The custom channel mode API has been rewritten, allowing these modules to work
+  correctly when reloaded, or loaded from the config file.
+- The EFNet RBL is now recommended, instead of DroneBL.
+- Remove the unsupported modules directory.
+- Numerous bug fixes and code cleanups.
+- In mkpasswd, default to MD5 crypt instead of insecure DES.
+
 -- shadowircd-6.0.0
 
 new modes
