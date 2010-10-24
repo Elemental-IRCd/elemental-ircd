@@ -55,11 +55,11 @@ fi
 
 cd ..
 
-echo "Building $RELEASENAME.tgz from $RELEASENAME/"
-tar zcf $RELEASENAME.tgz $RELEASENAME/
+echo "Building $RELEASENAME.tar.gz from $RELEASENAME/"
+tar zcf $RELEASENAME.tar.gz $RELEASENAME/
 
-echo "Building $RELEASENAME.tbz2 from $RELEASENAME/"
-tar jcf $RELEASENAME.tbz2 $RELEASENAME/
+echo "Building $RELEASENAME.tar.bz2 from $RELEASENAME/"
+tar jcf $RELEASENAME.tar.bz2 $RELEASENAME/
 
 PUBLISH="yes"
 
