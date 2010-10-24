@@ -1,6 +1,0 @@
-Todo list for ShadowIRCd 6.2
-----------------------------
-* global/remote SET, via shared block flag.
-* on the fly dnsbl exceptions (?)
-* evaluate snotes and possibly make a lot more netwide.
-* Update the SGML docs (oper-guide) for all the shadowircd stuff.

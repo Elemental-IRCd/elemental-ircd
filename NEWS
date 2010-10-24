@@ -3,9 +3,24 @@ See LICENSE for licensing details (GPL v2).
 
 -- shadowircd-6.2.0
 
-other changes
+configuration
+- add channel::hide_channel_below_users - Channels with a user count lower
+  than the valude of this option will not be shown by default in /LIST.
+- add channel::admin_on_channel_create - If enabled, gives users creating
+  new channels +ao in that channel instead of just +o.
+- add channel::disabledmodes - This allows opers to disallow users from
+  using certain channelmodes. This is only read on startup and your services
+  and remote servers must be configured the same otherwise desyncs will occur.
+- add many services aliases for new Atheme services.
+opers
+- when users get hit by a DNSBL, this is now shown in the snotes.
+other
 - change kicknorejoin to not be a config option and be hardcoded to 2 seconds
   because a longer time is kind of pointless.
+- Many new features and improvements from charybdis 3.3.0. See below the
+  shadowircd 6.1.0 news for information about all that.
+code
+- many bugfixes and various cleanups.
 
 -- shadowircd-6.1.0
 
