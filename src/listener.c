@@ -167,7 +167,6 @@ static int
 inetport(struct Listener *listener)
 {
 	rb_fde_t *F;
-	int ret;
 	int opt = 1;
 
 	/*

@@ -1766,8 +1766,6 @@ yyerror(const char *msg)
 int
 conf_fgets(char *lbuf, int max_size, FILE * fb)
 {
-	char *buff;
-
 	if(fgets(lbuf, max_size, fb) == NULL)
 		return (0);
 

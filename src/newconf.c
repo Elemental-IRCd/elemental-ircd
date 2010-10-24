@@ -1932,7 +1932,7 @@ conf_call_set(struct TopConf *tc, char *item, conf_parm_t * value, int type)
 
 	/* if it takes one thing, make sure they only passed one thing,
 	   and handle as needed. */
-	if(value->type & CF_FLIST && !cf->cf_type & CF_FLIST)
+	if(value->type & CF_FLIST && !(cf->cf_type & CF_FLIST))
 	{
 		conf_report_error
 			("Option %s::%s does not take a list of values.", tc->tc_name, item);
