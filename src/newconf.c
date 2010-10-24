@@ -2020,7 +2020,7 @@ add_conf_item(const char *topconf, const char *name, int type, void (*func) (voi
 	if((tc = find_top_conf(topconf)) == NULL)
 		return -1;
 
-	if((cf = find_conf_item(tc, name)) != NULL)
+	if(find_conf_item(tc, name))
 		return -1;
 
 	cf = rb_malloc(sizeof(struct ConfEntry));

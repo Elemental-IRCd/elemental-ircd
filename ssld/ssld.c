@@ -575,7 +575,7 @@ static void
 conn_mod_read_cb(rb_fde_t *fd, void *data)
 {
 	conn_t *conn = data;
-	const char *err = remote_closed;
+	const char *err;
 	int length;
 	if(conn == NULL)
 		return;
