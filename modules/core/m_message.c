@@ -574,7 +574,7 @@ msg_channel(int p_or_n, const char *command,
 				return;
 			}
 			if (p_or_n != NOTICE && *text == '\001' &&
-					strncasecmp(text + 1, "ACTION", 6))
+					strncasecmp(text + 1, "ACTION ", 7))
 			{
 				if (chptr->mode.mode & MODE_NOCTCP && (!ConfigChannel.exempt_cmode_C || !is_any_op(msptr)))
 				{
