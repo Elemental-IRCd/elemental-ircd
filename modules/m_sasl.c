@@ -42,6 +42,7 @@
 
 static int mr_authenticate(struct Client *, struct Client *, int, const char **);
 static int me_sasl(struct Client *, struct Client *, int, const char **);
+static int server_auth_sasl(struct Client *);
 
 static void abort_sasl(struct Client *);
 static void abort_sasl_exit(hook_data_client_exit *);
@@ -161,10 +162,32 @@ me_sasl(struct Client *client_p, struct Client *source_p,
 			sendto_one(target_p, form_str(RPL_SASLSUCCESS), me.name, EmptyString(target_p->name) ? "*" : target_p->name);
 			target_p->preClient->sasl_complete = 1;
 			ServerStats.is_ssuc++;
+			server_auth_sasl(target_p);
 		}
 		*target_p->preClient->sasl_agent = '\0'; /* Blank the stored agent so someone else can answer */
 	}
 	
+	return 0;
+}
+
+static int server_auth_sasl(struct Client *client_p)
+{
+	char *auth_user;
+
+        if (client_p->localClient->auth_user)
+        {
+                memset(client_p->localClient->auth_user, 0,
+                       strlen(client_p->localClient->auth_user));
+                rb_free(client_p->localClient->auth_user);
+                client_p->localClient->auth_user = NULL;
+        }
+
+	auth_user = rb_strndup(client_p->user->suser, PASSWDLEN);
+
+	/* pointless check here */
+	if (auth_user)
+		client_p->localClient->auth_user = rb_strndup(auth_user, PASSWDLEN);
+
 	return 0;
 }
 
