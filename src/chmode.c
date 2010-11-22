@@ -660,6 +660,7 @@ chm_hidden(struct Client *source_p, struct Channel *chptr,
 	if(MyClient(source_p) && (++mode_limit_simple > MAXMODES_SIMPLE))
 		return;
 
+
 	/* setting + */
 	if((dir == MODE_ADD) && !(chptr->mode.mode & mode_type))
 	{
@@ -673,6 +674,19 @@ chm_hidden(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].mems = ONLY_OPERS;
 		mode_changes[mode_count].override = 0;
 		mode_changes[mode_count++].arg = NULL;
+	
+		/* A little ugly */
+		sendto_wallops_flags(UMODE_WALLOP, &me, 
+				"+%c set on [%s] by %s!%s@%s",
+				c, chptr->chname, source_p->name, source_p->username, source_p->host);
+		ilog(L_MAIN, "+%c set on [%s] by %s",
+				c, chptr->chname, get_oper_name(source_p));
+
+		if(*chptr->chname != '&')
+			sendto_server(NULL, NULL, NOCAPS, NOCAPS, 
+				":%s WALLOPS :+%c set on [%s] by %s!%s@%s",
+				me.name, c, chptr->chname, source_p->name, source_p->username,
+				source_p->host);
 	}
 	else if((dir == MODE_DEL) && (chptr->mode.mode & mode_type))
 	{
@@ -686,6 +700,19 @@ chm_hidden(struct Client *source_p, struct Channel *chptr,
 		mode_changes[mode_count].id = NULL;
 		mode_changes[mode_count].override = 0;
 		mode_changes[mode_count++].arg = NULL;
+		
+		/* A little ugly */
+		sendto_wallops_flags(UMODE_WALLOP, &me, 
+				"+%c unset from [%s] by %s!%s@%s",
+				c, chptr->chname, source_p->name, source_p->username, source_p->host);
+		ilog(L_MAIN, "+%c unset from [%s] by %s",
+				c, chptr->chname, get_oper_name(source_p));
+
+		if(*chptr->chname != '&')
+			sendto_server(NULL, NULL, NOCAPS, NOCAPS, 
+				":%s WALLOPS :+%c unset from [%s] by %s!%s@%s",
+				me.name, c, chptr->chname, source_p->name, source_p->username,
+				source_p->host);
 	}
 }
 
