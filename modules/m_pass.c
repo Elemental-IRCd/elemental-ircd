@@ -58,7 +58,7 @@ DECLARE_MODULE_AV1(pass, NULL, NULL, pass_clist, NULL, NULL, "$Revision: 3550 $"
 static int
 mr_pass(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	char *auth_user, *pass, *buf;
+	char *pass, *buf;
 	buf = LOCAL_COPY(parv[1]);
 	
 	if(client_p->localClient->passwd)
@@ -69,30 +69,10 @@ mr_pass(struct Client *client_p, struct Client *source_p, int parc, const char *
 		client_p->localClient->passwd = NULL;
 	}
 
-	if (client_p->localClient->auth_user)
-	{
-		memset(client_p->localClient->auth_user, 0,
-		       strlen(client_p->localClient->auth_user));
-		rb_free(client_p->localClient->auth_user);
-		client_p->localClient->auth_user = NULL;
-	}
-
-	if ((pass = strchr(buf, ':')) != NULL)
-	{
-		*pass++ = '\0'; 
-		auth_user = buf; 
-	}
-	else
-	{
-		pass = buf;
-		auth_user = NULL;
-	}
+	pass = buf;
 	
 	client_p->localClient->passwd = *pass ? rb_strndup(pass, PASSWDLEN) : NULL;
 	
-	if(auth_user && *auth_user && pass && *pass)
-		client_p->localClient->auth_user = rb_strndup(auth_user, PASSWDLEN);
-
 	/* These are for servers only */
 	if(parc > 2 && client_p->user == NULL)
 	{
