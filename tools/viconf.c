@@ -43,10 +43,6 @@ int main(int argc, char *argv[])
     p = argv[0];
   else
     p++;
-#ifdef KPATH
-  if(strcmp(p, "viklines") == 0)
-    filename = KPATH;
-#endif /* KPATH */
 
   if(strcmp(p, "vimotd") == 0)
     filename = MPATH;
