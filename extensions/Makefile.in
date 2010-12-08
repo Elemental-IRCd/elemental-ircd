@@ -67,6 +67,7 @@ SRCS =                          \
   m_webirc.c			\
   no_locops.c			\
   no_oper_invis.c		\
+  m_roleplay.c			\
   spy_admin_notice.c		\
   spy_info_notice.c		\
   spy_links_notice.c		\

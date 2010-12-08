@@ -52,6 +52,8 @@ m_okick.c      - OKICK - Allows an oper to kick a user from a channel
                          regardless of if they have ops or not.
                  Syntax: OKICK <channel> <nick> :<message>
 
+m_roleplay.c	- ROLEPLAY - Allows a variety of roleplaying commands.
+
 no_oper_invis.c - Disallow opers setting marking themselves as invisible
                   (+i) unless they have the hidden_oper flag.
 
