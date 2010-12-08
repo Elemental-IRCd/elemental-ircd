@@ -15,4 +15,4 @@ WHOWAS
 
 The following commands are provided by extensions and
 may not be present on your server:
-CYCLE           IDENTIFY        MKPASSWD
+CYCLE           IDENTIFY        MKPASSWD	ROLEPLAY

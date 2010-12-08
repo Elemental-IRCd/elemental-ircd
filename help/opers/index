@@ -28,4 +28,4 @@ may not be present on your server:
 ADMINWALL       CYCLE           FINDFORWARDS    FORCEJOIN
 FORCEPART       IDENTIFY        MKPASSWD        OACCEPT
 OJOIN           OKICK           OLIST           OMODE
-OPME            SENDBANS
+OPME            ROLEPLAY	SENDBANS
