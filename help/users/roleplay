@@ -3,21 +3,15 @@ all of which send messages to channel under 'fake'
 nicknames. The user of the command can be identified
 by looking at the ident of the 'fake' user - it will
 always be the nickname of the person using the command,
-and the host will always be npc.fakeuser.invalid.
+and the host will always be npc.fakeuser.invalid. These
+commands require the target channel to be set +E, and
+obey the same restrictions as regular PRIVMSG.
 
-These commands normally require chanops to run, unless
-cmode +x is on the channel in question, in which case
-any user that is voiced or above can run any roleplay
-command. Cmode +d will prevent any roleplay command
-being ran on the channel in question.
-
-Roleplay commands from normal users have the nick
-underlined, to clearly show that the message is a 
+Roleplay commands from normal users have the nick 
+underlined, to clearly show that the message is a
 roleplay message rather than a normal one (with one
 exception). Network operators are not subject to this 
-restriction. Network operators can also use these
-commands in any channel they are in, without requiring
-ops.
+restriction.
 
 NPC <nick> <channel> :message
 Sends a standard roleplay message to #channel with the 
