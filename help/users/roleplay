@@ -4,7 +4,7 @@ nicknames. The user of the command can be identified
 by looking at the ident of the 'fake' user - it will
 always be the nickname of the person using the command,
 and the host will always be npc.fakeuser.invalid. These
-commands require the target channel to be set +E, and
+commands require the target channel to be set +N, and
 obey the same restrictions as regular PRIVMSG.
 
 Roleplay commands from normal users have the nick 
