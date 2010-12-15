@@ -1900,7 +1900,7 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
 		{
 			sendto_one(source_p, form_str(ERR_TOOMANYCHANNELS),
 				   me.name, source_p->name, name);
-			return;
+			continue;
 		}
 
 		if(chptr == NULL)	/* If I already have a chptr, no point doing this */
