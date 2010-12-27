@@ -372,7 +372,7 @@ rb_ssl_tryconn_cb(rb_fde_t *F, void *data)
     switch (ret) {
     case -1:
         rb_ssl_connect_realcb(F, RB_ERROR_SSL, sconn);
-        break;
+		return;
     case 0:
         /* do_ssl_handshake does the rb_setselect stuff */
         return;

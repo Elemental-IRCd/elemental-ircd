@@ -1,3 +1,11 @@
+androsyn    2010/12/27 22:09:24 UTC	(20101227_0-27163)
+  Log:
+  return on RB_ERROR_SSL, do not do two callbacks
+
+  Modified:
+	libratbox/trunk/src/gnutls.c (File Modified) 
+
+
 androsyn    2010/10/14 18:46:35 UTC	(20101014_0-27110)
   Log:
   Rerun libtoolize/autoconf and make autoconf check for /bin/cp
