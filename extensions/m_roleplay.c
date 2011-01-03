@@ -152,7 +152,7 @@ m_displaymsg(struct Client *source_p, const char *channel, int underline, int ac
 		return 0;
 	}
 
-	if(!(chptr->mode.mode & chmode_flags['E']))
+	if(!(chptr->mode.mode & chmode_flags['N']))
 	{
 		sendto_one_numeric(source_p, 573, "%s :Roleplay commands are not enabled on this channel.", chptr->chname);
 		return 0;
