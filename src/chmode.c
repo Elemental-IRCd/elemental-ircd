@@ -152,8 +152,8 @@ construct_cflag_param_string(void)
 			ConfigChannel.use_except ? "e" : "",
 			ConfigChannel.use_forward ? "f" : "",
 			ConfigChannel.use_halfop ? "h" : "",
-			strchr(ConfigChannel.disabledmodes, "j") ? "" : "j",
-			strchr(ConfigChannel.disabledmodes, "q") ? "" : "q",
+			strchr(ConfigChannel.disabledmodes, 'j') ? "" : "j",
+			strchr(ConfigChannel.disabledmodes, 'q') ? "" : "q",
 			ConfigChannel.use_invex ? "I" : "");
 }
 
