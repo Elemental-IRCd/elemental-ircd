@@ -238,9 +238,9 @@ isupport_chanmodes(const void *ptr)
 	rb_snprintf(result, sizeof result, "%s%sb%s,k,%sl%s,%s",
 			ConfigChannel.use_except ? "e" : "",
 			ConfigChannel.use_invex ? "I" : "",
-			strcasecmp(ConfigChannel.disabledmodes, "q") ? "" : "q",
+			strchr(ConfigChannel.disabledmodes, "q") ? "" : "q",
 			ConfigChannel.use_forward ? "f" : "",
-			strcasecmp(ConfigChannel.disabledmodes, "j") ? "" : "j",
+			strchr(ConfigChannel.disabledmodes, "j") ? "" : "j",
 			cflagsbuf);
 	return result;
 }
