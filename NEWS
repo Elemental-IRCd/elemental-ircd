@@ -1,5 +1,39 @@
-This is ShadowIRCd 6.2, Copyright (c) 2005-2010 ShadowIRCd team.
+This is ShadowIRCd 6.3, Copyright (c) 2005-2011 ShadowIRCd team.
 See LICENSE for licensing details (GPL v2).
+
+-- shadowircd-6.3.0
+
+new modes
+- channelmode 'N' has been moved to 'd' to allow for m_roleplay and
+  specifically, compatibility with the charybdis m_roleplay.
+
+new modules
+- m_roleplay: New extension allowing many roleplay commands. Individual
+  channels can disable this by setting channelmode +N on their channels.
+
+configuration
+- use auth::auth_user for SASL. It is no longer usable in PASS (though its
+  use-case there is non-existant), but you can now set so if a user
+  successfully authenticates to the accountname in auth_user with SASL,
+  they will get the proper auth block privs. You can have multiple auth_users
+  in one auth block.
+- you can now specify a SSL fingerprint that the remote server must have in
+  order to link.
+
+opers
+- wallops are now sent upon setting or unsetting of +M or any other hidden
+  channelmode.
+- /LIST now has operspy support. You can see all channels (including secret
+  channels) with /LIST ! or /LIST !#target. OLIST still exists and can be
+  used as well. OLIST will also show channelmodes whereas LIST will not.
+
+users
+- /LIST can now be constrained by topic TS and channel TS.
+
+code
+- native support for SHA256, SHA512 and Blowfish added everywhere.
+- many small improvements and bugfixes.
+
 
 -- shadowircd-6.2.0
 
