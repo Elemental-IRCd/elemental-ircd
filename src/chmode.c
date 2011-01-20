@@ -1843,7 +1843,7 @@ struct ChannelMode chmode_table[256] =
   {chm_simple,	MODE_NOREPEAT },	/* K */
   {chm_staff,	MODE_EXLIMIT },		/* L */
   {chm_hidden,	MODE_NOOPERKICK },	/* M */
-  {chm_simple,	MODE_NONICK },		/* N */
+  {chm_nosuch,	0 },			/* N */
   {chm_nosuch,	0 },			/* O */
   {chm_staff,	MODE_PERMANENT },	/* P */
   {chm_simple,	MODE_DISFORWARD },	/* Q */
@@ -1865,7 +1865,7 @@ struct ChannelMode chmode_table[256] =
   {chm_admin,	0 },			/* a */
   {chm_ban,	CHFL_BAN },		/* b */
   {chm_simple,	MODE_NOCOLOR },		/* c */
-  {chm_nosuch,	0 },			/* d */
+  {chm_simple,	MODE_NONICK },		/* d */
   {chm_ban,	CHFL_EXCEPTION },	/* e */
   {chm_forward,	0 },			/* f */
   {chm_simple,	MODE_FREEINVITE },	/* g */

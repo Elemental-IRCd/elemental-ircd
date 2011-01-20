@@ -18,6 +18,8 @@ NO PARAMETERS:
      +r     - Registered users only.  Only users identified to services
               may join.
      +c     - No color.  All color codes in messages are stripped.
+     +d     - No nickchanges. People on the channel will not be able to
+              change nick.
      +g     - Free invite.  Everyone may invite users.  Significantly
               weakens +i control.
      +z     - Op moderated.  Messages blocked by +m, +b and +q are instead
@@ -35,8 +37,6 @@ NO PARAMETERS:
      +T     - Disable notice. All notices to the channel are disallowed.
      +E     - No kicks. Chanops will not be able to use /kick on this
               channel.
-     +N     - No nickchanges. People on the channel will not be able to
-              change nick.
      +G     - Block messages in all caps. Messages that are more than
               50% capital letters will be blocked.
      +J     - Prevent autorejoin on kick. Users will not be able to
