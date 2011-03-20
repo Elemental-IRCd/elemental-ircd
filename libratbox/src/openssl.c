@@ -657,7 +657,8 @@ void
 rb_get_ssl_info(char *buf, size_t len)
 {
 	rb_snprintf(buf, len, "Using SSL: %s compiled: 0x%lx, library 0x%lx", 
-		    SSLeay_version(SSLEAY_VERSION), OPENSSL_VERSION_NUMBER, SSLeay());
+		    SSLeay_version(SSLEAY_VERSION),
+		    (long)OPENSSL_VERSION_NUMBER, SSLeay());
 }
 
 
