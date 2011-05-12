@@ -1,3 +1,12 @@
+androsyn    2011/05/12 14:45:54 UTC	(20110512_0-27193)
+  Log:
+  call GCC_STACK_PROTECT_LIB so that libratbox gets linked against it on platforms that need it
+
+  Modified:
+	libratbox/trunk/configure (File Modified) 
+	libratbox/trunk/configure.ac (File Modified) 
+
+
 androsyn    2010/12/27 22:09:24 UTC	(20101227_0-27163)
   Log:
   return on RB_ERROR_SSL, do not do two callbacks
