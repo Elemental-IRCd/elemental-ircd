@@ -1,6 +1,17 @@
 This is ShadowIRCd 6.3, Copyright (c) 2005-2011 ShadowIRCd team.
 See LICENSE for licensing details (GPL v2).
 
+-- shadowircd 6.3.1
+
+bugfixes
+- When setting/unsetting cmode +M, wallops are only sent once, globally, 
+  not for every server on the network where the mode change happens.
+- Don't allow +Z to be set by default_umodes.
+- Cope with OPENSSL_VERSION_NUMBER not being a long. This is the case on
+  very new FreeBSD versions.
+- Disallow mIRC italics in channel names when disable_fake_channels is in use.
+- Allow kick_on_split_riding to protect channels with mlocked keys.
+
 -- shadowircd-6.3.0
 
 new modes
