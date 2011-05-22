@@ -1,10 +1,10 @@
-syntax: glob
 Makefile
 *~
 *.o
 *.so
 *.lo
 *.la
+*.swp
 *.orig
 *.log
 .deps
@@ -23,6 +23,8 @@ libratbox/libtool
 libratbox/src/version.c
 scripts/*.tbz2
 scripts/*.tgz
+scripts/*.tar.bz2
+scripts/*.tar.gz
 servlink/servlink
 src/ircd
 src/lex.yy.c
@@ -34,5 +36,4 @@ tools/convertilines
 tools/convertklines
 tools/mkpasswd
 tools/viconf
-syntax: regexp
-^include/serno\.h
+include/serno.h
