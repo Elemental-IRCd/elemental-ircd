@@ -513,6 +513,34 @@ msg_channel(int p_or_n, const char *command,
 		channel_metadata_add(chptr, "NOREPEAT", text2, 0);
 	}
 
+    // Must be processed before chmode c --SnoFox
+    if (strlen(text) > 10 && chptr->mode.mode & MODE_NOCAPS && (!ConfigChannel.exempt_cmode_G || !is_any_op(msptr)))
+    {
+        rb_strlcpy(text2, text, BUFSIZE);
+        strip_unprintable(text2);
+
+        // Don't count the "ACTION" part of action as part of the message --SnoFox
+        if (p_or_n != NOTICE && *text == '\001' &&
+                !strncasecmp(text + 1, "ACTION ", 7))
+        {
+            contor = 7;
+        } else {
+            contor = 0;
+        }
+        for(; contor < strlen(text2); contor++)
+        {
+            if(IsUpper(text2[contor]) && !isdigit(text2[contor]))
+                caps++; 
+            len++;
+        }
+        /* Added divide by 0 check --alxbl */
+        if(len != 0 && ((caps*100)/(len)) >= 50)
+        {
+            sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - Your message contains mostly capital letters (+G set)", chptr->chname);
+            return;
+        }
+    }
+
 	if(chptr->mode.mode & MODE_NOCOLOR && (!ConfigChannel.exempt_cmode_c || !is_any_op(msptr)))
 	{
 		rb_strlcpy(text2, text, BUFSIZE);
@@ -542,23 +570,6 @@ msg_channel(int p_or_n, const char *command,
 		if(result == CAN_SEND_OPV ||
 		   !flood_attack_channel(p_or_n, source_p, chptr, chptr->chname))
 		{
-			if (strlen(text) > 10 && chptr->mode.mode & MODE_NOCAPS && (!ConfigChannel.exempt_cmode_G || !is_any_op(msptr)))
-			{
-				rb_strlcpy(text2, text, BUFSIZE);
-				strip_unprintable(text2);
-				for(contor=0; contor < strlen(text2); contor++)
-				{
-					if(IsUpper(text2[contor]) && !isdigit(text2[contor]))
-						caps++; 
-					len++;
-				}
-				/* Added divide by 0 check --alxbl */
-				if(len != 0 && ((caps*100)/(len)) >= 50)
-				{
-					sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - Your message contains mostly capital letters (+G set)", chptr->chname);
-					return;
-				}
-			}
 			if (p_or_n != PRIVMSG && chptr->mode.mode & MODE_NONOTICE && (!ConfigChannel.exempt_cmode_T || !is_any_op(msptr)))
 			{
 				sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - Notices are disallowed (+T set)", chptr->chname);
