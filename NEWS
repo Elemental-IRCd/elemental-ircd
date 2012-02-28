@@ -50,7 +50,7 @@ code
 
 configuration
 - add channel::hide_channel_below_users - Channels with a user count lower
-  than the valude of this option will not be shown by default in /LIST.
+  than the value of this option will not be shown by default in /LIST.
 - add channel::admin_on_channel_create - If enabled, gives users creating
   new channels +ao in that channel instead of just +o.
 - add channel::disabledmodes - This allows opers to disallow users from
