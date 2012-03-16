@@ -2,7 +2,7 @@
  *  libratbox: a library used by ircd-ratbox and other things
  *  gnutls.c: gnutls related code
  *
- *  Copyright (C) 2007-2008 ircd-ratbox development team
+ *  Copyright (C) 2007-2012 ircd-ratbox development team
  *  Copyright (C) 2007-2008 Aaron Sethman <androsyn@ratbox.org>
  *
  *  This program is free software; you can redistribute it and/or modify

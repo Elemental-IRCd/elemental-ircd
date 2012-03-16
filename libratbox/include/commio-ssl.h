@@ -2,7 +2,7 @@
  *  ircd-ratbox: A slightly useful ircd.
  *  commio-ssl.h: A header for the ssl code
  *
- *  Copyright (C) 2008 ircd-ratbox development team
+ *  Copyright (C) 2008-2012 ircd-ratbox development team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

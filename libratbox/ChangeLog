@@ -1,3 +1,39 @@
+dubkat      2012/03/16 06:26:10 UTC	(20120316_0-27375)
+  Log:
+  House cleaning - update our copyright notices
+
+  Modified:
+	libratbox/trunk/include/commio-int.h (File Modified) 
+	libratbox/trunk/include/commio-ssl.h (File Modified) 
+	libratbox/trunk/include/event-int.h (File Modified) 
+	libratbox/trunk/include/rb_balloc.h (File Modified) 
+	libratbox/trunk/include/rb_commio.h (File Modified) 
+	libratbox/trunk/include/rb_event.h (File Modified) 
+	libratbox/trunk/include/rb_linebuf.h (File Modified) 
+	libratbox/trunk/include/rb_memory.h (File Modified) 
+	libratbox/trunk/include/rb_rawbuf.h (File Modified) 
+	libratbox/trunk/include/rb_snprintf.h (File Modified) 
+	libratbox/trunk/include/rb_tools.h (File Modified) 
+	libratbox/trunk/src/balloc.c (File Modified) 
+	libratbox/trunk/src/commio.c (File Modified) 
+	libratbox/trunk/src/devpoll.c (File Modified) 
+	libratbox/trunk/src/epoll.c (File Modified) 
+	libratbox/trunk/src/event.c (File Modified) 
+	libratbox/trunk/src/gnutls.c (File Modified) 
+	libratbox/trunk/src/kqueue.c (File Modified) 
+	libratbox/trunk/src/linebuf.c (File Modified) 
+	libratbox/trunk/src/nossl.c (File Modified) 
+	libratbox/trunk/src/openssl.c (File Modified) 
+	libratbox/trunk/src/poll.c (File Modified) 
+	libratbox/trunk/src/rawbuf.c (File Modified) 
+	libratbox/trunk/src/rb_memory.c (File Modified) 
+	libratbox/trunk/src/select.c (File Modified) 
+	libratbox/trunk/src/tools.c (File Modified) 
+	libratbox/trunk/src/unix.c (File Modified) 
+	libratbox/trunk/src/version.c.SH (File Modified) 
+	libratbox/trunk/src/win32.c (File Modified) 
+
+
 jilles      2011/10/21 15:35:00 UTC	(20111021_0-27263)
   Log:
   Add AC_LANG_SOURCE where new autoconf wants it.
