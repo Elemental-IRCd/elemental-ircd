@@ -1,6 +1,14 @@
 This is ShadowIRCd 6.3, Copyright (c) 2005-2011 ShadowIRCd team.
 See LICENSE for licensing details (GPL v2).
 
+-- shadowircd 6.3.3
+
+bugfixes
+- Fix compilation with Glibc-2.16 and newer
+- Fix extensions/ip_cloaking not telling linked servers about a changed hostname
+- Fix crash when a CAPAB with no parameters is sent
+- Fix bugs when shadowircd is run under OpenVZ or Virtuozzo
+
 -- shadowircd 6.3.2.1
 
 bugfixes
