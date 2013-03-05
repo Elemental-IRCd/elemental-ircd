@@ -1,3 +1,13 @@
+jilles      2013/03/05 23:32:36 UTC	(20130305_0-27444)
+  Log:
+  Add necessary casts to unsigned char for isXXX() and toXXX().
+  
+
+  Modified:
+	libratbox/trunk/src/commio.c (File Modified) 
+	libratbox/trunk/src/snprintf.c (File Modified) 
+
+
 dubkat      2012/03/16 23:11:44 UTC	(20120316_1-27383)
   Log:
   more copyright changes

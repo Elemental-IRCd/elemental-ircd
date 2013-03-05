@@ -31,7 +31,7 @@ skip_atoi(const char **s)
 {
     int i = 0;
 
-    while(isdigit(**s))
+    while(isdigit((unsigned char)**s))
         i = i * 10 + *((*s)++) - '0';
     return i;
 }
@@ -344,7 +344,7 @@ repeat:
 
         /* get field width */
         field_width = -1;
-        if(isdigit(*fmt))
+        if(isdigit((unsigned char)*fmt))
             field_width = skip_atoi(&fmt);
         else if(*fmt == '*') {
             ++fmt;
@@ -360,7 +360,7 @@ repeat:
         precision = -1;
         if(*fmt == '.') {
             ++fmt;
-            if(isdigit(*fmt))
+            if(isdigit((unsigned char)*fmt))
                 precision = skip_atoi(&fmt);
             else if(*fmt == '*') {
                 ++fmt;
