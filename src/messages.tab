@@ -402,7 +402,7 @@ static  const char *  replies[] = {
 /* 378 RPL_WHOISHOST, */        "%s :is connecting from *@%s %s",
 /* 379 RPL_WHOISMODES */	"%s :is using modes %s",
 /* 380 */       NULL,
-/* 381 RPL_YOUREOPER, */        ":%s 381 %s :Only the jilles can fix your machine god.",
+/* 381 RPL_YOUREOPER, */        ":%s 381 %s :Making sense? Aw, what fun is there in making sense?",
 /* 382 RPL_REHASHING, */        ":%s 382 %s %s :Rehashing",
 /* 383 */       NULL,
 /* 384 RPL_MYPORTIS, */		NULL,
