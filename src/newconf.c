@@ -2301,6 +2301,7 @@ static struct ConfEntry conf_channel_table[] =
 	{ "admin_on_channel_create", CF_YESNO, NULL, 0, &ConfigChannel.admin_on_channel_create },
 	{ "use_halfop",		CF_YESNO, NULL, 0, &ConfigChannel.use_halfop		},
 	{ "use_admin",		CF_YESNO, NULL, 0, &ConfigChannel.use_admin		},
+        { "use_owner",          CF_YESNO, NULL, 0, &ConfigChannel.use_owner             },
 	{ "use_except",		CF_YESNO, NULL, 0, &ConfigChannel.use_except		},
 	{ "use_invex",		CF_YESNO, NULL, 0, &ConfigChannel.use_invex		},
 	{ "use_knock",		CF_YESNO, NULL, 0, &ConfigChannel.use_knock		},
