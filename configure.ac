@@ -10,7 +10,7 @@ AC_PREREQ(2.57)
 dnl Sneaky way to get an Id tag into the configure script
 AC_COPYRIGHT([$Id: configure.ac 3516 2007-06-10 16:14:03Z jilles $])
 
-AC_INIT([shadowircd],[6.3.3])
+AC_INIT([ponychat-ircd],[6.3.4])
 
 AC_CONFIG_HEADER(include/setup.h)
 
@@ -1240,5 +1240,5 @@ Configuration:
 	Nickname length    : $NICKLEN
 	Topic length       : $TOPICLEN
 
-Use (g)make to compile ShadowIRCd, then (g)make install to install it.
+Use (g)make to compile ponychat-ircd, then (g)make install to install it.
 "
