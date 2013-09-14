@@ -319,23 +319,25 @@ can_kick_deop(struct membership *source, struct membership *target)
          * Reworked the logic to match this:
          *  - owners can do what they want
          *  - admins cannot kick or deop owners
+         *  - admins can kick or deop admins
          *  - ops cannot kick or deop admins
          *  - halfops cannot kick or deop anyone that has halfop or up
          *  -- Niichan
          */
 
-        if(is_halfop(source) && !is_any_op(target))
+        if(is_owner(source))
                 return 1;
-        else if(is_chanop(source) && !is_admin(target))
-                return 1;
-        else if(is_chanop(source) && !is_owner(target))
-                return 1;
-        else if(is_admin(source) && !is_owner(target))
-                return 1;
-        else if(is_owner(source))
-                return 1;
+        if(is_admin(source) && is_owner(target))
+                return 0;
+        if(is_chanop(source) && is_owner(target))
+                return 0;
+        if(is_chanop(source) && is_admin(target))
+                return 0;
+        if(is_halfop(source) && is_any_op(target))
+                return 0;
 
-	return 0;
+	return 1;
+
 }
 
 /* add_user_to_channel()
