@@ -101,7 +101,7 @@ mo_ojoin(struct Client *client_p, struct Client *source_p, int parc, const char 
         {
                 add_user_to_channel(chptr, source_p, CHFL_OWNER);
                 sendto_server(client_p, chptr, CAP_TS6, NOCAPS,
-                                ":%s SJOIN %ld %s + :!%s",
+                                ":%s SJOIN %ld %s + :~%s",
                                 me.id, (long) chptr->channelts, chptr->chname, source_p->id);
                 sendto_channel_local(ALL_MEMBERS, chptr, ":%s!%s@%s JOIN %s",
                                 source_p->name,
