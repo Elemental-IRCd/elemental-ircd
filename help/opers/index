@@ -9,23 +9,16 @@ INVITE          ISON            JOIN            KICK
 KILL            KLINE           KNOCK           LINKS
 LIST            LOCOPS          LUSERS          MAP
 MASKTRACE       MODLIST         MODLOAD         MODRELOAD
-MODRESTART      MODUNLOAD       MOTD            NAMES
-NICK            NOTICE          OPER            OPERSPY
-OPERWALL        PART            PASS            PING
-PONG            POST            PRIVMSG         QUIT
-REHASH          RESTART         RESV            SCAN
-SERVER          SET             SJOIN           SNOMASK
-SQUIT           STATS           SVINFO          TESTGECOS
-TESTLINE        TESTMASK        TIME            TOPIC
-TRACE           UHELP           UMODE           UNDLINE
-UNKLINE         UNREJECT        UNRESV          UNXLINE
-USER            USERHOST        USERS           VERSION
-WALLOPS         WHO             WHOIS           WHOWAS
-XLINE
-
-The following commands are provided by extensions and
-may not be present on your server:
-ADMINWALL       CYCLE           FINDFORWARDS    FORCEJOIN
-FORCEPART       IDENTIFY        MKPASSWD        OACCEPT
-OJOIN           OKICK           OLIST           OMODE
-OPME            ROLEPLAY	SENDBANS
+MODRESTART      MODUNLOAD       MONITOR         MOTD
+NAMES           NICK            NOTICE          OPER
+OPERSPY         OPERWALL        PART            PASS
+PING            PONG            POST            PRIVMSG
+QUIT            REHASH          RESTART         RESV
+SCAN            SERVER          SET             SJOIN
+SNOMASK         SQUIT           STATS           SVINFO
+TESTGECOS       TESTLINE        TESTMASK        TIME
+TOPIC           TRACE           UHELP           UMODE
+UNDLINE         UNKLINE         UNREJECT        UNRESV
+UNXLINE         USER            USERHOST        USERS
+VERSION         WALLOPS         WHO             WHOIS
+WHOWAS          XLINE
