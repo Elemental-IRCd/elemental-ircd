@@ -452,6 +452,10 @@ register_local_user(struct Client *client_p, struct Client *source_p, const char
 					source_p->sockhost, source_p->preClient->dnsbl_listed->host);
 			source_p->preClient->dnsbl_listed->hits++;
 
+                        sendto_server(NULL, NULL, CAP_TS6, NOCAPS,
+                                        ":%s ENCAP * SNOTE r :%s (%s@%s) is being disconnected due to being listed in DNS Blacklist %s",
+                                        me.id, source_p->name, source_p->username, source_p->sockhost, source_p->preClient->dnsbl_listed->host);
+
 			sendto_realops_snomask(SNO_REJ, L_ALL,
 					"%s (%s@%s) is being disconnected due to being listed in DNS Blacklist %s",
 					source_p->name, source_p->username, source_p->sockhost, source_p->preClient->dnsbl_listed->host);
