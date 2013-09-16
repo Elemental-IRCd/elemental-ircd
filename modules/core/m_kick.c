@@ -173,6 +173,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 			return 0;
 		}
 
+		//NOTE: Will not stop kicks from services.
 		if (MyClient(source_p) && chptr->mode.mode & MODE_NOOPERKICK && IsOper(who))
 		{
 			sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
