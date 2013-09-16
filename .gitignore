@@ -2,6 +2,7 @@ Makefile
 *~
 *.o
 *.so
+*.dSYM/
 *.lo
 *.la
 *.swp
