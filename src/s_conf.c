@@ -1532,7 +1532,15 @@ read_conf_files(int cold)
 	{
 		if(cold)
 		{
+            inotice("Failed in reading configuration file %s, aborting", filename);
 			ilog(L_MAIN, "Failed in reading configuration file %s", filename);
+
+            int e;
+            e = errno;
+
+            inotice("FATAL: %s %s", strerror(e), filename);
+            ilog(L_MAIN, "FATAL: %s %s", strerror(e), filename);
+
 			exit(-1);
 		}
 		else
