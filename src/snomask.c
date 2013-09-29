@@ -62,7 +62,7 @@ int snomask_modes[256] = {
         0,                      /* P */
         0,		        /* Q */
         0,                      /* R */
-        0,		        /* S */
+        SNO_SASLFAIL,	        /* S */
         0,                      /* T */
         0,                      /* U */
         0,                      /* V */

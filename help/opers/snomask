@@ -16,6 +16,7 @@ Server notice masks: (? designates that the snomask is provided
        +n     - Local client nick changes
        +r     - Invalid usernames and dumb HTTP proxies
        +s     - Generic server messages and oper kills
+       +S     - Clients refused due to failed SASL auth
        +u     - Client connections without auth{} block
      ? +W     - Shows whenever someone does a local whois on you
        +x     - New server introduction and split messages
