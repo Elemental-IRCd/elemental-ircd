@@ -60,14 +60,14 @@
 /* Define to 1 if you have the `gmtime_r' function. */
 #undef HAVE_GMTIME_R
 
-/* Has GnuTLS */
-#undef HAVE_GNUTLS
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
 /* Define to 1 if you have the `kevent' function. */
 #undef HAVE_KEVENT
+
+/* Define to 1 if you have the <linux/tcp.h> header file. */
+#undef HAVE_LINUX_TCP_H
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
