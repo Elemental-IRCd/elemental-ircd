@@ -771,6 +771,7 @@ set_default_conf(void)
 	ConfigChannel.admin_on_channel_create = NO;
 	ConfigChannel.use_halfop = YES;
 	ConfigChannel.use_admin = YES;
+        ConfigChannel.use_owner = YES;
 	ConfigChannel.use_except = YES;
 	ConfigChannel.use_invex = YES;
 	ConfigChannel.use_knock = YES;

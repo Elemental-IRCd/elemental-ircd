@@ -257,11 +257,13 @@ isupport_chanlimit(const void *ptr)
 static const char*
 isupport_prefix(const void *ptr)
 {
-	static char result[11];
+	static char result[13];
 
-	rb_snprintf(result, sizeof result, "(%so%sv)%s@%s+",
+	rb_snprintf(result, sizeof result, "(%s%so%sv)%s%s@%s+",
+                        ConfigChannel.use_owner ? "y" : "",
 			ConfigChannel.use_admin ? "a" : "",
 			ConfigChannel.use_halfop ? "h" : "",
+                        ConfigChannel.use_owner ? "~" : "",
 			ConfigChannel.use_admin ? "!" : "",
 			ConfigChannel.use_halfop ? "%" : "");
 	return result;

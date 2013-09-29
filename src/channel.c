@@ -186,6 +186,12 @@ find_channel_status(struct membership *msptr, int combine)
 
 	p = buffer;
 
+        if(is_owner(msptr))
+        {
+                if(!combine)
+                        return "~";
+                *p++ = '~';
+        }
 	if(is_admin(msptr))
 	{
 		if(!combine)
@@ -252,6 +258,24 @@ is_admin(struct membership *msptr)
 		return 0;
 }
 
+/* is_owner()
+ * input    - membership to check for owner
+ * output   - 1 if the user is an admin, 0 if the user is not or owner
+ * is disabled
+ * side effects - 
+ *
+ */
+int
+is_owner(struct membership *msptr)
+{
+        if(!ConfigChannel.use_owner)
+                return 0;
+        if(is_chmode_y(msptr))
+                return 1;
+        else
+                return 0;
+}
+
 /* is_any_op()
  *
  * input	- membership to check for ops
@@ -261,7 +285,7 @@ is_admin(struct membership *msptr)
 int
 is_any_op(struct membership *msptr)
 {
-	if(is_chanop(msptr) || is_halfop(msptr) || is_admin(msptr))
+	if(is_chanop(msptr) || is_halfop(msptr) || is_admin(msptr) || is_owner(msptr))
 		return 1;
 	else
 		return 0;
@@ -276,7 +300,7 @@ is_any_op(struct membership *msptr)
 int
 is_chanop_voiced(struct membership *msptr)
 {
-	if(is_chanop(msptr) || is_voiced(msptr) || is_halfop(msptr) || is_admin(msptr))
+	if(is_chanop(msptr) || is_voiced(msptr) || is_halfop(msptr) || is_admin(msptr) || is_owner(msptr))
 		return 1;
 	else
 		return 0;
@@ -291,14 +315,29 @@ is_chanop_voiced(struct membership *msptr)
 int
 can_kick_deop(struct membership *source, struct membership *target)
 {
-	if(is_chanop(source) && !is_admin(target))
-		return 1;
-	else if(is_halfop(source) && !is_any_op(target))
-		return 1;
-	else if(is_admin(source))
-		return 1;
+        /*
+         * Reworked the logic to match this:
+         *  - owners can do what they want
+         *  - admins cannot kick or deop owners
+         *  - admins can kick or deop admins
+         *  - ops cannot kick or deop admins
+         *  - halfops cannot kick or deop anyone that has halfop or up
+         *  -- Niichan
+         */
 
-	return 0;
+        if(is_owner(source))
+                return 1;
+        if(is_admin(source) && is_owner(target))
+                return 0;
+        if(is_chanop(source) && is_owner(target))
+                return 0;
+        if(is_chanop(source) && is_admin(target))
+                return 0;
+        if(is_halfop(source) && is_any_op(target))
+                return 0;
+
+	return 1;
+
 }
 
 /* add_user_to_channel()

@@ -123,7 +123,24 @@ mo_omode(struct Client *client_p, struct Client *source_p, int parc, const char 
 	set_channel_mode(client_p, source_p->servptr, chptr, msptr, 
 			 parc - 2, parv + 2);
 #else
-	if (parc == 4 && !strcmp(parv[2], "+a") && !irccmp(parv[3], source_p->name))
+        if (parc == 4 && !strcmp(parv[2], "+y") && !irccmp(parv[3], source_p->name))
+        {
+                /* Ownering themselves */
+                if (!wasonchannel)
+                {
+                        sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
+                                        form_str(ERR_USERNOTINCHANNEL), parv[3], chptr->chname);
+                        return 0;
+                }
+                sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +y %s",
+                                me.name, parv[1], source_p->name);
+                sendto_server(NULL, chptr, CAP_TS6, NOCAPS,
+                                ":%s TMODE %ld %s +y %s",
+                                me.id, (long) chptr->channelts, parv[1],
+                                source_p->id);
+                msptr->flags |= CHFL_OWNER;
+        }
+        else if (parc == 4 && !strcmp(parv[2], "+a") && !irccmp(parv[3], source_p->name))
 	{
 		/* Admining themselves */
 		if (!wasonchannel)
@@ -174,6 +191,26 @@ mo_omode(struct Client *client_p, struct Client *source_p, int parc, const char 
 				source_p->id);
 		msptr->flags |= CHFL_HALFOP;
 	}
+        else if (ConfigChannel.use_owner)
+        {
+                /* I hope this is correct.
+                 * -- Kabaka */
+
+                /* Hack it so set_channel_mode() will accept */
+                if (wasonchannel)
+                        msptr->flags |= CHFL_OWNER;
+                else
+                {
+                        add_user_to_channel(chptr, source_p, CHFL_CHANOP);
+                        msptr = find_channel_membership(chptr, source_p);
+                }
+                set_channel_mode(client_p, source_p, chptr, msptr,
+                                parc - 2, parv + 2);
+                if (wasonchannel)
+                        msptr->flags &= ~CHFL_OWNER;
+                else
+                        remove_user_from_channel(msptr);
+        }
 	else if (ConfigChannel.use_admin)
 	{
 		/* Hack it so set_channel_mode() will accept */

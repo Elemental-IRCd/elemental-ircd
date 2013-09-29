@@ -64,7 +64,7 @@ mo_ojoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 		return 0;
 	}
 
-	if(*parv[1] == '@' || *parv[1] == '%' || *parv[1] == '+' || *parv[1] == '!')
+	if(*parv[1] == '@' || *parv[1] == '%' || *parv[1] == '+' || *parv[1] == '!' || *parv[1] == '~')
 	{
 		parv[1]++;
 		move_me = 1;
@@ -97,7 +97,19 @@ mo_ojoin(struct Client *client_p, struct Client *source_p, int parc, const char 
 			me.name, parv[1],
 			source_p->name, source_p->username, source_p->host);
 
-	if(*parv[1] == '!' && ConfigChannel.use_admin)
+        if(*parv[1] == '~' && ConfigChannel.use_owner)
+        {
+                add_user_to_channel(chptr, source_p, CHFL_OWNER);
+                sendto_server(client_p, chptr, CAP_TS6, NOCAPS,
+                                ":%s SJOIN %ld %s + :~%s",
+                                me.id, (long) chptr->channelts, chptr->chname, source_p->id);
+                sendto_channel_local(ALL_MEMBERS, chptr, ":%s!%s@%s JOIN %s",
+                                source_p->name,
+                                source_p->username, source_p->host, chptr->chname);
+                sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +y %s",
+                                me.name, chptr->chname, source_p->name);
+        }
+        else if(*parv[1] == '!' && ConfigChannel.use_admin)
 	{
 		add_user_to_channel(chptr, source_p, CHFL_ADMIN);
 		sendto_server(client_p, chptr, CAP_TS6, NOCAPS,
