@@ -1148,7 +1148,7 @@ exit_generic_client(struct Client *client_p, struct Client *source_p, struct Cli
 	/* get rid of any metadata the user may have */
 	user_metadata_clear(source_p);
 
-	sendto_common_channels_local(source_p, ":%s!%s@%s QUIT :%s",
+	sendto_common_channels_local(source_p, NOCAPS, ":%s!%s@%s QUIT :%s",
 				     source_p->name,
 				     source_p->username, source_p->host, comment);
 

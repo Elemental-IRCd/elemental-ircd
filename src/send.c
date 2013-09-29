@@ -703,17 +703,92 @@ sendto_channel_local_butone(struct Client *one, int type, struct Channel *chptr,
 }
 
 /*
+ * _sendto_channel_local_with_capability_butone()
+ *
+ * Shared implementation of sendto_channel_local_with_capability and sendto_channel_local_with_capability_butone
+ */
+static void
+_sendto_channel_local_with_capability_butone(struct Client *one, int type, int caps, int negcaps, struct Channel *chptr,
+                                             const char *pattern, va_list * args)
+{
+	buf_head_t linebuf;
+	struct membership *msptr;
+	struct Client *target_p;
+	rb_dlink_node *ptr;
+	rb_dlink_node *next_ptr;
+    
+	rb_linebuf_newbuf(&linebuf);
+	rb_linebuf_putmsg(&linebuf, pattern, args, NULL);
+    
+	RB_DLINK_FOREACH_SAFE(ptr, next_ptr, chptr->locmembers.head)
+	{
+		msptr = ptr->data;
+		target_p = msptr->client_p;
+        
+		if (target_p == one)
+			continue;
+        
+		if(IsIOError(target_p) ||
+		   !IsCapable(target_p, caps) ||
+ 		   !NotCapable(target_p, negcaps))
+			continue;
+        
+		if(type && ((msptr->flags & type) == 0))
+			continue;
+        
+		_send_linebuf(target_p, &linebuf);
+	}
+    
+	rb_linebuf_donebuf(&linebuf);
+}
+
+/* sendto_channel_local_with_capability()
+ *
+ * inputs	- flags to send to, caps, negate caps, channel to send to, va_args
+ * outputs	- message to local channel members
+ * side effects -
+ */
+void
+sendto_channel_local_with_capability(int type, int caps, int negcaps, struct Channel *chptr, const char *pattern, ...)
+{
+	va_list args;
+    
+	va_start(args, pattern);
+	_sendto_channel_local_with_capability_butone(NULL, type, caps, negcaps, chptr, pattern, &args);
+	va_end(args);
+}
+
+
+/* sendto_channel_local_with_capability()
+ *
+ * inputs	- flags to send to, caps, negate caps, channel to send to, va_args
+ * outputs	- message to local channel members
+ * side effects -
+ */
+void
+sendto_channel_local_with_capability_butone(struct Client *one, int type, int caps, int negcaps, struct Channel *chptr,
+                                            const char *pattern, ...)
+{
+	va_list args;
+    
+	va_start(args, pattern);
+	_sendto_channel_local_with_capability_butone(one, type, caps, negcaps, chptr, pattern, &args);
+	va_end(args);
+}
+
+/*
  * sendto_common_channels_local()
  *
  * inputs	- pointer to client
  *		- pattern to send
+ *              - capability mask
  * output	- NONE
  * side effects	- Sends a message to all people on local server who are
  * 		  in same channel with user. 
  *		  used by m_nick.c and exit_one_client.
  */
 void
-sendto_common_channels_local(struct Client *user, const char *pattern, ...)
+sendto_common_channels_local(struct Client *user, int cap, const char *pattern, ...)
 {
 	va_list args;
 	rb_dlink_node *ptr;
@@ -744,7 +819,8 @@ sendto_common_channels_local(struct Client *user, const char *pattern, ...)
 			target_p = msptr->client_p;
 
 			if(IsIOError(target_p) ||
-			   target_p->serial == current_serial)
+			   target_p->serial == current_serial ||
+               !IsCapable(target_p, cap))
 				continue;
 
 			target_p->serial = current_serial;
@@ -766,12 +842,13 @@ sendto_common_channels_local(struct Client *user, const char *pattern, ...)
  *
  * inputs	- pointer to client
  *		- pattern to send
+ *              - capability mask
  * output	- NONE
  * side effects	- Sends a message to all people on local server who are
  * 		  in same channel with user, except for user itself.
  */
 void
-sendto_common_channels_local_butone(struct Client *user, const char *pattern, ...)
+sendto_common_channels_local_butone(struct Client *user, int cap, const char *pattern, ...)
 {
 	va_list args;
 	rb_dlink_node *ptr;
@@ -804,7 +881,8 @@ sendto_common_channels_local_butone(struct Client *user, const char *pattern, ..
 			target_p = msptr->client_p;
 
 			if(IsIOError(target_p) ||
-			   target_p->serial == current_serial)
+			   target_p->serial == current_serial ||
+               !IsCapable(target_p, cap))
 				continue;
 
 			target_p->serial = current_serial;
