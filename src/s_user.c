@@ -1540,6 +1540,13 @@ change_nick_user_host(struct Client *target_p,	const char *nick, const char *use
 			chptr = mscptr->chptr;
 			mptr = mode;
 
+            if(is_owner(mscptr))
+            {
+                *mptr++ = 'y';
+                strcat(modeval, nick);
+                strcat(modeval, " ");
+            }
+
 			if(is_admin(mscptr))
 			{
 				*mptr++ = 'a';

@@ -75,7 +75,7 @@ mo_opme(struct Client *client_p, struct Client *source_p, int parc, const char *
 	{
 		msptr = ptr->data;
 
-		if(is_chanop(msptr) || is_admin(msptr))
+		if(is_chanop(msptr) || is_admin(msptr) || is_owner(msptr))
 		{
 			sendto_one_notice(source_p, ":%s Channel is not opless", parv[1]);
 			return 0;
