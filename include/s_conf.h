@@ -233,6 +233,7 @@ struct config_file_entry
 	int use_propagated_bans;
 	int secret_channels_in_whois;
 	int expire_override_time;
+    int away_interval;
 };
 
 struct config_channel_entry

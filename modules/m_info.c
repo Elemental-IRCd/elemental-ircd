@@ -547,6 +547,12 @@ static struct InfoStruct info_table[] = {
 		&ConfigFileEntry.use_propagated_bans,
 		"KLINE sets fully propagated bans"
 	},
+    {
+        "away_interval",
+        OUTPUT_DECIMAL,
+        &ConfigFileEntry.away_interval,
+        "The minimum time between aways",
+    },
 	{
 		"default_split_server_count",
 		OUTPUT_DECIMAL,
