@@ -1,5 +1,13 @@
 $Id: CREDITS 3133 2007-01-21 15:38:16Z jilles $
- 
+
+ponychat-ircd is a reboot of the ShadowIRCD project for use on PonyChat
+or other irc networks. We work with upstream charybdis and only apply 
+patches that make sense for our use.
+
+The ponychat-ircd team is listed in nick-alphabetical order:
+
+Niichan, Sam Dodrill <niichan -at- ponychat.net>
+
 ShadowIRCd 6 is a modern restart of the old ShadowIRCd project
 based on Charybdis with a few additional features to make it appeal 
 more to more users. We try to work as closely as possible with the 
