@@ -66,6 +66,9 @@ mr_dumb_proxy(struct Client *client_p, struct Client *source_p, int parc, const 
 	sendto_realops_snomask(SNO_REJ, L_ALL,
 			     "HTTP Proxy disconnected: [%s@%s]",
 			     client_p->username, client_p->host);
+    sendto_server(NULL, NULL, CAP_TS6, NOCAPS,
+             ":%s ENCAP * SNOTE r :%s HTTP Proxy disconnected: [%s@%s]",
+             me.id, source_p->name, client_p->username, client_p->host);
 	exit_client(client_p, source_p, source_p, "Client Exit");
 
 	return 0;
