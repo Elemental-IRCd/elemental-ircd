@@ -357,6 +357,11 @@ register_local_user(struct Client *client_p, struct Client *source_p, const char
 	{
 		sendto_realops_snomask(SNO_SASLFAIL, L_ALL,
 				     "SASL authentication failed, rejecting %s[%s].", source_p->name, source_p->host);
+        //Broadcast snote
+        sendto_server(NULL, NULL, CAP_TS6, NOCAPS,
+                ":%s ENCAP * SNOTE S :%s SASL authentication failed, rejecting %s[%s].",
+                me.id, me.name, source_p->name, source_p->host);
+
 		ServerStats.is_ref++;
 		sendto_one_notice(source_p, ":*** Notice -- You need to identify via SASL to use this server");
 		exit_client(client_p, source_p, &me, "SASL access only");
