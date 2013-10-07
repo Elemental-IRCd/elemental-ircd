@@ -630,7 +630,7 @@ burst_TS6(struct Client *client_p)
 
 			tlen = strlen(use_id(msptr->client_p)) + 1;
 			if(is_owner(msptr))
-				tlen = tlen +2; // HACK: Space it out
+				tlen++;
 			if(is_admin(msptr))
 				tlen++;
 			if(is_chanop(msptr))
