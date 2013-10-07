@@ -629,6 +629,8 @@ burst_TS6(struct Client *client_p)
 			msptr = uptr->data;
 
 			tlen = strlen(use_id(msptr->client_p)) + 1;
+			if(is_owner(msptr))
+				tlen++;
 			if(is_admin(msptr))
 				tlen++;
 			if(is_chanop(msptr))
