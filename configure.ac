@@ -10,7 +10,7 @@ AC_PREREQ(2.57)
 dnl Sneaky way to get an Id tag into the configure script
 AC_COPYRIGHT([$Id: configure.ac 3516 2007-06-10 16:14:03Z jilles $])
 
-AC_INIT([ponychat-ircd],[6.3.4])
+AC_INIT([ponychat-ircd],[6.5-rc])
 
 AC_CONFIG_HEADER(include/setup.h)
 
