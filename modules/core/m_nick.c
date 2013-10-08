@@ -720,10 +720,6 @@ change_local_nick(struct Client *client_p, struct Client *source_p,
 			     "Nick change: From %s to %s [%s@%s]",
 			     source_p->name, nick, source_p->username, source_p->host);
 
-    sendto_server(NULL, NULL, CAP_TS6, NOCAPS,
-            ":%s ENCAP * SNOTE n :%s Nick change: From %s to %s [%s@%s]",
-            me.id, me.name, source_p->name, nick, source_p->username, source_p->host);
-
 	/* send the nick change to the users channels */
 	sendto_common_channels_local(source_p, NOCAPS, ":%s!%s@%s NICK :%s",
 				     source_p->name, source_p->username, source_p->host, nick);
