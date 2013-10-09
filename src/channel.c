@@ -335,6 +335,8 @@ can_kick_deop(struct membership *source, struct membership *target)
                 return 0;
         if(is_halfop(source) && is_any_op(target))
                 return 0;
+        if(!is_any_op(source))
+                return 0;
 
 	return 1;
 
