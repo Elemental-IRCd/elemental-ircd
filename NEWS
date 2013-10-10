@@ -1,5 +1,20 @@
-This is ShadowIRCd 6.3, Copyright (c) 2005-2011 ShadowIRCd team.
+This is ponychat-ircd 6.5, Copyright (c) 2013 ponychat-ircd team.
 See LICENSE for licensing details (GPL v2).
+
+-- ponychat-ircd 6.5
+
+additions
+ - Channel owner mode (+y)
+ - away-notify, account-notify and extended-join client capabilities
+ - DNSBL hit and m_post HTTP proxy rejection server notices are global
+ - IPv6 DNSBL support
+ - Away rate limiting added
+ - Added snotes for failed SASL authentication attempts if need_sasl flag is set
+
+bugfixes
+ - Reject nicks with '~' in them, rather than cutting at the '~'
+ - Fix possible memory leak of certificate fingerprints
+ - Printed error message on unreadable config file rather than just a log entry
 
 -- ponychat-ircd 6.3.4
 
