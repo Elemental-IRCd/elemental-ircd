@@ -327,6 +327,8 @@ can_kick_deop(struct membership *source, struct membership *target)
 
         if(is_owner(source))
                 return 1;
+        if(is_admin(source) && is_admin(target))
+                return 1;
         if(is_admin(source) && is_owner(target))
                 return 0;
         if(is_chanop(source) && is_owner(target))
