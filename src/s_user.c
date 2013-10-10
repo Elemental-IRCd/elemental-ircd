@@ -1603,6 +1603,13 @@ change_nick_user_host(struct Client *target_p,	const char *nick, const char *use
 				target_p->host, nick);
 	}
 
+    //Needed check for away-notify
+    if(target_p->user->away != NULL)
+    {
+        sendto_common_channels_local_butone(target_p, CLICAP_AWAY_NOTIFY, ":%s!%s@%s AWAY :%s",
+                target_p->name, target_p->username, host, target_p->user->away);
+    }
+
 	rb_strlcpy(target_p->username, user, sizeof target_p->username);
 	rb_strlcpy(target_p->host, host, sizeof target_p->host);
 
