@@ -1,11 +1,13 @@
 $Id: CREDITS 3133 2007-01-21 15:38:16Z jilles $
 
-ponychat-ircd is a reboot of the ShadowIRCD project for use on PonyChat
-or other irc networks. We work with upstream charybdis and only apply 
-patches that make sense for our use.
+elemental-ircd is a fork of the ShadowIRCD project created to meet
+PonyChat's needs and keep the now-defunct ShadowIRCD project's goals
+alive.
 
-The ponychat-ircd team is listed in nick-alphabetical order:
+The elemental-ircd team is listed in nick-alphabetical order:
 
+aji, Alex Iadicico <alex -at- ajitek.net>
+Kabaka, Kyle Johnson <kabaka -at- ponychat.net>
 Niichan, Sam Dodrill <niichan -at- ponychat.net>
 
 ShadowIRCd 6 is a modern restart of the old ShadowIRCd project
