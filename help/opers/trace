@@ -4,7 +4,7 @@ With no argument, TRACE gives a list of all clients connected
 to the local server, both users and operators.
 
 With one argument which is a server, TRACE displays the path
-to the specified server, and all servers, opers and -i users
+to the specified server, and all servers, opers, and -i users
 on that server.
 
 Non-opers can only see themselves, opers and servers in the

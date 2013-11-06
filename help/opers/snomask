@@ -14,7 +14,7 @@ Server notice masks: (? designates that the snomask is provided
      ? +F     - Global client connections and exits
        +k     - Server and service kill messages
        +n     - Local client nick changes
-       +r     - Invalid usernames, DNSBL hits and dumb HTTP proxies
+       +r     - Invalid usernames, DNSBL hits, and dumb HTTP proxies
        +s     - Generic server messages and oper kills
        +S     - Clients refused due to failed SASL auth
        +u     - Client connections without auth{} block
