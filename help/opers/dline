@@ -3,7 +3,7 @@ DLINE [duration] <ip> :[reason] [| oper reason]
 Adds a DLINE to the database which will deny any
 connections from the IP address of the banned client.
 The banned client will receive a message saying
-he/she is banned with reason [reason].
+they are banned with reason [reason].
 
 Duration is optional, and is in minutes. If specified,
 the DLINE will not be saved in the database.

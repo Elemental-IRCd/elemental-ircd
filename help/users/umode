@@ -1,11 +1,11 @@
 MODE <nick> <+|-><modes>
 
-Usermodes: (? designates that the umode is provided by an extension
-            and may not be present on this server) 
+User modes: (? designates that the umode is provided by an extension
+             and may not be present on this server)
 
      USERMODE     DESCRIPTION
 -----------------------------------------------------------------
-         +o     - Designates this client is an IRC Operator.
+         +o     - Designates that this client is an IRC Operator.
                   Use the /oper command to attain this.
          +i     - Designates this client 'invisible'.
          +g     - "caller id" mode only allow accept clients to message you
@@ -19,4 +19,4 @@ Usermodes: (? designates that the umode is provided by an extension
          +G     - "soft caller id" mode - same as +g but automatically allows
                   anyone who's in a common channel with you to message you.
          +V     - Prevents you from receiving invites.
-         +Z     - Is connected via SSL (cannot be set or unset).
+         +Z     - Is connected via SSL (set only on connection).

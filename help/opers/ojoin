@@ -1,6 +1,8 @@
-OJOIN [@|+]<#channel>
+OJOIN [~|!|@|%|+]<#channel>
 
--- This commands allows opers to join a channel through bans and many cmodes.
-This command bypasses bans and cmodes +i, +k, +r, +J, +S, +l to allow
-opers to join any channel. If the channel name is prefixed with @ or +,
-you will join that channel and have ops or voice, respectively.
+-- This commands allows opers to join a channel, breaking through bans and
+many cmodes. This command bypasses bans and cmodes +i, +k, +r, +J, +S, +l, +j to allow
+opers to join any channel. If the channel name is prefixed with ~, !, @ % or +,
+you will join that channel and have channel owner, channel admin,
+channel operator, half-operator, or voice granted by the server depending on
+the prefix specified.

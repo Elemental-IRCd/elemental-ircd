@@ -1,8 +1,8 @@
 MODE <channel> <+|-><modes> [parameters]
 
-Channelmodes: (* designates that the cmode can only be set by opers)
-              (? designates that the cmode is provided by an extension
-               and may not be present on this server) 
+Channel modes: (* designates that the cmode can only be set by opers)
+               (? designates that the cmode is provided by an extension
+                and may not be present on this server)
 
 CHANNELMODE - DESCRIPTION
 ------------------------------------------------------------------------
@@ -39,8 +39,8 @@ NO PARAMETERS:
               channel.
      +G     - Block messages in all caps. Messages that are more than
               50% capital letters will be blocked.
-     +J     - Prevent autorejoin on kick. Users will not be able to
-              rejoin immediately after being kicked. 
+     +J     - Prevent automatic rejoin on kick. Users will not be able to
+              rejoin immediately after being kicked.
      +K     - No repeat messages. Messages that are the same as the
               last message sent to the channel will be blocked.
   ?* +O     - Oper only channel. Only opers will be able to join.
