@@ -144,8 +144,7 @@ m_oper(struct Client *client_p, struct Client *source_p, int parc, const char *p
 	}
 	else
 	{
-		sendto_one(source_p, form_str(ERR_PASSWDMISMATCH),
-			   me.name, source_p->name);
+		sendto_one_numeric(source_p, ERR_NOOPERHOST, form_str(ERR_NOOPERHOST));
 
 		ilog(L_FOPER, "FAILED OPER (%s) by (%s!%s@%s) (%s)",
 		     name, source_p->name, source_p->username, source_p->host,
