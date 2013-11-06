@@ -1,6 +1,7 @@
 CPRIVMSG <nick> <channel> :<text>
 
-Providing you are opped (+o), halfopped (+h), admined (+a),
-a channel owner (+y), or voiced (+v) in <channel>, and <nick>
-is a member of <channel>, CPRIVMSG generates a PRIVMSG towards
-<nick>.  CPRIVMSG bypasses any anti-spam measures in place.
+Providing you are a channel owner (+y), a channel admin (+a),
+a channel operator (+o), a half-operator (+h) or voiced in
+<channel>, and <nick> is a member of <channel>, CPRIVMSG
+generates a PRIVMSG towards <nick> that bypasses any anti-spam
+measures in place

@@ -40,13 +40,15 @@ NO PARAMETERS:
      +G     - Block messages in all caps. Messages that are more than
               50% capital letters will be blocked.
      +J     - Prevent automatic rejoin on kick. Users will not be able to
-              rejoin immediately after being kicked. 
+              rejoin immediately after being kicked.
      +K     - No repeat messages. Messages that are the same as the
               last message sent to the channel will be blocked.
    * +M     - Immune. Opers cannot be kicked from the channel. May
               be set by server admins regardless of channel status.
-              Users will not see this mode at all.
-              Opers may still be kicked from the channel by services.
+              Users will not see this mode at all. May only be set by
+              server admins.
+              Opers may still be kicked from the channel by services or
+              any other u-lined server.
   ?* +O     - Oper only channel. Only opers will be able to join.
   ?* +A     - Admin only channel. Only admins will be able to join.
               Can only be set by admins.
