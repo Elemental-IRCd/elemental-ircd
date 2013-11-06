@@ -1,8 +1,8 @@
 MODE <channel> <+|-><modes> [parameters]
 
-Channelmodes: (* designates that the cmode can only be set by opers)
-              (? designates that the cmode is provided by an extension
-               and may not be present on this server) 
+Channel modes: (* designates that the cmode can only be set by opers)
+               (? designates that the cmode is provided by an extension
+                and may not be present on all servers)
 
 CHANNELMODE - DESCRIPTION
 ------------------------------------------------------------------------
@@ -13,12 +13,12 @@ NO PARAMETERS:
      +s     - Secret.  Channel will not be shown in /whois and /list etc.
      +p     - Private.  Disables /knock to the channel.
      +m     - Moderated.  Only opped/voiced users may talk in channel.
-     +i     - Invite only.  Users need to be /invite'd or match a +I to
+     +i     - Invite only.  Users need to be invited or match a +I to
               join the channel.
      +r     - Registered users only.  Only users identified to services
               may join.
      +c     - No color.  All color codes in messages are stripped.
-     +d     - No nickchanges. People on the channel will not be able to
+     +d     - No nick changes. People on the channel will not be able to
               change nick.
      +g     - Free invite.  Everyone may invite users.  Significantly
               weakens +i control.
@@ -39,13 +39,13 @@ NO PARAMETERS:
               channel.
      +G     - Block messages in all caps. Messages that are more than
               50% capital letters will be blocked.
-     +J     - Prevent autorejoin on kick. Users will not be able to
+     +J     - Prevent automatic rejoin on kick. Users will not be able to
               rejoin immediately after being kicked. 
      +K     - No repeat messages. Messages that are the same as the
               last message sent to the channel will be blocked.
    * +M     - Immune. Opers cannot be kicked from the channel. May
-              be set by admins regardless of channel status. Users
-              will not see this mode at all. Can only be set by admins.
+              be set by server admins regardless of channel status.
+              Users will not see this mode at all.
               Opers may still be kicked from the channel by services.
   ?* +O     - Oper only channel. Only opers will be able to join.
   ?* +A     - Admin only channel. Only admins will be able to join.
