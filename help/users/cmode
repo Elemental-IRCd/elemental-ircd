@@ -66,6 +66,8 @@ WITH PARAMETERS:
               PARAMS: /mode #channel +o nick
      +a     - Admin.  Grants channel administrator status.
               PARAMS: /mode #channel +a nick
+     +y     - Owner.  Grants channel owner status.
+              PARAMS: /mode #channel +y nick
      +b     - Ban.  Prevents a user from entering the channel, and from
               sending or changing nick if they are on it, based on a 
               nick!ident@host match.
