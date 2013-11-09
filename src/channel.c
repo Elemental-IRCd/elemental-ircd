@@ -2013,10 +2013,21 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
                                              source_p->tsinfo, source_p->info);
 
         /* Send away message to away-notify enabled clients. */
-        if (client_p->user->away)
-            sendto_channel_local_with_capability_butone(client_p, ALL_MEMBERS, CLICAP_AWAY_NOTIFY, NOCAPS, chptr,
-                    ":%s!%s@%s AWAY :%s", client_p->name, client_p->username,
-                    client_p->host, client_p->user->away);
+
+        /*
+         * The following test fixes autojoin_opers in an auth block joining
+         * clients to channels from segfaulting the irc daemon.
+         * - Niichan
+         */
+        if (client_p->user != NULL)
+        {
+            if (client_p->user->away)
+            {
+                sendto_channel_local_with_capability_butone(client_p, ALL_MEMBERS, CLICAP_AWAY_NOTIFY, NOCAPS, chptr,
+                        ":%s!%s@%s AWAY :%s", client_p->name, client_p->username,
+                        client_p->host, client_p->user->away);
+            }
+        }
 
 		/* its a new channel, set +nt and burst. */
 		if(flags & CHFL_CHANOP)
