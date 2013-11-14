@@ -1,15 +1,15 @@
 $Id: CREDITS 3133 2007-01-21 15:38:16Z jilles $
-
+ 
 elemental-ircd is a fork of the ShadowIRCD project created to meet
 PonyChat's needs and keep the now-defunct ShadowIRCD project's goals
 alive.
-
+ 
 The elemental-ircd team is listed in nick-alphabetical order:
-
+ 
 aji, Alex Iadicico <alex -at- ajitek.net>
+lyska, Sam Dodrill <shadowh511 -at- gmail.com>>
 Kabaka, Kyle Johnson <kabaka -at- ponychat.net>
-Niichan, Sam Dodrill <niichan -at- ponychat.net>
-
+ 
 ShadowIRCd 6 is a modern restart of the old ShadowIRCd project
 based on Charybdis with a few additional features to make it appeal 
 more to more users. We try to work as closely as possible with the 
@@ -54,5 +54,5 @@ ThaPrince, Jon Christopherson <jon -at- vile.com>
 twincest, River Tarnell <river -at- attenuate.org>
 w00t, Robin Burchell <surreal.w00t -at- gmail.com>
  
-Visit the ShadowIRCd website at: http://www.shadowircd.net
-Visit us on IRC at: irc.thinstack.net #shadowircd
+Visit the elemental-ircd repo at: http://www.github.com/ponychat/elemental-ircd
+Visit us on IRC at: irc.ponychat.net #rainbow-factory

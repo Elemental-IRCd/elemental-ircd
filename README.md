@@ -13,6 +13,6 @@ was headed.
 ## Support
 
 Our support channel is `#rainbow-factory` on `irc.ponychat.net`. Poke
-**aji** or **Kabaka** for help.
+**aji**, **lyska** or **Kabaka** for help.
 
 To report bugs, please use the GitHub issue tracker.
