@@ -30,6 +30,11 @@ mapi_clist_av1 metadata_clist[] = {
 
 DECLARE_MODULE_AV1(metadata, NULL, NULL, metadata_clist, NULL, NULL, "$Revision$");
 
+/*
+ * Follows the specification for IRCv3 METADATA
+ * http://ircv3.org/specification/metadata-3.2
+ */
+
 static int
 me_metadata(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
@@ -40,9 +45,9 @@ me_metadata(struct Client *client_p, struct Client *source_p, int parc, const ch
 		if((chptr = find_channel(parv[2])) == NULL)
 			return 0;
 
-		if(!strcmp(parv[1], "ADD") && parv[4] != NULL)
+		if(!strcmp(parv[1], "SET") && parv[4] != NULL)
 			channel_metadata_add(chptr, parv[3], parv[4], 0);
-		if(!strcmp(parv[1], "DELETE") && parv[3] != NULL)
+		if(!strcmp(parv[1], "CLEAR") && parv[3] != NULL)
 			channel_metadata_delete(chptr, parv[3], 0);
 	}
 
@@ -56,9 +61,9 @@ me_metadata(struct Client *client_p, struct Client *source_p, int parc, const ch
 		if(!target_p->user)
 			return 0;
 
-		if(!strcmp(parv[1], "ADD") && parv[4] != NULL)
+		if(!strcmp(parv[1], "SET") && parv[4] != NULL)
 			user_metadata_add(target_p, parv[3], parv[4], 0);
-		if(!strcmp(parv[1], "DELETE") && parv[3] != NULL)
+		if(!strcmp(parv[1], "CLEAR") && parv[3] != NULL)
 			user_metadata_delete(target_p, parv[3], 0);
 	}
 	return 0;

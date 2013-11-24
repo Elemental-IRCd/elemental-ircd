@@ -2110,7 +2110,7 @@ channel_metadata_add(struct Channel *target, const char *name, const char *value
 	irc_dictionary_add(target->metadata, md->name, md);
 	
 	if(propegate)
-		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA ADD %s %s :%s",
+		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA SET %s %s :%s",
 				target->chname, name, value);
 
 	return md;
@@ -2163,7 +2163,7 @@ channel_metadata_delete(struct Channel *target, const char *name, int propegate)
 	rb_free(md);
 
 	if(propegate)
-		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA DELETE %s %s",
+		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA CLEAR %s %s",
 				target->chname, name);
 }
 
