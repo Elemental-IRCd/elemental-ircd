@@ -40,7 +40,8 @@ NO PARAMETERS:
      +E     - No kicks. Chanops will not be able to use /kick on this
               channel.
      +G     - Block messages in all caps. Messages that are more than
-              50% capital letters will be blocked.
+              50% capital letters will be blocked. Messages shorter than
+              10 characters are ignored.
      +J     - Prevent automatic rejoin on kick. Users will not be able to
               rejoin immediately after being kicked.
      +K     - No repeat messages. Messages that are the same as the
