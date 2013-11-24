@@ -45,6 +45,13 @@ me_metadata(struct Client *client_p, struct Client *source_p, int parc, const ch
 		if((chptr = find_channel(parv[2])) == NULL)
 			return 0;
 
+		//XXX need to support the old, nonstandard verbs for compatability reasons
+		if(!strcmp(parv[1], "ADD") && parv[4] != NULL)
+			channel_metadata_add(chptr, parv[3], parv[4], 0);
+		if(!strcmp(parv[1], "DELETE") && parv[3] != NULL)
+			channel_metadata_delete(chptr, parv[3], 0);
+
+		//Now moving on to the standard ones
 		if(!strcmp(parv[1], "SET") && parv[4] != NULL)
 			channel_metadata_add(chptr, parv[3], parv[4], 0);
 		if(!strcmp(parv[1], "CLEAR") && parv[3] != NULL)
@@ -61,6 +68,13 @@ me_metadata(struct Client *client_p, struct Client *source_p, int parc, const ch
 		if(!target_p->user)
 			return 0;
 
+		//XXX need to support the old, nonstandard verbs for compatability reasons
+		if(!strcmp(parv[1], "ADD") && parv[4] != NULL)
+			user_metadata_add(target_p, parv[3], parv[4], 0);
+		if(!strcmp(parv[1], "DELETE") && parv[3] != NULL)
+			user_metadata_delete(target_p, parv[3], 0);
+
+		//Now moving on to the standard ones
 		if(!strcmp(parv[1], "SET") && parv[4] != NULL)
 			user_metadata_add(target_p, parv[3], parv[4], 0);
 		if(!strcmp(parv[1], "CLEAR") && parv[3] != NULL)
