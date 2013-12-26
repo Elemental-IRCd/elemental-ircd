@@ -1431,16 +1431,6 @@ oper_up(struct Client *source_p, struct oper_conf *oper_p)
 
 	aconf = source_p->localClient->att_conf;
 
-	/* Do the auth::autojoin_opers wizardry here */
-	if(aconf->autojoin_opers != NULL)
-	{
-		/* opers should never be banned from the opers channel.
-		 * Plus this is post-umode being set so you'll pass +I $o or +O.
-		 * Hence why we're making this a normal clean join. --jdhore
-		 */
-		user_join(&me, source_p, aconf->autojoin_opers, NULL);
-	}
-
 	/* If we're setting +p, expire it */
 	if(ConfigFileEntry.expire_override_time && MyClient(source_p) && source_p->umodes & UMODE_OVERRIDE)
 	{
