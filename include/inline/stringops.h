@@ -107,7 +107,7 @@ strip_unprintable(char *string)
 			*c2++ = *c;
 			break;
 		default:
-			if (*c < 32)
+			if (*c < 32 && *c >= 0)
 				break;
 			*c2++ = *c;
 			last_non_space = c2;
