@@ -1955,7 +1955,7 @@ user_metadata_add(struct Client *target, const char *name, const char *value, in
 	irc_dictionary_add(target->user->metadata, md->name, md);
 	
 	if(propegate)
-		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA ADD %s %s :%s",
+		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA SET %s %s :%s",
 				target->id, name, value);
 
 	return md;
@@ -1983,7 +1983,7 @@ user_metadata_delete(struct Client *target, const char *name, int propegate)
 	rb_free(md);
 
 	if(propegate)
-		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA DELETE %s %s",
+		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA CLEAR %s %s",
 				target->id, name);
 }
 

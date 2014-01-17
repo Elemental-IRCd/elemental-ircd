@@ -52,3 +52,17 @@ servers and check.  Bots or pseudoservices may also uses these lines to perform
 additional actions (such as `AKILL`s or logging to channels) as needed by the
 bot author.
 
+#### METADATA
+
+The old ShadowIRCD implementation of METADATA used `ADD` and `DELETE` verbs for
+adding and deleting metadata to channels and clients. This, in practice looks
+something like:
+
+    <<< :45X ENCAP * METADATA ADD 1NRAAAABR OPERSTRING :is an IRC Administrator
+    <<< :45X ENCAP * METADATA DELETE 1NRAAAABR OPERSTRING
+
+Functionality is identical to the new `SET` and `CLEAR` verbs, but this deviates
+from the spec by being **only** a server to server command. Support for client
+to server and server to client metadata setting/getting will come in a future
+version of elemental-ircd.
+
