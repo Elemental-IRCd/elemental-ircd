@@ -972,14 +972,14 @@ recurse_send_quits(struct Client *client_p, struct Client *source_p,
 		RB_DLINK_FOREACH_SAFE(ptr, ptr_next, source_p->serv->users.head)
 		{
 			target_p = ptr->data;
-			sendto_one(to, ":%s QUIT :%s", target_p->name, comment1);
+			sendto_one(to, ":%s QUIT :%s", target_p->id, comment1);
 		}
 		RB_DLINK_FOREACH_SAFE(ptr, ptr_next, source_p->serv->servers.head)
 		{
 			target_p = ptr->data;
 			recurse_send_quits(client_p, target_p, to, comment1, comment);
 		}
-		sendto_one(to, "SQUIT %s :%s", source_p->name, comment);
+		sendto_one(to, "SQUIT %s :%s", source_p->id, comment);
 	}
 }
 
