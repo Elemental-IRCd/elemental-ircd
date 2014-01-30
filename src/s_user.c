@@ -234,6 +234,15 @@ register_local_user(struct Client *client_p, struct Client *source_p, const char
 	if(IsAnyDead(source_p))
 		return -1;
 
+	/* Allocate a UID if it was not previously allocated.
+	 * If this already occured, it was probably during SASL auth...
+	 */
+	if(!*source_p->id)
+	{
+		strcpy(source_p->id, generate_uid());
+		add_to_id_hash(source_p->id, source_p);
+	}
+
 	if(ConfigFileEntry.ping_cookie)
 	{
 		if(!(source_p->flags & FLAGS_PINGSENT) && source_p->localClient->random_ping == 0)
@@ -533,15 +542,6 @@ register_local_user(struct Client *client_p, struct Client *source_p, const char
 			source_p->info);
 
 	add_to_hostname_hash(source_p->orighost, source_p);
-
-	/* Allocate a UID if it was not previously allocated.
-	 * If this already occured, it was probably during SASL auth...
-	 */
-	if(!*source_p->id)
-	{
-		strcpy(source_p->id, generate_uid());
-		add_to_id_hash(source_p->id, source_p);
-	}
 
 	if (IsSSL(source_p))
 		source_p->umodes |= UMODE_SSLCLIENT;
