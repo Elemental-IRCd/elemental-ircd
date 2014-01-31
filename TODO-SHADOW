@@ -1,5 +1,0 @@
-TODO list for ShadowIRCd 7.0
-----------------------------
-* evaluate some of the more inane cmodes (D, E, N, etc) for possible removal.
-* move umode +B to extensions
-* evaluate old code and clean up / improve where improvement can be made

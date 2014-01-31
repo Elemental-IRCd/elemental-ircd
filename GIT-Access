@@ -1,6 +1,0 @@
-The ShadowIRCd Stable GIT repository can be checked out using the following command:
- git clone git://git.atheme.org/unofficial/shadowircd-stable.git shadowircd-stable
-
-ShadowIRCd's GIT repository depot can be browsed over the internet at
-the following address:
- http://git.atheme.org/unofficial/shadowircd-stable/
