@@ -660,6 +660,7 @@ introduce_client(struct Client *client_p, struct Client *source_p, struct User *
 	{
 		sendto_server(client_p, NULL, CAP_TS6, use_euid ? CAP_EUID : NOCAPS, ":%s ENCAP * REALHOST %s",
 				use_id(source_p), source_p->orighost);
+		user_metadata_add(source_p, "CLOAKEDHOST", source_p->host, 1);
 	}
 
 	if (!EmptyString(source_p->user->suser))
