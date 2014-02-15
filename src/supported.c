@@ -305,6 +305,19 @@ isupport_extban(const void *ptr)
 	return result;
 }
 
+static const char *
+isupport_ownermode(const void *ptr)
+{
+	static char result[200];
+
+	if(!ConfigChannel.use_owner)
+		return NULL;
+
+	rb_snprintf(result, sizeof result, "y");
+
+	return result;
+}
+
 void
 init_isupport(void)
 {
@@ -319,6 +332,7 @@ init_isupport(void)
 	add_isupport("CHANMODES", isupport_chanmodes, NULL);
 	add_isupport("CHANLIMIT", isupport_chanlimit, NULL);
 	add_isupport("PREFIX", isupport_prefix, NULL);
+	add_isupport("OWNER", isupport_ownermode, NULL);
 	add_isupport("MAXLIST", isupport_maxlist, NULL);
 	add_isupport("MODES", isupport_intptr, &maxmodes);
 	add_isupport("NETWORK", isupport_stringptr, &ServerInfo.network_name);
