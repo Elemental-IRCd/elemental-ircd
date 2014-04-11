@@ -961,6 +961,10 @@ flood_attack_client(int p_or_n, struct Client *source_p, struct Client *target_p
 						     source_p->name, source_p->username,
 						     source_p->orighost,
 						     source_p->servptr->name, target_p->name);
+				sendto_server(NULL, NULL, CAP_TS6, NOCAPS,
+						     ":%s ENCAP * SNOTE b :Possible Flooder %s[%s@%s] on %s target: %s",
+						      me.id, source_p->name, source_p->username, source_p->orighost,
+						      source_p->servptr->name, target_p->name);
 				target_p->flood_noticed = 1;
 				/* add a bit of penalty */
 				target_p->received_number_of_privmsgs += 2;
