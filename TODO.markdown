@@ -1,5 +1,21 @@
 # TODO
 
+## elemental-ircd 6.5.2
+
+ - [ ] Fix `extended-join` not triggering for users on other servers
+ - [x] Patch `m_sasl`, http://seclists.org/fulldisclosure/2014/Mar/320
+ - [x] Fix null reference in `src/channel.c`
+ - [x] Add basic autoconfiguration script
+ - [x] Add modules for services packages
+ - [x] Make end user oper failures more generic
+ - [x] Add `OWNER=` to `005`
+ - [x] Show own modes in a `WHOIS`
+ - [x] Remove AHBL blacklists from default configs
+ - [x] Remove `SNOTE`s in `m_post`
+ - [x] Make flooding `SNOTE`s global
+ - [x] Add quotes around `PART` reason
+ - [x] Disable `away-notify` for now
+
 ## elemental-ircd 6.6
 
  - [ ] Finish websocket support
