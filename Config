@@ -55,13 +55,6 @@ while nicklen > 51:
 
 print("")
 
-print("Would you like to use SSL (Secure Socket Layer) encryption for client and")
-print("server links? (Highly reccomended)")
-
-usessl = promptYesNo("SSL? (Y/N)")
-
-print("")
-
 print("Would you like to disable small network support? This increases the size")
 print("of a few buffers in the code and can increase performance on large networks.")
 
@@ -69,11 +62,6 @@ smallnet = promptYesNo("Small network? (Y/N)")
 
 configflags.append("--prefix=%s" % installloc)
 configflags.append("--with-nicklen=%s" % nicklen)
-
-if usessl:
-    configflags.append("--enable-openssl")
-else:
-    configflags.append("--disable-openssl")
 
 if not smallnet:
     configflags.append("--enable-small-net")
