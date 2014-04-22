@@ -245,9 +245,13 @@ ms_join(struct Client *client_p, struct Client *source_p, int parc, const char *
 			chptr->join_delta = rb_current_time();
 		}
 		chptr->join_count++;
-		sendto_channel_local(ALL_MEMBERS, chptr, ":%s!%s@%s JOIN :%s",
-				     source_p->name, source_p->username,
-				     source_p->host, chptr->chname);
+		sendto_channel_local_with_capability(ALL_MEMBERS, NOCAPS, CLICAP_EXTENDED_JOIN, chptr, ":%s!%s@%s JOIN %s",
+                                             source_p->name, source_p->username, source_p->host, chptr->chname);
+
+		sendto_channel_local_with_capability(ALL_MEMBERS, CLICAP_EXTENDED_JOIN, NOCAPS, chptr, ":%s!%s@%s JOIN %s %s %ld :%s",
+                                             source_p->name, source_p->username, source_p->host, chptr->chname,
+                                             EmptyString(source_p->user->suser) ? "*" : source_p->user->suser,
+                                             source_p->tsinfo, source_p->info);
 	}
 
 	sendto_server(client_p, chptr, CAP_TS6, NOCAPS,

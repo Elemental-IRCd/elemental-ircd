@@ -1572,8 +1572,20 @@ change_nick_user_host(struct Client *target_p,	const char *nick, const char *use
 
 			*mptr = '\0';
 
-			sendto_channel_local_butone(target_p, ALL_MEMBERS, chptr, ":%s!%s@%s JOIN :%s",
-					nick, user, host, chptr->chname);
+			struct Client *source_p;
+
+			source_p = find_named_client(nick);
+
+			sendto_channel_local_with_capability(ALL_MEMBERS, NOCAPS,
+							CLICAP_EXTENDED_JOIN, chptr, ":%s!%s@%s JOIN %s",
+							source_p->name, source_p->username, host,
+							chptr->chname);
+			sendto_channel_local_with_capability(ALL_MEMBERS,
+					CLICAP_EXTENDED_JOIN, NOCAPS, chptr, ":%s!%s@%s JOIN %s %s %ld :%s",
+					source_p->name, source_p->username, source_p->host,
+					chptr->chname, EmptyString(source_p->user->suser) ? "*" : source_p->user->suser,
+					source_p->tsinfo, source_p->info);
+
 			if(*mode)
 				sendto_channel_local_butone(target_p, ALL_MEMBERS, chptr,
 						":%s MODE %s +%s %s",
