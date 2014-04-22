@@ -74,8 +74,6 @@ raw_input("Press enter to continue... ")
 
 system(" ".join(configflags))
 
-system("clear")
-
 print(art)
 
 print("""
