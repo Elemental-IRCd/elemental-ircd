@@ -2,6 +2,8 @@
 
 # This is the IRCHighway branch. This will not link to other Elemental-IRCd instances without the specific patches in this version.
 
+# YOU WILL NOT GET SUPPORT FOR THIS BRANCH. DO NOT ASK.
+
 **Elemental-IRCd** is a high performance, lightweight, and scalable
 IRC daemon. It is a fork of the now-defunct ShadowIRCD and seeks to continue in
 the direction ShadowIRCD was headed.
