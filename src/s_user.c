@@ -1538,7 +1538,7 @@ change_nick_user_host(struct Client *target_p,	const char *nick, const char *use
 
             if(is_owner(mscptr))
             {
-                *mptr++ = 'y';
+                *mptr++ = 'q';
                 strcat(modeval, nick);
                 strcat(modeval, " ");
             }

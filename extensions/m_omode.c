@@ -123,7 +123,7 @@ mo_omode(struct Client *client_p, struct Client *source_p, int parc, const char 
 	set_channel_mode(client_p, source_p->servptr, chptr, msptr, 
 			 parc - 2, parv + 2);
 #else
-        if (parc == 4 && !strcmp(parv[2], "+y") && !irccmp(parv[3], source_p->name))
+        if (parc == 4 && !strcmp(parv[2], "+q") && !irccmp(parv[3], source_p->name))
         {
                 /* Ownering themselves */
                 if (!wasonchannel)
@@ -132,10 +132,10 @@ mo_omode(struct Client *client_p, struct Client *source_p, int parc, const char 
                                         form_str(ERR_USERNOTINCHANNEL), parv[3], chptr->chname);
                         return 0;
                 }
-                sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +y %s",
+                sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +q %s",
                                 me.name, parv[1], source_p->name);
                 sendto_server(NULL, chptr, CAP_TS6, NOCAPS,
-                                ":%s TMODE %ld %s +y %s",
+                                ":%s TMODE %ld %s +q %s",
                                 me.id, (long) chptr->channelts, parv[1],
                                 source_p->id);
                 msptr->flags |= CHFL_OWNER;

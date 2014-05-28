@@ -260,11 +260,11 @@ isupport_prefix(const void *ptr)
 	static char result[13];
 
 	rb_snprintf(result, sizeof result, "(%s%so%sv)%s%s@%s+",
-                        ConfigChannel.use_owner ? "y" : "",
+                        ConfigChannel.use_owner ? "q" : "",
 			ConfigChannel.use_admin ? "a" : "",
 			ConfigChannel.use_halfop ? "h" : "",
                         ConfigChannel.use_owner ? "~" : "",
-			ConfigChannel.use_admin ? "!" : "",
+			ConfigChannel.use_admin ? "&" : "",
 			ConfigChannel.use_halfop ? "%" : "");
 	return result;
 }
@@ -274,7 +274,7 @@ isupport_maxlist(const void *ptr)
 {
 	static char result[30];
 
-	rb_snprintf(result, sizeof result, "bq%s%s:%i",
+	rb_snprintf(result, sizeof result, "bQ%s%s:%i",
 			ConfigChannel.use_except ? "e" : "",
 			ConfigChannel.use_invex ? "I" : "",
 			ConfigChannel.max_bans);
@@ -313,7 +313,7 @@ isupport_ownermode(const void *ptr)
 	if(!ConfigChannel.use_owner)
 		return NULL;
 
-	rb_snprintf(result, sizeof result, "y");
+	rb_snprintf(result, sizeof result, "q");
 
 	return result;
 }
@@ -332,7 +332,7 @@ init_isupport(void)
 	add_isupport("CHANMODES", isupport_chanmodes, NULL);
 	add_isupport("CHANLIMIT", isupport_chanlimit, NULL);
 	add_isupport("PREFIX", isupport_prefix, NULL);
-	add_isupport("OWNER", isupport_ownermode, NULL);
+	//add_isupport("OWNER", isupport_ownermode, NULL);
 	add_isupport("MAXLIST", isupport_maxlist, NULL);
 	add_isupport("MODES", isupport_intptr, &maxmodes);
 	add_isupport("NETWORK", isupport_stringptr, &ServerInfo.network_name);

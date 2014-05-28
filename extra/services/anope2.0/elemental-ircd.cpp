@@ -33,7 +33,7 @@ class ChannelModeLargeBan : public ChannelMode
 class ElementalProto : public IRCDProto
 {
  public:
-	ElementalProto(Module *creator) : IRCDProto(creator, "Elemental-IRCd 6.5+")
+	ElementalProto(Module *creator) : IRCDProto(creator, "Elemental-IRCd+ihw 6.5+")
 	{
 		DefaultPseudoclientModes = "+oiS";
 		CanCertFP = true;
@@ -378,8 +378,8 @@ class ProtoElemental : public Module
 		ModeManager::AddChannelMode(new ChannelModeStatus("VOICE", 'v', '+', 0));
 		ModeManager::AddChannelMode(new ChannelModeStatus("HALFOP", 'h', '%', 1));
 		ModeManager::AddChannelMode(new ChannelModeStatus("OP", 'o', '@', 2);
-		ModeManager::AddChannelMode(new ChannelModeStatus("PROTECT", 'a', '!', 3));
-		ModeManager::AddChannelMode(new ChannelModeStatus("OWNER", 'y', '~', 4));
+		ModeManager::AddChannelMode(new ChannelModeStatus("PROTECT", 'a', '&', 3));
+		ModeManager::AddChannelMode(new ChannelModeStatus("OWNER", 'q', '~', 4));
 	}
 
  public:

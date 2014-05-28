@@ -150,13 +150,13 @@ construct_cflag_param_string(void)
 
 	*cflagsparaminfo = '\0';
 	rb_snprintf(cflagsparaminfo, sizeof cflagsparaminfo, "%s%sb%s%s%s%sklov%s%s",
-                        ConfigChannel.use_owner ? "y" : "",
+                        ConfigChannel.use_owner ? "q" : "",
 			ConfigChannel.use_admin ? "a" : "",
 			ConfigChannel.use_except ? "e" : "",
 			ConfigChannel.use_forward ? "f" : "",
 			ConfigChannel.use_halfop ? "h" : "",
 			strchr(ConfigChannel.disabledmodes, 'j') ? "" : "j",
-			strchr(ConfigChannel.disabledmodes, 'q') ? "" : "q",
+			strchr(ConfigChannel.disabledmodes, 'Q') ? "" : "Q",
 			ConfigChannel.use_invex ? "I" : "");
 }
 
@@ -1968,7 +1968,7 @@ struct ChannelMode chmode_table[256] =
   {chm_nosuch,	0 },			/* N */
   {chm_nosuch,	0 },			/* O */
   {chm_staff,	MODE_PERMANENT },	/* P */
-  {chm_simple,	MODE_DISFORWARD },	/* Q */
+  {chm_ban,	CHFL_QUIET },		/* Q */
   {chm_nosuch,	0 },			/* R */
   {chm_nosuch,	0 },			/* S */
   {chm_simple,	MODE_NONOTICE },	/* T */
@@ -2000,7 +2000,7 @@ struct ChannelMode chmode_table[256] =
   {chm_simple,	MODE_NOPRIVMSGS },	/* n */
   {chm_op,	0 },			/* o */
   {chm_simple,	MODE_PRIVATE },		/* p */
-  {chm_ban,	CHFL_QUIET },		/* q */
+  {chm_owner,	0 },			/* q */
   {chm_simple, MODE_REGONLY },		/* r */
   {chm_simple,	MODE_SECRET },		/* s */
   {chm_simple,	MODE_TOPICLIMIT },	/* t */
@@ -2008,7 +2008,7 @@ struct ChannelMode chmode_table[256] =
   {chm_voice,	0 },			/* v */
   {chm_nosuch,	0 },			/* w */
   {chm_nosuch,	0 },			/* x */
-  {chm_owner,   0 },    		/* y */
+  {chm_nosuch,	0 },		/* y */
   {chm_simple,	MODE_OPMODERATE },	/* z */
 
   {chm_nosuch,  0 },			/* 0x7b */
