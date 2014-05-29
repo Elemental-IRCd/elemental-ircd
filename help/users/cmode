@@ -24,6 +24,8 @@ NO PARAMETERS:
               change nick.
      +g     - Free invite.  Everyone may invite users.  Significantly
               weakens +i control.
+     +u     - Hidden ban/quiet lists. Ban/quiet lists are hidden from all
+              channel members that are not a halfop or higher.
      +z     - Op moderated.  Messages blocked by +m, +b and +q are instead
               sent to ops.
    * +L     - Large ban list.  Increase maximum number of +beIq entries.

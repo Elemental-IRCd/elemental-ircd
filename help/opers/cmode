@@ -26,6 +26,8 @@ NO PARAMETERS:
               weakens +i control.
      +z     - Op moderated.  Messages blocked by +m, +b and +q are instead
               sent to ops.
+     +u     - Hidden ban/quiet list. Ban/quiet lists may only be seen
+              by halfops or higher.
    * +L     - Large ban list.  Increase maximum number of +beIq entries.
    * +P     - Permanent.  Channel does not disappear when empty.
      +F     - Free target.  Anyone may set forwards to this (otherwise
