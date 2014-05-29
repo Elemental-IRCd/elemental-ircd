@@ -70,6 +70,7 @@ struct cmode_ elemental_mode_list[] = {
   { 'd', CMODE_NONICKS },		
   { 'K', CMODE_NOREPEAT },		
   { 'J', CMODE_KICKNOREJOIN },
+  { 'u', CMODE_NOFORWARD },
   { '\0', 0 }
 };
 
