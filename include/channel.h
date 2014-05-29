@@ -191,6 +191,7 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define MODE_NOREJOIN	0x200000 /* Block rejoin immediately after kick */
 #define MODE_NOREPEAT	0x400000 /* Block repeat messages */
 #define MODE_NOOPERKICK	0x800000 /* disallow kicking opers */
+#define MODE_HIDEBANS	0x1000000 /* disallow non-chanops from seeing ban/quiet lists */
 
 #define CHFL_BAN        0x10000000	/* ban channel flag */
 #define CHFL_EXCEPTION  0x20000000	/* exception to ban channel flag */

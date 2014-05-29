@@ -907,6 +907,12 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
 			}
 		}
 
+		if(chptr->mode.mode & MODE_HIDEBANS) {
+			if(alevel != CHFL_CHANOP && alevel != CHFL_ADMIN && alevel != CHFL_HALFOP && alevel != CHFL_OWNER) {
+				goto skiplistdone;
+			}
+		}
+
 		RB_DLINK_FOREACH(ptr, list->head)
 		{
 			banptr = ptr->data;
@@ -914,6 +920,7 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
 				   me.name, source_p->name, chptr->chname,
 				   banptr->banstr, banptr->who, banptr->when);
 		}
+skiplistdone:
 		sendto_one(source_p, form_str(rpl_endlist), me.name, source_p->name, chptr->chname);
 		return;
 	}
@@ -2004,7 +2011,7 @@ struct ChannelMode chmode_table[256] =
   {chm_simple, MODE_REGONLY },		/* r */
   {chm_simple,	MODE_SECRET },		/* s */
   {chm_simple,	MODE_TOPICLIMIT },	/* t */
-  {chm_nosuch,	0 },			/* u */
+  {chm_simple,	MODE_HIDEBANS },	/* u */
   {chm_voice,	0 },			/* v */
   {chm_nosuch,	0 },			/* w */
   {chm_nosuch,	0 },			/* x */
