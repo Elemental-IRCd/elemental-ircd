@@ -307,9 +307,14 @@ single_whois(struct Client *source_p, struct Client *target_p, int operspy)
 	if(cur_len > mlen + extra_space)
 		sendto_one(source_p, "%s", buf);
 
-	sendto_one_numeric(source_p, RPL_WHOISSERVER, form_str(RPL_WHOISSERVER),
-			   target_p->name, target_p->servptr->name,
-			   target_p->servptr->info);
+	if(IsOper(source_p)) {
+		sendto_one_numeric(source_p, RPL_WHOISSERVER, form_str(RPL_WHOISSERVER),
+				   target_p->name, target_p->servptr->name,
+				   target_p->servptr->info);
+	} else {
+		sendto_one_numeric(source_p, RPL_WHOISSERVER, form_str(RPL_WHOISSERVER),
+				   target_p->name, "irc.server", "An IRC server");
+	}
 
 	if(target_p->user->away)
 		sendto_one_numeric(source_p, RPL_AWAY, form_str(RPL_AWAY),
