@@ -426,6 +426,7 @@ struct ListClient
 #define UMODE_NOINVITE	   0x0800	/* block invites */
 #define UMODE_BOT	   0x8000	/* mark as a bot in whois */
 #define UMODE_SCALLERID    0x40000	/* soft caller id */
+#define UMODE_HIDECHANS    0x80000	/* hide channels in whois */
 
 /* user information flags, only settable by remote mode or local oper */
 #define UMODE_OPER         0x1000	/* Operator */
