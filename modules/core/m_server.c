@@ -135,7 +135,7 @@ mr_server(struct Client *client_p, struct Client *source_p, int parc, const char
 			sendto_realops_snomask(SNO_GENERAL, L_ALL,
 					     "Unauthorised server connection attempt from %s: "
 					     "No entry for servername %s",
-					     "[@255.255.255.255]", name);
+					     log_client_name(client_p, SHOW_IP), name);
 
 			ilog(L_SERVER, "Access denied, no connect block for server %s%s",
 			     EmptyString(client_p->name) ? name : "",
@@ -151,7 +151,7 @@ mr_server(struct Client *client_p, struct Client *source_p, int parc, const char
 		sendto_realops_snomask(SNO_GENERAL, is_remote_connect(client_p) ? L_NETWIDE : L_ALL,
 				     "Unauthorised server connection attempt from %s: "
 				     "Bad credentials for server %s",
-				     "[@255.255.255.255]", name);
+				     log_client_name(client_p, SHOW_IP), name);
 
 		ilog(L_SERVER, "Access denied, invalid credentials for server %s%s",
 		     EmptyString(client_p->name) ? name : "",
@@ -166,7 +166,7 @@ mr_server(struct Client *client_p, struct Client *source_p, int parc, const char
 		sendto_realops_snomask(SNO_GENERAL, L_ALL,
 				     "Unauthorised server connection attempt from %s: "
 				     "Invalid host for server %s",
-				     "[@255.255.255.255]", name);
+				     log_client_name(client_p, SHOW_IP), name);
 
 		ilog(L_SERVER, "Access denied, invalid host for server %s%s",
 		     EmptyString(client_p->name) ? name : "",
@@ -181,7 +181,7 @@ mr_server(struct Client *client_p, struct Client *source_p, int parc, const char
 	case -4:
 		sendto_realops_snomask(SNO_GENERAL, L_ALL,
 				     "Invalid servername %s from %s",
-				     name, "[@255.255.255.255]");
+				     name, log_client_name(client_p, SHOW_IP));
 		ilog(L_SERVER, "Access denied, invalid servername from %s",
 		     log_client_name(client_p, SHOW_IP));
 
@@ -234,7 +234,7 @@ mr_server(struct Client *client_p, struct Client *source_p, int parc, const char
 		{
 			sendto_realops_snomask(SNO_GENERAL, L_ALL,
 					     "Attempt to re-introduce server %s from %s",
-					     name, "[@255.255.255.255]");
+					     name, log_client_name(client_p, SHOW_IP));
 			ilog(L_SERVER, "Attempt to re-introduce server %s from %s",
 					name, log_client_name(client_p, SHOW_IP));
 

@@ -1321,7 +1321,7 @@ serv_connect_callback(rb_fde_t *F, int status, void *data)
 			sendto_realops_snomask(SNO_GENERAL, is_remote_connect(client_p) ? L_NETWIDE : L_ALL,
 					"Error connecting to %s[%s]: %s",
 					client_p->name, 
-					"255.255.255.255",
+					client_p->sockhost,
 					rb_errstr(status));
 			ilog(L_SERVER, "Error connecting to %s[%s]: %s",
 				client_p->name, client_p->sockhost,
