@@ -25,4 +25,6 @@ User modes: (* designates that the umode is oper only)
          +G     - "soft caller id" mode - same as +g but automatically allows
                   anyone who's in a common channel with you to message you.
          +V     - Prevents you from receiving invites.
+         +I     - Prevents non-opers from seeing your channel list in
+                  a whois query.
          +Z     - Is connected via SSL (set only on connection).
