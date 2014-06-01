@@ -1,14 +1,23 @@
 $Id: CREDITS 3133 2007-01-21 15:38:16Z jilles $
  
-elemental-ircd is a fork of the ShadowIRCD project created to meet
+Elemental-IRCd is a fork of the now-defunct ShadowIRCD project.
+ 
+The Elemental-IRCd team is listed below in nick-alphabetical order:
+ 
+Xena, Sam Dodrill <shadowh511 -at- gmail.com>
+ 
+Some Elemental-IRCd features are modeled after or direct ports of
+code from Charybdis.
+ 
+ponychat-ircd is a fork of the ShadowIRCD project created to meet
 PonyChat's needs and keep the now-defunct ShadowIRCD project's goals
 alive.
  
-The elemental-ircd team is listed in nick-alphabetical order:
+The ponychat-ircd team is listed in nick-alphabetical order:
  
 aji, Alex Iadicico <alex -at- ajitek.net>
-lyska, Sam Dodrill <shadowh511 -at- gmail.com>>
 Kabaka, Kyle Johnson <kabaka -at- ponychat.net>
+Xe, Sam Dodrill <shadowh511 -at- gmail.com>
  
 ShadowIRCd 6 is a modern restart of the old ShadowIRCd project
 based on Charybdis with a few additional features to make it appeal 

@@ -1,6 +1,39 @@
 This is elemental-ircd 6.5, Copyright (c) 2013 elemental-ircd team.
 See LICENSE for licensing details (GPL v2).
 
+-- elemental-ircd 6.6
+
+additions
+ - add OWNER=y to 005
+ - add autoconfigure script like unrealircd
+ - add channel mode +u to hide banlists unless users have halfop or up
+ - add modules for services packages
+ - add quotes around PART reason
+ - add umode +I to hide channels line from WHOIS
+ - make end-user /OPER failures much more generic
+ - make flooding SNOTEs global
+ - show own modes in whois
+ - show remote server IP addresses
+ - update helpfiles to have much more up to date information
+
+bugfixes
+ - don't strip unicode in strip_unprintable
+ - fix extended-join for remote users
+ - fix null reference in away-notify
+ - make genssl.sh generate ten year certs
+
+removals
+ - remove away-notify
+ - remove AHBL from default configs
+ - remove m_post SNOTEs because of an upstream change
+
+The official channel for Elemental-IRCd is now #elemental-ircd on
+irc.yolo-swag.com.
+
+-- elemental-ircd 6.5.1
+
+Rename to Elemental-IRCd
+
 -- ponychat-ircd 6.5
 
 additions
