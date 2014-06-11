@@ -2084,13 +2084,13 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
  * inputs	- pointer to channel struct
  *		- name of metadata item you wish to add
  *		- value of metadata item
- *		- 1 if metadata should be propegated, 0 if not
+ *		- 1 if metadata should be propagated, 0 if not
  * output	- none
  * side effects - metadata is added to the channel in question
- *		- metadata is propegated if propegate is set.
+ *		- metadata is propagated if propagate is set.
  */
 struct Metadata *
-channel_metadata_add(struct Channel *target, const char *name, const char *value, int propegate)
+channel_metadata_add(struct Channel *target, const char *name, const char *value, int propagate)
 {
 	struct Metadata *md;
 
@@ -2100,7 +2100,7 @@ channel_metadata_add(struct Channel *target, const char *name, const char *value
 
 	irc_dictionary_add(target->metadata, md->name, md);
 	
-	if(propegate)
+	if(propagate)
 		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA SET %s %s :%s",
 				target->chname, name, value);
 
@@ -2139,10 +2139,10 @@ channel_metadata_time_add(struct Channel *target, const char *name, time_t timev
  *		- name of metadata item you wish to delete
  * output	- none
  * side effects - metadata is deleted from the channel in question
- * 		- deletion is propegated if propegate is set
+ * 		- deletion is propagated if propagate is set
  */
 void
-channel_metadata_delete(struct Channel *target, const char *name, int propegate)
+channel_metadata_delete(struct Channel *target, const char *name, int propagate)
 {
 	struct Metadata *md = channel_metadata_find(target, name);
 
@@ -2153,7 +2153,7 @@ channel_metadata_delete(struct Channel *target, const char *name, int propegate)
 
 	rb_free(md);
 
-	if(propegate)
+	if(propagate)
 		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA CLEAR %s %s",
 				target->chname, name);
 }
