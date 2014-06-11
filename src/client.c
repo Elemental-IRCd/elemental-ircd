@@ -1938,13 +1938,13 @@ error_exit_client(struct Client *client_p, int error)
  * inputs	- pointer to client struct
  *		- name of metadata item you wish to add
  *		- value of metadata item
- *		- 1 if metadata should be propegated, 0 if not
+ *		- 1 if metadata should be propagated, 0 if not
  * output	- none
  * side effects - metadata is added to the user in question
- *		- metadata is propegated if propegate is set.
+ *		- metadata is propagated if propagate is set.
  */
 struct Metadata *
-user_metadata_add(struct Client *target, const char *name, const char *value, int propegate)
+user_metadata_add(struct Client *target, const char *name, const char *value, int propagate)
 {
 	struct Metadata *md;
 
@@ -1954,7 +1954,7 @@ user_metadata_add(struct Client *target, const char *name, const char *value, in
 
 	irc_dictionary_add(target->user->metadata, md->name, md);
 	
-	if(propegate)
+	if(propagate)
 		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA SET %s %s :%s",
 				target->id, name, value);
 
@@ -1968,10 +1968,10 @@ user_metadata_add(struct Client *target, const char *name, const char *value, in
  *		- name of metadata item you wish to delete
  * output	- none
  * side effects - metadata is deleted from the user in question
- * 		- deletion is propegated if propegate is set
+ * 		- deletion is propagated if propagate is set
  */
 void
-user_metadata_delete(struct Client *target, const char *name, int propegate)
+user_metadata_delete(struct Client *target, const char *name, int propagate)
 {
 	struct Metadata *md = user_metadata_find(target, name);
 
@@ -1982,7 +1982,7 @@ user_metadata_delete(struct Client *target, const char *name, int propegate)
 
 	rb_free(md);
 
-	if(propegate)
+	if(propagate)
 		sendto_match_servs(&me, "*", CAP_ENCAP, NOCAPS, "ENCAP * METADATA CLEAR %s %s",
 				target->id, name);
 }
