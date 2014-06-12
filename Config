@@ -8,21 +8,10 @@ This software is under GPL.
 
 from os import system
 
-def promptUser(prompt, default):
-    inp = raw_input("%s [%s]> " % (prompt, default))
-
-    if inp == "":
-        return default
-    else:
-        return inp
-
-def promptYesNo(prompt, default=True):
-    inp = False if promptUser(prompt, "Y") == "N" else True
-    return inp
-
-configflags = ["./configure"]
-
-system("clear")
+try:
+    raw_input = raw_input
+except NameError:
+    raw_input = input
 
 art = """
  _______ __                              __          __       _______ ______ ______     __
@@ -35,49 +24,64 @@ Welcome to the Elemental-IRCd Configuration script. This script will help you ch
 best compile flags for your installation of Elemental-IRCd.
 """
 
-print(art)
-print(welcome)
+class Configure():
+    def promptUser(self, prompt, default):
+        inp = raw_input("%s [%s]> " % (prompt, default))
+        if inp == "":
+            return default
+        return inp
 
-print("Please specify where you would like to install Elemental-IRCd.")
-installloc = promptUser("Install location?", "$HOME/ircd")
+    def promptYesNo(self, prompt, defult=True):
+        inp = False if self.promptUser(prompt, "Y") == "N" else True
+        return inp
 
-print("")
+    def go(self):
+        configflags = ["./configure"]
+        print(art)
+        print(welcome)
 
-print("Please specify the maximum nickname length. This must be the same across")
-print("all servers in your network or you risk desyncs. The maximum is 50.")
+        print("Please specify where you would like to install Elemental-IRCd.")
+        installloc = self.promptUser("Install location?", "$HOME/ircd")
 
-nicklen = 100
-while nicklen > 51:
-    if nicklen != 100:
-        print "Error: you must choose a value under 50."
+        print("")
+        print("Please specify the maximum nickname length. This must be the same across")
+        print("all servers in your network or you risk desyncs. The maximum is 50.")
 
-    nicklen = int(promptUser("Maximum nickname length?", "31"))
+        nicklen = 890234
+        nicklen_valid = False
+        while not nicklen_valid:
+            try:
+                nicklen = int(self.promptUser("Maximum nickname length?", "31"))
+                if nicklen > 51 and nicklen != 890234:
+                    nicklen_valid = False
+                else:
+                    nicklen_valid = True
+            except ValueError:
+                nicklen_valid = False
+        
+            if not nicklen_valid:
+                print("Error: you must choose an integer value under 50.")
 
-print("")
+        print("")
 
-print("Would you like to disable small network support? This increases the size")
-print("of a few buffers in the code and can increase performance on large networks.")
+        print("Would you like to disable small network support? This increases the size")
+        print("of a few buffers in the code and can increase performance on large networks.")
+        smallnet = self.promptYesNo("Small network? (Y/N)")
 
-smallnet = promptYesNo("Small network? (Y/N)")
+        configflags.append("--prefix=%s" % installloc)
+        configflags.append("--with-nicklen=%s" % nicklen)
+        if not smallnet:
+            configflags.append("--enable-small-net")
+        else:
+            configflags.append("--disable-small-net")
 
-configflags.append("--prefix=%s" % installloc)
-configflags.append("--with-nicklen=%s" % nicklen)
+        print("\nThat should be it for now. Running %s" % " ".join(configflags))
+        raw_input("Press enter to continue... ")
+        system(" ".join(configflags))
+        print(art)
 
-if not smallnet:
-    configflags.append("--enable-small-net")
-else:
-    configflags.append("--disable-small-net")
-
-print("\nThat should be it for now. Running %s" % " ".join(configflags))
-
-raw_input("Press enter to continue... ")
-
-system(" ".join(configflags))
-
-print(art)
-
-print("""
-Next, run make and make install. Then copy %s/etc/example.conf to
+        print("""
+Next, run `make` and `make install`. Then copy %s/etc/example.conf to
 %s/etc/ircd.conf and read through the example configuration completely to make
 sure your install is tailored to your needs. After that, run %s/bin/ircd
 and start to connect clients and servers as you need.
@@ -85,8 +89,13 @@ and start to connect clients and servers as you need.
 If you have any problems, please check the documentation in the doc/ folder
 of the source repository. If problems persist please stop by #elemental-ircd
 on irc.yolo-swag.com and ask. Running Elemental-IRCd in insane conditions may
-make support either very difficult or at most impossible.""" %\
-    (installloc, installloc, installloc))
+make support either very difficult or at most impossible.""" % (installloc, installloc, installloc))
+            
+system("clear")
+c = Configure()
+try:
+    c.go()
+except KeyboardInterrupt:
+    print("\nInterrupted, exiting!")
 
 # vim: set ts=4 sw=4 tw=0 et
-
