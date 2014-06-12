@@ -47,14 +47,12 @@ class Configure():
         print("Please specify the maximum nickname length. This must be the same across")
         print("all servers in your network or you risk desyncs. The maximum is 50.")
 
-        nicklen = 890234
+        nicklen = 0
         nicklen_valid = False
         while not nicklen_valid:
             try:
                 nicklen = int(self.promptUser("Maximum nickname length?", "31"))
-                if nicklen > 51 and nicklen != 890234:
-                    nicklen_valid = False
-                else:
+                if nicklen < 51:
                     nicklen_valid = True
             except ValueError:
                 nicklen_valid = False
@@ -95,7 +93,7 @@ system("clear")
 c = Configure()
 try:
     c.go()
-except KeyboardInterrupt:
+except (KeyboardInterrupt, EOFError):
     print("\nInterrupted, exiting!")
 
 # vim: set ts=4 sw=4 tw=0 et
