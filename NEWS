@@ -21,6 +21,7 @@ bugfixes
  - fix extended-join for remote users
  - fix null reference in away-notify
  - make genssl.sh generate ten year certs
+ - merge some upstream charybdis patches
 
 removals
  - remove away-notify
