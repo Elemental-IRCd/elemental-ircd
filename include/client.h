@@ -616,8 +616,8 @@ extern char *generate_uid(void);
 void allocate_away(struct Client *);
 void free_away(struct Client *);
 
-extern struct Metadata *user_metadata_add(struct Client *target, const char *name, const char *value, int propegate);
-extern void user_metadata_delete(struct Client *target, const char *name, int propegate);
+extern struct Metadata *user_metadata_add(struct Client *target, const char *name, const char *value, int propagate);
+extern void user_metadata_delete(struct Client *target, const char *name, int propagate);
 extern struct Metadata *user_metadata_find(struct Client *target, const char *name);
 extern void user_metadata_clear(struct Client *target);
 
