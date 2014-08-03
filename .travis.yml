@@ -1,0 +1,9 @@
+language: c
+compiler:
+- gcc
+
+before-install:
+- sudo apt-get update
+install:
+- sudo apt-get install build-essential libssl-dev flex bison
+script: "./configure && make"
