@@ -563,6 +563,11 @@ rb_ssl_start_connected(rb_fde_t *F, CNCB * callback, void *data, int timeout)
 int
 rb_init_prng(const char *path, prng_seed_t seed_type)
 {
+#ifndef HAVE_SSL_RAND_EGD
+	/* We may not have EGD (old OpenSSL / LibreSSL), fall back to default */
+	seed_type = RB_PRNG_DEFAULT;
+#endif
+
 	if(seed_type == RB_PRNG_DEFAULT)
 	{
 #ifdef _WIN32
@@ -575,10 +580,12 @@ rb_init_prng(const char *path, prng_seed_t seed_type)
 
 	switch (seed_type)
 	{
+#ifdef HAVE_SSL_RAND_EGD
 	case RB_PRNG_EGD:
 		if(RAND_egd(path) == -1)
 			return -1;
 		break;
+#endif
 	case RB_PRNG_FILE:
 		if(RAND_load_file(path, -1) == -1)
 			return -1;
