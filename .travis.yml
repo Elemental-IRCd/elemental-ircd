@@ -7,3 +7,6 @@ before-install:
 install:
 - sudo apt-get install build-essential libssl-dev flex bison
 script: "./configure && make"
+
+notifications:
+  irc: "irc.yolo-swag.com#elemental-ircd"
