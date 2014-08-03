@@ -42,46 +42,44 @@ static rb_bh *monitor_heap;
 void
 init_monitor(void)
 {
-	monitor_heap = rb_bh_create(sizeof(struct monitor), MONITOR_HEAP_SIZE, "monitor_heap");
+    monitor_heap = rb_bh_create(sizeof(struct monitor), MONITOR_HEAP_SIZE, "monitor_heap");
 }
 
 static inline unsigned int
 hash_monitor_nick(const char *name)
 {
-	return fnv_hash_upper((const unsigned char *)name, MONITOR_HASH_BITS);
+    return fnv_hash_upper((const unsigned char *)name, MONITOR_HASH_BITS);
 }
 
 struct monitor *
 find_monitor(const char *name, int add)
 {
-	struct monitor *monptr;
+    struct monitor *monptr;
 
-	unsigned int hashv = hash_monitor_nick(name);
+    unsigned int hashv = hash_monitor_nick(name);
 
-	for(monptr = monitorTable[hashv]; monptr; monptr = monptr->hnext)
-	{
-		if(!irccmp(monptr->name, name))
-			return monptr;
-	}
+    for(monptr = monitorTable[hashv]; monptr; monptr = monptr->hnext) {
+        if(!irccmp(monptr->name, name))
+            return monptr;
+    }
 
-	if(add)
-	{
-		monptr = rb_bh_alloc(monitor_heap);
-		rb_strlcpy(monptr->name, name, sizeof(monptr->name));
+    if(add) {
+        monptr = rb_bh_alloc(monitor_heap);
+        rb_strlcpy(monptr->name, name, sizeof(monptr->name));
 
-		monptr->hnext = monitorTable[hashv];
-		monitorTable[hashv] = monptr;
+        monptr->hnext = monitorTable[hashv];
+        monitorTable[hashv] = monptr;
 
-		return monptr;
-	}
+        return monptr;
+    }
 
-	return NULL;
+    return NULL;
 }
 
 void
 free_monitor(struct monitor *monptr)
 {
-	rb_bh_free(monitor_heap, monptr);
+    rb_bh_free(monitor_heap, monptr);
 }
 
 /* monitor_signon()
@@ -94,16 +92,16 @@ free_monitor(struct monitor *monptr)
 void
 monitor_signon(struct Client *client_p)
 {
-	char buf[USERHOST_REPLYLEN];
-	struct monitor *monptr = find_monitor(client_p->name, 0);
+    char buf[USERHOST_REPLYLEN];
+    struct monitor *monptr = find_monitor(client_p->name, 0);
 
-	/* noones watching this nick */
-	if(monptr == NULL)
-		return;
+    /* noones watching this nick */
+    if(monptr == NULL)
+        return;
 
-	rb_snprintf(buf, sizeof(buf), "%s!%s@%s", client_p->name, client_p->username, client_p->host);
+    rb_snprintf(buf, sizeof(buf), "%s!%s@%s", client_p->name, client_p->username, client_p->host);
 
-	sendto_monitor(monptr, form_str(RPL_MONONLINE), me.name, "*", buf);
+    sendto_monitor(monptr, form_str(RPL_MONONLINE), me.name, "*", buf);
 }
 
 /* monitor_signoff()
@@ -116,30 +114,29 @@ monitor_signon(struct Client *client_p)
 void
 monitor_signoff(struct Client *client_p)
 {
-	struct monitor *monptr = find_monitor(client_p->name, 0);
+    struct monitor *monptr = find_monitor(client_p->name, 0);
 
-	/* noones watching this nick */
-	if(monptr == NULL)
-		return;
+    /* noones watching this nick */
+    if(monptr == NULL)
+        return;
 
-	sendto_monitor(monptr, form_str(RPL_MONOFFLINE), me.name, "*",
-			client_p->name);
+    sendto_monitor(monptr, form_str(RPL_MONOFFLINE), me.name, "*",
+                   client_p->name);
 }
 
 void
 clear_monitor(struct Client *client_p)
 {
-	struct monitor *monptr;
-	rb_dlink_node *ptr, *next_ptr;
+    struct monitor *monptr;
+    rb_dlink_node *ptr, *next_ptr;
 
-	RB_DLINK_FOREACH_SAFE(ptr, next_ptr, client_p->localClient->monitor_list.head)
-	{
-		monptr = ptr->data;
+    RB_DLINK_FOREACH_SAFE(ptr, next_ptr, client_p->localClient->monitor_list.head) {
+        monptr = ptr->data;
 
-		rb_dlinkFindDestroy(client_p, &monptr->users);
-		rb_free_rb_dlink_node(ptr);
-	}
+        rb_dlinkFindDestroy(client_p, &monptr->users);
+        rb_free_rb_dlink_node(ptr);
+    }
 
-	client_p->localClient->monitor_list.head = client_p->localClient->monitor_list.tail = NULL;
-	client_p->localClient->monitor_list.length = 0;
+    client_p->localClient->monitor_list.head = client_p->localClient->monitor_list.tail = NULL;
+    client_p->localClient->monitor_list.length = 0;
 }

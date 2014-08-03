@@ -35,7 +35,7 @@
  * the network..
  *   -- adrian
  */
-/* MAX_FLOOD is the amount of lines in a 'burst' we allow from a client, 
+/* MAX_FLOOD is the amount of lines in a 'burst' we allow from a client,
  * anything beyond MAX_FLOOD is limited to about one line per second.
  *
  * MAX_FLOOD_CONN is the amount of lines we allow from a client who has

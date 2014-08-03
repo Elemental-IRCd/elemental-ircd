@@ -28,13 +28,13 @@
 void
 rb_outofmemory(void)
 {
-	static int was_here = 0;
+    static int was_here = 0;
 
-	if(was_here)
-		abort();
+    if(was_here)
+        abort();
 
-	was_here = 1;
+    was_here = 1;
 
-	rb_lib_log("Out of memory: restarting server...");
-	rb_lib_restart("Out of Memory");
+    rb_lib_log("Out of memory: restarting server...");
+    rb_lib_restart("Out of Memory");
 }

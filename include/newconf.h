@@ -5,22 +5,20 @@
 #ifndef _NEWCONF_H_INCLUDED
 #define _NEWCONF_H_INCLUDED
 
-struct ConfEntry
-{
-	const char *cf_name;
-	int cf_type;
-	void (*cf_func) (void *);
-	int cf_len;
-	void *cf_arg;
+struct ConfEntry {
+    const char *cf_name;
+    int cf_type;
+    void (*cf_func) (void *);
+    int cf_len;
+    void *cf_arg;
 };
 
-struct TopConf
-{
-	const char *tc_name;
-	int (*tc_sfunc) (struct TopConf *);
-	int (*tc_efunc) (struct TopConf *);
-	rb_dlink_list tc_items;
-	struct ConfEntry *tc_entries;
+struct TopConf {
+    const char *tc_name;
+    int (*tc_sfunc) (struct TopConf *);
+    int (*tc_efunc) (struct TopConf *);
+    rb_dlink_list tc_items;
+    struct ConfEntry *tc_entries;
 };
 
 
@@ -37,17 +35,15 @@ struct TopConf
 #define CF_FLIST	0x1000
 #define CF_MFLAG	0xFF00
 
-typedef struct conf_parm_t_stru
-{
-	struct conf_parm_t_stru *next;
-	int type;
-	union
-	{
-		char *string;
-		int number;
-		struct conf_parm_t_stru *list;
-	}
-	v;
+typedef struct conf_parm_t_stru {
+    struct conf_parm_t_stru *next;
+    int type;
+    union {
+        char *string;
+        int number;
+        struct conf_parm_t_stru *list;
+    }
+    v;
 }
 conf_parm_t;
 

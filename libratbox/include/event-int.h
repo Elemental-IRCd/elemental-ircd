@@ -22,16 +22,15 @@
  *
  */
 
-struct ev_entry
-{
-	rb_dlink_node node;
-	EVH *func;
-	void *arg;
-	char *name;
-	time_t frequency;
-	time_t when;
-	time_t next;
-	void *data;
-	void *comm_ptr;
+struct ev_entry {
+    rb_dlink_node node;
+    EVH *func;
+    void *arg;
+    char *name;
+    time_t frequency;
+    time_t when;
+    time_t next;
+    void *data;
+    void *comm_ptr;
 };
 void rb_event_io_register_all(void);

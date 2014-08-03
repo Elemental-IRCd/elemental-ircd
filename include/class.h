@@ -30,22 +30,21 @@ struct ConfItem;
 struct Client;
 struct _patricia_tree_t;
 
-struct Class
-{
-	struct Class *next;
-	char *class_name;
-	int max_total;
-	int max_local;
-	int max_global;
-	int max_ident;
-	int max_sendq;
-	int con_freq;
-	int ping_freq;
-	int total;
-	rb_patricia_tree_t *ip_limits;
-	int cidr_ipv4_bitlen;
-	int cidr_ipv6_bitlen;
-	int cidr_amount;
+struct Class {
+    struct Class *next;
+    char *class_name;
+    int max_total;
+    int max_local;
+    int max_global;
+    int max_ident;
+    int max_sendq;
+    int con_freq;
+    int ping_freq;
+    int total;
+    rb_patricia_tree_t *ip_limits;
+    int cidr_ipv4_bitlen;
+    int cidr_ipv6_bitlen;
+    int cidr_amount;
 
 };
 

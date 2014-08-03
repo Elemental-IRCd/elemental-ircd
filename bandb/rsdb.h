@@ -6,19 +6,17 @@ typedef void rsdb_error_cb(const char *);
 
 typedef int (*rsdb_callback) (int, const char **);
 
-typedef enum rsdb_transtype
-{
-	RSDB_TRANS_START,
-	RSDB_TRANS_END
+typedef enum rsdb_transtype {
+    RSDB_TRANS_START,
+    RSDB_TRANS_END
 }
 rsdb_transtype;
 
-struct rsdb_table
-{
-	char ***row;
-	int row_count;
-	int col_count;
-	void *arg;
+struct rsdb_table {
+    char ***row;
+    int row_count;
+    int col_count;
+    void *arg;
 };
 
 int rsdb_init(rsdb_error_cb *);

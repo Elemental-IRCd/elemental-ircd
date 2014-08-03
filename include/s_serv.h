@@ -37,7 +37,7 @@
 /*
  * number of seconds to wait after server starts up, before
  * starting try_connections()
- * TOO SOON and you can nick collide like crazy. 
+ * TOO SOON and you can nick collide like crazy.
  */
 #define STARTUP_CONNECTIONS_TIME 60
 
@@ -46,11 +46,10 @@ struct server_conf;
 struct Channel;
 
 /* Capabilities */
-struct Capability
-{
-	const char *name;	/* name of capability */
-	unsigned int cap;	/* mask value */
-	unsigned int required;  /* 1 if required, 0 if not */
+struct Capability {
+    const char *name;	/* name of capability */
+    unsigned int cap;	/* mask value */
+    unsigned int required;  /* 1 if required, 0 if not */
 };
 
 #define CAP_CAP         0x00001	/* received a CAP to begin with */
@@ -110,7 +109,7 @@ extern int MaxConnectionCount;	/* GLOBAL - highest number of connections */
 extern int refresh_user_links;
 
 /*
- * return values for hunt_server() 
+ * return values for hunt_server()
  */
 #define HUNTED_NOSUCH   (-1)	/* if the hunted server is not found */
 #define HUNTED_ISME     0	/* if this server should execute the command */
@@ -118,8 +117,8 @@ extern int refresh_user_links;
 
 
 extern int hunt_server(struct Client *client_pt,
-		       struct Client *source_pt,
-		       const char *command, int server, int parc, const char **parv);
+                       struct Client *source_pt,
+                       const char *command, int server, int parc, const char **parv);
 extern void send_capabilities(struct Client *, int);
 extern const char *show_capabilities(struct Client *client);
 extern void try_connections(void *unused);

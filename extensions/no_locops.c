@@ -15,8 +15,8 @@
 static void h_nl_umode_changed(hook_data_umode_changed *);
 
 mapi_hfn_list_av1 nl_hfnlist[] = {
-	{ "umode_changed", (hookfn) h_nl_umode_changed },
-	{ NULL, NULL }
+    { "umode_changed", (hookfn) h_nl_umode_changed },
+    { NULL, NULL }
 };
 
 DECLARE_MODULE_AV1(no_locops, NULL, NULL, NULL, NULL, nl_hfnlist, "$Revision: 3219 $");
@@ -24,10 +24,9 @@ DECLARE_MODULE_AV1(no_locops, NULL, NULL, NULL, NULL, nl_hfnlist, "$Revision: 32
 static void
 h_nl_umode_changed(hook_data_umode_changed *hdata)
 {
-	struct Client *source_p = hdata->client;
+    struct Client *source_p = hdata->client;
 
-	if (MyClient(source_p) && source_p->umodes & UMODE_LOCOPS)
-	{
-		source_p->umodes &= ~UMODE_LOCOPS;
-	}
+    if (MyClient(source_p) && source_p->umodes & UMODE_LOCOPS) {
+        source_p->umodes &= ~UMODE_LOCOPS;
+    }
 }

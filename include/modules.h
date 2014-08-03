@@ -41,19 +41,17 @@
 #include "msg.h"
 #include "hook.h"
 
-struct module
-{
-	char *name;
-	const char *version;
-	void *address;
-	int core;
-	int mapi_version;
-	void * mapi_header; /* actually struct mapi_mheader_av<mapi_version>	*/
+struct module {
+    char *name;
+    const char *version;
+    void *address;
+    int core;
+    int mapi_version;
+    void * mapi_header; /* actually struct mapi_mheader_av<mapi_version>	*/
 };
 
-struct module_path
-{
-	char path[MAXPATHLEN];
+struct module_path {
+    char path[MAXPATHLEN];
 };
 
 #define MAPI_MAGIC_HDR	0x4D410000
@@ -65,28 +63,25 @@ struct module_path
 
 typedef struct Message* mapi_clist_av1;
 
-typedef struct
-{
-	const char *	hapi_name;
-	int *		hapi_id;
+typedef struct {
+    const char *	hapi_name;
+    int *		hapi_id;
 } mapi_hlist_av1;
 
-typedef struct
-{
-	const char * 	hapi_name;
-	hookfn 		fn;
+typedef struct {
+    const char * 	hapi_name;
+    hookfn 		fn;
 } mapi_hfn_list_av1;
 
-struct mapi_mheader_av1
-{
-	int		  mapi_version;				/* Module API version		*/
-	int		(*mapi_register)	(void);		/* Register function;
+struct mapi_mheader_av1 {
+    int		  mapi_version;				/* Module API version		*/
+    int		(*mapi_register)	(void);		/* Register function;
 								   ret -1 = failure (unload)	*/
-	void		(*mapi_unregister)	(void);		/* Unregister function.		*/
-	mapi_clist_av1	* mapi_command_list;			/* List of commands to add.	*/
-	mapi_hlist_av1	* mapi_hook_list;			/* List of hooks to add.	*/
-	mapi_hfn_list_av1 *mapi_hfn_list;			/* List of hook_add_hook's to do */
-	const char *	  mapi_module_version;			/* Module's version (freeform)	*/
+    void		(*mapi_unregister)	(void);		/* Unregister function.		*/
+    mapi_clist_av1	* mapi_command_list;			/* List of commands to add.	*/
+    mapi_hlist_av1	* mapi_hook_list;			/* List of hooks to add.	*/
+    mapi_hfn_list_av1 *mapi_hfn_list;			/* List of hook_add_hook's to do */
+    const char *	  mapi_module_version;			/* Module's version (freeform)	*/
 };
 
 #ifndef STATIC_MODULES

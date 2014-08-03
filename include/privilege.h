@@ -27,17 +27,17 @@
 #include "stdinc.h"
 
 enum {
-	PRIV_NEEDOPER = 1
+    PRIV_NEEDOPER = 1
 };
 typedef unsigned int PrivilegeFlags;
 
 struct PrivilegeSet {
-	unsigned int status;	/* If CONF_ILLEGAL, delete when no refs */
-	int refs;
-	char *name;
-	char *privs;
-	PrivilegeFlags flags;
-	rb_dlink_node node;
+    unsigned int status;	/* If CONF_ILLEGAL, delete when no refs */
+    int refs;
+    char *name;
+    char *privs;
+    PrivilegeFlags flags;
+    rb_dlink_node node;
 };
 
 int privilegeset_in_set(struct PrivilegeSet *set, const char *priv);

@@ -59,25 +59,23 @@ extern void init_s_newconf(void);
 extern void clear_s_newconf(void);
 extern void clear_s_newconf_bans(void);
 
-typedef struct
-{
-	char *ip;
-	time_t expiry;
-	rb_patricia_node_t *pnode;
-	rb_dlink_node node;
+typedef struct {
+    char *ip;
+    time_t expiry;
+    rb_patricia_node_t *pnode;
+    rb_dlink_node node;
 } tgchange;
 
 void add_tgchange(const char *host);
 tgchange *find_tgchange(const char *host);
 
 /* shared/cluster/hub/leaf confs */
-struct remote_conf
-{
-	char *username;
-	char *host;
-	char *server;
-	int flags;
-	rb_dlink_node node;
+struct remote_conf {
+    char *username;
+    char *host;
+    char *server;
+    int flags;
+    rb_dlink_node node;
 };
 
 /* flags used in shared/cluster */
@@ -107,28 +105,27 @@ struct remote_conf
 #define CONF_HUB	0x0001
 #define CONF_LEAF	0x0002
 
-struct oper_conf
-{
-	char *name;
-	char *username;
-	char *host;
-	char *passwd;
-	char *certfp;
+struct oper_conf {
+    char *name;
+    char *username;
+    char *host;
+    char *passwd;
+    char *certfp;
 
-	int flags;
-	int umodes;
+    int flags;
+    int umodes;
 
-	unsigned int snomask;
+    unsigned int snomask;
 
-	char *vhost;
-	char *swhois;
-	char *operstring;
+    char *vhost;
+    char *swhois;
+    char *operstring;
 
-	struct PrivilegeSet *privset;
+    struct PrivilegeSet *privset;
 
 #ifdef HAVE_LIBCRYPTO
-	char *rsa_pubkey_file;
-	RSA *rsa_pubkey;
+    char *rsa_pubkey_file;
+    RSA *rsa_pubkey;
 #endif
 };
 
@@ -136,11 +133,11 @@ extern struct remote_conf *make_remote_conf(void);
 extern void free_remote_conf(struct remote_conf *);
 
 extern int find_shared_conf(const char *username, const char *host,
-			const char *server, int flags);
+                            const char *server, int flags);
 extern void propagate_generic(struct Client *source_p, const char *command,
-		const char *target, int cap, const char *format, ...);
+                              const char *target, int cap, const char *format, ...);
 extern void cluster_generic(struct Client *, const char *, int cltype,
-			int cap, const char *format, ...);
+                            int cap, const char *format, ...);
 
 #define OPER_ENCRYPTED	0x00001
 #define OPER_NEEDSSL    0x80000
@@ -177,28 +174,27 @@ extern void free_oper_conf(struct oper_conf *);
 extern void clear_oper_conf(void);
 
 extern struct oper_conf *find_oper_conf(const char *username, const char *host,
-					const char *locip, const char *oname);
+                                        const char *locip, const char *oname);
 
 extern const char *get_oper_privs(int flags);
 
-struct server_conf
-{
-	char *name;
-	char *host;
-	char *passwd;
-	char *spasswd;
-	char *certfp;
-	int port;
-	int flags;
-	int servers;
-	time_t hold;
+struct server_conf {
+    char *name;
+    char *host;
+    char *passwd;
+    char *spasswd;
+    char *certfp;
+    int port;
+    int flags;
+    int servers;
+    time_t hold;
 
-	int aftype;
-	struct rb_sockaddr_storage my_ipnum;
+    int aftype;
+    struct rb_sockaddr_storage my_ipnum;
 
-	char *class_name;
-	struct Class *class;
-	rb_dlink_node node;
+    char *class_name;
+    struct Class *class;
+    rb_dlink_node node;
 };
 
 #define SERVER_ILLEGAL		0x0001
@@ -226,8 +222,8 @@ extern struct server_conf *find_server_conf(const char *name);
 
 extern void attach_server_conf(struct Client *, struct server_conf *);
 extern void detach_server_conf(struct Client *);
-extern void set_server_conf_autoconn(struct Client *source_p, const char *name, 
-					int newval);
+extern void set_server_conf_autoconn(struct Client *source_p, const char *name,
+                                     int newval);
 extern void disable_server_conf_autoconn(const char *name);
 
 
@@ -240,11 +236,10 @@ extern int valid_wild_card_simple(const char *);
 extern int clean_resv_nick(const char *);
 time_t valid_temp_time(const char *p);
 
-struct nd_entry
-{
-	char name[NICKLEN+1];
-	time_t expire;
-	rb_dlink_node lnode;	/* node in ll */
+struct nd_entry {
+    char name[NICKLEN+1];
+    time_t expire;
+    rb_dlink_node lnode;	/* node in ll */
 };
 
 extern void add_nd_entry(const char *name);

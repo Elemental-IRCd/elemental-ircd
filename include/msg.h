@@ -31,15 +31,14 @@
 struct Client;
 
 /* MessageHandler */
-typedef enum HandlerType
-{
-	UNREGISTERED_HANDLER,
-	CLIENT_HANDLER,
-	RCLIENT_HANDLER,
-	SERVER_HANDLER,
-	ENCAP_HANDLER,
-	OPER_HANDLER,
-	LAST_HANDLER_TYPE
+typedef enum HandlerType {
+    UNREGISTERED_HANDLER,
+    CLIENT_HANDLER,
+    RCLIENT_HANDLER,
+    SERVER_HANDLER,
+    ENCAP_HANDLER,
+    OPER_HANDLER,
+    LAST_HANDLER_TYPE
 }
 HandlerType;
 
@@ -50,27 +49,25 @@ HandlerType;
  */
 typedef int (*MessageHandler) (struct Client *, struct Client *, int, const char *[]);
 
-struct MessageEntry
-{
-	MessageHandler handler;
-	int min_para;
+struct MessageEntry {
+    MessageHandler handler;
+    int min_para;
 };
 
 /* Message table structure */
-struct Message
-{
-	const char *cmd;
-	unsigned int count;	/* number of times command used */
-	unsigned int rcount;	/* number of times command used by server */
-	unsigned long bytes;	/* bytes received for this message */
-	unsigned int flags;	/* bit 0 set means that this command is allowed
+struct Message {
+    const char *cmd;
+    unsigned int count;	/* number of times command used */
+    unsigned int rcount;	/* number of times command used by server */
+    unsigned long bytes;	/* bytes received for this message */
+    unsigned int flags;	/* bit 0 set means that this command is allowed
 				 * to be used only on the average of once per 2
 				 * seconds -SRB
 				 */
-	/* handlers:
-	 * UNREGISTERED, CLIENT, RCLIENT, SERVER, OPER, LAST
-	 */
-	struct MessageEntry handlers[LAST_HANDLER_TYPE];
+    /* handlers:
+     * UNREGISTERED, CLIENT, RCLIENT, SERVER, OPER, LAST
+     */
+    struct MessageEntry handlers[LAST_HANDLER_TYPE];
 };
 
 #define MFLG_SLOW	0x01	/* executed roughly once per 2s */

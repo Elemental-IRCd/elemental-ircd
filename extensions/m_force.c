@@ -48,11 +48,11 @@
 #include "modules.h"
 
 static int mo_forcejoin(struct Client *client_p, struct Client *source_p,
-			int parc, const char *parv[]);
+                        int parc, const char *parv[]);
 
 struct Message forcejoin_msgtab = {
-	"FORCEJOIN", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, mg_not_oper, mg_ignore, mg_ignore, mg_ignore, {mo_forcejoin, 3}}
+    "FORCEJOIN", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, mg_not_oper, mg_ignore, mg_ignore, mg_ignore, {mo_forcejoin, 3}}
 };
 
 mapi_clist_av1 force_clist[] = { &forcejoin_msgtab, NULL };
@@ -67,152 +67,137 @@ DECLARE_MODULE_AV1(force, NULL, NULL, force_clist, NULL, NULL, "$Revision: 3297 
 static int
 mo_forcejoin(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	struct Client *target_p;
-	struct Channel *chptr;
-	int type;
-	char mode;
-	char sjmode;
-	char *newch;
+    struct Client *target_p;
+    struct Channel *chptr;
+    int type;
+    char mode;
+    char sjmode;
+    char *newch;
 
-	if(!IsOperAdmin(source_p))
-	{
-		sendto_one(source_p, form_str(ERR_NOPRIVS), me.name, source_p->name, "admin");
-		return 0;
-	}
+    if(!IsOperAdmin(source_p)) {
+        sendto_one(source_p, form_str(ERR_NOPRIVS), me.name, source_p->name, "admin");
+        return 0;
+    }
 
-	if((hunt_server(client_p, source_p, ":%s FORCEJOIN %s %s", 1, parc, parv)) != HUNTED_ISME)
-		return 0;
+    if((hunt_server(client_p, source_p, ":%s FORCEJOIN %s %s", 1, parc, parv)) != HUNTED_ISME)
+        return 0;
 
-	/* if target_p is not existant, print message
-	 * to source_p and bail - scuzzy
-	 */
-	if((target_p = find_client(parv[1])) == NULL)
-	{
-		sendto_one(source_p, form_str(ERR_NOSUCHNICK), me.name, source_p->name, parv[1]);
-		return 0;
-	}
+    /* if target_p is not existant, print message
+     * to source_p and bail - scuzzy
+     */
+    if((target_p = find_client(parv[1])) == NULL) {
+        sendto_one(source_p, form_str(ERR_NOSUCHNICK), me.name, source_p->name, parv[1]);
+        return 0;
+    }
 
-	if(!IsPerson(target_p))
-		return 0;
+    if(!IsPerson(target_p))
+        return 0;
 
-	sendto_wallops_flags(UMODE_WALLOP, &me,
-			     "FORCEJOIN called for %s %s by %s!%s@%s",
-			     parv[1], parv[2], source_p->name, source_p->username, source_p->host);
-	ilog(L_MAIN, "FORCEJOIN called for %s %s by %s!%s@%s",
-	     parv[1], parv[2], source_p->name, source_p->username, source_p->host);
-	sendto_server(NULL, NULL, NOCAPS, NOCAPS,
-			":%s WALLOPS :FORCEJOIN called for %s %s by %s!%s@%s",
-			me.name, parv[1], parv[2],
-			source_p->name, source_p->username, source_p->host);
+    sendto_wallops_flags(UMODE_WALLOP, &me,
+                         "FORCEJOIN called for %s %s by %s!%s@%s",
+                         parv[1], parv[2], source_p->name, source_p->username, source_p->host);
+    ilog(L_MAIN, "FORCEJOIN called for %s %s by %s!%s@%s",
+         parv[1], parv[2], source_p->name, source_p->username, source_p->host);
+    sendto_server(NULL, NULL, NOCAPS, NOCAPS,
+                  ":%s WALLOPS :FORCEJOIN called for %s %s by %s!%s@%s",
+                  me.name, parv[1], parv[2],
+                  source_p->name, source_p->username, source_p->host);
 
-	/* select our modes from parv[2] if they exist... (chanop) */
-	if(*parv[2] == '@')
-	{
-		type = CHFL_CHANOP;
-		mode = 'o';
-		sjmode = '@';
-	}
-	else if(*parv[2] == '+')
-	{
-		type = CHFL_VOICE;
-		mode = 'v';
-		sjmode = '+';
-	}
-	else
-	{
-		type = CHFL_PEON;
-		mode = sjmode = '\0';
-	}
+    /* select our modes from parv[2] if they exist... (chanop) */
+    if(*parv[2] == '@') {
+        type = CHFL_CHANOP;
+        mode = 'o';
+        sjmode = '@';
+    } else if(*parv[2] == '+') {
+        type = CHFL_VOICE;
+        mode = 'v';
+        sjmode = '+';
+    } else {
+        type = CHFL_PEON;
+        mode = sjmode = '\0';
+    }
 
-	if(mode != '\0')
-		parv[2]++;
+    if(mode != '\0')
+        parv[2]++;
 
-	if((chptr = find_channel(parv[2])) != NULL)
-	{
-		if(IsMember(target_p, chptr))
-		{
-			/* debugging is fun... */
-			sendto_one_notice(source_p, ":*** Notice -- %s is already in %s",
-				 target_p->name, chptr->chname);
-			return 0;
-		}
+    if((chptr = find_channel(parv[2])) != NULL) {
+        if(IsMember(target_p, chptr)) {
+            /* debugging is fun... */
+            sendto_one_notice(source_p, ":*** Notice -- %s is already in %s",
+                              target_p->name, chptr->chname);
+            return 0;
+        }
 
-		add_user_to_channel(chptr, target_p, type);
+        add_user_to_channel(chptr, target_p, type);
 
-		sendto_server(target_p, chptr, NOCAPS, NOCAPS,
-			      ":%s SJOIN %ld %s + :%c%s",
-			      me.name, (long) chptr->channelts,
-			      chptr->chname, type ? sjmode : ' ', target_p->name);
+        sendto_server(target_p, chptr, NOCAPS, NOCAPS,
+                      ":%s SJOIN %ld %s + :%c%s",
+                      me.name, (long) chptr->channelts,
+                      chptr->chname, type ? sjmode : ' ', target_p->name);
 
-		sendto_channel_local(ALL_MEMBERS, chptr, ":%s!%s@%s JOIN :%s",
-				     target_p->name, target_p->username,
-				     target_p->host, chptr->chname);
+        sendto_channel_local(ALL_MEMBERS, chptr, ":%s!%s@%s JOIN :%s",
+                             target_p->name, target_p->username,
+                             target_p->host, chptr->chname);
 
-		if(type)
-			sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +%c %s",
-					     me.name, chptr->chname, mode, target_p->name);
+        if(type)
+            sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +%c %s",
+                                 me.name, chptr->chname, mode, target_p->name);
 
-		if(chptr->topic != NULL)
-		{
-			sendto_one(target_p, form_str(RPL_TOPIC), me.name,
-				   target_p->name, chptr->chname, chptr->topic);
-			sendto_one(target_p, form_str(RPL_TOPICWHOTIME),
-				   me.name, source_p->name, chptr->chname,
-				   chptr->topic_info, chptr->topic_time);
-		}
+        if(chptr->topic != NULL) {
+            sendto_one(target_p, form_str(RPL_TOPIC), me.name,
+                       target_p->name, chptr->chname, chptr->topic);
+            sendto_one(target_p, form_str(RPL_TOPICWHOTIME),
+                       me.name, source_p->name, chptr->chname,
+                       chptr->topic_info, chptr->topic_time);
+        }
 
-		channel_member_names(chptr, target_p, 1);
-	}
-	else
-	{
-		newch = LOCAL_COPY(parv[2]);
-		if(!check_channel_name(newch))
-		{
-			sendto_one(source_p, form_str(ERR_BADCHANNAME), me.name,
-				   source_p->name, (unsigned char *) newch);
-			return 0;
-		}
+        channel_member_names(chptr, target_p, 1);
+    } else {
+        newch = LOCAL_COPY(parv[2]);
+        if(!check_channel_name(newch)) {
+            sendto_one(source_p, form_str(ERR_BADCHANNAME), me.name,
+                       source_p->name, (unsigned char *) newch);
+            return 0;
+        }
 
-		/* channel name must begin with & or # */
-		if(!IsChannelName(newch))
-		{
-			sendto_one(source_p, form_str(ERR_BADCHANNAME), me.name,
-				   source_p->name, (unsigned char *) newch);
-			return 0;
-		}
+        /* channel name must begin with & or # */
+        if(!IsChannelName(newch)) {
+            sendto_one(source_p, form_str(ERR_BADCHANNAME), me.name,
+                       source_p->name, (unsigned char *) newch);
+            return 0;
+        }
 
-		/* newch can't be longer than CHANNELLEN */
-		if(strlen(newch) > CHANNELLEN)
-		{
-			sendto_one_notice(source_p, ":Channel name is too long");
-			return 0;
-		}
+        /* newch can't be longer than CHANNELLEN */
+        if(strlen(newch) > CHANNELLEN) {
+            sendto_one_notice(source_p, ":Channel name is too long");
+            return 0;
+        }
 
-		chptr = get_or_create_channel(target_p, newch, NULL);
-		add_user_to_channel(chptr, target_p, CHFL_CHANOP);
+        chptr = get_or_create_channel(target_p, newch, NULL);
+        add_user_to_channel(chptr, target_p, CHFL_CHANOP);
 
-		/* send out a join, make target_p join chptr */
-		sendto_server(target_p, chptr, NOCAPS, NOCAPS,
-			      ":%s SJOIN %ld %s +nt :@%s", me.name,
-			      (long) chptr->channelts, chptr->chname, target_p->name);
+        /* send out a join, make target_p join chptr */
+        sendto_server(target_p, chptr, NOCAPS, NOCAPS,
+                      ":%s SJOIN %ld %s +nt :@%s", me.name,
+                      (long) chptr->channelts, chptr->chname, target_p->name);
 
-		sendto_channel_local(ALL_MEMBERS, chptr, ":%s!%s@%s JOIN :%s",
-				     target_p->name, target_p->username,
-				     target_p->host, chptr->chname);
+        sendto_channel_local(ALL_MEMBERS, chptr, ":%s!%s@%s JOIN :%s",
+                             target_p->name, target_p->username,
+                             target_p->host, chptr->chname);
 
-		chptr->mode.mode |= MODE_TOPICLIMIT;
-		chptr->mode.mode |= MODE_NOPRIVMSGS;
+        chptr->mode.mode |= MODE_TOPICLIMIT;
+        chptr->mode.mode |= MODE_NOPRIVMSGS;
 
-		sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +nt", me.name, chptr->chname);
+        sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +nt", me.name, chptr->chname);
 
-		target_p->localClient->last_join_time = rb_current_time();
-		channel_member_names(chptr, target_p, 1);
+        target_p->localClient->last_join_time = rb_current_time();
+        channel_member_names(chptr, target_p, 1);
 
-		/* we do this to let the oper know that a channel was created, this will be
-		 * seen from the server handling the command instead of the server that
-		 * the oper is on.
-		 */
-		sendto_one_notice(source_p, ":*** Notice -- Creating channel %s", chptr->chname);
-	}
-	return 0;
+        /* we do this to let the oper know that a channel was created, this will be
+         * seen from the server handling the command instead of the server that
+         * the oper is on.
+         */
+        sendto_one_notice(source_p, ":*** Notice -- Creating channel %s", chptr->chname);
+    }
+    return 0;
 }

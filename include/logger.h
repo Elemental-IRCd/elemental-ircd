@@ -35,19 +35,18 @@
 
 #include "ircd_defs.h"
 
-typedef enum ilogfile
-{
-	L_MAIN,
-	L_USER,
-	L_FUSER,
-	L_OPERED,
-	L_FOPER,
-	L_SERVER,
-	L_KILL,
-	L_KLINE,
-	L_OPERSPY,
-	L_IOERROR,
-	LAST_LOGFILE
+typedef enum ilogfile {
+    L_MAIN,
+    L_USER,
+    L_FUSER,
+    L_OPERED,
+    L_FOPER,
+    L_SERVER,
+    L_KILL,
+    L_KLINE,
+    L_OPERSPY,
+    L_IOERROR,
+    LAST_LOGFILE
 } ilogfile;
 
 struct Client;

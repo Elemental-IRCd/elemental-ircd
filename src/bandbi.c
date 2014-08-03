@@ -49,7 +49,7 @@
 #include "operhash.h"
 
 static char bandb_add_letter[LAST_BANDB_TYPE] = {
-	'K', 'D', 'X', 'R'
+    'K', 'D', 'X', 'R'
 };
 
 rb_dlink_list bandb_pending;
@@ -64,391 +64,373 @@ static char *bandb_path;
 void
 init_bandb(void)
 {
-	if(start_bandb())
-	{
-		ilog(L_MAIN, "Unable to start bandb helper: %s", strerror(errno));
-		exit(0);
-	}
+    if(start_bandb()) {
+        ilog(L_MAIN, "Unable to start bandb helper: %s", strerror(errno));
+        exit(0);
+    }
 }
 
 
 static int
 start_bandb(void)
 {
-	char fullpath[PATH_MAX + 1];
+    char fullpath[PATH_MAX + 1];
 #ifdef _WIN32
-	const char *suffix = ".exe";
+    const char *suffix = ".exe";
 #else
-	const char *suffix = "";
+    const char *suffix = "";
 #endif
 
-	rb_setenv("BANDB_DBPATH", PKGLOCALSTATEDIR "/ban.db", 1);
-	if(bandb_path == NULL)
-	{
-		rb_snprintf(fullpath, sizeof(fullpath), "%s/bandb%s", PKGLIBEXECDIR, suffix);
+    rb_setenv("BANDB_DBPATH", PKGLOCALSTATEDIR "/ban.db", 1);
+    if(bandb_path == NULL) {
+        rb_snprintf(fullpath, sizeof(fullpath), "%s/bandb%s", PKGLIBEXECDIR, suffix);
 
-		if(access(fullpath, X_OK) == -1)
-		{
-			rb_snprintf(fullpath, sizeof(fullpath), "%s/bin/bandb%s",
-				    ConfigFileEntry.dpath, suffix);
+        if(access(fullpath, X_OK) == -1) {
+            rb_snprintf(fullpath, sizeof(fullpath), "%s/bin/bandb%s",
+                        ConfigFileEntry.dpath, suffix);
 
-			if(access(fullpath, X_OK) == -1)
-			{
-				ilog(L_MAIN,
-				     "Unable to execute bandb%s in %s or %s/bin",
-				     suffix, PKGLIBEXECDIR, ConfigFileEntry.dpath);
-				return 0;
-			}
-		}
-		bandb_path = rb_strdup(fullpath);
-	}
+            if(access(fullpath, X_OK) == -1) {
+                ilog(L_MAIN,
+                     "Unable to execute bandb%s in %s or %s/bin",
+                     suffix, PKGLIBEXECDIR, ConfigFileEntry.dpath);
+                return 0;
+            }
+        }
+        bandb_path = rb_strdup(fullpath);
+    }
 
 
-	bandb_helper = rb_helper_start("bandb", bandb_path, bandb_parse, bandb_restart_cb);
+    bandb_helper = rb_helper_start("bandb", bandb_path, bandb_parse, bandb_restart_cb);
 
-	if(bandb_helper == NULL)
-	{
-		ilog(L_MAIN, "Unable to start bandb: %s", strerror(errno));
-		sendto_realops_snomask(SNO_GENERAL, L_ALL, "Unable to start bandb: %s",
-				     strerror(errno));
-		return 1;
-	}
+    if(bandb_helper == NULL) {
+        ilog(L_MAIN, "Unable to start bandb: %s", strerror(errno));
+        sendto_realops_snomask(SNO_GENERAL, L_ALL, "Unable to start bandb: %s",
+                               strerror(errno));
+        return 1;
+    }
 
-	rb_helper_run(bandb_helper);
-	return 0;
+    rb_helper_run(bandb_helper);
+    return 0;
 }
 
 void
 bandb_add(bandb_type type, struct Client *source_p, const char *mask1,
-	  const char *mask2, const char *reason, const char *oper_reason, int perm)
+          const char *mask2, const char *reason, const char *oper_reason, int perm)
 {
-	if(bandb_helper == NULL)
-		return;
+    if(bandb_helper == NULL)
+        return;
 
-	static char buf[BUFSIZE];
+    static char buf[BUFSIZE];
 
-	rb_snprintf(buf, sizeof(buf), "%c %s ", bandb_add_letter[type], mask1);
+    rb_snprintf(buf, sizeof(buf), "%c %s ", bandb_add_letter[type], mask1);
 
-	if(!EmptyString(mask2))
-		rb_snprintf_append(buf, sizeof(buf), "%s ", mask2);
+    if(!EmptyString(mask2))
+        rb_snprintf_append(buf, sizeof(buf), "%s ", mask2);
 
-	rb_snprintf_append(buf, sizeof(buf), "%s %ld %d :%s",
-			   get_oper_name(source_p), (long int)rb_current_time(), perm, reason);
+    rb_snprintf_append(buf, sizeof(buf), "%s %ld %d :%s",
+                       get_oper_name(source_p), (long int)rb_current_time(), perm, reason);
 
-	if(!EmptyString(oper_reason))
-		rb_snprintf_append(buf, sizeof(buf), "|%s", oper_reason);
+    if(!EmptyString(oper_reason))
+        rb_snprintf_append(buf, sizeof(buf), "|%s", oper_reason);
 
-	rb_helper_write(bandb_helper, "%s", buf);
+    rb_helper_write(bandb_helper, "%s", buf);
 }
 
 static char bandb_del_letter[LAST_BANDB_TYPE] = {
-	'k', 'd', 'x', 'r'
+    'k', 'd', 'x', 'r'
 };
 
 void
 bandb_del(bandb_type type, const char *mask1, const char *mask2)
 {
-	if(bandb_helper == NULL)
-		return;
+    if(bandb_helper == NULL)
+        return;
 
-	static char buf[BUFSIZE];
+    static char buf[BUFSIZE];
 
-	buf[0] = '\0';
+    buf[0] = '\0';
 
-	rb_snprintf_append(buf, sizeof(buf), "%c %s", bandb_del_letter[type], mask1);
+    rb_snprintf_append(buf, sizeof(buf), "%c %s", bandb_del_letter[type], mask1);
 
-	if(!EmptyString(mask2))
-		rb_snprintf_append(buf, sizeof(buf), " %s", mask2);
+    if(!EmptyString(mask2))
+        rb_snprintf_append(buf, sizeof(buf), " %s", mask2);
 
-	rb_helper_write(bandb_helper, "%s", buf);
+    rb_helper_write(bandb_helper, "%s", buf);
 }
 
 static void
 bandb_handle_ban(char *parv[], int parc)
 {
-	struct ConfItem *aconf;
-	char *p;
-	int para = 1;
+    struct ConfItem *aconf;
+    char *p;
+    int para = 1;
 
-	aconf = make_conf();
-	aconf->port = 0;
+    aconf = make_conf();
+    aconf->port = 0;
 
-	if(parv[0][0] == 'K')
-		aconf->user = rb_strdup(parv[para++]);
+    if(parv[0][0] == 'K')
+        aconf->user = rb_strdup(parv[para++]);
 
-	aconf->host = rb_strdup(parv[para++]);
-	aconf->info.oper = operhash_add(parv[para++]);
+    aconf->host = rb_strdup(parv[para++]);
+    aconf->info.oper = operhash_add(parv[para++]);
 
-	switch (parv[0][0])
-	{
-	case 'K':
-		aconf->status = CONF_KILL;
-		break;
+    switch (parv[0][0]) {
+    case 'K':
+        aconf->status = CONF_KILL;
+        break;
 
-	case 'D':
-		aconf->status = CONF_DLINE;
-		break;
+    case 'D':
+        aconf->status = CONF_DLINE;
+        break;
 
-	case 'X':
-		aconf->status = CONF_XLINE;
-		break;
+    case 'X':
+        aconf->status = CONF_XLINE;
+        break;
 
-	case 'R':
-		if(IsChannelName(aconf->host))
-			aconf->status = CONF_RESV_CHANNEL;
-		else
-			aconf->status = CONF_RESV_NICK;
+    case 'R':
+        if(IsChannelName(aconf->host))
+            aconf->status = CONF_RESV_CHANNEL;
+        else
+            aconf->status = CONF_RESV_NICK;
 
-		break;
-	}
+        break;
+    }
 
-	if((p = strchr(parv[para], '|')))
-	{
-		*p++ = '\0';
-		aconf->spasswd = rb_strdup(p);
-	}
+    if((p = strchr(parv[para], '|'))) {
+        *p++ = '\0';
+        aconf->spasswd = rb_strdup(p);
+    }
 
-	aconf->passwd = rb_strdup(parv[para]);
+    aconf->passwd = rb_strdup(parv[para]);
 
-	rb_dlinkAddAlloc(aconf, &bandb_pending);
+    rb_dlinkAddAlloc(aconf, &bandb_pending);
 }
 
 static int
 bandb_check_kline(struct ConfItem *aconf)
 {
-	struct rb_sockaddr_storage daddr;
-	struct ConfItem *kconf = NULL;
-	int aftype;
-	const char *p;
+    struct rb_sockaddr_storage daddr;
+    struct ConfItem *kconf = NULL;
+    int aftype;
+    const char *p;
 
-	aftype = parse_netmask(aconf->host, (struct sockaddr *)&daddr, NULL);
+    aftype = parse_netmask(aconf->host, (struct sockaddr *)&daddr, NULL);
 
-	if(aftype != HM_HOST)
-	{
+    if(aftype != HM_HOST) {
 #ifdef RB_IPV6
-		if(aftype == HM_IPV6)
-			aftype = AF_INET6;
-		else
+        if(aftype == HM_IPV6)
+            aftype = AF_INET6;
+        else
 #endif
-			aftype = AF_INET;
+            aftype = AF_INET;
 
-		kconf = find_conf_by_address(aconf->host, NULL, NULL, (struct sockaddr *)&daddr,
-					     CONF_KILL, aftype, aconf->user, NULL);
-	}
-	else
-		kconf = find_conf_by_address(aconf->host, NULL, NULL, NULL, CONF_KILL, 0, aconf->user, NULL);
+        kconf = find_conf_by_address(aconf->host, NULL, NULL, (struct sockaddr *)&daddr,
+                                     CONF_KILL, aftype, aconf->user, NULL);
+    } else
+        kconf = find_conf_by_address(aconf->host, NULL, NULL, NULL, CONF_KILL, 0, aconf->user, NULL);
 
-	if(kconf && ((kconf->flags & CONF_FLAGS_TEMPORARY) == 0))
-		return 0;
+    if(kconf && ((kconf->flags & CONF_FLAGS_TEMPORARY) == 0))
+        return 0;
 
-	for(p = aconf->user; *p; p++)
-	{
-		if(!IsUserChar(*p) && !IsKWildChar(*p))
-			return 0;
-	}
+    for(p = aconf->user; *p; p++) {
+        if(!IsUserChar(*p) && !IsKWildChar(*p))
+            return 0;
+    }
 
-	for(p = aconf->host; *p; p++)
-	{
-		if(!IsHostChar(*p) && !IsKWildChar(*p))
-			return 0;
-	}
+    for(p = aconf->host; *p; p++) {
+        if(!IsHostChar(*p) && !IsKWildChar(*p))
+            return 0;
+    }
 
-	return 1;
+    return 1;
 }
 
 static int
 bandb_check_dline(struct ConfItem *aconf)
 {
-	struct rb_sockaddr_storage daddr;
-/* 	struct ConfItem *dconf; */
-	int bits;
+    struct rb_sockaddr_storage daddr;
+    /* 	struct ConfItem *dconf; */
+    int bits;
 
-	if(!parse_netmask(aconf->host, (struct sockaddr *)&daddr, &bits))
-		return 0;
+    if(!parse_netmask(aconf->host, (struct sockaddr *)&daddr, &bits))
+        return 0;
 
-	return 1;
+    return 1;
 }
 
 static int
 bandb_check_xline(struct ConfItem *aconf)
 {
-	struct ConfItem *xconf;
-	/* XXX perhaps convert spaces to \s? -- jilles */
+    struct ConfItem *xconf;
+    /* XXX perhaps convert spaces to \s? -- jilles */
 
-	xconf = find_xline_mask(aconf->host);
-	if(xconf != NULL && !(xconf->flags & CONF_FLAGS_TEMPORARY))
-		return 0;
+    xconf = find_xline_mask(aconf->host);
+    if(xconf != NULL && !(xconf->flags & CONF_FLAGS_TEMPORARY))
+        return 0;
 
-	return 1;
+    return 1;
 }
 
 static int
 bandb_check_resv_channel(struct ConfItem *aconf)
 {
-	const char *p;
+    const char *p;
 
-	if(hash_find_resv(aconf->host) || strlen(aconf->host) > CHANNELLEN)
-		return 0;
+    if(hash_find_resv(aconf->host) || strlen(aconf->host) > CHANNELLEN)
+        return 0;
 
-	for(p = aconf->host; *p; p++)
-	{
-		if(!IsChanChar(*p))
-			return 0;
-	}
+    for(p = aconf->host; *p; p++) {
+        if(!IsChanChar(*p))
+            return 0;
+    }
 
-	return 1;
+    return 1;
 }
 
 static int
 bandb_check_resv_nick(struct ConfItem *aconf)
 {
-	if(!clean_resv_nick(aconf->host))
-		return 0;
+    if(!clean_resv_nick(aconf->host))
+        return 0;
 
-	if(find_nick_resv(aconf->host))
-		return 0;
+    if(find_nick_resv(aconf->host))
+        return 0;
 
-	return 1;
+    return 1;
 }
 
 static void
 bandb_handle_clear(void)
 {
-	rb_dlink_node *ptr, *next_ptr;
+    rb_dlink_node *ptr, *next_ptr;
 
-	RB_DLINK_FOREACH_SAFE(ptr, next_ptr, bandb_pending.head)
-	{
-		free_conf(ptr->data);
-		rb_dlinkDestroy(ptr, &bandb_pending);
-	}
+    RB_DLINK_FOREACH_SAFE(ptr, next_ptr, bandb_pending.head) {
+        free_conf(ptr->data);
+        rb_dlinkDestroy(ptr, &bandb_pending);
+    }
 }
 
 static void
 bandb_handle_finish(void)
 {
-	struct ConfItem *aconf;
-	rb_dlink_node *ptr, *next_ptr;
+    struct ConfItem *aconf;
+    rb_dlink_node *ptr, *next_ptr;
 
-	clear_out_address_conf_bans();
-	clear_s_newconf_bans();
+    clear_out_address_conf_bans();
+    clear_s_newconf_bans();
 
-	RB_DLINK_FOREACH_SAFE(ptr, next_ptr, bandb_pending.head)
-	{
-		aconf = ptr->data;
+    RB_DLINK_FOREACH_SAFE(ptr, next_ptr, bandb_pending.head) {
+        aconf = ptr->data;
 
-		rb_dlinkDestroy(ptr, &bandb_pending);
+        rb_dlinkDestroy(ptr, &bandb_pending);
 
-		switch (aconf->status)
-		{
-		case CONF_KILL:
-			if(bandb_check_kline(aconf))
-				add_conf_by_address(aconf->host, CONF_KILL, aconf->user, NULL, aconf);
-			else
-				free_conf(aconf);
+        switch (aconf->status) {
+        case CONF_KILL:
+            if(bandb_check_kline(aconf))
+                add_conf_by_address(aconf->host, CONF_KILL, aconf->user, NULL, aconf);
+            else
+                free_conf(aconf);
 
-			break;
+            break;
 
-		case CONF_DLINE:
-			if(bandb_check_dline(aconf))
-				add_conf_by_address(aconf->host, CONF_DLINE, aconf->user, NULL, aconf);
-			else
-				free_conf(aconf);
+        case CONF_DLINE:
+            if(bandb_check_dline(aconf))
+                add_conf_by_address(aconf->host, CONF_DLINE, aconf->user, NULL, aconf);
+            else
+                free_conf(aconf);
 
-			break;
+            break;
 
-		case CONF_XLINE:
-			if(bandb_check_xline(aconf))
-				rb_dlinkAddAlloc(aconf, &xline_conf_list);
-			else
-				free_conf(aconf);
+        case CONF_XLINE:
+            if(bandb_check_xline(aconf))
+                rb_dlinkAddAlloc(aconf, &xline_conf_list);
+            else
+                free_conf(aconf);
 
-			break;
+            break;
 
-		case CONF_RESV_CHANNEL:
-			if(bandb_check_resv_channel(aconf))
-				add_to_resv_hash(aconf->host, aconf);
-			else
-				free_conf(aconf);
+        case CONF_RESV_CHANNEL:
+            if(bandb_check_resv_channel(aconf))
+                add_to_resv_hash(aconf->host, aconf);
+            else
+                free_conf(aconf);
 
-			break;
+            break;
 
-		case CONF_RESV_NICK:
-			if(bandb_check_resv_nick(aconf))
-				rb_dlinkAddAlloc(aconf, &resv_conf_list);
-			else
-				free_conf(aconf);
+        case CONF_RESV_NICK:
+            if(bandb_check_resv_nick(aconf))
+                rb_dlinkAddAlloc(aconf, &resv_conf_list);
+            else
+                free_conf(aconf);
 
-			break;
-		}
-	}
+            break;
+        }
+    }
 
-	check_banned_lines();
+    check_banned_lines();
 }
 
 static void
 bandb_handle_failure(rb_helper *helper, char **parv, int parc)
 {
-	if(server_state_foreground)
-		fprintf(stderr, "bandb - bandb failure: %s\n", parv[1]);
-	
-	ilog(L_MAIN, "bandb - bandb failure: %s", parv[1]);
-	sendto_realops_snomask(SNO_GENERAL, L_ALL, "bandb - bandb failure: %s", parv[1]);
-	exit(1);
+    if(server_state_foreground)
+        fprintf(stderr, "bandb - bandb failure: %s\n", parv[1]);
+
+    ilog(L_MAIN, "bandb - bandb failure: %s", parv[1]);
+    sendto_realops_snomask(SNO_GENERAL, L_ALL, "bandb - bandb failure: %s", parv[1]);
+    exit(1);
 }
 
 static void
 bandb_parse(rb_helper *helper)
 {
-	static char buf[READBUF_SIZE];
-	char *parv[MAXPARA + 1];
-	int len, parc;
+    static char buf[READBUF_SIZE];
+    char *parv[MAXPARA + 1];
+    int len, parc;
 
-	while((len = rb_helper_read(helper, buf, sizeof(buf))))
-	{
-		parc = rb_string_to_array(buf, parv, MAXPARA);
+    while((len = rb_helper_read(helper, buf, sizeof(buf)))) {
+        parc = rb_string_to_array(buf, parv, MAXPARA);
 
-		if(parc < 1)
-			continue;
+        if(parc < 1)
+            continue;
 
-		switch (parv[0][0])
-		{
-		case '!':
-			bandb_handle_failure(helper, parv, parc);
-			break;
-		case 'K':
-		case 'D':
-		case 'X':
-		case 'R':
-			bandb_handle_ban(parv, parc);
-			break;
+        switch (parv[0][0]) {
+        case '!':
+            bandb_handle_failure(helper, parv, parc);
+            break;
+        case 'K':
+        case 'D':
+        case 'X':
+        case 'R':
+            bandb_handle_ban(parv, parc);
+            break;
 
-		case 'C':
-			bandb_handle_clear();
-		case 'F':
-			bandb_handle_finish();
-			break;
-		}
-	}
+        case 'C':
+            bandb_handle_clear();
+        case 'F':
+            bandb_handle_finish();
+            break;
+        }
+    }
 }
 
 void
 bandb_rehash_bans(void)
 {
-	if(bandb_helper != NULL)
-		rb_helper_write(bandb_helper, "L");
+    if(bandb_helper != NULL)
+        rb_helper_write(bandb_helper, "L");
 }
 
 static void
 bandb_restart_cb(rb_helper *helper)
 {
-	ilog(L_MAIN, "bandb - bandb_restart_cb called, bandb helper died?");
-	sendto_realops_snomask(SNO_GENERAL, L_ALL,
-			     "bandb - bandb_restart_cb called, bandb helper died?");
-	if(helper != NULL)
-	{
-		rb_helper_close(helper);
-		bandb_helper = NULL;
-	}
-	start_bandb();
-	return;
+    ilog(L_MAIN, "bandb - bandb_restart_cb called, bandb helper died?");
+    sendto_realops_snomask(SNO_GENERAL, L_ALL,
+                           "bandb - bandb_restart_cb called, bandb helper died?");
+    if(helper != NULL) {
+        rb_helper_close(helper);
+        bandb_helper = NULL;
+    }
+    start_bandb();
+    return;
 }
