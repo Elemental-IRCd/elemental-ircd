@@ -44,8 +44,8 @@
 static int mo_omode(struct Client *, struct Client *, int, const char **);
 
 struct Message omode_msgtab = {
-	"OMODE", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, mg_not_oper, mg_ignore, mg_ignore, mg_ignore, {mo_omode, 3}}
+    "OMODE", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, mg_not_oper, mg_ignore, mg_ignore, mg_ignore, {mo_omode, 3}}
 };
 
 mapi_clist_av1 omode_clist[] = { &omode_msgtab, NULL };
@@ -59,199 +59,174 @@ DECLARE_MODULE_AV1(omode, NULL, NULL, omode_clist, NULL, NULL, "$Revision: 3121 
 static int
 mo_omode(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	struct Channel *chptr = NULL;
-	struct membership *msptr;
-	char params[512];
-	int i;
-	int wasonchannel;
+    struct Channel *chptr = NULL;
+    struct membership *msptr;
+    char params[512];
+    int i;
+    int wasonchannel;
 
-	/* admins only */
-	if(!IsOperAdmin(source_p))
-	{
-		sendto_one(source_p, form_str(ERR_NOPRIVS), me.name, source_p->name, "admin");
-		return 0;
-	}
+    /* admins only */
+    if(!IsOperAdmin(source_p)) {
+        sendto_one(source_p, form_str(ERR_NOPRIVS), me.name, source_p->name, "admin");
+        return 0;
+    }
 
-	/* Now, try to find the channel in question */
-	if(!IsChanPrefix(parv[1][0]) || !check_channel_name(parv[1]))
-	{
-		sendto_one_numeric(source_p, ERR_BADCHANNAME,
-				form_str(ERR_BADCHANNAME), parv[1]);
-		return 0;
-	}
+    /* Now, try to find the channel in question */
+    if(!IsChanPrefix(parv[1][0]) || !check_channel_name(parv[1])) {
+        sendto_one_numeric(source_p, ERR_BADCHANNAME,
+                           form_str(ERR_BADCHANNAME), parv[1]);
+        return 0;
+    }
 
-	chptr = find_channel(parv[1]);
+    chptr = find_channel(parv[1]);
 
-	if(chptr == NULL)
-	{
-		sendto_one_numeric(source_p, ERR_NOSUCHCHANNEL,
-				form_str(ERR_NOSUCHCHANNEL), parv[1]);
-		return 0;
-	}
+    if(chptr == NULL) {
+        sendto_one_numeric(source_p, ERR_NOSUCHCHANNEL,
+                           form_str(ERR_NOSUCHCHANNEL), parv[1]);
+        return 0;
+    }
 
-	/* Now know the channel exists */
-	msptr = find_channel_membership(chptr, source_p);
-	wasonchannel = msptr != NULL;
+    /* Now know the channel exists */
+    msptr = find_channel_membership(chptr, source_p);
+    wasonchannel = msptr != NULL;
 
-	if (is_any_op(msptr))
-	{
-		sendto_one_notice(source_p, ":Use a normal MODE you idiot");
-		return 0;
-	}
+    if (is_any_op(msptr)) {
+        sendto_one_notice(source_p, ":Use a normal MODE you idiot");
+        return 0;
+    }
 
-	params[0] = '\0';
-	for (i = 2; i < parc; i++)
-	{
-		if (i != 2)
-			rb_strlcat(params, " ", sizeof params);
-		rb_strlcat(params, parv[i], sizeof params);
-	}
+    params[0] = '\0';
+    for (i = 2; i < parc; i++) {
+        if (i != 2)
+            rb_strlcat(params, " ", sizeof params);
+        rb_strlcat(params, parv[i], sizeof params);
+    }
 
-	sendto_wallops_flags(UMODE_WALLOP, &me, 
-			     "OMODE called for [%s] [%s] by %s!%s@%s",
-			     parv[1], params, source_p->name, source_p->username, source_p->host);
-	ilog(L_MAIN, "OMODE called for [%s] [%s] by %s",
-	     parv[1], params, get_oper_name(source_p));
+    sendto_wallops_flags(UMODE_WALLOP, &me,
+                         "OMODE called for [%s] [%s] by %s!%s@%s",
+                         parv[1], params, source_p->name, source_p->username, source_p->host);
+    ilog(L_MAIN, "OMODE called for [%s] [%s] by %s",
+         parv[1], params, get_oper_name(source_p));
 
-	if(*chptr->chname != '&')
-		sendto_server(NULL, NULL, NOCAPS, NOCAPS, 
-			      ":%s WALLOPS :OMODE called for [%s] [%s] by %s!%s@%s",
-			      me.name, parv[1], params, source_p->name, source_p->username,
-			      source_p->host);
+    if(*chptr->chname != '&')
+        sendto_server(NULL, NULL, NOCAPS, NOCAPS,
+                      ":%s WALLOPS :OMODE called for [%s] [%s] by %s!%s@%s",
+                      me.name, parv[1], params, source_p->name, source_p->username,
+                      source_p->host);
 
 #if 0
-	set_channel_mode(client_p, source_p->servptr, chptr, msptr, 
-			 parc - 2, parv + 2);
+    set_channel_mode(client_p, source_p->servptr, chptr, msptr,
+                     parc - 2, parv + 2);
 #else
-        if (parc == 4 && !strcmp(parv[2], "+y") && !irccmp(parv[3], source_p->name))
-        {
-                /* Ownering themselves */
-                if (!wasonchannel)
-                {
-                        sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
-                                        form_str(ERR_USERNOTINCHANNEL), parv[3], chptr->chname);
-                        return 0;
-                }
-                sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +y %s",
-                                me.name, parv[1], source_p->name);
-                sendto_server(NULL, chptr, CAP_TS6, NOCAPS,
-                                ":%s TMODE %ld %s +y %s",
-                                me.id, (long) chptr->channelts, parv[1],
-                                source_p->id);
-                msptr->flags |= CHFL_OWNER;
+    if (parc == 4 && !strcmp(parv[2], "+y") && !irccmp(parv[3], source_p->name)) {
+        /* Ownering themselves */
+        if (!wasonchannel) {
+            sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
+                               form_str(ERR_USERNOTINCHANNEL), parv[3], chptr->chname);
+            return 0;
         }
-        else if (parc == 4 && !strcmp(parv[2], "+a") && !irccmp(parv[3], source_p->name))
-	{
-		/* Admining themselves */
-		if (!wasonchannel)
-		{
-			sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
-					   form_str(ERR_USERNOTINCHANNEL), parv[3], chptr->chname);
-			return 0;
-		}
-		sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +a %s",
-				me.name, parv[1], source_p->name);
-		sendto_server(NULL, chptr, CAP_TS6, NOCAPS,
-				":%s TMODE %ld %s +a %s",
-				me.id, (long) chptr->channelts, parv[1],
-				source_p->id);
-		msptr->flags |= CHFL_ADMIN;
-	}
-	else if (parc == 4 && !strcmp(parv[2], "+o") && !irccmp(parv[3], source_p->name))
-	{
-		/* Opping themselves */
-		if (!wasonchannel)
-		{
-			sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
-					   form_str(ERR_USERNOTINCHANNEL), parv[3], chptr->chname);
-			return 0;
-		}
-		sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +o %s",
-				me.name, parv[1], source_p->name);
-		sendto_server(NULL, chptr, CAP_TS6, NOCAPS,
-				":%s TMODE %ld %s +o %s",
-				me.id, (long) chptr->channelts, parv[1],
-				source_p->id);
-		msptr->flags |= CHFL_CHANOP;
-	}
-	else if (parc == 4 && !strcmp(parv[2], "+h") && !irccmp(parv[3], source_p->name))
-	{
-		/* Halfopping themselves */
-		if (!wasonchannel)
-		{
-			sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
-					   form_str(ERR_USERNOTINCHANNEL), parv[3], chptr->chname);
-			return 0;
-		}
-		sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +h %s",
-				me.name, parv[1], source_p->name);
-		sendto_server(NULL, chptr, CAP_TS6, NOCAPS,
-				":%s TMODE %ld %s +h %s",
-				me.id, (long) chptr->channelts, parv[1],
-				source_p->id);
-		msptr->flags |= CHFL_HALFOP;
-	}
-        else if (ConfigChannel.use_owner)
-        {
-                /* I hope this is correct.
-                 * -- Kabaka */
+        sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +y %s",
+                             me.name, parv[1], source_p->name);
+        sendto_server(NULL, chptr, CAP_TS6, NOCAPS,
+                      ":%s TMODE %ld %s +y %s",
+                      me.id, (long) chptr->channelts, parv[1],
+                      source_p->id);
+        msptr->flags |= CHFL_OWNER;
+    } else if (parc == 4 && !strcmp(parv[2], "+a") && !irccmp(parv[3], source_p->name)) {
+        /* Admining themselves */
+        if (!wasonchannel) {
+            sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
+                               form_str(ERR_USERNOTINCHANNEL), parv[3], chptr->chname);
+            return 0;
+        }
+        sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +a %s",
+                             me.name, parv[1], source_p->name);
+        sendto_server(NULL, chptr, CAP_TS6, NOCAPS,
+                      ":%s TMODE %ld %s +a %s",
+                      me.id, (long) chptr->channelts, parv[1],
+                      source_p->id);
+        msptr->flags |= CHFL_ADMIN;
+    } else if (parc == 4 && !strcmp(parv[2], "+o") && !irccmp(parv[3], source_p->name)) {
+        /* Opping themselves */
+        if (!wasonchannel) {
+            sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
+                               form_str(ERR_USERNOTINCHANNEL), parv[3], chptr->chname);
+            return 0;
+        }
+        sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +o %s",
+                             me.name, parv[1], source_p->name);
+        sendto_server(NULL, chptr, CAP_TS6, NOCAPS,
+                      ":%s TMODE %ld %s +o %s",
+                      me.id, (long) chptr->channelts, parv[1],
+                      source_p->id);
+        msptr->flags |= CHFL_CHANOP;
+    } else if (parc == 4 && !strcmp(parv[2], "+h") && !irccmp(parv[3], source_p->name)) {
+        /* Halfopping themselves */
+        if (!wasonchannel) {
+            sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
+                               form_str(ERR_USERNOTINCHANNEL), parv[3], chptr->chname);
+            return 0;
+        }
+        sendto_channel_local(ALL_MEMBERS, chptr, ":%s MODE %s +h %s",
+                             me.name, parv[1], source_p->name);
+        sendto_server(NULL, chptr, CAP_TS6, NOCAPS,
+                      ":%s TMODE %ld %s +h %s",
+                      me.id, (long) chptr->channelts, parv[1],
+                      source_p->id);
+        msptr->flags |= CHFL_HALFOP;
+    } else if (ConfigChannel.use_owner) {
+        /* I hope this is correct.
+         * -- Kabaka */
 
-                /* Hack it so set_channel_mode() will accept */
-                if (wasonchannel)
-                        msptr->flags |= CHFL_OWNER;
-                else
-                {
-                        add_user_to_channel(chptr, source_p, CHFL_CHANOP);
-                        msptr = find_channel_membership(chptr, source_p);
-                }
-                set_channel_mode(client_p, source_p, chptr, msptr,
-                                parc - 2, parv + 2);
-                if (wasonchannel)
-                        msptr->flags &= ~CHFL_OWNER;
-                else
-                        remove_user_from_channel(msptr);
+        /* Hack it so set_channel_mode() will accept */
+        if (wasonchannel)
+            msptr->flags |= CHFL_OWNER;
+        else {
+            add_user_to_channel(chptr, source_p, CHFL_CHANOP);
+            msptr = find_channel_membership(chptr, source_p);
         }
-	else if (ConfigChannel.use_admin)
-	{
-		/* Hack it so set_channel_mode() will accept */
-		if (wasonchannel)
-			msptr->flags |= CHFL_ADMIN;
-		else
-		{
-			add_user_to_channel(chptr, source_p, CHFL_CHANOP);
-			msptr = find_channel_membership(chptr, source_p);
-		}
-		set_channel_mode(client_p, source_p, chptr, msptr, 
-				parc - 2, parv + 2);
-		/* We know they were not opped before and they can't have opped
-		 * themselves as set_channel_mode() does not allow that
-		 * -- jilles */
-		if (wasonchannel)
-			msptr->flags &= ~CHFL_ADMIN;
-		else
-			remove_user_from_channel(msptr);
-	}
-	else
-	{
-		/* CHFL_ADMIN is only useful if admin is enabled
-		 * so hack it with op if it is not. */
-		if (wasonchannel)
-			msptr->flags |= CHFL_CHANOP;
-		else
-		{
-			add_user_to_channel(chptr, source_p, CHFL_CHANOP);
-			msptr = find_channel_membership(chptr, source_p);
-		}
-		set_channel_mode(client_p, source_p, chptr, msptr, 
-				parc - 2, parv + 2);
-		/* We know they were not opped before and they can't have opped
-		 * themselves as set_channel_mode() does not allow that 
-		 * -- jilles */
-		if (wasonchannel)
-			msptr->flags &= ~CHFL_CHANOP;
-		else
-			remove_user_from_channel(msptr);
-	}
+        set_channel_mode(client_p, source_p, chptr, msptr,
+                         parc - 2, parv + 2);
+        if (wasonchannel)
+            msptr->flags &= ~CHFL_OWNER;
+        else
+            remove_user_from_channel(msptr);
+    } else if (ConfigChannel.use_admin) {
+        /* Hack it so set_channel_mode() will accept */
+        if (wasonchannel)
+            msptr->flags |= CHFL_ADMIN;
+        else {
+            add_user_to_channel(chptr, source_p, CHFL_CHANOP);
+            msptr = find_channel_membership(chptr, source_p);
+        }
+        set_channel_mode(client_p, source_p, chptr, msptr,
+                         parc - 2, parv + 2);
+        /* We know they were not opped before and they can't have opped
+         * themselves as set_channel_mode() does not allow that
+         * -- jilles */
+        if (wasonchannel)
+            msptr->flags &= ~CHFL_ADMIN;
+        else
+            remove_user_from_channel(msptr);
+    } else {
+        /* CHFL_ADMIN is only useful if admin is enabled
+         * so hack it with op if it is not. */
+        if (wasonchannel)
+            msptr->flags |= CHFL_CHANOP;
+        else {
+            add_user_to_channel(chptr, source_p, CHFL_CHANOP);
+            msptr = find_channel_membership(chptr, source_p);
+        }
+        set_channel_mode(client_p, source_p, chptr, msptr,
+                         parc - 2, parv + 2);
+        /* We know they were not opped before and they can't have opped
+         * themselves as set_channel_mode() does not allow that
+         * -- jilles */
+        if (wasonchannel)
+            msptr->flags &= ~CHFL_CHANOP;
+        else
+            remove_user_from_channel(msptr);
+    }
 #endif
-	return 0;
+    return 0;
 }

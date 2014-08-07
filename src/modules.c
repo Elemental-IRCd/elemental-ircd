@@ -44,10 +44,10 @@
 /* -TimeMr14C:
  * I have moved the dl* function definitions and
  * the two functions (load_a_module / unload_a_module) to the
- * file dynlink.c 
+ * file dynlink.c
  * And also made the necessary changes to those functions
  * to comply with shl_load and friends.
- * In this file, to keep consistency with the makefile, 
+ * In this file, to keep consistency with the makefile,
  * I added the ability to load *.sl files, too.
  * 27/02/2002
  */
@@ -57,21 +57,21 @@
 struct module **modlist = NULL;
 
 static const char *core_module_table[] = {
-	"m_ban",
-	"m_die",
-	"m_error",
-	"m_join",
-	"m_kick",
-	"m_kill",
-	"m_message",
-	"m_metadata",
-	"m_mode",
-	"m_nick",
-	"m_part",
-	"m_quit",
-	"m_server",
-	"m_squit",
-	NULL
+    "m_ban",
+    "m_die",
+    "m_error",
+    "m_join",
+    "m_kick",
+    "m_kill",
+    "m_message",
+    "m_metadata",
+    "m_mode",
+    "m_nick",
+    "m_part",
+    "m_quit",
+    "m_server",
+    "m_squit",
+    NULL
 };
 
 #define MODS_INCREMENT 10
@@ -86,7 +86,7 @@ static int mo_modreload(struct Client *, struct Client *, int, const char **);
 static int mo_modunload(struct Client *, struct Client *, int, const char **);
 static int mo_modrestart(struct Client *, struct Client *, int, const char **);
 
-static int me_modload(struct Client *, struct Client *, int, const char **); 
+static int me_modload(struct Client *, struct Client *, int, const char **);
 static int me_modlist(struct Client *, struct Client *, int, const char **);
 static int me_modreload(struct Client *, struct Client *, int, const char **);
 static int me_modunload(struct Client *, struct Client *, int, const char **);
@@ -96,45 +96,45 @@ static int do_modload(struct Client *, const char *);
 static int do_modunload(struct Client *, const char *);
 static int do_modreload(struct Client *, const char *);
 static int do_modlist(struct Client *, const char *);
-static int do_modrestart(struct Client *); 
+static int do_modrestart(struct Client *);
 
 struct Message modload_msgtab = {
-	"MODLOAD", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, mg_not_oper, mg_ignore, mg_ignore, {me_modload, 2}, {mo_modload, 2}}
+    "MODLOAD", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, mg_not_oper, mg_ignore, mg_ignore, {me_modload, 2}, {mo_modload, 2}}
 };
 
 struct Message modunload_msgtab = {
-	"MODUNLOAD", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, mg_not_oper, mg_ignore, mg_ignore, {me_modunload, 2}, {mo_modunload, 2}}
+    "MODUNLOAD", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, mg_not_oper, mg_ignore, mg_ignore, {me_modunload, 2}, {mo_modunload, 2}}
 };
 
 struct Message modreload_msgtab = {
-	"MODRELOAD", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, mg_not_oper, mg_ignore, mg_ignore, {me_modreload, 2}, {mo_modreload, 2}}
+    "MODRELOAD", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, mg_not_oper, mg_ignore, mg_ignore, {me_modreload, 2}, {mo_modreload, 2}}
 };
 
 struct Message modlist_msgtab = {
-	"MODLIST", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, mg_not_oper, mg_ignore, mg_ignore, {me_modlist, 0}, {mo_modlist, 0}}
+    "MODLIST", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, mg_not_oper, mg_ignore, mg_ignore, {me_modlist, 0}, {mo_modlist, 0}}
 };
 
 struct Message modrestart_msgtab = {
-	"MODRESTART", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, mg_not_oper, mg_ignore, mg_ignore, {me_modrestart, 0}, {mo_modrestart, 0}}
+    "MODRESTART", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, mg_not_oper, mg_ignore, mg_ignore, {me_modrestart, 0}, {mo_modrestart, 0}}
 };
 
 void
 modules_init(void)
 {
-	mod_add_cmd(&modload_msgtab);
-	mod_add_cmd(&modunload_msgtab);
-	mod_add_cmd(&modreload_msgtab);
-	mod_add_cmd(&modlist_msgtab);
-	mod_add_cmd(&modrestart_msgtab);
+    mod_add_cmd(&modload_msgtab);
+    mod_add_cmd(&modunload_msgtab);
+    mod_add_cmd(&modreload_msgtab);
+    mod_add_cmd(&modlist_msgtab);
+    mod_add_cmd(&modrestart_msgtab);
 
-	/* Add the default paths we look in to the module system --nenolod */
-	mod_add_path(MODPATH);
-	mod_add_path(AUTOMODPATH);
+    /* Add the default paths we look in to the module system --nenolod */
+    mod_add_path(MODPATH);
+    mod_add_path(AUTOMODPATH);
 }
 
 /* mod_find_path()
@@ -146,38 +146,37 @@ modules_init(void)
 static struct module_path *
 mod_find_path(const char *path)
 {
-	rb_dlink_node *ptr;
-	struct module_path *mpath;
+    rb_dlink_node *ptr;
+    struct module_path *mpath;
 
-	RB_DLINK_FOREACH(ptr, mod_paths.head)
-	{
-		mpath = ptr->data;
+    RB_DLINK_FOREACH(ptr, mod_paths.head) {
+        mpath = ptr->data;
 
-		if(!strcmp(path, mpath->path))
-			return mpath;
-	}
+        if(!strcmp(path, mpath->path))
+            return mpath;
+    }
 
-	return NULL;
+    return NULL;
 }
 
 /* mod_add_path
  *
  * input	- path
- * ouput	- 
+ * ouput	-
  * side effects - adds path to list
  */
 void
 mod_add_path(const char *path)
 {
-	struct module_path *pathst;
+    struct module_path *pathst;
 
-	if(mod_find_path(path))
-		return;
+    if(mod_find_path(path))
+        return;
 
-	pathst = rb_malloc(sizeof(struct module_path));
+    pathst = rb_malloc(sizeof(struct module_path));
 
-	strcpy(pathst->path, path);
-	rb_dlinkAddAlloc(pathst, &mod_paths);
+    strcpy(pathst->path, path);
+    rb_dlinkAddAlloc(pathst, &mod_paths);
 }
 
 /* mod_clear_paths()
@@ -189,16 +188,15 @@ mod_add_path(const char *path)
 void
 mod_clear_paths(void)
 {
-	rb_dlink_node *ptr, *next_ptr;
+    rb_dlink_node *ptr, *next_ptr;
 
-	RB_DLINK_FOREACH_SAFE(ptr, next_ptr, mod_paths.head)
-	{
-		rb_free(ptr->data);
-		rb_free_rb_dlink_node(ptr);
-	}
+    RB_DLINK_FOREACH_SAFE(ptr, next_ptr, mod_paths.head) {
+        rb_free(ptr->data);
+        rb_free_rb_dlink_node(ptr);
+    }
 
-	mod_paths.head = mod_paths.tail = NULL;
-	mod_paths.length = 0;
+    mod_paths.head = mod_paths.tail = NULL;
+    mod_paths.length = 0;
 }
 
 /* findmodule_byname
@@ -211,14 +209,13 @@ mod_clear_paths(void)
 int
 findmodule_byname(const char *name)
 {
-	int i;
+    int i;
 
-	for (i = 0; i < num_mods; i++)
-	{
-		if(!irccmp(modlist[i]->name, name))
-			return i;
-	}
-	return -1;
+    for (i = 0; i < num_mods; i++) {
+        if(!irccmp(modlist[i]->name, name))
+            return i;
+    }
+    return -1;
 }
 
 /* load_all_modules()
@@ -230,36 +227,33 @@ findmodule_byname(const char *name)
 void
 load_all_modules(int warn)
 {
-	DIR *system_module_dir = NULL;
-	struct dirent *ldirent = NULL;
-	char module_fq_name[PATH_MAX + 1];
-	int len;
+    DIR *system_module_dir = NULL;
+    struct dirent *ldirent = NULL;
+    char module_fq_name[PATH_MAX + 1];
+    int len;
 
-	modules_init();
+    modules_init();
 
-	modlist = (struct module **) rb_malloc(sizeof(struct module) * (MODS_INCREMENT));
+    modlist = (struct module **) rb_malloc(sizeof(struct module) * (MODS_INCREMENT));
 
-	max_mods = MODS_INCREMENT;
+    max_mods = MODS_INCREMENT;
 
-	system_module_dir = opendir(AUTOMODPATH);
+    system_module_dir = opendir(AUTOMODPATH);
 
-	if(system_module_dir == NULL)
-	{
-		ilog(L_MAIN, "Could not load modules from %s: %s", AUTOMODPATH, strerror(errno));
-		return;
-	}
+    if(system_module_dir == NULL) {
+        ilog(L_MAIN, "Could not load modules from %s: %s", AUTOMODPATH, strerror(errno));
+        return;
+    }
 
-	while ((ldirent = readdir(system_module_dir)) != NULL)
-	{
-        	len = strlen(ldirent->d_name);
-		if((len > 3) && !strcmp(ldirent->d_name+len-3, SHARED_SUFFIX))
-                {
-		 	(void) rb_snprintf(module_fq_name, sizeof(module_fq_name), "%s/%s", AUTOMODPATH, ldirent->d_name);
-		 	(void) load_a_module(module_fq_name, warn, 0);
-                }
+    while ((ldirent = readdir(system_module_dir)) != NULL) {
+        len = strlen(ldirent->d_name);
+        if((len > 3) && !strcmp(ldirent->d_name+len-3, SHARED_SUFFIX)) {
+            (void) rb_snprintf(module_fq_name, sizeof(module_fq_name), "%s/%s", AUTOMODPATH, ldirent->d_name);
+            (void) load_a_module(module_fq_name, warn, 0);
+        }
 
-	}
-	(void) closedir(system_module_dir);
+    }
+    (void) closedir(system_module_dir);
 }
 
 /* load_core_modules()
@@ -271,23 +265,21 @@ load_all_modules(int warn)
 void
 load_core_modules(int warn)
 {
-	char module_name[MAXPATHLEN];
-	int i;
+    char module_name[MAXPATHLEN];
+    int i;
 
 
-	for (i = 0; core_module_table[i]; i++)
-	{
-		rb_snprintf(module_name, sizeof(module_name), "%s/%s%s", MODPATH,
-			    core_module_table[i], SHARED_SUFFIX);
+    for (i = 0; core_module_table[i]; i++) {
+        rb_snprintf(module_name, sizeof(module_name), "%s/%s%s", MODPATH,
+                    core_module_table[i], SHARED_SUFFIX);
 
-		if(load_a_module(module_name, warn, 1) == -1)
-		{
-			ilog(L_MAIN,
-			     "Error loading core module %s%s: terminating ircd",
-			     core_module_table[i], SHARED_SUFFIX);
-			exit(0);
-		}
-	}
+        if(load_a_module(module_name, warn, 1) == -1) {
+            ilog(L_MAIN,
+                 "Error loading core module %s%s: terminating ircd",
+                 core_module_table[i], SHARED_SUFFIX);
+            exit(0);
+        }
+    }
 }
 
 /* load_one_module()
@@ -299,39 +291,35 @@ load_core_modules(int warn)
 int
 load_one_module(const char *path, int coremodule)
 {
-	char modpath[MAXPATHLEN];
-	rb_dlink_node *pathst;
-	struct module_path *mpath;
+    char modpath[MAXPATHLEN];
+    rb_dlink_node *pathst;
+    struct module_path *mpath;
 
-	struct stat statbuf;
+    struct stat statbuf;
 
-	if (server_state_foreground == 1)
-		inotice("loading module %s ...", path);	
+    if (server_state_foreground == 1)
+        inotice("loading module %s ...", path);
 
-	RB_DLINK_FOREACH(pathst, mod_paths.head)
-	{
-		mpath = pathst->data;
+    RB_DLINK_FOREACH(pathst, mod_paths.head) {
+        mpath = pathst->data;
 
-		rb_snprintf(modpath, sizeof(modpath), "%s/%s", mpath->path, path);
-		if((strstr(modpath, "../") == NULL) && (strstr(modpath, "/..") == NULL))
-		{
-			if(stat(modpath, &statbuf) == 0)
-			{
-				if(S_ISREG(statbuf.st_mode))
-				{
-					/* Regular files only please */
-					if(coremodule)
-						return load_a_module(modpath, 1, 1);
-					else
-						return load_a_module(modpath, 1, 0);
-				}
-			}
+        rb_snprintf(modpath, sizeof(modpath), "%s/%s", mpath->path, path);
+        if((strstr(modpath, "../") == NULL) && (strstr(modpath, "/..") == NULL)) {
+            if(stat(modpath, &statbuf) == 0) {
+                if(S_ISREG(statbuf.st_mode)) {
+                    /* Regular files only please */
+                    if(coremodule)
+                        return load_a_module(modpath, 1, 1);
+                    else
+                        return load_a_module(modpath, 1, 0);
+                }
+            }
 
-		}
-	}
+        }
+    }
 
-	sendto_realops_snomask(SNO_GENERAL, L_NETWIDE, "Cannot locate module %s", path);
-	return -1;
+    sendto_realops_snomask(SNO_GENERAL, L_NETWIDE, "Cannot locate module %s", path);
+    return -1;
 }
 
 
@@ -339,54 +327,50 @@ load_one_module(const char *path, int coremodule)
 static int
 mo_modload(struct Client *client_p, struct Client *source_p, int parc, const char **parv)
 {
-	if(!IsOperAdmin(source_p))
-	{
-		sendto_one(source_p, form_str(ERR_NOPRIVS),
-			   me.name, source_p->name, "admin");
-		return 0;
-	}
+    if(!IsOperAdmin(source_p)) {
+        sendto_one(source_p, form_str(ERR_NOPRIVS),
+                   me.name, source_p->name, "admin");
+        return 0;
+    }
 
-	if(parc > 2)
-	{
-		sendto_match_servs(source_p, parv[2], CAP_ENCAP, NOCAPS,
-				"ENCAP %s MODLOAD %s", parv[2], parv[1]);
-		if (match(parv[2], me.name) == 0)
-			return 0;
-	}
+    if(parc > 2) {
+        sendto_match_servs(source_p, parv[2], CAP_ENCAP, NOCAPS,
+                           "ENCAP %s MODLOAD %s", parv[2], parv[1]);
+        if (match(parv[2], me.name) == 0)
+            return 0;
+    }
 
-	return do_modload(source_p, parv[1]);
+    return do_modload(source_p, parv[1]);
 }
 
 static int
 me_modload(struct Client *client_p, struct Client *source_p, int parc, const char **parv)
 {
-	if(!find_shared_conf(source_p->username, source_p->host, source_p->servptr->name, SHARED_MODULE))
-	{
-		sendto_one_notice(source_p, ":*** You do not have an appropriate shared block "
-				"to load modules on this server.");
-		return 0;
-	}
+    if(!find_shared_conf(source_p->username, source_p->host, source_p->servptr->name, SHARED_MODULE)) {
+        sendto_one_notice(source_p, ":*** You do not have an appropriate shared block "
+                          "to load modules on this server.");
+        return 0;
+    }
 
-	return do_modload(source_p, parv[1]);
+    return do_modload(source_p, parv[1]);
 }
 
 static int
 do_modload(struct Client *source_p, const char *module)
 {
-	char *m_bn = rb_basename(module);
+    char *m_bn = rb_basename(module);
 
-	if(findmodule_byname(m_bn) != -1)
-	{
-		sendto_one_notice(source_p, ":Module %s is already loaded", m_bn);
-		rb_free(m_bn);
-		return 0;
-	}
+    if(findmodule_byname(m_bn) != -1) {
+        sendto_one_notice(source_p, ":Module %s is already loaded", m_bn);
+        rb_free(m_bn);
+        return 0;
+    }
 
-	load_one_module(module, 0);
+    load_one_module(module, 0);
 
-	rb_free(m_bn);
+    rb_free(m_bn);
 
-	return 0;
+    return 0;
 }
 
 
@@ -394,257 +378,234 @@ do_modload(struct Client *source_p, const char *module)
 static int
 mo_modunload(struct Client *client_p, struct Client *source_p, int parc, const char **parv)
 {
-	if(!IsOperAdmin(source_p))
-	{
-		sendto_one(source_p, form_str(ERR_NOPRIVS),
-			   me.name, source_p->name, "admin");
-		return 0;
-	}
+    if(!IsOperAdmin(source_p)) {
+        sendto_one(source_p, form_str(ERR_NOPRIVS),
+                   me.name, source_p->name, "admin");
+        return 0;
+    }
 
-	if(parc > 2)
-	{
-		sendto_match_servs(source_p, parv[2], CAP_ENCAP, NOCAPS,
-				"ENCAP %s MODUNLOAD %s", parv[2], parv[1]);
-		if (match(parv[2], me.name) == 0)
-			return 0;
-	}
+    if(parc > 2) {
+        sendto_match_servs(source_p, parv[2], CAP_ENCAP, NOCAPS,
+                           "ENCAP %s MODUNLOAD %s", parv[2], parv[1]);
+        if (match(parv[2], me.name) == 0)
+            return 0;
+    }
 
-	return do_modunload(source_p, parv[1]);
+    return do_modunload(source_p, parv[1]);
 }
 
 static int
 me_modunload(struct Client *client_p, struct Client *source_p, int parc, const char **parv)
 {
-	if(!find_shared_conf(source_p->username, source_p->host, source_p->servptr->name, SHARED_MODULE))
-	{
-		sendto_one_notice(source_p, ":*** You do not have an appropriate shared block "
-				"to load modules on this server.");
-		return 0;
-	}
+    if(!find_shared_conf(source_p->username, source_p->host, source_p->servptr->name, SHARED_MODULE)) {
+        sendto_one_notice(source_p, ":*** You do not have an appropriate shared block "
+                          "to load modules on this server.");
+        return 0;
+    }
 
-	return do_modunload(source_p, parv[1]);
+    return do_modunload(source_p, parv[1]);
 }
 
 static int
 do_modunload(struct Client *source_p, const char *module)
 {
-	int modindex;
-	char *m_bn = rb_basename(module);
+    int modindex;
+    char *m_bn = rb_basename(module);
 
-	if((modindex = findmodule_byname(m_bn)) == -1)
-	{
-		sendto_one_notice(source_p, ":Module %s is not loaded", m_bn);
-		rb_free(m_bn);
-		return 0;
-	}
+    if((modindex = findmodule_byname(m_bn)) == -1) {
+        sendto_one_notice(source_p, ":Module %s is not loaded", m_bn);
+        rb_free(m_bn);
+        return 0;
+    }
 
-	if(modlist[modindex]->core == 1)
-	{
-		sendto_one_notice(source_p, ":Module %s is a core module and may not be unloaded", m_bn);
-		rb_free(m_bn);
-		return 0;
-	}
+    if(modlist[modindex]->core == 1) {
+        sendto_one_notice(source_p, ":Module %s is a core module and may not be unloaded", m_bn);
+        rb_free(m_bn);
+        return 0;
+    }
 
-	if(unload_one_module(m_bn, 1) == -1)
-	{
-		sendto_one_notice(source_p, ":Module %s is not loaded", m_bn);
-	}
+    if(unload_one_module(m_bn, 1) == -1) {
+        sendto_one_notice(source_p, ":Module %s is not loaded", m_bn);
+    }
 
-	rb_free(m_bn);
-	return 0;
+    rb_free(m_bn);
+    return 0;
 }
 
 /* unload and load in one! */
 static int
 mo_modreload(struct Client *client_p, struct Client *source_p, int parc, const char **parv)
 {
-	if(!IsOperAdmin(source_p))
-	{
-		sendto_one(source_p, form_str(ERR_NOPRIVS),
-			   me.name, source_p->name, "admin");
-		return 0;
-	}
+    if(!IsOperAdmin(source_p)) {
+        sendto_one(source_p, form_str(ERR_NOPRIVS),
+                   me.name, source_p->name, "admin");
+        return 0;
+    }
 
-	if(parc > 2)
-	{
-		sendto_match_servs(source_p, parv[2], CAP_ENCAP, NOCAPS,
-				"ENCAP %s MODRELOAD %s", parv[2], parv[1]);
-		if (match(parv[2], me.name) == 0)
-			return 0;
-	}
+    if(parc > 2) {
+        sendto_match_servs(source_p, parv[2], CAP_ENCAP, NOCAPS,
+                           "ENCAP %s MODRELOAD %s", parv[2], parv[1]);
+        if (match(parv[2], me.name) == 0)
+            return 0;
+    }
 
-	return do_modreload(source_p, parv[1]);
+    return do_modreload(source_p, parv[1]);
 }
 
 static int
 me_modreload(struct Client *client_p, struct Client *source_p, int parc, const char **parv)
 {
-	if(!find_shared_conf(source_p->username, source_p->host, source_p->servptr->name, SHARED_MODULE))
-	{
-		sendto_one_notice(source_p, ":*** You do not have an appropriate shared block "
-				"to load modules on this server.");
-		return 0;
-	}
+    if(!find_shared_conf(source_p->username, source_p->host, source_p->servptr->name, SHARED_MODULE)) {
+        sendto_one_notice(source_p, ":*** You do not have an appropriate shared block "
+                          "to load modules on this server.");
+        return 0;
+    }
 
-	return do_modreload(source_p, parv[1]);
+    return do_modreload(source_p, parv[1]);
 }
 
 static int
 do_modreload(struct Client *source_p, const char *module)
 {
-	int modindex;
-	int check_core;
-	char *m_bn = rb_basename(module);
+    int modindex;
+    int check_core;
+    char *m_bn = rb_basename(module);
 
-	if((modindex = findmodule_byname(m_bn)) == -1)
-	{
-		sendto_one_notice(source_p, ":Module %s is not loaded", m_bn);
-		rb_free(m_bn);
-		return 0;
-	}
+    if((modindex = findmodule_byname(m_bn)) == -1) {
+        sendto_one_notice(source_p, ":Module %s is not loaded", m_bn);
+        rb_free(m_bn);
+        return 0;
+    }
 
-	check_core = modlist[modindex]->core;
+    check_core = modlist[modindex]->core;
 
-	if(unload_one_module(m_bn, 1) == -1)
-	{
-		sendto_one_notice(source_p, ":Module %s is not loaded", m_bn);
-		rb_free(m_bn);
-		return 0;
-	}
+    if(unload_one_module(m_bn, 1) == -1) {
+        sendto_one_notice(source_p, ":Module %s is not loaded", m_bn);
+        rb_free(m_bn);
+        return 0;
+    }
 
-	if((load_one_module(m_bn, check_core) == -1) && check_core)
-	{
-		sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-				     "Error reloading core module: %s: terminating ircd", m_bn);
-		ilog(L_MAIN, "Error loading core module %s: terminating ircd", m_bn);
-		exit(0);
-	}
+    if((load_one_module(m_bn, check_core) == -1) && check_core) {
+        sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+                               "Error reloading core module: %s: terminating ircd", m_bn);
+        ilog(L_MAIN, "Error loading core module %s: terminating ircd", m_bn);
+        exit(0);
+    }
 
-	rb_free(m_bn);
-	return 0;
+    rb_free(m_bn);
+    return 0;
 }
 
 /* list modules .. */
 static int
 mo_modlist(struct Client *client_p, struct Client *source_p, int parc, const char **parv)
 {
-	if(!IsOperAdmin(source_p))
-	{
-		sendto_one(source_p, form_str(ERR_NOPRIVS),
-			   me.name, source_p->name, "admin");
-		return 0;
-	}
+    if(!IsOperAdmin(source_p)) {
+        sendto_one(source_p, form_str(ERR_NOPRIVS),
+                   me.name, source_p->name, "admin");
+        return 0;
+    }
 
-	if(parc > 2)
-	{
-		sendto_match_servs(source_p, parv[2], CAP_ENCAP, NOCAPS,
-				"ENCAP %s MODLIST %s", parv[2], parv[1]);
-		if (match(parv[2], me.name) == 0)
-			return 0;
-	}
+    if(parc > 2) {
+        sendto_match_servs(source_p, parv[2], CAP_ENCAP, NOCAPS,
+                           "ENCAP %s MODLIST %s", parv[2], parv[1]);
+        if (match(parv[2], me.name) == 0)
+            return 0;
+    }
 
-	return do_modlist(source_p, parc > 1 ? parv[1] : 0);
+    return do_modlist(source_p, parc > 1 ? parv[1] : 0);
 }
 
 static int
 me_modlist(struct Client *client_p, struct Client *source_p, int parc, const char **parv)
 {
-	if(!find_shared_conf(source_p->username, source_p->host, source_p->servptr->name, SHARED_MODULE))
-	{
-		sendto_one_notice(source_p, ":*** You do not have an appropriate shared block "
-				"to load modules on this server.");
-		return 0;
-	}
+    if(!find_shared_conf(source_p->username, source_p->host, source_p->servptr->name, SHARED_MODULE)) {
+        sendto_one_notice(source_p, ":*** You do not have an appropriate shared block "
+                          "to load modules on this server.");
+        return 0;
+    }
 
-	return do_modlist(source_p, parv[1]);
+    return do_modlist(source_p, parv[1]);
 }
 
 static int
 do_modlist(struct Client *source_p, const char *pattern)
 {
-	int i;
+    int i;
 
-	for (i = 0; i < num_mods; i++)
-	{
-		if(pattern)
-		{
-			if(match(pattern, modlist[i]->name))
-			{
-				sendto_one(source_p, form_str(RPL_MODLIST),
-					   me.name, source_p->name,
-					   modlist[i]->name,
-					   modlist[i]->address,
-					   modlist[i]->version, modlist[i]->core ? "(core)" : "");
-			}
-		}
-		else
-		{
-			sendto_one(source_p, form_str(RPL_MODLIST),
-				   me.name, source_p->name, modlist[i]->name,
-				   modlist[i]->address, modlist[i]->version,
-				   modlist[i]->core ? "(core)" : "");
-		}
-	}
+    for (i = 0; i < num_mods; i++) {
+        if(pattern) {
+            if(match(pattern, modlist[i]->name)) {
+                sendto_one(source_p, form_str(RPL_MODLIST),
+                           me.name, source_p->name,
+                           modlist[i]->name,
+                           modlist[i]->address,
+                           modlist[i]->version, modlist[i]->core ? "(core)" : "");
+            }
+        } else {
+            sendto_one(source_p, form_str(RPL_MODLIST),
+                       me.name, source_p->name, modlist[i]->name,
+                       modlist[i]->address, modlist[i]->version,
+                       modlist[i]->core ? "(core)" : "");
+        }
+    }
 
-	sendto_one(source_p, form_str(RPL_ENDOFMODLIST), me.name, source_p->name);
-	return 0;
+    sendto_one(source_p, form_str(RPL_ENDOFMODLIST), me.name, source_p->name);
+    return 0;
 }
 
 /* unload and reload all modules */
 static int
 mo_modrestart(struct Client *client_p, struct Client *source_p, int parc, const char **parv)
 {
-	if(!IsOperAdmin(source_p))
-	{
-		sendto_one(source_p, form_str(ERR_NOPRIVS),
-			   me.name, source_p->name, "admin");
-		return 0;
-	}
+    if(!IsOperAdmin(source_p)) {
+        sendto_one(source_p, form_str(ERR_NOPRIVS),
+                   me.name, source_p->name, "admin");
+        return 0;
+    }
 
-	if(parc > 1)
-	{
-		sendto_match_servs(source_p, parv[1], CAP_ENCAP, NOCAPS,
-				"ENCAP %s MODRESTART", parv[1]);
-		if (match(parv[1], me.name) == 0)
-			return 0;
-	}
+    if(parc > 1) {
+        sendto_match_servs(source_p, parv[1], CAP_ENCAP, NOCAPS,
+                           "ENCAP %s MODRESTART", parv[1]);
+        if (match(parv[1], me.name) == 0)
+            return 0;
+    }
 
-	return do_modrestart(source_p);
+    return do_modrestart(source_p);
 }
 
 static int
 me_modrestart(struct Client *client_p, struct Client *source_p, int parc, const char **parv)
 {
-	if(!find_shared_conf(source_p->username, source_p->host, source_p->servptr->name, SHARED_MODULE))
-	{
-		sendto_one_notice(source_p, ":*** You do not have an appropriate shared block "
-				"to load modules on this server.");
-		return 0;
-	}
+    if(!find_shared_conf(source_p->username, source_p->host, source_p->servptr->name, SHARED_MODULE)) {
+        sendto_one_notice(source_p, ":*** You do not have an appropriate shared block "
+                          "to load modules on this server.");
+        return 0;
+    }
 
-	return do_modrestart(source_p);
+    return do_modrestart(source_p);
 }
 
 static int
 do_modrestart(struct Client *source_p)
 {
-	int modnum;
+    int modnum;
 
-	sendto_one_notice(source_p, ":Reloading all modules");
+    sendto_one_notice(source_p, ":Reloading all modules");
 
-	modnum = num_mods;
-	while (num_mods)
-		unload_one_module(modlist[0]->name, 0);
+    modnum = num_mods;
+    while (num_mods)
+        unload_one_module(modlist[0]->name, 0);
 
-	load_all_modules(0);
-	load_core_modules(0);
-	rehash(0);
+    load_all_modules(0);
+    load_core_modules(0);
+    rehash(0);
 
-	sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-			     "Module Restart: %d modules unloaded, %d modules loaded",
-			     modnum, num_mods);
-	ilog(L_MAIN, "Module Restart: %d modules unloaded, %d modules loaded", modnum, num_mods);
-	return 0;
+    sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+                           "Module Restart: %d modules unloaded, %d modules loaded",
+                           modnum, num_mods);
+    ilog(L_MAIN, "Module Restart: %d modules unloaded, %d modules loaded", modnum, num_mods);
+    return 0;
 }
 
 
@@ -697,98 +658,96 @@ void *dlsym(void *, char *);
 static int firstLoad = TRUE;
 static int myDlError;
 static char *myErrorTable[] = { "Loading file as object failed\n",
-	"Loading file as object succeeded\n",
-	"Not a valid shared object\n",
-	"Architecture of object invalid on this architecture\n",
-	"Invalid or corrupt image\n",
-	"Could not access object\n",
-	"NSCreateObjectFileImageFromFile failed\n",
-	NULL
-};
+                                "Loading file as object succeeded\n",
+                                "Not a valid shared object\n",
+                                "Architecture of object invalid on this architecture\n",
+                                "Invalid or corrupt image\n",
+                                "Could not access object\n",
+                                "NSCreateObjectFileImageFromFile failed\n",
+                                NULL
+                              };
 
 void
 undefinedErrorHandler(const char *symbolName)
 {
-	sendto_realops_snomask(SNO_GENERAL, L_NETWIDE, "Undefined symbol: %s", symbolName);
-	ilog(L_MAIN, "Undefined symbol: %s", symbolName);
-	return;
+    sendto_realops_snomask(SNO_GENERAL, L_NETWIDE, "Undefined symbol: %s", symbolName);
+    ilog(L_MAIN, "Undefined symbol: %s", symbolName);
+    return;
 }
 
 NSModule
 multipleErrorHandler(NSSymbol s, NSModule old, NSModule new)
 {
-	/* XXX
-	 ** This results in substantial leaking of memory... Should free one
-	 ** module, maybe?
-	 */
-	sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-			     "Symbol `%s' found in `%s' and `%s'",
-			     NSNameOfSymbol(s), NSNameOfModule(old), NSNameOfModule(new));
-	ilog(L_MAIN, "Symbol `%s' found in `%s' and `%s'",
-	     NSNameOfSymbol(s), NSNameOfModule(old), NSNameOfModule(new));
-	/* We return which module should be considered valid, I believe */
-	return new;
+    /* XXX
+     ** This results in substantial leaking of memory... Should free one
+     ** module, maybe?
+     */
+    sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+                           "Symbol `%s' found in `%s' and `%s'",
+                           NSNameOfSymbol(s), NSNameOfModule(old), NSNameOfModule(new));
+    ilog(L_MAIN, "Symbol `%s' found in `%s' and `%s'",
+         NSNameOfSymbol(s), NSNameOfModule(old), NSNameOfModule(new));
+    /* We return which module should be considered valid, I believe */
+    return new;
 }
 
 void
 linkEditErrorHandler(NSLinkEditErrors errorClass, int errnum,
-		     const char *fileName, const char *errorString)
+                     const char *fileName, const char *errorString)
 {
-	sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-			     "Link editor error: %s for %s", errorString, fileName);
-	ilog(L_MAIN, "Link editor error: %s for %s", errorString, fileName);
-	return;
+    sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+                           "Link editor error: %s for %s", errorString, fileName);
+    ilog(L_MAIN, "Link editor error: %s for %s", errorString, fileName);
+    return;
 }
 
 char *
 dlerror(void)
 {
-	return myDlError == NSObjectFileImageSuccess ? NULL : myErrorTable[myDlError % 7];
+    return myDlError == NSObjectFileImageSuccess ? NULL : myErrorTable[myDlError % 7];
 }
 
 void *
 dlopen(char *filename, int unused)
 {
-	NSObjectFileImage myImage;
-	NSModule myModule;
+    NSObjectFileImage myImage;
+    NSModule myModule;
 
-	if(firstLoad)
-	{
-		/*
-		 ** If we are loading our first symbol (huzzah!) we should go ahead
-		 ** and install link editor error handling!
-		 */
-		NSLinkEditErrorHandlers linkEditorErrorHandlers;
+    if(firstLoad) {
+        /*
+         ** If we are loading our first symbol (huzzah!) we should go ahead
+         ** and install link editor error handling!
+         */
+        NSLinkEditErrorHandlers linkEditorErrorHandlers;
 
-		linkEditorErrorHandlers.undefined = undefinedErrorHandler;
-		linkEditorErrorHandlers.multiple = multipleErrorHandler;
-		linkEditorErrorHandlers.linkEdit = linkEditErrorHandler;
-		NSInstallLinkEditErrorHandlers(&linkEditorErrorHandlers);
-		firstLoad = FALSE;
-	}
-	myDlError = NSCreateObjectFileImageFromFile(filename, &myImage);
-	if(myDlError != NSObjectFileImageSuccess)
-	{
-		return NULL;
-	}
-	myModule = NSLinkModule(myImage, filename, NSLINKMODULE_OPTION_PRIVATE);
-	return (void *) myModule;
+        linkEditorErrorHandlers.undefined = undefinedErrorHandler;
+        linkEditorErrorHandlers.multiple = multipleErrorHandler;
+        linkEditorErrorHandlers.linkEdit = linkEditErrorHandler;
+        NSInstallLinkEditErrorHandlers(&linkEditorErrorHandlers);
+        firstLoad = FALSE;
+    }
+    myDlError = NSCreateObjectFileImageFromFile(filename, &myImage);
+    if(myDlError != NSObjectFileImageSuccess) {
+        return NULL;
+    }
+    myModule = NSLinkModule(myImage, filename, NSLINKMODULE_OPTION_PRIVATE);
+    return (void *) myModule;
 }
 
 int
 dlclose(void *myModule)
 {
-	NSUnLinkModule(myModule, FALSE);
-	return 0;
+    NSUnLinkModule(myModule, FALSE);
+    return 0;
 }
 
 void *
 dlsym(void *myModule, char *mySymbolName)
 {
-	NSSymbol mySymbol;
+    NSSymbol mySymbol;
 
-	mySymbol = NSLookupSymbolInModule((NSModule) myModule, mySymbolName);
-	return NSAddressOfSymbol(mySymbol);
+    mySymbol = NSLookupSymbolInModule((NSModule) myModule, mySymbolName);
+    return NSAddressOfSymbol(mySymbol);
 }
 #endif
 #endif
@@ -808,10 +767,10 @@ dlsym(void *myModule, char *mySymbolName)
 static void *
 hpux_dlsym(void *handle, char *name)
 {
-	void *sym_addr;
-	if(!shl_findsym((shl_t *) & handle, name, TYPE_UNDEFINED, &sym_addr))
-		return sym_addr;
-	return NULL;
+    void *sym_addr;
+    if(!shl_findsym((shl_t *) & handle, name, TYPE_UNDEFINED, &sym_addr))
+        return sym_addr;
+    return NULL;
 }
 
 #endif
@@ -826,73 +785,68 @@ hpux_dlsym(void *handle, char *name)
 int
 unload_one_module(const char *name, int warn)
 {
-	int modindex;
+    int modindex;
 
-	if((modindex = findmodule_byname(name)) == -1)
-		return -1;
+    if((modindex = findmodule_byname(name)) == -1)
+        return -1;
 
-	/*
-	 ** XXX - The type system in C does not allow direct conversion between
-	 ** data and function pointers, but as it happens, most C compilers will
-	 ** safely do this, however it is a theoretical overlow to cast as we 
-	 ** must do here.  I have library functions to take care of this, but 
-	 ** despite being more "correct" for the C language, this is more 
-	 ** practical.  Removing the abuse of the ability to cast ANY pointer
-	 ** to and from an integer value here will break some compilers.
-	 **          -jmallett
-	 */
-	/* Left the comment in but the code isn't here any more         -larne */
-	switch (modlist[modindex]->mapi_version)
-	{
-	case 1:
-		{
-			struct mapi_mheader_av1 *mheader = modlist[modindex]->mapi_header;
-			if(mheader->mapi_command_list)
-			{
-				struct Message **m;
-				for (m = mheader->mapi_command_list; *m; ++m)
-					mod_del_cmd(*m);
-			}
+    /*
+     ** XXX - The type system in C does not allow direct conversion between
+     ** data and function pointers, but as it happens, most C compilers will
+     ** safely do this, however it is a theoretical overlow to cast as we
+     ** must do here.  I have library functions to take care of this, but
+     ** despite being more "correct" for the C language, this is more
+     ** practical.  Removing the abuse of the ability to cast ANY pointer
+     ** to and from an integer value here will break some compilers.
+     **          -jmallett
+     */
+    /* Left the comment in but the code isn't here any more         -larne */
+    switch (modlist[modindex]->mapi_version) {
+    case 1: {
+        struct mapi_mheader_av1 *mheader = modlist[modindex]->mapi_header;
+        if(mheader->mapi_command_list) {
+            struct Message **m;
+            for (m = mheader->mapi_command_list; *m; ++m)
+                mod_del_cmd(*m);
+        }
 
-			/* hook events are never removed, we simply lose the
-			 * ability to call them --fl
-			 */
-			if(mheader->mapi_hfn_list)
-			{
-				mapi_hfn_list_av1 *m;
-				for (m = mheader->mapi_hfn_list; m->hapi_name; ++m)
-					remove_hook(m->hapi_name, m->fn);
-			}
+        /* hook events are never removed, we simply lose the
+         * ability to call them --fl
+         */
+        if(mheader->mapi_hfn_list) {
+            mapi_hfn_list_av1 *m;
+            for (m = mheader->mapi_hfn_list; m->hapi_name; ++m)
+                remove_hook(m->hapi_name, m->fn);
+        }
 
-			if(mheader->mapi_unregister)
-				mheader->mapi_unregister();
-			break;
-		}
-	default:
-		sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-				     "Unknown/unsupported MAPI version %d when unloading %s!",
-				     modlist[modindex]->mapi_version, modlist[modindex]->name);
-		ilog(L_MAIN, "Unknown/unsupported MAPI version %d when unloading %s!",
-		     modlist[modindex]->mapi_version, modlist[modindex]->name);
-		break;
-	}
+        if(mheader->mapi_unregister)
+            mheader->mapi_unregister();
+        break;
+    }
+    default:
+        sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+                               "Unknown/unsupported MAPI version %d when unloading %s!",
+                               modlist[modindex]->mapi_version, modlist[modindex]->name);
+        ilog(L_MAIN, "Unknown/unsupported MAPI version %d when unloading %s!",
+             modlist[modindex]->mapi_version, modlist[modindex]->name);
+        break;
+    }
 
-	dlclose(modlist[modindex]->address);
+    dlclose(modlist[modindex]->address);
 
-	rb_free(modlist[modindex]->name);
-	memmove(&modlist[modindex], &modlist[modindex + 1],
-	       sizeof(struct module) * ((num_mods - 1) - modindex));
+    rb_free(modlist[modindex]->name);
+    memmove(&modlist[modindex], &modlist[modindex + 1],
+            sizeof(struct module) * ((num_mods - 1) - modindex));
 
-	if(num_mods != 0)
-		num_mods--;
+    if(num_mods != 0)
+        num_mods--;
 
-	if(warn == 1)
-	{
-		ilog(L_MAIN, "Module %s unloaded", name);
-		sendto_realops_snomask(SNO_GENERAL, L_NETWIDE, "Module %s unloaded", name);
-	}
+    if(warn == 1) {
+        ilog(L_MAIN, "Module %s unloaded", name);
+        sendto_realops_snomask(SNO_GENERAL, L_NETWIDE, "Module %s unloaded", name);
+    }
 
-	return 0;
+    return 0;
 }
 
 
@@ -906,130 +860,121 @@ unload_one_module(const char *name, int warn)
 int
 load_a_module(const char *path, int warn, int core)
 {
-	void *tmpptr = NULL;
+    void *tmpptr = NULL;
 
-	char *mod_basename;
-	const char *ver;
+    char *mod_basename;
+    const char *ver;
 
-	int *mapi_version;
+    int *mapi_version;
 
-	mod_basename = rb_basename(path);
+    mod_basename = rb_basename(path);
 
 #ifdef CHARYBDIS_PROFILE
-	tmpptr = dlopen(path, RTLD_NOW | RTLD_LOCAL | RTLD_PROFILE);
+    tmpptr = dlopen(path, RTLD_NOW | RTLD_LOCAL | RTLD_PROFILE);
 #else
-	tmpptr = dlopen(path, RTLD_NOW | RTLD_LOCAL);
+    tmpptr = dlopen(path, RTLD_NOW | RTLD_LOCAL);
 #endif
 
-	if(tmpptr == NULL)
-	{
-		const char *err = dlerror();
+    if(tmpptr == NULL) {
+        const char *err = dlerror();
 
-		sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-				     "Error loading module %s: %s", mod_basename, err);
-		ilog(L_MAIN, "Error loading module %s: %s", mod_basename, err);
-		rb_free(mod_basename);
-		return -1;
-	}
+        sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+                               "Error loading module %s: %s", mod_basename, err);
+        ilog(L_MAIN, "Error loading module %s: %s", mod_basename, err);
+        rb_free(mod_basename);
+        return -1;
+    }
 
 
-	/*
-	 * _mheader is actually a struct mapi_mheader_*, but mapi_version
-	 * is always the first member of this structure, so we treate it
-	 * as a single int in order to determine the API version.
-	 *      -larne.
-	 */
-	mapi_version = (int *) (uintptr_t) dlsym(tmpptr, "_mheader");
-	if((mapi_version == NULL
-	    && (mapi_version = (int *) (uintptr_t) dlsym(tmpptr, "__mheader")) == NULL)
-	   || MAPI_MAGIC(*mapi_version) != MAPI_MAGIC_HDR)
-	{
-		sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-				     "Data format error: module %s has no MAPI header.",
-				     mod_basename);
-		ilog(L_MAIN, "Data format error: module %s has no MAPI header.", mod_basename);
-		(void) dlclose(tmpptr);
-		rb_free(mod_basename);
-		return -1;
-	}
+    /*
+     * _mheader is actually a struct mapi_mheader_*, but mapi_version
+     * is always the first member of this structure, so we treate it
+     * as a single int in order to determine the API version.
+     *      -larne.
+     */
+    mapi_version = (int *) (uintptr_t) dlsym(tmpptr, "_mheader");
+    if((mapi_version == NULL
+        && (mapi_version = (int *) (uintptr_t) dlsym(tmpptr, "__mheader")) == NULL)
+       || MAPI_MAGIC(*mapi_version) != MAPI_MAGIC_HDR) {
+        sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+                               "Data format error: module %s has no MAPI header.",
+                               mod_basename);
+        ilog(L_MAIN, "Data format error: module %s has no MAPI header.", mod_basename);
+        (void) dlclose(tmpptr);
+        rb_free(mod_basename);
+        return -1;
+    }
 
-	switch (MAPI_VERSION(*mapi_version))
-	{
-	case 1:
-		{
-			struct mapi_mheader_av1 *mheader = (struct mapi_mheader_av1 *) mapi_version;	/* see above */
-			if(mheader->mapi_register && (mheader->mapi_register() == -1))
-			{
-				ilog(L_MAIN, "Module %s indicated failure during load.",
-				     mod_basename);
-				sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-						     "Module %s indicated failure during load.",
-						     mod_basename);
-				dlclose(tmpptr);
-				rb_free(mod_basename);
-				return -1;
-			}
-			if(mheader->mapi_command_list)
-			{
-				struct Message **m;
-				for (m = mheader->mapi_command_list; *m; ++m)
-					mod_add_cmd(*m);
-			}
+    switch (MAPI_VERSION(*mapi_version)) {
+    case 1: {
+        struct mapi_mheader_av1 *mheader = (struct mapi_mheader_av1 *) mapi_version;	/* see above */
+        if(mheader->mapi_register && (mheader->mapi_register() == -1)) {
+            ilog(L_MAIN, "Module %s indicated failure during load.",
+                 mod_basename);
+            sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+                                   "Module %s indicated failure during load.",
+                                   mod_basename);
+            dlclose(tmpptr);
+            rb_free(mod_basename);
+            return -1;
+        }
+        if(mheader->mapi_command_list) {
+            struct Message **m;
+            for (m = mheader->mapi_command_list; *m; ++m)
+                mod_add_cmd(*m);
+        }
 
-			if(mheader->mapi_hook_list)
-			{
-				mapi_hlist_av1 *m;
-				for (m = mheader->mapi_hook_list; m->hapi_name; ++m)
-					*m->hapi_id = register_hook(m->hapi_name);
-			}
+        if(mheader->mapi_hook_list) {
+            mapi_hlist_av1 *m;
+            for (m = mheader->mapi_hook_list; m->hapi_name; ++m)
+                *m->hapi_id = register_hook(m->hapi_name);
+        }
 
-			if(mheader->mapi_hfn_list)
-			{
-				mapi_hfn_list_av1 *m;
-				for (m = mheader->mapi_hfn_list; m->hapi_name; ++m)
-					add_hook(m->hapi_name, m->fn);
-			}
+        if(mheader->mapi_hfn_list) {
+            mapi_hfn_list_av1 *m;
+            for (m = mheader->mapi_hfn_list; m->hapi_name; ++m)
+                add_hook(m->hapi_name, m->fn);
+        }
 
-			ver = mheader->mapi_module_version;
-			break;
-		}
+        ver = mheader->mapi_module_version;
+        break;
+    }
 
-	default:
-		ilog(L_MAIN, "Module %s has unknown/unsupported MAPI version %d.",
-		     mod_basename, MAPI_VERSION(*mapi_version));
-		sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-				     "Module %s has unknown/unsupported MAPI version %d.",
-				     mod_basename, *mapi_version);
-		dlclose(tmpptr);
-		rb_free(mod_basename);
-		return -1;
-	}
+    default:
+        ilog(L_MAIN, "Module %s has unknown/unsupported MAPI version %d.",
+             mod_basename, MAPI_VERSION(*mapi_version));
+        sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+                               "Module %s has unknown/unsupported MAPI version %d.",
+                               mod_basename, *mapi_version);
+        dlclose(tmpptr);
+        rb_free(mod_basename);
+        return -1;
+    }
 
-	if(ver == NULL)
-		ver = unknown_ver;
+    if(ver == NULL)
+        ver = unknown_ver;
 
-	increase_modlist();
+    increase_modlist();
 
-	modlist[num_mods] = rb_malloc(sizeof(struct module));
-	modlist[num_mods]->address = tmpptr;
-	modlist[num_mods]->version = ver;
-	modlist[num_mods]->core = core;
-	modlist[num_mods]->name = rb_strdup(mod_basename);
-	modlist[num_mods]->mapi_header = mapi_version;
-	modlist[num_mods]->mapi_version = MAPI_VERSION(*mapi_version);
-	num_mods++;
+    modlist[num_mods] = rb_malloc(sizeof(struct module));
+    modlist[num_mods]->address = tmpptr;
+    modlist[num_mods]->version = ver;
+    modlist[num_mods]->core = core;
+    modlist[num_mods]->name = rb_strdup(mod_basename);
+    modlist[num_mods]->mapi_header = mapi_version;
+    modlist[num_mods]->mapi_version = MAPI_VERSION(*mapi_version);
+    num_mods++;
 
-	if(warn == 1)
-	{
-		sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-				     "Module %s [version: %s; MAPI version: %d] loaded at 0x%lx",
-				     mod_basename, ver, MAPI_VERSION(*mapi_version),
-				     (unsigned long) tmpptr);
-		ilog(L_MAIN, "Module %s [version: %s; MAPI version: %d] loaded at 0x%lx",
-		     mod_basename, ver, MAPI_VERSION(*mapi_version), (unsigned long) tmpptr);
-	}
-	rb_free(mod_basename);
-	return 0;
+    if(warn == 1) {
+        sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+                               "Module %s [version: %s; MAPI version: %d] loaded at 0x%lx",
+                               mod_basename, ver, MAPI_VERSION(*mapi_version),
+                               (unsigned long) tmpptr);
+        ilog(L_MAIN, "Module %s [version: %s; MAPI version: %d] loaded at 0x%lx",
+             mod_basename, ver, MAPI_VERSION(*mapi_version), (unsigned long) tmpptr);
+    }
+    rb_free(mod_basename);
+    return 0;
 }
 
 /*
@@ -1042,18 +987,18 @@ load_a_module(const char *path, int warn, int core)
 static void
 increase_modlist(void)
 {
-	struct module **new_modlist = NULL;
+    struct module **new_modlist = NULL;
 
-	if((num_mods + 1) < max_mods)
-		return;
+    if((num_mods + 1) < max_mods)
+        return;
 
-	new_modlist = (struct module **) rb_malloc(sizeof(struct module) *
-						  (max_mods + MODS_INCREMENT));
-	memcpy((void *) new_modlist, (void *) modlist, sizeof(struct module) * num_mods);
+    new_modlist = (struct module **) rb_malloc(sizeof(struct module) *
+                  (max_mods + MODS_INCREMENT));
+    memcpy((void *) new_modlist, (void *) modlist, sizeof(struct module) * num_mods);
 
-	rb_free(modlist);
-	modlist = new_modlist;
-	max_mods += MODS_INCREMENT;
+    rb_free(modlist);
+    modlist = new_modlist;
+    max_mods += MODS_INCREMENT;
 }
 
 #else /* STATIC_MODULES */
@@ -1067,7 +1012,7 @@ increase_modlist(void)
 void
 load_all_modules(int warn)
 {
-	load_static_modules();
+    load_static_modules();
 }
 
 #endif /* STATIC_MODULES */

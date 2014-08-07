@@ -34,7 +34,7 @@
 struct rb_bh;
 typedef struct rb_bh rb_bh;
 typedef void rb_bh_usage_cb (size_t bused, size_t bfree, size_t bmemusage, size_t heapalloc,
-			     const char *desc, void *data);
+                             const char *desc, void *data);
 
 
 int rb_bh_free(rb_bh *, void *);

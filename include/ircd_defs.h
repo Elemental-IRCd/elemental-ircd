@@ -26,7 +26,7 @@
 
 /*
  * NOTE: NICKLEN and TOPICLEN do not live here anymore. Set it with configure
- * Otherwise there are no user servicable part here. 
+ * Otherwise there are no user servicable part here.
  *
  */
 
@@ -94,7 +94,7 @@
 #endif
 
 #define HOSTLEN         63	/* Length of hostname.  Updated to         */
-				/* comply with RFC1123                     */
+/* comply with RFC1123                     */
 
 #define USERLEN         10
 #define REALLEN         50
@@ -121,8 +121,8 @@
 
 #define HELPLEN         400
 
-/* 
- * message return values 
+/*
+ * message return values
  */
 #define CLIENT_EXITED    -2
 #define CLIENT_PARSE_ERROR -1

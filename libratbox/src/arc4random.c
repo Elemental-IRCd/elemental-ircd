@@ -40,11 +40,10 @@
 
 
 
-struct arc4_stream
-{
-	uint8_t i;
-	uint8_t j;
-	uint8_t s[256];
+struct arc4_stream {
+    uint8_t i;
+    uint8_t j;
+    uint8_t s[256];
 };
 
 
@@ -60,160 +59,155 @@ static inline uint32_t arc4_getword(struct arc4_stream *);
 static inline void
 arc4_init(struct arc4_stream *as)
 {
-	int n;
+    int n;
 
-	for(n = 0; n < 256; n++)
-		as->s[n] = n;
-	as->i = 0;
-	as->j = 0;
+    for(n = 0; n < 256; n++)
+        as->s[n] = n;
+    as->i = 0;
+    as->j = 0;
 }
 
 static inline void
 arc4_addrandom(struct arc4_stream *as, uint8_t *dat, int datlen)
 {
-	int n;
-	uint8_t si;
+    int n;
+    uint8_t si;
 
-	as->i--;
-	for(n = 0; n < 256; n++)
-	{
-		as->i = (as->i + 1);
-		si = as->s[as->i];
-		as->j = (as->j + si + dat[n % datlen]);
-		as->s[as->i] = as->s[as->j];
-		as->s[as->j] = si;
-	}
-	as->j = as->i;
+    as->i--;
+    for(n = 0; n < 256; n++) {
+        as->i = (as->i + 1);
+        si = as->s[as->i];
+        as->j = (as->j + si + dat[n % datlen]);
+        as->s[as->i] = as->s[as->j];
+        as->s[as->j] = si;
+    }
+    as->j = as->i;
 }
 
 static void
 arc4_stir(struct arc4_stream *as)
 {
-	struct timeval tv;
-	pid_t pid;
-	int n;
+    struct timeval tv;
+    pid_t pid;
+    int n;
 #ifdef _WIN32
-	HMODULE lib;
+    HMODULE lib;
 #endif
-	/* XXX this doesn't support egd sources or similiar */
+    /* XXX this doesn't support egd sources or similiar */
 
-	pid = getpid();
-	arc4_addrandom(as, (void *)&pid, sizeof(pid));
+    pid = getpid();
+    arc4_addrandom(as, (void *)&pid, sizeof(pid));
 
-	rb_gettimeofday(&tv, NULL);
-	arc4_addrandom(as, (void *)&tv.tv_sec, sizeof(&tv.tv_sec));
-	arc4_addrandom(as, (void *)&tv.tv_usec, sizeof(&tv.tv_usec));
-	rb_gettimeofday(&tv, NULL);
-	arc4_addrandom(as, (void *)&tv.tv_usec, sizeof(&tv.tv_usec));
+    rb_gettimeofday(&tv, NULL);
+    arc4_addrandom(as, (void *)&tv.tv_sec, sizeof(&tv.tv_sec));
+    arc4_addrandom(as, (void *)&tv.tv_usec, sizeof(&tv.tv_usec));
+    rb_gettimeofday(&tv, NULL);
+    arc4_addrandom(as, (void *)&tv.tv_usec, sizeof(&tv.tv_usec));
 
 #if defined(HAVE_GETRUSAGE) && RUSAGE_SELF
-	{
-		struct rusage buf;
-		getrusage(RUSAGE_SELF, &buf);
-		arc4_addrandom(as, (void *)&buf, sizeof(buf));
-	memset(&buf, 0, sizeof(buf))}
+    {
+        struct rusage buf;
+        getrusage(RUSAGE_SELF, &buf);
+        arc4_addrandom(as, (void *)&buf, sizeof(buf));
+        memset(&buf, 0, sizeof(buf))
+    }
 #endif
 
 #if !defined(_WIN32)
-	{
-		uint8_t rnd[128];
-		int fd;
-		fd = open("/dev/urandom", O_RDONLY);
-		if(fd != -1)
-		{
-			read(fd, rnd, sizeof(rnd));
-			close(fd);
-			arc4_addrandom(as, (void *)rnd, sizeof(rnd));
-			memset(&rnd, 0, sizeof(rnd));
-		}
+    {
+        uint8_t rnd[128];
+        int fd;
+        fd = open("/dev/urandom", O_RDONLY);
+        if(fd != -1) {
+            read(fd, rnd, sizeof(rnd));
+            close(fd);
+            arc4_addrandom(as, (void *)rnd, sizeof(rnd));
+            memset(&rnd, 0, sizeof(rnd));
+        }
 
-	}
+    }
 #else
-	{
-		LARGE_INTEGER performanceCount;
-		if(QueryPerformanceCounter(&performanceCount))
-		{
-			arc4_addrandom(as, (void *)&performanceCount, sizeof(performanceCount));
-		}
-		lib = LoadLibrary("ADVAPI32.DLL");
-		if(lib)
-		{
-			uint8_t rnd[128];
-			BOOLEAN(APIENTRY * pfn) (void *, ULONG) =
-				(BOOLEAN(APIENTRY *) (void *, ULONG))GetProcAddress(lib,
-										    "SystemFunction036");
-			if(pfn)
-			{
-				if(pfn(rnd, sizeof(rnd)) == TRUE)
-					arc4_addrandom(as, (void *)rnd, sizeof(rnd));
-				memset(&rnd, 0, sizeof(rnd));
-			}
-		}
-	}
+    {
+        LARGE_INTEGER performanceCount;
+        if(QueryPerformanceCounter(&performanceCount)) {
+            arc4_addrandom(as, (void *)&performanceCount, sizeof(performanceCount));
+        }
+        lib = LoadLibrary("ADVAPI32.DLL");
+        if(lib) {
+            uint8_t rnd[128];
+            BOOLEAN(APIENTRY * pfn) (void *, ULONG) =
+                (BOOLEAN(APIENTRY *) (void *, ULONG))GetProcAddress(lib,
+                        "SystemFunction036");
+            if(pfn) {
+                if(pfn(rnd, sizeof(rnd)) == TRUE)
+                    arc4_addrandom(as, (void *)rnd, sizeof(rnd));
+                memset(&rnd, 0, sizeof(rnd));
+            }
+        }
+    }
 #endif
 
 
-	/*
-	 * Throw away the first N words of output, as suggested in the
-	 * paper "Weaknesses in the Key Scheduling Algorithm of RC4"
-	 * by Fluher, Mantin, and Shamir.
-	 * http://www.wisdom.weizmann.ac.il/~itsik/RC4/Papers/Rc4_ksa.ps
-	 * N = 256 in our case.
-	 */
-	for(n = 0; n < 256 * 4; n++)
-		arc4_getbyte(as);
+    /*
+     * Throw away the first N words of output, as suggested in the
+     * paper "Weaknesses in the Key Scheduling Algorithm of RC4"
+     * by Fluher, Mantin, and Shamir.
+     * http://www.wisdom.weizmann.ac.il/~itsik/RC4/Papers/Rc4_ksa.ps
+     * N = 256 in our case.
+     */
+    for(n = 0; n < 256 * 4; n++)
+        arc4_getbyte(as);
 }
 
 static inline uint8_t
 arc4_getbyte(struct arc4_stream *as)
 {
-	uint8_t si, sj;
+    uint8_t si, sj;
 
-	as->i = (as->i + 1);
-	si = as->s[as->i];
-	as->j = (as->j + si);
-	sj = as->s[as->j];
-	as->s[as->i] = sj;
-	as->s[as->j] = si;
-	return (as->s[(si + sj) & 0xff]);
+    as->i = (as->i + 1);
+    si = as->s[as->i];
+    as->j = (as->j + si);
+    sj = as->s[as->j];
+    as->s[as->i] = sj;
+    as->s[as->j] = si;
+    return (as->s[(si + sj) & 0xff]);
 }
 
 static inline uint32_t
 arc4_getword(struct arc4_stream *as)
 {
-	uint32_t val;
-	val = arc4_getbyte(as) << 24;
-	val |= arc4_getbyte(as) << 16;
-	val |= arc4_getbyte(as) << 8;
-	val |= arc4_getbyte(as);
-	return val;
+    uint32_t val;
+    val = arc4_getbyte(as) << 24;
+    val |= arc4_getbyte(as) << 16;
+    val |= arc4_getbyte(as) << 8;
+    val |= arc4_getbyte(as);
+    return val;
 }
 
 void
 arc4random_stir(void)
 {
-	if(!rs_initialized)
-	{
-		arc4_init(&rs);
-		rs_initialized = 1;
-	}
-	arc4_stir(&rs);
+    if(!rs_initialized) {
+        arc4_init(&rs);
+        rs_initialized = 1;
+    }
+    arc4_stir(&rs);
 }
 
 void
 arc4random_addrandom(uint8_t *dat, int datlen)
 {
-	if(!rs_initialized)
-		arc4random_stir();
-	arc4_addrandom(&rs, dat, datlen);
+    if(!rs_initialized)
+        arc4random_stir();
+    arc4_addrandom(&rs, dat, datlen);
 }
 
 uint32_t
 arc4random(void)
 {
-	if(!rs_initialized)
-		arc4random_stir();
-	return arc4_getword(&rs);
+    if(!rs_initialized)
+        arc4random_stir();
+    return arc4_getword(&rs);
 }
 
 #endif

@@ -47,11 +47,10 @@
 #endif
 
 #define RTSIGNAL SIGRTMIN
-struct epoll_info
-{
-	int ep;
-	struct epoll_event *pfd;
-	int pfd_size;
+struct epoll_info {
+    int ep;
+    struct epoll_event *pfd;
+    int pfd_size;
 };
 
 static struct epoll_info *ep_info;
@@ -67,25 +66,24 @@ static int can_do_timerfd;
 int
 rb_init_netio_epoll(void)
 {
-	can_do_event = 0;	/* shut up gcc */
-	can_do_timerfd = 0;
-	ep_info = rb_malloc(sizeof(struct epoll_info));
-	ep_info->pfd_size = getdtablesize();
-	ep_info->ep = epoll_create(ep_info->pfd_size);
-	if(ep_info->ep < 0)
-	{
-		return -1;
-	}
-	rb_open(ep_info->ep, RB_FD_UNKNOWN, "epoll file descriptor");
-	ep_info->pfd = rb_malloc(sizeof(struct epoll_event) * ep_info->pfd_size);
+    can_do_event = 0;	/* shut up gcc */
+    can_do_timerfd = 0;
+    ep_info = rb_malloc(sizeof(struct epoll_info));
+    ep_info->pfd_size = getdtablesize();
+    ep_info->ep = epoll_create(ep_info->pfd_size);
+    if(ep_info->ep < 0) {
+        return -1;
+    }
+    rb_open(ep_info->ep, RB_FD_UNKNOWN, "epoll file descriptor");
+    ep_info->pfd = rb_malloc(sizeof(struct epoll_event) * ep_info->pfd_size);
 
-	return 0;
+    return 0;
 }
 
 int
 rb_setup_fd_epoll(rb_fde_t *F)
 {
-	return 0;
+    return 0;
 }
 
 
@@ -98,56 +96,53 @@ rb_setup_fd_epoll(rb_fde_t *F)
 void
 rb_setselect_epoll(rb_fde_t *F, unsigned int type, PF * handler, void *client_data)
 {
-	struct epoll_event ep_event;
-	int old_flags = F->pflags;
-	int op = -1;
+    struct epoll_event ep_event;
+    int old_flags = F->pflags;
+    int op = -1;
 
-	lrb_assert(IsFDOpen(F));
+    lrb_assert(IsFDOpen(F));
 
-	/* Update the list, even though we're not using it .. */
-	if(type & RB_SELECT_READ)
-	{
-		if(handler != NULL)
-			F->pflags |= EPOLLIN;
-		else
-			F->pflags &= ~EPOLLIN;
-		F->read_handler = handler;
-		F->read_data = client_data;
-	}
+    /* Update the list, even though we're not using it .. */
+    if(type & RB_SELECT_READ) {
+        if(handler != NULL)
+            F->pflags |= EPOLLIN;
+        else
+            F->pflags &= ~EPOLLIN;
+        F->read_handler = handler;
+        F->read_data = client_data;
+    }
 
-	if(type & RB_SELECT_WRITE)
-	{
-		if(handler != NULL)
-			F->pflags |= EPOLLOUT;
-		else
-			F->pflags &= ~EPOLLOUT;
-		F->write_handler = handler;
-		F->write_data = client_data;
-	}
+    if(type & RB_SELECT_WRITE) {
+        if(handler != NULL)
+            F->pflags |= EPOLLOUT;
+        else
+            F->pflags &= ~EPOLLOUT;
+        F->write_handler = handler;
+        F->write_data = client_data;
+    }
 
-	if(old_flags == 0 && F->pflags == 0)
-		return;
-	else if(F->pflags <= 0)
-		op = EPOLL_CTL_DEL;
-	else if(old_flags == 0 && F->pflags > 0)
-		op = EPOLL_CTL_ADD;
-	else if(F->pflags != old_flags)
-		op = EPOLL_CTL_MOD;
+    if(old_flags == 0 && F->pflags == 0)
+        return;
+    else if(F->pflags <= 0)
+        op = EPOLL_CTL_DEL;
+    else if(old_flags == 0 && F->pflags > 0)
+        op = EPOLL_CTL_ADD;
+    else if(F->pflags != old_flags)
+        op = EPOLL_CTL_MOD;
 
-	if(op == -1)
-		return;
+    if(op == -1)
+        return;
 
-	ep_event.events = F->pflags;
-	ep_event.data.ptr = F;
+    ep_event.events = F->pflags;
+    ep_event.data.ptr = F;
 
-	if(op == EPOLL_CTL_ADD || op == EPOLL_CTL_MOD)
-		ep_event.events |= EPOLLET;
+    if(op == EPOLL_CTL_ADD || op == EPOLL_CTL_MOD)
+        ep_event.events |= EPOLLET;
 
-	if(epoll_ctl(ep_info->ep, op, F->fd, &ep_event) != 0)
-	{
-		rb_lib_log("rb_setselect_epoll(): epoll_ctl failed: %s", strerror(errno));
-		abort();
-	}
+    if(epoll_ctl(ep_info->ep, op, F->fd, &ep_event) != 0) {
+        rb_lib_log("rb_setselect_epoll(): epoll_ctl failed: %s", strerror(errno));
+        abort();
+    }
 
 
 }
@@ -164,162 +159,150 @@ rb_setselect_epoll(rb_fde_t *F, unsigned int type, PF * handler, void *client_da
 int
 rb_select_epoll(long delay)
 {
-	int num, i, flags, old_flags, op;
-	struct epoll_event ep_event;
-	int o_errno;
-	void *data;
+    int num, i, flags, old_flags, op;
+    struct epoll_event ep_event;
+    int o_errno;
+    void *data;
 
-	num = epoll_wait(ep_info->ep, ep_info->pfd, ep_info->pfd_size, delay);
+    num = epoll_wait(ep_info->ep, ep_info->pfd, ep_info->pfd_size, delay);
 
-	/* save errno as rb_set_time() will likely clobber it */
-	o_errno = errno;
-	rb_set_time();
-	errno = o_errno;
+    /* save errno as rb_set_time() will likely clobber it */
+    o_errno = errno;
+    rb_set_time();
+    errno = o_errno;
 
-	if(num < 0 && !rb_ignore_errno(o_errno))
-		return RB_ERROR;
+    if(num < 0 && !rb_ignore_errno(o_errno))
+        return RB_ERROR;
 
-	if(num <= 0)
-		return RB_OK;
+    if(num <= 0)
+        return RB_OK;
 
-	for(i = 0; i < num; i++)
-	{
-		PF *hdl;
-		rb_fde_t *F = ep_info->pfd[i].data.ptr;
-		old_flags = F->pflags;
-		if(ep_info->pfd[i].events & (EPOLLIN | EPOLLHUP | EPOLLERR))
-		{
-			hdl = F->read_handler;
-			data = F->read_data;
-			F->read_handler = NULL;
-			F->read_data = NULL;
-			if(hdl)
-			{
-				hdl(F, data);
-			}
-		}
+    for(i = 0; i < num; i++) {
+        PF *hdl;
+        rb_fde_t *F = ep_info->pfd[i].data.ptr;
+        old_flags = F->pflags;
+        if(ep_info->pfd[i].events & (EPOLLIN | EPOLLHUP | EPOLLERR)) {
+            hdl = F->read_handler;
+            data = F->read_data;
+            F->read_handler = NULL;
+            F->read_data = NULL;
+            if(hdl) {
+                hdl(F, data);
+            }
+        }
 
-		if(!IsFDOpen(F))
-			continue;
-		if(ep_info->pfd[i].events & (EPOLLOUT | EPOLLHUP | EPOLLERR))
-		{
-			hdl = F->write_handler;
-			data = F->write_data;
-			F->write_handler = NULL;
-			F->write_data = NULL;
+        if(!IsFDOpen(F))
+            continue;
+        if(ep_info->pfd[i].events & (EPOLLOUT | EPOLLHUP | EPOLLERR)) {
+            hdl = F->write_handler;
+            data = F->write_data;
+            F->write_handler = NULL;
+            F->write_data = NULL;
 
-			if(hdl)
-			{
-				hdl(F, data);
-			}
-		}
+            if(hdl) {
+                hdl(F, data);
+            }
+        }
 
-		if(!IsFDOpen(F))
-			continue;
+        if(!IsFDOpen(F))
+            continue;
 
-		flags = 0;
+        flags = 0;
 
-		if(F->read_handler != NULL)
-			flags |= EPOLLIN;
-		if(F->write_handler != NULL)
-			flags |= EPOLLOUT;
+        if(F->read_handler != NULL)
+            flags |= EPOLLIN;
+        if(F->write_handler != NULL)
+            flags |= EPOLLOUT;
 
-		if(old_flags != flags)
-		{
-			if(flags == 0)
-				op = EPOLL_CTL_DEL;
-			else
-				op = EPOLL_CTL_MOD;
-			F->pflags = ep_event.events = flags;
-			ep_event.data.ptr = F;
-			if(op == EPOLL_CTL_MOD || op == EPOLL_CTL_ADD)
-				ep_event.events |= EPOLLET;
+        if(old_flags != flags) {
+            if(flags == 0)
+                op = EPOLL_CTL_DEL;
+            else
+                op = EPOLL_CTL_MOD;
+            F->pflags = ep_event.events = flags;
+            ep_event.data.ptr = F;
+            if(op == EPOLL_CTL_MOD || op == EPOLL_CTL_ADD)
+                ep_event.events |= EPOLLET;
 
-			if(epoll_ctl(ep_info->ep, op, F->fd, &ep_event) != 0)
-			{
-				rb_lib_log("rb_select_epoll(): epoll_ctl failed: %s",
-					   strerror(errno));
-			}
-		}
+            if(epoll_ctl(ep_info->ep, op, F->fd, &ep_event) != 0) {
+                rb_lib_log("rb_select_epoll(): epoll_ctl failed: %s",
+                           strerror(errno));
+            }
+        }
 
-	}
-	return RB_OK;
+    }
+    return RB_OK;
 }
 
 #ifdef EPOLL_SCHED_EVENT
 int
 rb_epoll_supports_event(void)
 {
-	/* try to detect at runtime if everything we need actually works */
-	timer_t timer;
-	struct sigevent ev;
-	struct stat st;
-	int fd;
-	sigset_t set;
+    /* try to detect at runtime if everything we need actually works */
+    timer_t timer;
+    struct sigevent ev;
+    struct stat st;
+    int fd;
+    sigset_t set;
 
-	if(can_do_event == 1)
-		return 1;
-	if(can_do_event == -1)
-		return 0;
+    if(can_do_event == 1)
+        return 1;
+    if(can_do_event == -1)
+        return 0;
 
-	/* Check for openvz..it has a broken timerfd.. */
-	if(stat("/proc/user_beancounters", &st) == 0)
-	{
-		can_do_event = -1;
-		return 0;
-	}
+    /* Check for openvz..it has a broken timerfd.. */
+    if(stat("/proc/user_beancounters", &st) == 0) {
+        can_do_event = -1;
+        return 0;
+    }
 
 #ifdef USE_TIMERFD_CREATE
-	if((fd = timerfd_create(CLOCK_REALTIME, 0)) >= 0)
-	{
-		close(fd);
-		can_do_event = 1;
-		can_do_timerfd = 1;
-		return 1;
-	}
+    if((fd = timerfd_create(CLOCK_REALTIME, 0)) >= 0) {
+        close(fd);
+        can_do_event = 1;
+        can_do_timerfd = 1;
+        return 1;
+    }
 #endif
 
-	ev.sigev_signo = SIGVTALRM;
-	ev.sigev_notify = SIGEV_SIGNAL;
-	if(timer_create(CLOCK_REALTIME, &ev, &timer) != 0)
-	{
-		can_do_event = -1;
-		return 0;
-	}
-	timer_delete(timer);
-	sigemptyset(&set);
-	fd = signalfd(-1, &set, 0);
-	if(fd < 0)
-	{
-		can_do_event = -1;
-		return 0;
-	}
-	close(fd);
-	can_do_event = 1;
-	return 1;
+    ev.sigev_signo = SIGVTALRM;
+    ev.sigev_notify = SIGEV_SIGNAL;
+    if(timer_create(CLOCK_REALTIME, &ev, &timer) != 0) {
+        can_do_event = -1;
+        return 0;
+    }
+    timer_delete(timer);
+    sigemptyset(&set);
+    fd = signalfd(-1, &set, 0);
+    if(fd < 0) {
+        can_do_event = -1;
+        return 0;
+    }
+    close(fd);
+    can_do_event = 1;
+    return 1;
 }
 
 
 /* bleh..work around a glibc header bug on 32bit systems */
-struct our_signalfd_siginfo
-{
-	uint32_t signo;
-	int32_t err;
-	int32_t code;
-	uint32_t pid;
-	uint32_t uid;
-	int32_t fd;
-	uint32_t tid;
-	uint32_t band;
-	uint32_t overrun;
-	uint32_t trapno;
-	int32_t status;
-	int32_t svint;
-	uint64_t svptr;
-	uint64_t utime;
-	uint64_t stime;
-	uint64_t addr;
-	uint8_t pad[48];
+struct our_signalfd_siginfo {
+    uint32_t signo;
+    int32_t err;
+    int32_t code;
+    uint32_t pid;
+    uint32_t uid;
+    int32_t fd;
+    uint32_t tid;
+    uint32_t band;
+    uint32_t overrun;
+    uint32_t trapno;
+    int32_t status;
+    int32_t svint;
+    uint64_t svptr;
+    uint64_t utime;
+    uint64_t stime;
+    uint64_t addr;
+    uint8_t pad[48];
 };
 
 
@@ -327,169 +310,156 @@ struct our_signalfd_siginfo
 static void
 signalfd_handler(rb_fde_t *F, void *data)
 {
-	static struct our_signalfd_siginfo fdsig[SIGFDIOV_COUNT];
-	static struct iovec iov[SIGFDIOV_COUNT];
-	struct ev_entry *ev;
-	int ret, x;
+    static struct our_signalfd_siginfo fdsig[SIGFDIOV_COUNT];
+    static struct iovec iov[SIGFDIOV_COUNT];
+    struct ev_entry *ev;
+    int ret, x;
 
-	for(x = 0; x < SIGFDIOV_COUNT; x++)
-	{
-		iov[x].iov_base = &fdsig[x];
-		iov[x].iov_len = sizeof(struct our_signalfd_siginfo);
-	}
+    for(x = 0; x < SIGFDIOV_COUNT; x++) {
+        iov[x].iov_base = &fdsig[x];
+        iov[x].iov_len = sizeof(struct our_signalfd_siginfo);
+    }
 
-	while(1)
-	{
-		ret = readv(rb_get_fd(F), iov, SIGFDIOV_COUNT);
+    while(1) {
+        ret = readv(rb_get_fd(F), iov, SIGFDIOV_COUNT);
 
-		if(ret == 0 || (ret < 0 && !rb_ignore_errno(errno)))
-		{
-			rb_close(F);
-			rb_epoll_init_event();
-			return;
-		}
+        if(ret == 0 || (ret < 0 && !rb_ignore_errno(errno))) {
+            rb_close(F);
+            rb_epoll_init_event();
+            return;
+        }
 
-		if(ret < 0)
-		{
-			rb_setselect(F, RB_SELECT_READ, signalfd_handler, NULL);
-			return;
-		}
-		for(x = 0; x < ret / (int)sizeof(struct our_signalfd_siginfo); x++)
-		{
+        if(ret < 0) {
+            rb_setselect(F, RB_SELECT_READ, signalfd_handler, NULL);
+            return;
+        }
+        for(x = 0; x < ret / (int)sizeof(struct our_signalfd_siginfo); x++) {
 #if __WORDSIZE == 32 && defined(__sparc__)
-			uint32_t *q = (uint32_t *)&fdsig[x].svptr;
-			ev = (struct ev_entry *)q[0];
+            uint32_t *q = (uint32_t *)&fdsig[x].svptr;
+            ev = (struct ev_entry *)q[0];
 #else
-			ev = (struct ev_entry *)(uintptr_t)(fdsig[x].svptr);
+            ev = (struct ev_entry *)(uintptr_t)(fdsig[x].svptr);
 
 #endif
-			if(ev == NULL)
-				continue;
-			rb_run_event(ev);
-		}
-	}
+            if(ev == NULL)
+                continue;
+            rb_run_event(ev);
+        }
+    }
 }
 
 void
 rb_epoll_init_event(void)
 {
 
-	sigset_t ss;
-	rb_fde_t *F;
-	int sfd;
-	rb_epoll_supports_event();
-	if(!can_do_timerfd)
-	{
-		sigemptyset(&ss);
-		sigaddset(&ss, RTSIGNAL);
-		sigprocmask(SIG_BLOCK, &ss, 0);
-		sigemptyset(&ss);
-		sigaddset(&ss, RTSIGNAL);
-		sfd = signalfd(-1, &ss, 0);
-		if(sfd == -1)
-		{
-			can_do_event = -1;
-			return;
-		}
-		F = rb_open(sfd, RB_FD_UNKNOWN, "signalfd");
-		rb_set_nb(F);
-		signalfd_handler(F, NULL);
-	}
+    sigset_t ss;
+    rb_fde_t *F;
+    int sfd;
+    rb_epoll_supports_event();
+    if(!can_do_timerfd) {
+        sigemptyset(&ss);
+        sigaddset(&ss, RTSIGNAL);
+        sigprocmask(SIG_BLOCK, &ss, 0);
+        sigemptyset(&ss);
+        sigaddset(&ss, RTSIGNAL);
+        sfd = signalfd(-1, &ss, 0);
+        if(sfd == -1) {
+            can_do_event = -1;
+            return;
+        }
+        F = rb_open(sfd, RB_FD_UNKNOWN, "signalfd");
+        rb_set_nb(F);
+        signalfd_handler(F, NULL);
+    }
 }
 
 static int
 rb_epoll_sched_event_signalfd(struct ev_entry *event, int when)
 {
-	timer_t *id;
-	struct sigevent ev;
-	struct itimerspec ts;
+    timer_t *id;
+    struct sigevent ev;
+    struct itimerspec ts;
 
-	memset(&ev, 0, sizeof(&ev));
-	event->comm_ptr = rb_malloc(sizeof(timer_t));
-	id = event->comm_ptr;
-	ev.sigev_notify = SIGEV_SIGNAL;
-	ev.sigev_signo = RTSIGNAL;
-	ev.sigev_value.sival_ptr = event;
+    memset(&ev, 0, sizeof(&ev));
+    event->comm_ptr = rb_malloc(sizeof(timer_t));
+    id = event->comm_ptr;
+    ev.sigev_notify = SIGEV_SIGNAL;
+    ev.sigev_signo = RTSIGNAL;
+    ev.sigev_value.sival_ptr = event;
 
-	if(timer_create(CLOCK_REALTIME, &ev, id) < 0)
-	{
-		rb_lib_log("timer_create: %s\n", strerror(errno));
-		return 0;
-	}
-	memset(&ts, 0, sizeof(ts));
-	ts.it_value.tv_sec = when;
-	ts.it_value.tv_nsec = 0;
-	if(event->frequency != 0)
-		ts.it_interval = ts.it_value;
+    if(timer_create(CLOCK_REALTIME, &ev, id) < 0) {
+        rb_lib_log("timer_create: %s\n", strerror(errno));
+        return 0;
+    }
+    memset(&ts, 0, sizeof(ts));
+    ts.it_value.tv_sec = when;
+    ts.it_value.tv_nsec = 0;
+    if(event->frequency != 0)
+        ts.it_interval = ts.it_value;
 
-	if(timer_settime(*id, 0, &ts, NULL) < 0)
-	{
-		rb_lib_log("timer_settime: %s\n", strerror(errno));
-		return 0;
-	}
-	return 1;
+    if(timer_settime(*id, 0, &ts, NULL) < 0) {
+        rb_lib_log("timer_settime: %s\n", strerror(errno));
+        return 0;
+    }
+    return 1;
 }
 
 #ifdef USE_TIMERFD_CREATE
 static void
 rb_read_timerfd(rb_fde_t *F, void *data)
 {
-	struct ev_entry *event = (struct ev_entry *)data;
-	int retlen;
-	uint64_t count;
+    struct ev_entry *event = (struct ev_entry *)data;
+    int retlen;
+    uint64_t count;
 
-	if(event == NULL)
-	{
-		rb_close(F);
-		return;
-	}
+    if(event == NULL) {
+        rb_close(F);
+        return;
+    }
 
-	retlen = rb_read(F, &count, sizeof(count));
+    retlen = rb_read(F, &count, sizeof(count));
 
-	if(retlen == 0 || (retlen < 0 && !rb_ignore_errno(errno)))
-	{
-		rb_close(F);
-		rb_lib_log("rb_read_timerfd: timerfd[%s] closed on error: %s", event->name,
-			   strerror(errno));
-		return;
-	}
-	rb_setselect(F, RB_SELECT_READ, rb_read_timerfd, event);
-	rb_run_event(event);
+    if(retlen == 0 || (retlen < 0 && !rb_ignore_errno(errno))) {
+        rb_close(F);
+        rb_lib_log("rb_read_timerfd: timerfd[%s] closed on error: %s", event->name,
+                   strerror(errno));
+        return;
+    }
+    rb_setselect(F, RB_SELECT_READ, rb_read_timerfd, event);
+    rb_run_event(event);
 }
 
 
 static int
 rb_epoll_sched_event_timerfd(struct ev_entry *event, int when)
 {
-	struct itimerspec ts;
-	static char buf[FD_DESC_SZ + 8];
-	int fd;
-	rb_fde_t *F;
+    struct itimerspec ts;
+    static char buf[FD_DESC_SZ + 8];
+    int fd;
+    rb_fde_t *F;
 
-	if((fd = timerfd_create(CLOCK_REALTIME, 0)) < 0)
-	{
-		rb_lib_log("timerfd_create: %s\n", strerror(errno));
-		return 0;
-	}
+    if((fd = timerfd_create(CLOCK_REALTIME, 0)) < 0) {
+        rb_lib_log("timerfd_create: %s\n", strerror(errno));
+        return 0;
+    }
 
-	memset(&ts, 0, sizeof(ts));
-	ts.it_value.tv_sec = when;
-	ts.it_value.tv_nsec = 0;
-	if(event->frequency != 0)
-		ts.it_interval = ts.it_value;
+    memset(&ts, 0, sizeof(ts));
+    ts.it_value.tv_sec = when;
+    ts.it_value.tv_nsec = 0;
+    if(event->frequency != 0)
+        ts.it_interval = ts.it_value;
 
-	if(timerfd_settime(fd, 0, &ts, NULL) < 0)
-	{
-		rb_lib_log("timerfd_settime: %s\n", strerror(errno));
-		close(fd);
-		return 0;
-	}
-	rb_snprintf(buf, sizeof(buf), "timerfd: %s", event->name);
-	F = rb_open(fd, RB_FD_UNKNOWN, buf);
-	rb_set_nb(F);
-	event->comm_ptr = F;
-	rb_setselect(F, RB_SELECT_READ, rb_read_timerfd, event);
-	return 1;
+    if(timerfd_settime(fd, 0, &ts, NULL) < 0) {
+        rb_lib_log("timerfd_settime: %s\n", strerror(errno));
+        close(fd);
+        return 0;
+    }
+    rb_snprintf(buf, sizeof(buf), "timerfd: %s", event->name);
+    F = rb_open(fd, RB_FD_UNKNOWN, buf);
+    rb_set_nb(F);
+    event->comm_ptr = F;
+    rb_setselect(F, RB_SELECT_READ, rb_read_timerfd, event);
+    return 1;
 }
 #endif
 
@@ -499,28 +469,26 @@ int
 rb_epoll_sched_event(struct ev_entry *event, int when)
 {
 #ifdef USE_TIMERFD_CREATE
-	if(can_do_timerfd)
-	{
-		return rb_epoll_sched_event_timerfd(event, when);
-	}
+    if(can_do_timerfd) {
+        return rb_epoll_sched_event_timerfd(event, when);
+    }
 #endif
-	return rb_epoll_sched_event_signalfd(event, when);
+    return rb_epoll_sched_event_signalfd(event, when);
 }
 
 void
 rb_epoll_unsched_event(struct ev_entry *event)
 {
 #ifdef USE_TIMERFD_CREATE
-	if(can_do_timerfd)
-	{
-		rb_close((rb_fde_t *)event->comm_ptr);
-		event->comm_ptr = NULL;
-		return;
-	}
+    if(can_do_timerfd) {
+        rb_close((rb_fde_t *)event->comm_ptr);
+        event->comm_ptr = NULL;
+        return;
+    }
 #endif
-	timer_delete(*((timer_t *) event->comm_ptr));
-	rb_free(event->comm_ptr);
-	event->comm_ptr = NULL;
+    timer_delete(*((timer_t *) event->comm_ptr));
+    rb_free(event->comm_ptr);
+    event->comm_ptr = NULL;
 }
 #endif /* EPOLL_SCHED_EVENT */
 
@@ -528,28 +496,28 @@ rb_epoll_unsched_event(struct ev_entry *event)
 int
 rb_init_netio_epoll(void)
 {
-	return ENOSYS;
+    return ENOSYS;
 }
 
 void
 rb_setselect_epoll(rb_fde_t *F, unsigned int type, PF * handler, void *client_data)
 {
-	errno = ENOSYS;
-	return;
+    errno = ENOSYS;
+    return;
 }
 
 int
 rb_select_epoll(long delay)
 {
-	errno = ENOSYS;
-	return -1;
+    errno = ENOSYS;
+    return -1;
 }
 
 int
 rb_setup_fd_epoll(rb_fde_t *F)
 {
-	errno = ENOSYS;
-	return -1;
+    errno = ENOSYS;
+    return -1;
 }
 
 
@@ -559,26 +527,26 @@ rb_setup_fd_epoll(rb_fde_t *F)
 void
 rb_epoll_init_event(void)
 {
-	return;
+    return;
 }
 
 int
 rb_epoll_sched_event(struct ev_entry *event, int when)
 {
-	errno = ENOSYS;
-	return -1;
+    errno = ENOSYS;
+    return -1;
 }
 
 void
 rb_epoll_unsched_event(struct ev_entry *event)
 {
-	return;
+    return;
 }
 
 int
 rb_epoll_supports_event(void)
 {
-	errno = ENOSYS;
-	return 0;
+    errno = ENOSYS;
+    return 0;
 }
 #endif /* !USING_EPOLL || !EPOLL_SCHED_EVENT */

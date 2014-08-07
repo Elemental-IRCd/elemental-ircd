@@ -57,8 +57,8 @@
 static int mr_webirc(struct Client *, struct Client *, int, const char **);
 
 struct Message webirc_msgtab = {
-	"WEBIRC", 0, 0, 0, MFLG_SLOW | MFLG_UNREG,
-	{{mr_webirc, 5}, mg_reg, mg_ignore, mg_ignore, mg_ignore, mg_reg}
+    "WEBIRC", 0, 0, 0, MFLG_SLOW | MFLG_UNREG,
+    {{mr_webirc, 5}, mg_reg, mg_ignore, mg_ignore, mg_ignore, mg_reg}
 };
 
 mapi_clist_av1 webirc_clist[] = { &webirc_msgtab, NULL };
@@ -68,74 +68,68 @@ DECLARE_MODULE_AV1(webirc, NULL, NULL, webirc_clist, NULL, NULL, "$Revision: 207
  * mr_webirc - webirc message handler
  *      parv[1] = password
  *      parv[2] = fake username (we ignore this)
- *	parv[3] = fake hostname 
+ *	parv[3] = fake hostname
  *	parv[4] = fake ip
  */
 static int
 mr_webirc(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	struct ConfItem *aconf;
-	const char *encr;
+    struct ConfItem *aconf;
+    const char *encr;
 
-	if (!strchr(parv[4], '.') && !strchr(parv[4], ':'))
-	{
-		sendto_one(source_p, "NOTICE * :Invalid IP");
-		return 0;
-	}
+    if (!strchr(parv[4], '.') && !strchr(parv[4], ':')) {
+        sendto_one(source_p, "NOTICE * :Invalid IP");
+        return 0;
+    }
 
-	aconf = find_address_conf(client_p->host, client_p->sockhost, 
-				IsGotId(client_p) ? client_p->username : "webirc",
-				IsGotId(client_p) ? client_p->username : "webirc",
-				(struct sockaddr *) &client_p->localClient->ip,
-				client_p->localClient->ip.ss_family, NULL);
-	if (aconf == NULL || !(aconf->status & CONF_CLIENT))
-		return 0;
-	if (!IsConfDoSpoofIp(aconf) || irccmp(aconf->info.name, "webirc."))
-	{
-		/* XXX */
-		sendto_one(source_p, "NOTICE * :Not a CGI:IRC auth block");
-		return 0;
-	}
-	if (EmptyString(aconf->passwd))
-	{
-		sendto_one(source_p, "NOTICE * :CGI:IRC auth blocks must have a password");
-		return 0;
-	}
+    aconf = find_address_conf(client_p->host, client_p->sockhost,
+                              IsGotId(client_p) ? client_p->username : "webirc",
+                              IsGotId(client_p) ? client_p->username : "webirc",
+                              (struct sockaddr *) &client_p->localClient->ip,
+                              client_p->localClient->ip.ss_family, NULL);
+    if (aconf == NULL || !(aconf->status & CONF_CLIENT))
+        return 0;
+    if (!IsConfDoSpoofIp(aconf) || irccmp(aconf->info.name, "webirc.")) {
+        /* XXX */
+        sendto_one(source_p, "NOTICE * :Not a CGI:IRC auth block");
+        return 0;
+    }
+    if (EmptyString(aconf->passwd)) {
+        sendto_one(source_p, "NOTICE * :CGI:IRC auth blocks must have a password");
+        return 0;
+    }
 
-	if (EmptyString(parv[1]))
-		encr = "";
-	else if (IsConfEncrypted(aconf))
-		encr = rb_crypt(parv[1], aconf->passwd);
-	else
-		encr = parv[1];
+    if (EmptyString(parv[1]))
+        encr = "";
+    else if (IsConfEncrypted(aconf))
+        encr = rb_crypt(parv[1], aconf->passwd);
+    else
+        encr = parv[1];
 
-	if (strcmp(encr, aconf->passwd))
-	{
-		sendto_one(source_p, "NOTICE * :CGI:IRC password incorrect");
-		return 0;
-	}
+    if (strcmp(encr, aconf->passwd)) {
+        sendto_one(source_p, "NOTICE * :CGI:IRC password incorrect");
+        return 0;
+    }
 
 
-	rb_strlcpy(source_p->sockhost, parv[4], sizeof(source_p->sockhost));
+    rb_strlcpy(source_p->sockhost, parv[4], sizeof(source_p->sockhost));
 
-	if(strlen(parv[3]) <= HOSTLEN)
-		rb_strlcpy(source_p->host, parv[3], sizeof(source_p->host));
-	else
-		rb_strlcpy(source_p->host, source_p->sockhost, sizeof(source_p->host));
-	
-	rb_inet_pton_sock(parv[4], (struct sockaddr *)&source_p->localClient->ip);
+    if(strlen(parv[3]) <= HOSTLEN)
+        rb_strlcpy(source_p->host, parv[3], sizeof(source_p->host));
+    else
+        rb_strlcpy(source_p->host, source_p->sockhost, sizeof(source_p->host));
 
-	/* Check dlines now, klines will be checked on registration */
-	if((aconf = find_dline((struct sockaddr *)&source_p->localClient->ip, 
-			       source_p->localClient->ip.ss_family)))
-	{
-		if(!(aconf->status & CONF_EXEMPTDLINE))
-		{
-			exit_client(client_p, source_p, &me, "D-lined");
-			return 0;
-		}
-	}
+    rb_inet_pton_sock(parv[4], (struct sockaddr *)&source_p->localClient->ip);
 
-	sendto_one(source_p, "NOTICE * :CGI:IRC host/IP set to %s %s", parv[3], parv[4]);
-	return 0;
+    /* Check dlines now, klines will be checked on registration */
+    if((aconf = find_dline((struct sockaddr *)&source_p->localClient->ip,
+                           source_p->localClient->ip.ss_family))) {
+        if(!(aconf->status & CONF_EXEMPTDLINE)) {
+            exit_client(client_p, source_p, &me, "D-lined");
+            return 0;
+        }
+    }
+
+    sendto_one(source_p, "NOTICE * :CGI:IRC host/IP set to %s %s", parv[3], parv[4]);
+    return 0;
 }

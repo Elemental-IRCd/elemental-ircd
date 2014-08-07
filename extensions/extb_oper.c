@@ -18,26 +18,26 @@ DECLARE_MODULE_AV1(extb_oper, _modinit, _moddeinit, NULL, NULL, NULL, "$Revision
 static int
 _modinit(void)
 {
-	extban_table['o'] = eb_oper;
+    extban_table['o'] = eb_oper;
 
-	return 0;
+    return 0;
 }
 
 static void
 _moddeinit(void)
 {
-	extban_table['o'] = NULL;
+    extban_table['o'] = NULL;
 }
 
 static int eb_oper(const char *data, struct Client *client_p,
-		struct Channel *chptr, long mode_type)
+                   struct Channel *chptr, long mode_type)
 {
 
-	(void)chptr;
-	(void)mode_type;
-	/* perhaps use data somehow? (opernick/flags?) */
-	/* so deny any bans with data for now */
-	if (data != NULL)
-		return EXTBAN_INVALID;
-	return IsOper(client_p) ? EXTBAN_MATCH : EXTBAN_NOMATCH;
+    (void)chptr;
+    (void)mode_type;
+    /* perhaps use data somehow? (opernick/flags?) */
+    /* so deny any bans with data for now */
+    if (data != NULL)
+        return EXTBAN_INVALID;
+    return IsOper(client_p) ? EXTBAN_MATCH : EXTBAN_NOMATCH;
 }

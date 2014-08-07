@@ -39,8 +39,8 @@
 static int m_knock(struct Client *, struct Client *, int, const char **);
 
 struct Message knock_msgtab = {
-	"KNOCK", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, {m_knock, 2}, {m_knock, 2}, mg_ignore, mg_ignore, {m_knock, 2}}
+    "KNOCK", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, {m_knock, 2}, {m_knock, 2}, mg_ignore, mg_ignore, {m_knock, 2}}
 };
 
 mapi_clist_av1 knock_clist[] = { &knock_msgtab, NULL };
@@ -62,110 +62,99 @@ DECLARE_MODULE_AV1(knock, NULL, NULL, knock_clist, NULL, NULL, "$Revision: 3570 
 static int
 m_knock(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	struct Channel *chptr;
-	char *p, *name;
+    struct Channel *chptr;
+    char *p, *name;
 
-	if(MyClient(source_p) && ConfigChannel.use_knock == 0)
-	{
-		sendto_one(source_p, form_str(ERR_KNOCKDISABLED),
-			   me.name, source_p->name);
-		return 0;
-	}
+    if(MyClient(source_p) && ConfigChannel.use_knock == 0) {
+        sendto_one(source_p, form_str(ERR_KNOCKDISABLED),
+                   me.name, source_p->name);
+        return 0;
+    }
 
-	name = LOCAL_COPY(parv[1]);
+    name = LOCAL_COPY(parv[1]);
 
-	/* dont allow one knock to multiple chans */
-	if((p = strchr(name, ',')))
-		*p = '\0';
+    /* dont allow one knock to multiple chans */
+    if((p = strchr(name, ',')))
+        *p = '\0';
 
-	if(!IsChannelName(name))
-	{
-		sendto_one_numeric(source_p, ERR_NOSUCHCHANNEL,
-				   form_str(ERR_NOSUCHCHANNEL), name);
-		return 0;
-	}
+    if(!IsChannelName(name)) {
+        sendto_one_numeric(source_p, ERR_NOSUCHCHANNEL,
+                           form_str(ERR_NOSUCHCHANNEL), name);
+        return 0;
+    }
 
-	if((chptr = find_channel(name)) == NULL)
-	{
-		sendto_one_numeric(source_p, ERR_NOSUCHCHANNEL,
-				   form_str(ERR_NOSUCHCHANNEL), name);
-		return 0;
-	}
+    if((chptr = find_channel(name)) == NULL) {
+        sendto_one_numeric(source_p, ERR_NOSUCHCHANNEL,
+                           form_str(ERR_NOSUCHCHANNEL), name);
+        return 0;
+    }
 
-	if(IsMember(source_p, chptr))
-	{
-		if(MyClient(source_p))
-			sendto_one(source_p, form_str(ERR_KNOCKONCHAN),
-				   me.name, source_p->name, name);
-		return 0;
-	}
+    if(IsMember(source_p, chptr)) {
+        if(MyClient(source_p))
+            sendto_one(source_p, form_str(ERR_KNOCKONCHAN),
+                       me.name, source_p->name, name);
+        return 0;
+    }
 
-	if(!((chptr->mode.mode & MODE_INVITEONLY) || (*chptr->mode.key) || 
-	     (chptr->mode.limit && 
-	      rb_dlink_list_length(&chptr->members) >= (unsigned long)chptr->mode.limit)))
-	{
-		sendto_one_numeric(source_p, ERR_CHANOPEN,
-				   form_str(ERR_CHANOPEN), name);
-		return 0;
-	}
+    if(!((chptr->mode.mode & MODE_INVITEONLY) || (*chptr->mode.key) ||
+         (chptr->mode.limit &&
+          rb_dlink_list_length(&chptr->members) >= (unsigned long)chptr->mode.limit))) {
+        sendto_one_numeric(source_p, ERR_CHANOPEN,
+                           form_str(ERR_CHANOPEN), name);
+        return 0;
+    }
 
-	/* cant knock to a +p channel */
-	if(HiddenChannel(chptr))
-	{
-		sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
-				   form_str(ERR_CANNOTSENDTOCHAN), name);
-		return 0;
-	}
+    /* cant knock to a +p channel */
+    if(HiddenChannel(chptr)) {
+        sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
+                           form_str(ERR_CANNOTSENDTOCHAN), name);
+        return 0;
+    }
 
-	
-	if(MyClient(source_p))
-	{
-		/* don't allow a knock if the user is banned */
-		if(is_banned(chptr, source_p, NULL, NULL, NULL) == CHFL_BAN ||
-				is_quieted(chptr, source_p, NULL, NULL, NULL) == CHFL_BAN)
-		{
-			sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
-					   form_str(ERR_CANNOTSENDTOCHAN), name);
-			return 0;
-		}
 
-		/* local flood protection:
-		 * allow one knock per user per knock_delay
-		 * allow one knock per channel per knock_delay_channel
-		 */
-		if(!IsOper(source_p) && 
-		   (source_p->localClient->last_knock + ConfigChannel.knock_delay) > rb_current_time())
-		{
-			sendto_one(source_p, form_str(ERR_TOOMANYKNOCK),
-					me.name, source_p->name, name, "user");
-			return 0;
-		}
-		else if((chptr->last_knock + ConfigChannel.knock_delay_channel) > rb_current_time())
-		{
-			sendto_one(source_p, form_str(ERR_TOOMANYKNOCK),
-					me.name, source_p->name, name, "channel");
-			return 0;
-		}
+    if(MyClient(source_p)) {
+        /* don't allow a knock if the user is banned */
+        if(is_banned(chptr, source_p, NULL, NULL, NULL) == CHFL_BAN ||
+           is_quieted(chptr, source_p, NULL, NULL, NULL) == CHFL_BAN) {
+            sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
+                               form_str(ERR_CANNOTSENDTOCHAN), name);
+            return 0;
+        }
 
-		/* ok, we actually can send the knock, tell client */
-		source_p->localClient->last_knock = rb_current_time();
+        /* local flood protection:
+         * allow one knock per user per knock_delay
+         * allow one knock per channel per knock_delay_channel
+         */
+        if(!IsOper(source_p) &&
+           (source_p->localClient->last_knock + ConfigChannel.knock_delay) > rb_current_time()) {
+            sendto_one(source_p, form_str(ERR_TOOMANYKNOCK),
+                       me.name, source_p->name, name, "user");
+            return 0;
+        } else if((chptr->last_knock + ConfigChannel.knock_delay_channel) > rb_current_time()) {
+            sendto_one(source_p, form_str(ERR_TOOMANYKNOCK),
+                       me.name, source_p->name, name, "channel");
+            return 0;
+        }
 
-		sendto_one(source_p, form_str(RPL_KNOCKDLVR),
-			   me.name, source_p->name, name);
-	}
+        /* ok, we actually can send the knock, tell client */
+        source_p->localClient->last_knock = rb_current_time();
 
-	chptr->last_knock = rb_current_time();
+        sendto_one(source_p, form_str(RPL_KNOCKDLVR),
+                   me.name, source_p->name, name);
+    }
 
-	if(ConfigChannel.use_knock)
-		sendto_channel_local(chptr->mode.mode & MODE_FREEINVITE ? ALL_MEMBERS : ONLY_CHANOPS,
-				     chptr, form_str(RPL_KNOCK),
-				     me.name, name, name, source_p->name,
-				     source_p->username, source_p->host);
+    chptr->last_knock = rb_current_time();
 
-	sendto_server(client_p, chptr, CAP_KNOCK|CAP_TS6, NOCAPS,
-		      ":%s KNOCK %s", use_id(source_p), name);
-	sendto_server(client_p, chptr, CAP_KNOCK, CAP_TS6,
-		      ":%s KNOCK %s", source_p->name, name);
-	return 0;
+    if(ConfigChannel.use_knock)
+        sendto_channel_local(chptr->mode.mode & MODE_FREEINVITE ? ALL_MEMBERS : ONLY_CHANOPS,
+                             chptr, form_str(RPL_KNOCK),
+                             me.name, name, name, source_p->name,
+                             source_p->username, source_p->host);
+
+    sendto_server(client_p, chptr, CAP_KNOCK|CAP_TS6, NOCAPS,
+                  ":%s KNOCK %s", use_id(source_p), name);
+    sendto_server(client_p, chptr, CAP_KNOCK, CAP_TS6,
+                  ":%s KNOCK %s", source_p->name, name);
+    return 0;
 }
 

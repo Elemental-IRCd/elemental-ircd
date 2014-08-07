@@ -70,48 +70,36 @@ static void select_update_selectfds(rb_fde_t *F, short event, PF * handler);
 static void
 select_update_selectfds(rb_fde_t *F, short event, PF * handler)
 {
-	/* Update the read / write set */
-	if(event & RB_SELECT_READ)
-	{
-		if(handler)
-		{
-			MY_FD_SET(F->fd, &select_readfds);
-			F->pflags |= RB_SELECT_READ;
-		}
-		else
-		{
-			MY_FD_CLR(F->fd, &select_readfds);
-			F->pflags &= ~RB_SELECT_READ;
-		}
-	}
+    /* Update the read / write set */
+    if(event & RB_SELECT_READ) {
+        if(handler) {
+            MY_FD_SET(F->fd, &select_readfds);
+            F->pflags |= RB_SELECT_READ;
+        } else {
+            MY_FD_CLR(F->fd, &select_readfds);
+            F->pflags &= ~RB_SELECT_READ;
+        }
+    }
 
-	if(event & RB_SELECT_WRITE)
-	{
-		if(handler)
-		{
-			MY_FD_SET(F->fd, &select_writefds);
-			F->pflags |= RB_SELECT_WRITE;
-		}
-		else
-		{
-			MY_FD_CLR(F->fd, &select_writefds);
-			F->pflags &= ~RB_SELECT_WRITE;
-		}
-	}
+    if(event & RB_SELECT_WRITE) {
+        if(handler) {
+            MY_FD_SET(F->fd, &select_writefds);
+            F->pflags |= RB_SELECT_WRITE;
+        } else {
+            MY_FD_CLR(F->fd, &select_writefds);
+            F->pflags &= ~RB_SELECT_WRITE;
+        }
+    }
 
-	if(F->pflags & (RB_SELECT_READ | RB_SELECT_WRITE))
-	{
-		if(F->fd > rb_maxfd)
-		{
-			rb_maxfd = F->fd;
-		}
-	}
-	else if(F->fd <= rb_maxfd)
-	{
-		while(rb_maxfd >= 0 && !FD_ISSET(rb_maxfd, &select_readfds)
-		      && !FD_ISSET(rb_maxfd, &select_writefds))
-			rb_maxfd--;
-	}
+    if(F->pflags & (RB_SELECT_READ | RB_SELECT_WRITE)) {
+        if(F->fd > rb_maxfd) {
+            rb_maxfd = F->fd;
+        }
+    } else if(F->fd <= rb_maxfd) {
+        while(rb_maxfd >= 0 && !FD_ISSET(rb_maxfd, &select_readfds)
+              && !FD_ISSET(rb_maxfd, &select_writefds))
+            rb_maxfd--;
+    }
 }
 
 
@@ -121,7 +109,7 @@ select_update_selectfds(rb_fde_t *F, short event, PF * handler)
 int
 rb_setup_fd_select(rb_fde_t *F)
 {
-	return 0;
+    return 0;
 }
 
 
@@ -135,11 +123,11 @@ extern int rb_maxconnections;
 int
 rb_init_netio_select(void)
 {
-	if(rb_maxconnections > FD_SETSIZE)
-		rb_maxconnections = FD_SETSIZE;	/* override this */
-	FD_ZERO(&select_readfds);
-	FD_ZERO(&select_writefds);
-	return 0;
+    if(rb_maxconnections > FD_SETSIZE)
+        rb_maxconnections = FD_SETSIZE;	/* override this */
+    FD_ZERO(&select_readfds);
+    FD_ZERO(&select_writefds);
+    return 0;
 }
 
 /*
@@ -151,20 +139,18 @@ rb_init_netio_select(void)
 void
 rb_setselect_select(rb_fde_t *F, unsigned int type, PF * handler, void *client_data)
 {
-	lrb_assert(IsFDOpen(F));
+    lrb_assert(IsFDOpen(F));
 
-	if(type & RB_SELECT_READ)
-	{
-		F->read_handler = handler;
-		F->read_data = client_data;
-		select_update_selectfds(F, RB_SELECT_READ, handler);
-	}
-	if(type & RB_SELECT_WRITE)
-	{
-		F->write_handler = handler;
-		F->write_data = client_data;
-		select_update_selectfds(F, RB_SELECT_WRITE, handler);
-	}
+    if(type & RB_SELECT_READ) {
+        F->read_handler = handler;
+        F->read_data = client_data;
+        select_update_selectfds(F, RB_SELECT_READ, handler);
+    }
+    if(type & RB_SELECT_WRITE) {
+        F->write_handler = handler;
+        F->write_data = client_data;
+        select_update_selectfds(F, RB_SELECT_WRITE, handler);
+    }
 }
 
 /*
@@ -182,94 +168,90 @@ rb_setselect_select(rb_fde_t *F, unsigned int type, PF * handler, void *client_d
 int
 rb_select_select(long delay)
 {
-	int num;
-	int fd;
-	PF *hdl;
-	rb_fde_t *F;
-	struct timeval to;
+    int num;
+    int fd;
+    PF *hdl;
+    rb_fde_t *F;
+    struct timeval to;
 
-	/* Copy over the read/write sets so we don't have to rebuild em */
-	memcpy(&tmpreadfds, &select_readfds, sizeof(fd_set));
-	memcpy(&tmpwritefds, &select_writefds, sizeof(fd_set));
+    /* Copy over the read/write sets so we don't have to rebuild em */
+    memcpy(&tmpreadfds, &select_readfds, sizeof(fd_set));
+    memcpy(&tmpwritefds, &select_writefds, sizeof(fd_set));
 
-	for(;;)
-	{
-		to.tv_sec = 0;
-		to.tv_usec = delay * 1000;
-		num = select(rb_maxfd + 1, &tmpreadfds, &tmpwritefds, NULL, &to);
-		if(num >= 0)
-			break;
-		if(rb_ignore_errno(errno))
-			continue;
-		rb_set_time();
-		/* error! */
-		return -1;
-		/* NOTREACHED */
-	}
-	rb_set_time();
+    for(;;) {
+        to.tv_sec = 0;
+        to.tv_usec = delay * 1000;
+        num = select(rb_maxfd + 1, &tmpreadfds, &tmpwritefds, NULL, &to);
+        if(num >= 0)
+            break;
+        if(rb_ignore_errno(errno))
+            continue;
+        rb_set_time();
+        /* error! */
+        return -1;
+        /* NOTREACHED */
+    }
+    rb_set_time();
 
-	if(num == 0)
-		return 0;
+    if(num == 0)
+        return 0;
 
-	/* XXX we *could* optimise by falling out after doing num fds ... */
-	for(fd = 0; fd < rb_maxfd + 1; fd++)
-	{
-		F = rb_find_fd(fd);
-		if(F == NULL)
-			continue;
-		if(FD_ISSET(fd, &tmpreadfds))
-		{
-			hdl = F->read_handler;
-			F->read_handler = NULL;
-			if(hdl)
-				hdl(F, F->read_data);
-		}
+    /* XXX we *could* optimise by falling out after doing num fds ... */
+    for(fd = 0; fd < rb_maxfd + 1; fd++) {
+        F = rb_find_fd(fd);
+        if(F == NULL)
+            continue;
+        if(FD_ISSET(fd, &tmpreadfds)) {
+            hdl = F->read_handler;
+            F->read_handler = NULL;
+            if(hdl)
+                hdl(F, F->read_data);
+        }
 
-		if(!IsFDOpen(F))
-			continue;	/* Read handler closed us..go on */
+        if(!IsFDOpen(F))
+            continue;	/* Read handler closed us..go on */
 
-		if(FD_ISSET(fd, &tmpwritefds))
-		{
-			hdl = F->write_handler;
-			F->write_handler = NULL;
-			if(hdl)
-				hdl(F, F->write_data);
-		}
+        if(FD_ISSET(fd, &tmpwritefds)) {
+            hdl = F->write_handler;
+            F->write_handler = NULL;
+            if(hdl)
+                hdl(F, F->write_data);
+        }
 
-		if(F->read_handler == NULL)
-			select_update_selectfds(F, RB_SELECT_READ, NULL);
-		if(F->write_handler == NULL)
-			select_update_selectfds(F, RB_SELECT_WRITE, NULL);
-	}
-	return 0;
+        if(F->read_handler == NULL)
+            select_update_selectfds(F, RB_SELECT_READ, NULL);
+        if(F->write_handler == NULL)
+            select_update_selectfds(F, RB_SELECT_WRITE, NULL);
+    }
+    return 0;
 }
 
 #else /* select not supported..what sort of garbage is this? */
 int
 rb_init_netio_select(void)
 {
-	return ENOSYS;
+    return ENOSYS;
 }
 
 void
 rb_setselect_select(rb_fde_t *F, unsigned int type, PF * handler, void *client_data)
 {
-	errno = ENOSYS;
-	return;
+    errno = ENOSYS;
+    return;
 }
 
 int
 rb_select_select(long delay)
 {
-	errno = ENOSYS;
-	return -1;
+    errno = ENOSYS;
+    return -1;
 }
 
 int
 rb_setup_fd_select(rb_fde_t *F)
 {
-	errno = ENOSYS;
-	return -1;
+    errno = ENOSYS;
+    return -1;
 }
 
 #endif

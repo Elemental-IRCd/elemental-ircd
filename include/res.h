@@ -12,22 +12,20 @@
 #include "match.h"
 #include "ircd.h"
 
-/* Maximum number of nameservers in /etc/resolv.conf we care about 
+/* Maximum number of nameservers in /etc/resolv.conf we care about
  * In hybrid, this was 2 -- but in Charybdis, we want to track
  * a few more than that ;) --nenolod
  */
 #define IRCD_MAXNS 10
 
-struct DNSReply
-{
-  char *h_name;
-  struct rb_sockaddr_storage addr;
+struct DNSReply {
+    char *h_name;
+    struct rb_sockaddr_storage addr;
 };
 
-struct DNSQuery
-{
-  void *ptr; /* pointer used by callback to identify request */
-  void (*callback)(void* vptr, struct DNSReply *reply); /* callback to call */
+struct DNSQuery {
+    void *ptr; /* pointer used by callback to identify request */
+    void (*callback)(void* vptr, struct DNSReply *reply); /* callback to call */
 };
 
 extern struct rb_sockaddr_storage irc_nsaddr_list[];

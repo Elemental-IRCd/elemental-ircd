@@ -43,11 +43,11 @@
 #include "modules.h"
 
 static int ms_operspy(struct Client *client_p, struct Client *source_p,
-		      int parc, const char *parv[]);
+                      int parc, const char *parv[]);
 
 struct Message operspy_msgtab = {
-	"OPERSPY", 0, 0, 0, MFLG_SLOW,
-	{mg_ignore, mg_ignore, mg_ignore, mg_ignore, {ms_operspy, 2}, mg_ignore}
+    "OPERSPY", 0, 0, 0, MFLG_SLOW,
+    {mg_ignore, mg_ignore, mg_ignore, mg_ignore, {ms_operspy, 2}, mg_ignore}
 };
 
 mapi_clist_av1 operspy_clist[] = { &operspy_msgtab, NULL };
@@ -60,40 +60,37 @@ DECLARE_MODULE_AV1(operspy, NULL, NULL, operspy_clist, NULL, NULL, "$Revision: 2
  */
 static int
 ms_operspy(struct Client *client_p, struct Client *source_p,
-	   int parc, const char *parv[])
+           int parc, const char *parv[])
 {
-	static char buffer[BUFSIZE];
-	char *ptr;
-	int cur_len = 0;
-	int len, i;
+    static char buffer[BUFSIZE];
+    char *ptr;
+    int cur_len = 0;
+    int len, i;
 
-	if(parc < 4)
-	{
-		report_operspy(source_p, parv[1],
-			    parc < 3 ? NULL : parv[2]);
-	}
-	/* buffer all remaining into one param */
-	else
-	{
-		ptr = buffer;
-		cur_len = 0;
+    if(parc < 4) {
+        report_operspy(source_p, parv[1],
+                       parc < 3 ? NULL : parv[2]);
+    }
+    /* buffer all remaining into one param */
+    else {
+        ptr = buffer;
+        cur_len = 0;
 
-		for(i = 2; i < parc; i++)
-		{
-			len = strlen(parv[i]) + 1;
+        for(i = 2; i < parc; i++) {
+            len = strlen(parv[i]) + 1;
 
-			if((size_t)(cur_len + len) >= sizeof(buffer))
-				return 0;
+            if((size_t)(cur_len + len) >= sizeof(buffer))
+                return 0;
 
-			rb_snprintf(ptr, sizeof(buffer) - cur_len, "%s ",
-				 parv[i]);
-			ptr += len;
-			cur_len += len;
-		}
+            rb_snprintf(ptr, sizeof(buffer) - cur_len, "%s ",
+                        parv[i]);
+            ptr += len;
+            cur_len += len;
+        }
 
-		report_operspy(source_p, parv[1], buffer);
-	}
+        report_operspy(source_p, parv[1], buffer);
+    }
 
-	return 0;
+    return 0;
 }
 

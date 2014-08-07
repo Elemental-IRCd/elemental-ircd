@@ -34,13 +34,13 @@ static int me_chghost(struct Client *, struct Client *, int, const char **);
 static int mo_chghost(struct Client *, struct Client *, int, const char **);
 
 struct Message realhost_msgtab = {
-	"REALHOST", 0, 0, 0, MFLG_SLOW,
-	{mg_ignore, mg_ignore, mg_ignore, mg_ignore, {me_realhost, 2}, mg_ignore}
+    "REALHOST", 0, 0, 0, MFLG_SLOW,
+    {mg_ignore, mg_ignore, mg_ignore, mg_ignore, {me_realhost, 2}, mg_ignore}
 };
 
 struct Message chghost_msgtab = {
-	"CHGHOST", 0, 0, 0, MFLG_SLOW,
-	{mg_ignore, mg_not_oper, {ms_chghost, 3}, {ms_chghost, 3}, {me_chghost, 3}, {mo_chghost, 3}}
+    "CHGHOST", 0, 0, 0, MFLG_SLOW,
+    {mg_ignore, mg_not_oper, {ms_chghost, 3}, {ms_chghost, 3}, {me_chghost, 3}, {mo_chghost, 3}}
 };
 
 mapi_clist_av1 chghost_clist[] = { &chghost_msgtab, &realhost_msgtab, NULL };
@@ -56,29 +56,28 @@ DECLARE_MODULE_AV1(chghost, NULL, NULL, chghost_clist, NULL, NULL, "$Revision: 3
 static int
 clean_host(const char *host)
 {
-	int len = 0;
-	const char *last_slash = 0;
-	
-	if (*host == '\0' || *host == ':')
-		return 0;
+    int len = 0;
+    const char *last_slash = 0;
 
-	for(; *host; host++)
-	{
-		len++;
+    if (*host == '\0' || *host == ':')
+        return 0;
 
-		if(!IsHostChar(*host))
-			return 0;
-		if(*host == '/')
-			last_slash = host;
-	}
+    for(; *host; host++) {
+        len++;
 
-	if(len > HOSTLEN)
-		return 0;
+        if(!IsHostChar(*host))
+            return 0;
+        if(*host == '/')
+            last_slash = host;
+    }
 
-	if(last_slash && IsDigit(last_slash[1]))
-		return 0;
+    if(len > HOSTLEN)
+        return 0;
 
-	return 1;
+    if(last_slash && IsDigit(last_slash[1]))
+        return 0;
+
+    return 1;
 }
 
 /*
@@ -92,55 +91,51 @@ clean_host(const char *host)
  */
 static int
 me_realhost(struct Client *client_p, struct Client *source_p,
-	int parc, const char *parv[])
+            int parc, const char *parv[])
 {
-	if (!IsPerson(source_p))
-		return 0;
+    if (!IsPerson(source_p))
+        return 0;
 
-	del_from_hostname_hash(source_p->orighost, source_p);
-	rb_strlcpy(source_p->orighost, parv[1], sizeof source_p->orighost);
-	if (irccmp(source_p->host, source_p->orighost))
-		SetDynSpoof(source_p);
-	else
-		ClearDynSpoof(source_p);
-	add_to_hostname_hash(source_p->orighost, source_p);
-	return 0;
+    del_from_hostname_hash(source_p->orighost, source_p);
+    rb_strlcpy(source_p->orighost, parv[1], sizeof source_p->orighost);
+    if (irccmp(source_p->host, source_p->orighost))
+        SetDynSpoof(source_p);
+    else
+        ClearDynSpoof(source_p);
+    add_to_hostname_hash(source_p->orighost, source_p);
+    return 0;
 }
 
 static int
 do_chghost(struct Client *source_p, struct Client *target_p,
-		const char *newhost, int is_encap)
+           const char *newhost, int is_encap)
 {
-	if (!clean_host(newhost))
-	{
-		sendto_realops_snomask(SNO_GENERAL, is_encap ? L_ALL : L_NETWIDE, "%s attempted to change hostname for %s to %s (invalid)",
-				IsServer(source_p) ? source_p->name : get_oper_name(source_p),
-				target_p->name, newhost);
-		/* sending this remotely may disclose important
-		 * routing information -- jilles */
-		if (is_encap ? MyClient(target_p) : !ConfigServerHide.flatten_links)
-			sendto_one_notice(target_p, ":*** Notice -- %s attempted to change your hostname to %s (invalid)",
-					source_p->name, newhost);
-		return 0;
-	}
-	change_nick_user_host(target_p, target_p->name, target_p->username, newhost, 0, "Changing host");
-	if (irccmp(target_p->host, target_p->orighost))
-	{
-		SetDynSpoof(target_p);
-		if (MyClient(target_p))
-			sendto_one_numeric(target_p, RPL_HOSTHIDDEN, "%s :is now your hidden host (set by %s)", target_p->host, source_p->name);
-	}
-	else
-	{
-		ClearDynSpoof(target_p);
-		if (MyClient(target_p))
-			sendto_one_numeric(target_p, RPL_HOSTHIDDEN, "%s :hostname reset by %s", target_p->host, source_p->name);
-	}
-	if (MyClient(source_p))
-		sendto_one_notice(source_p, ":Changed hostname for %s to %s", target_p->name, target_p->host);
-	if (!IsServer(source_p) && !IsService(source_p))
-		sendto_realops_snomask(SNO_GENERAL, L_ALL, "%s changed hostname for %s to %s", get_oper_name(source_p), target_p->name, target_p->host);
-	return 1;
+    if (!clean_host(newhost)) {
+        sendto_realops_snomask(SNO_GENERAL, is_encap ? L_ALL : L_NETWIDE, "%s attempted to change hostname for %s to %s (invalid)",
+                               IsServer(source_p) ? source_p->name : get_oper_name(source_p),
+                               target_p->name, newhost);
+        /* sending this remotely may disclose important
+         * routing information -- jilles */
+        if (is_encap ? MyClient(target_p) : !ConfigServerHide.flatten_links)
+            sendto_one_notice(target_p, ":*** Notice -- %s attempted to change your hostname to %s (invalid)",
+                              source_p->name, newhost);
+        return 0;
+    }
+    change_nick_user_host(target_p, target_p->name, target_p->username, newhost, 0, "Changing host");
+    if (irccmp(target_p->host, target_p->orighost)) {
+        SetDynSpoof(target_p);
+        if (MyClient(target_p))
+            sendto_one_numeric(target_p, RPL_HOSTHIDDEN, "%s :is now your hidden host (set by %s)", target_p->host, source_p->name);
+    } else {
+        ClearDynSpoof(target_p);
+        if (MyClient(target_p))
+            sendto_one_numeric(target_p, RPL_HOSTHIDDEN, "%s :hostname reset by %s", target_p->host, source_p->name);
+    }
+    if (MyClient(source_p))
+        sendto_one_notice(source_p, ":Changed hostname for %s to %s", target_p->name, target_p->host);
+    if (!IsServer(source_p) && !IsService(source_p))
+        sendto_realops_snomask(SNO_GENERAL, L_ALL, "%s changed hostname for %s to %s", get_oper_name(source_p), target_p->name, target_p->host);
+    return 1;
 }
 
 /*
@@ -150,24 +145,23 @@ do_chghost(struct Client *source_p, struct Client *target_p,
  */
 static int
 ms_chghost(struct Client *client_p, struct Client *source_p,
-	int parc, const char *parv[])
+           int parc, const char *parv[])
 {
-	struct Client *target_p;
+    struct Client *target_p;
 
-	if (!(target_p = find_person(parv[1])))
-		return -1;
+    if (!(target_p = find_person(parv[1])))
+        return -1;
 
-	if (do_chghost(source_p, target_p, parv[2], 0))
-	{
-		sendto_server(client_p, NULL,
-			CAP_EUID | CAP_TS6, NOCAPS, ":%s CHGHOST %s %s",
-			use_id(source_p), use_id(target_p), parv[2]);
-		sendto_server(client_p, NULL,
-			CAP_TS6, CAP_EUID, ":%s ENCAP * CHGHOST %s :%s",
-			use_id(source_p), use_id(target_p), parv[2]);
-	}
+    if (do_chghost(source_p, target_p, parv[2], 0)) {
+        sendto_server(client_p, NULL,
+                      CAP_EUID | CAP_TS6, NOCAPS, ":%s CHGHOST %s %s",
+                      use_id(source_p), use_id(target_p), parv[2]);
+        sendto_server(client_p, NULL,
+                      CAP_TS6, CAP_EUID, ":%s ENCAP * CHGHOST %s :%s",
+                      use_id(source_p), use_id(target_p), parv[2]);
+    }
 
-	return 0;
+    return 0;
 }
 
 /*
@@ -177,16 +171,16 @@ ms_chghost(struct Client *client_p, struct Client *source_p,
  */
 static int
 me_chghost(struct Client *client_p, struct Client *source_p,
-	int parc, const char *parv[])
+           int parc, const char *parv[])
 {
-	struct Client *target_p;
+    struct Client *target_p;
 
-	if (!(target_p = find_person(parv[1])))
-		return -1;
+    if (!(target_p = find_person(parv[1])))
+        return -1;
 
-	do_chghost(source_p, target_p, parv[2], 1);
+    do_chghost(source_p, target_p, parv[2], 1);
 
-	return 0;
+    return 0;
 }
 
 /*
@@ -199,44 +193,41 @@ me_chghost(struct Client *client_p, struct Client *source_p,
  */
 static int
 mo_chghost(struct Client *client_p, struct Client *source_p,
-	int parc, const char *parv[])
+           int parc, const char *parv[])
 {
 #ifdef ENABLE_OPER_CHGHOST
-	struct Client *target_p;
+    struct Client *target_p;
 
-	if(!IsOperAdmin(source_p))
-	{
-		sendto_one(source_p, form_str(ERR_NOPRIVS),
-			   me.name, source_p->name, "admin");
-		return 0;
-	}
+    if(!IsOperAdmin(source_p)) {
+        sendto_one(source_p, form_str(ERR_NOPRIVS),
+                   me.name, source_p->name, "admin");
+        return 0;
+    }
 
-	if (!(target_p = find_named_person(parv[1])))
-	{
-		sendto_one_numeric(source_p, ERR_NOSUCHNICK,
-				form_str(ERR_NOSUCHNICK), parv[1]);
-		return 0;
-	}
+    if (!(target_p = find_named_person(parv[1]))) {
+        sendto_one_numeric(source_p, ERR_NOSUCHNICK,
+                           form_str(ERR_NOSUCHNICK), parv[1]);
+        return 0;
+    }
 
-	if (!clean_host(parv[2]))
-	{
-		sendto_one_notice(source_p, ":Hostname %s is invalid", parv[2]);
-		return 0;
-	}
+    if (!clean_host(parv[2])) {
+        sendto_one_notice(source_p, ":Hostname %s is invalid", parv[2]);
+        return 0;
+    }
 
-	do_chghost(source_p, target_p, parv[2], 0);
+    do_chghost(source_p, target_p, parv[2], 0);
 
-	sendto_server(NULL, NULL,
-		CAP_EUID | CAP_TS6, NOCAPS, ":%s CHGHOST %s %s",
-		use_id(source_p), use_id(target_p), parv[2]);
-	sendto_server(NULL, NULL,
-		CAP_TS6, CAP_EUID, ":%s ENCAP * CHGHOST %s :%s",
-		use_id(source_p), use_id(target_p), parv[2]);
+    sendto_server(NULL, NULL,
+                  CAP_EUID | CAP_TS6, NOCAPS, ":%s CHGHOST %s %s",
+                  use_id(source_p), use_id(target_p), parv[2]);
+    sendto_server(NULL, NULL,
+                  CAP_TS6, CAP_EUID, ":%s ENCAP * CHGHOST %s :%s",
+                  use_id(source_p), use_id(target_p), parv[2]);
 #else
-	sendto_one_numeric(source_p, ERR_DISABLED, form_str(ERR_DISABLED),
-			"CHGHOST");
+    sendto_one_numeric(source_p, ERR_DISABLED, form_str(ERR_DISABLED),
+                       "CHGHOST");
 #endif
 
-	return 0;
+    return 0;
 }
 

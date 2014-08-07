@@ -2,7 +2,7 @@
  * Dave Plonka <plonka@doit.wisc.edu>
  *
  * This product includes software developed by the University of Michigan,
- * Merit Network, Inc., and their contributors. 
+ * Merit Network, Inc., and their contributors.
  *
  * This file had been called "radix.h" in the MRT sources.
  *
@@ -29,51 +29,47 @@
 #define MAXLINE 1024
 #define BIT_TEST(f, b)  ((f) & (b))
 
-typedef struct _rb_prefix_t
-{
-	unsigned short family;	/* AF_INET | AF_INET6 */
-	unsigned short bitlen;	/* same as mask? */
-	int ref_count;		/* reference count */
-	union
-	{
-		struct in_addr sin;
+typedef struct _rb_prefix_t {
+    unsigned short family;	/* AF_INET | AF_INET6 */
+    unsigned short bitlen;	/* same as mask? */
+    int ref_count;		/* reference count */
+    union {
+        struct in_addr sin;
 #ifdef RB_IPV6
-		struct in6_addr sin6;
+        struct in6_addr sin6;
 #endif				/* RB_IPV6 */
-	}
-	add;
+    }
+    add;
 }
 rb_prefix_t;
 
 
-typedef struct _rb_patricia_node_t
-{
-	unsigned int bit;	/* flag if this node used */
-	rb_prefix_t *prefix;	/* who we are in patricia tree */
-	struct _rb_patricia_node_t *l, *r;	/* left and right children */
-	struct _rb_patricia_node_t *parent;	/* may be used */
-	void *data;
+typedef struct _rb_patricia_node_t {
+    unsigned int bit;	/* flag if this node used */
+    rb_prefix_t *prefix;	/* who we are in patricia tree */
+    struct _rb_patricia_node_t *l, *r;	/* left and right children */
+    struct _rb_patricia_node_t *parent;	/* may be used */
+    void *data;
 }
 rb_patricia_node_t;
 
-typedef struct _rb_patricia_tree_t
-{
-	rb_patricia_node_t *head;
-	unsigned int maxbits;	/* for IP, 32 bit addresses */
-	int num_active_node;	/* for debug purpose */
+typedef struct _rb_patricia_tree_t {
+    rb_patricia_node_t *head;
+    unsigned int maxbits;	/* for IP, 32 bit addresses */
+    int num_active_node;	/* for debug purpose */
 }
 rb_patricia_tree_t;
 
 
 rb_patricia_node_t *rb_match_ip(rb_patricia_tree_t *tree, struct sockaddr *ip);
 rb_patricia_node_t *rb_match_ip_exact(rb_patricia_tree_t *tree, struct sockaddr *ip,
-				      unsigned int len);
+                                      unsigned int len);
 rb_patricia_node_t *rb_match_string(rb_patricia_tree_t *tree, const char *string);
 rb_patricia_node_t *rb_match_exact_string(rb_patricia_tree_t *tree, const char *string);
 rb_patricia_node_t *rb_patricia_search_exact(rb_patricia_tree_t *patricia, rb_prefix_t *prefix);
 rb_patricia_node_t *rb_patricia_search_best(rb_patricia_tree_t *patricia, rb_prefix_t *prefix);
 rb_patricia_node_t *rb_patricia_search_best2(rb_patricia_tree_t *patricia,
-					     rb_prefix_t *prefix, int inclusive);
+        rb_prefix_t *prefix, int inclusive);
 rb_patricia_node_t *rb_patricia_lookup(rb_patricia_tree_t *patricia, rb_prefix_t *prefix);
 
 void rb_patricia_remove(rb_patricia_tree_t *patricia, rb_patricia_node_t *node);

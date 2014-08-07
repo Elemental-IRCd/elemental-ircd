@@ -20,8 +20,8 @@
 static void h_can_create_channel_authenticated(hook_data_client_approval *);
 
 mapi_hfn_list_av1 restrict_hfnlist[] = {
-	{ "can_create_channel", (hookfn) h_can_create_channel_authenticated },
-	{ NULL, NULL }
+    { "can_create_channel", (hookfn) h_can_create_channel_authenticated },
+    { NULL, NULL }
 };
 
 DECLARE_MODULE_AV1(createauthonly, NULL, NULL, NULL, NULL, restrict_hfnlist, "$Revision: 833 $");
@@ -29,8 +29,8 @@ DECLARE_MODULE_AV1(createauthonly, NULL, NULL, NULL, NULL, restrict_hfnlist, "$R
 static void
 h_can_create_channel_authenticated(hook_data_client_approval *data)
 {
-	struct Client *source_p = data->client;
+    struct Client *source_p = data->client;
 
-	if (*source_p->user->suser == '\0' && !IsOper(source_p))
-		data->approved = ERR_NEEDREGGEDNICK;
+    if (*source_p->user->suser == '\0' && !IsOper(source_p))
+        data->approved = ERR_NEEDREGGEDNICK;
 }

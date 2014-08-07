@@ -29,17 +29,15 @@ struct Dictionary; /* defined in src/dictionary.c */
 
 typedef int (*DCF)(const char *a, const char *b);
 
-struct DictionaryElement
-{
-	struct DictionaryElement *left, *right, *prev, *next;
-	void *data;
-	const char *key;
-	int position;
+struct DictionaryElement {
+    struct DictionaryElement *left, *right, *prev, *next;
+    void *data;
+    const char *key;
+    int position;
 };
 
-struct DictionaryIter
-{
-	struct DictionaryElement *cur, *next;
+struct DictionaryIter {
+    struct DictionaryElement *cur, *next;
 };
 
 /*
@@ -65,7 +63,7 @@ extern struct Dictionary *irc_dictionary_create_named(const char *name, DCF comp
  * insertions in the DTree structure.
  */
 extern void irc_dictionary_set_comparator_func(struct Dictionary *dict,
-	DCF compare_cb);
+        DCF compare_cb);
 
 /*
  * irc_dictionary_get_comparator_func() returns the comparator used for lookups and
@@ -84,8 +82,8 @@ extern int irc_dictionary_get_linear_index(struct Dictionary *dict, const char *
  * a defined callback function to destroy any data attached to it.
  */
 extern void irc_dictionary_destroy(struct Dictionary *dtree,
-	void (*destroy_cb)(struct DictionaryElement *delem, void *privdata),
-	void *privdata);
+                                   void (*destroy_cb)(struct DictionaryElement *delem, void *privdata),
+                                   void *privdata);
 
 /*
  * irc_dictionary_foreach() iterates all entries in a dtree, and also optionally calls
@@ -94,8 +92,8 @@ extern void irc_dictionary_destroy(struct Dictionary *dtree,
  * To shortcircuit iteration, return non-zero from the callback function.
  */
 extern void irc_dictionary_foreach(struct Dictionary *dtree,
-	int (*foreach_cb)(struct DictionaryElement *delem, void *privdata),
-	void *privdata);
+                                   int (*foreach_cb)(struct DictionaryElement *delem, void *privdata),
+                                   void *privdata);
 
 /*
  * irc_dictionary_search() iterates all entries in a dtree, and also optionally calls
@@ -105,8 +103,8 @@ extern void irc_dictionary_foreach(struct Dictionary *dtree,
  * in that object being returned to the user.
  */
 extern void *irc_dictionary_search(struct Dictionary *dtree,
-	void *(*foreach_cb)(struct DictionaryElement *delem, void *privdata),
-	void *privdata);
+                                   void *(*foreach_cb)(struct DictionaryElement *delem, void *privdata),
+                                   void *privdata);
 
 /*
  * irc_dictionary_foreach_start() begins an iteration over all items
@@ -115,20 +113,20 @@ extern void *irc_dictionary_search(struct Dictionary *dtree,
  * of the iteration (but not any other element).
  */
 extern void irc_dictionary_foreach_start(struct Dictionary *dtree,
-	struct DictionaryIter *state);
+        struct DictionaryIter *state);
 
 /*
  * irc_dictionary_foreach_cur() returns the current element of the iteration,
  * or NULL if there are no more elements.
  */
 extern void *irc_dictionary_foreach_cur(struct Dictionary *dtree,
-	struct DictionaryIter *state);
+                                        struct DictionaryIter *state);
 
 /*
  * irc_dictionary_foreach_next() moves to the next element.
  */
 extern void irc_dictionary_foreach_next(struct Dictionary *dtree,
-	struct DictionaryIter *state);
+                                        struct DictionaryIter *state);
 
 /*
  * irc_dictionary_add() adds a key->value entry to the dictionary tree.

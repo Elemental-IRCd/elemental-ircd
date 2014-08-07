@@ -43,8 +43,8 @@ static int m_kick(struct Client *, struct Client *, int, const char **);
 #define mg_kick { m_kick, 3 }
 
 struct Message kick_msgtab = {
-	"KICK", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, mg_kick, mg_kick, mg_kick, mg_ignore, mg_kick}
+    "KICK", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, mg_kick, mg_kick, mg_kick, mg_ignore, mg_kick}
 };
 
 mapi_clist_av1 kick_clist[] = { &kick_msgtab, NULL };
@@ -60,190 +60,175 @@ DECLARE_MODULE_AV1(kick, NULL, NULL, kick_clist, NULL, NULL, "$Revision: 3317 $"
 static int
 m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	struct membership *msptr;
-	struct Client *who;
-	struct Channel *chptr;
-	int chasing = 0;
-	char *comment;
-	const char *name;
-	char *p = NULL;
-	char text[10];
-	const char *user;
-	static char buf[BUFSIZE];
-	int is_override = 0;
+    struct membership *msptr;
+    struct Client *who;
+    struct Channel *chptr;
+    int chasing = 0;
+    char *comment;
+    const char *name;
+    char *p = NULL;
+    char text[10];
+    const char *user;
+    static char buf[BUFSIZE];
+    int is_override = 0;
 
-	if(MyClient(source_p) && !IsFloodDone(source_p))
-		flood_endgrace(source_p);
+    if(MyClient(source_p) && !IsFloodDone(source_p))
+        flood_endgrace(source_p);
 
-	*buf = '\0';
-	if((p = strchr(parv[1], ',')))
-		*p = '\0';
+    *buf = '\0';
+    if((p = strchr(parv[1], ',')))
+        *p = '\0';
 
-	name = parv[1];
+    name = parv[1];
 
-	chptr = find_channel(name);
-	if(chptr == NULL)
-	{
-		sendto_one_numeric(source_p, ERR_NOSUCHCHANNEL, form_str(ERR_NOSUCHCHANNEL), name);
-		return 0;
-	}
+    chptr = find_channel(name);
+    if(chptr == NULL) {
+        sendto_one_numeric(source_p, ERR_NOSUCHCHANNEL, form_str(ERR_NOSUCHCHANNEL), name);
+        return 0;
+    }
 
-	user = parv[2];		/* strtoken(&p2, parv[2], ","); */
+    user = parv[2];		/* strtoken(&p2, parv[2], ","); */
 
-	if(!(who = find_chasing(source_p, user, &chasing)))
-	{
-		return 0;
-	}
+    if(!(who = find_chasing(source_p, user, &chasing))) {
+        return 0;
+    }
 
-	if(!IsServer(source_p))
-	{
-		msptr = find_channel_membership(chptr, source_p);
+    if(!IsServer(source_p)) {
+        msptr = find_channel_membership(chptr, source_p);
 
-		if((msptr == NULL) && MyConnect(source_p))
-		{
-			sendto_one_numeric(source_p, ERR_NOTONCHANNEL,
-					   form_str(ERR_NOTONCHANNEL), name);
-			return 0;
-		}
+        if((msptr == NULL) && MyConnect(source_p)) {
+            sendto_one_numeric(source_p, ERR_NOTONCHANNEL,
+                               form_str(ERR_NOTONCHANNEL), name);
+            return 0;
+        }
 
-		if(!can_kick_deop(msptr, find_channel_membership(chptr, who)))
-		{
-			if(MyConnect(source_p))
-			{
-				if(IsOverride(source_p))
-					is_override = 1;
-				else
-				{
-					sendto_one(source_p, ":%s 482 %s %s :You do not have the proper privileges to kick this user",
-							me.name, source_p->name, name);
-					return 0;
-				}
-			}
+        if(!can_kick_deop(msptr, find_channel_membership(chptr, who))) {
+            if(MyConnect(source_p)) {
+                if(IsOverride(source_p))
+                    is_override = 1;
+                else {
+                    sendto_one(source_p, ":%s 482 %s %s :You do not have the proper privileges to kick this user",
+                               me.name, source_p->name, name);
+                    return 0;
+                }
+            }
 
-			/* If its a TS 0 channel, do it the old way */
-			else if(chptr->channelts == 0)
-			{
-				sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
-					   get_id(&me, source_p), get_id(source_p, source_p), name);
-				return 0;
-			}
-		}
+            /* If its a TS 0 channel, do it the old way */
+            else if(chptr->channelts == 0) {
+                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                           get_id(&me, source_p), get_id(source_p, source_p), name);
+                return 0;
+            }
+        }
 
-		/* Its a user doing a kick, but is not showing as chanop locally
-		 * its also not a user ON -my- server, and the channel has a TS.
-		 * There are two cases we can get to this point then...
-		 *
-		 *     1) connect burst is happening, and for some reason a legit
-		 *        op has sent a KICK, but the SJOIN hasn't happened yet or 
-		 *        been seen. (who knows.. due to lag...)
-		 *
-		 *     2) The channel is desynced. That can STILL happen with TS
-		 *        
-		 *     Now, the old code roger wrote, would allow the KICK to 
-		 *     go through. Thats quite legit, but lets weird things like
-		 *     KICKS by users who appear not to be chanopped happen,
-		 *     or even neater, they appear not to be on the channel.
-		 *     This fits every definition of a desync, doesn't it? ;-)
-		 *     So I will allow the KICK, otherwise, things are MUCH worse.
-		 *     But I will warn it as a possible desync.
-		 *
-		 *     -Dianora
-		 */
-	}
+        /* Its a user doing a kick, but is not showing as chanop locally
+         * its also not a user ON -my- server, and the channel has a TS.
+         * There are two cases we can get to this point then...
+         *
+         *     1) connect burst is happening, and for some reason a legit
+         *        op has sent a KICK, but the SJOIN hasn't happened yet or
+         *        been seen. (who knows.. due to lag...)
+         *
+         *     2) The channel is desynced. That can STILL happen with TS
+         *
+         *     Now, the old code roger wrote, would allow the KICK to
+         *     go through. Thats quite legit, but lets weird things like
+         *     KICKS by users who appear not to be chanopped happen,
+         *     or even neater, they appear not to be on the channel.
+         *     This fits every definition of a desync, doesn't it? ;-)
+         *     So I will allow the KICK, otherwise, things are MUCH worse.
+         *     But I will warn it as a possible desync.
+         *
+         *     -Dianora
+         */
+    }
 
-	if((p = strchr(parv[2], ',')))
-		*p = '\0';
+    if((p = strchr(parv[2], ',')))
+        *p = '\0';
 
-	msptr = find_channel_membership(chptr, who);
+    msptr = find_channel_membership(chptr, who);
 
-	if(msptr != NULL)
-	{
-		if(MyClient(source_p) && IsService(who))
-		{
-			sendto_one(source_p, form_str(ERR_ISCHANSERVICE),
-				   me.name, source_p->name, who->name, chptr->chname);
-			return 0;
-		}
+    if(msptr != NULL) {
+        if(MyClient(source_p) && IsService(who)) {
+            sendto_one(source_p, form_str(ERR_ISCHANSERVICE),
+                       me.name, source_p->name, who->name, chptr->chname);
+            return 0;
+        }
 
-		if(MyClient(source_p) && chptr->mode.mode & MODE_NOKICK)
-		{
-			sendto_one_numeric(source_p, ERR_NOKICK,
-					form_str(ERR_NOKICK),
-					chptr->chname);
-			return 0;
-		}
+        if(MyClient(source_p) && chptr->mode.mode & MODE_NOKICK) {
+            sendto_one_numeric(source_p, ERR_NOKICK,
+                               form_str(ERR_NOKICK),
+                               chptr->chname);
+            return 0;
+        }
 
-		//NOTE: Will not stop kicks from services.
-		if (MyClient(source_p) && chptr->mode.mode & MODE_NOOPERKICK && IsOper(who))
-		{
-			sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-					"Overriding KICK from %s on %s in %s (channel is +M)",
-					source_p->name, who->name, chptr->chname);
-			sendto_one_numeric(source_p, ERR_ISCHANSERVICE,
-					"%s %s :Cannot kick IRC operators from that channel.",
-					who->name, chptr->chname);
-			return 0;
-		}
+        //NOTE: Will not stop kicks from services.
+        if (MyClient(source_p) && chptr->mode.mode & MODE_NOOPERKICK && IsOper(who)) {
+            sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
+                                   "Overriding KICK from %s on %s in %s (channel is +M)",
+                                   source_p->name, who->name, chptr->chname);
+            sendto_one_numeric(source_p, ERR_ISCHANSERVICE,
+                               "%s %s :Cannot kick IRC operators from that channel.",
+                               who->name, chptr->chname);
+            return 0;
+        }
 
-		if(MyClient(source_p))
-		{
-			hook_data_channel_approval hookdata;
+        if(MyClient(source_p)) {
+            hook_data_channel_approval hookdata;
 
-			hookdata.client = source_p;
-			hookdata.chptr = chptr;
-			hookdata.target = who;
-			hookdata.approved = 1;
+            hookdata.client = source_p;
+            hookdata.chptr = chptr;
+            hookdata.target = who;
+            hookdata.approved = 1;
 
-			call_hook(h_can_kick, &hookdata);
+            call_hook(h_can_kick, &hookdata);
 
-			if (!hookdata.approved)
-				return 0;
-		}
+            if (!hookdata.approved)
+                return 0;
+        }
 
-		comment = LOCAL_COPY((EmptyString(parv[3])) ? who->name : parv[3]);
-		if(strlen(comment) > (size_t) REASONLEN)
-			comment[REASONLEN] = '\0';
+        comment = LOCAL_COPY((EmptyString(parv[3])) ? who->name : parv[3]);
+        if(strlen(comment) > (size_t) REASONLEN)
+            comment[REASONLEN] = '\0';
 
-		if(is_override)
-		{
-			sendto_wallops_flags(UMODE_WALLOP, &me,
-					"%s is overriding KICK [%s] on [%s] [%s]",
-					get_oper_name(source_p), who->name, chptr->chname, comment);
-			sendto_server(NULL, chptr, NOCAPS, NOCAPS,
-					":%s WALLOPS :%s is overriding KICK [%s] on [%s] [%s]",
-					me.name, get_oper_name(source_p), who->name, chptr->chname, comment);
-		}
+        if(is_override) {
+            sendto_wallops_flags(UMODE_WALLOP, &me,
+                                 "%s is overriding KICK [%s] on [%s] [%s]",
+                                 get_oper_name(source_p), who->name, chptr->chname, comment);
+            sendto_server(NULL, chptr, NOCAPS, NOCAPS,
+                          ":%s WALLOPS :%s is overriding KICK [%s] on [%s] [%s]",
+                          me.name, get_oper_name(source_p), who->name, chptr->chname, comment);
+        }
 
-		/* jdc
-		 * - In the case of a server kicking a user (i.e. CLEARCHAN),
-		 *   the kick should show up as coming from the server which did
-		 *   the kick.
-		 * - Personally, flame and I believe that server kicks shouldn't
-		 *   be sent anyways.  Just waiting for some oper to abuse it...
-		 */
-		if(IsServer(source_p))
-			sendto_channel_local(ALL_MEMBERS, chptr, ":%s KICK %s %s :%s",
-					     source_p->name, name, who->name, comment);
-		else
-			sendto_channel_local(ALL_MEMBERS, chptr,
-					     ":%s!%s@%s KICK %s %s :%s",
-					     source_p->name, source_p->username,
-					     source_p->host, name, who->name, comment);
+        /* jdc
+         * - In the case of a server kicking a user (i.e. CLEARCHAN),
+         *   the kick should show up as coming from the server which did
+         *   the kick.
+         * - Personally, flame and I believe that server kicks shouldn't
+         *   be sent anyways.  Just waiting for some oper to abuse it...
+         */
+        if(IsServer(source_p))
+            sendto_channel_local(ALL_MEMBERS, chptr, ":%s KICK %s %s :%s",
+                                 source_p->name, name, who->name, comment);
+        else
+            sendto_channel_local(ALL_MEMBERS, chptr,
+                                 ":%s!%s@%s KICK %s %s :%s",
+                                 source_p->name, source_p->username,
+                                 source_p->host, name, who->name, comment);
 
-		sendto_server(client_p, chptr, CAP_TS6, NOCAPS,
-			      ":%s KICK %s %s :%s",
-			      use_id(source_p), chptr->chname, use_id(who), comment);
-		remove_user_from_channel(msptr);
+        sendto_server(client_p, chptr, CAP_TS6, NOCAPS,
+                      ":%s KICK %s %s :%s",
+                      use_id(source_p), chptr->chname, use_id(who), comment);
+        remove_user_from_channel(msptr);
 
-		rb_snprintf(text, sizeof(text), "K%s", who->id);
+        rb_snprintf(text, sizeof(text), "K%s", who->id);
 
-		/* we don't need to track NOREJOIN stuff unless it's our client being kicked */
-		if(MyClient(who) && chptr->mode.mode & MODE_NOREJOIN)
-			channel_metadata_time_add(chptr, text, rb_current_time(), "KICKNOREJOIN");
-	}
-	else if (MyClient(source_p))
-		sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
-				   form_str(ERR_USERNOTINCHANNEL), user, name);
+        /* we don't need to track NOREJOIN stuff unless it's our client being kicked */
+        if(MyClient(who) && chptr->mode.mode & MODE_NOREJOIN)
+            channel_metadata_time_add(chptr, text, rb_current_time(), "KICKNOREJOIN");
+    } else if (MyClient(source_p))
+        sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
+                           form_str(ERR_USERNOTINCHANNEL), user, name);
 
-	return 0;
+    return 0;
 }

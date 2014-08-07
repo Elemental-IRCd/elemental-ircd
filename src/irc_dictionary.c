@@ -30,13 +30,12 @@
 
 static rb_bh *elem_heap = NULL;
 
-struct Dictionary
-{
-	DCF compare_cb;
-	struct DictionaryElement *root, *head, *tail;
-	unsigned int count;
-	char *id;
-	unsigned int dirty:1;
+struct Dictionary {
+    DCF compare_cb;
+    struct DictionaryElement *root, *head, *tail;
+    unsigned int count;
+    char *id;
+    unsigned int dirty:1;
 };
 
 /*
@@ -56,18 +55,18 @@ struct Dictionary
  */
 struct Dictionary *irc_dictionary_create(DCF compare_cb)
 {
-	struct Dictionary *dtree = (struct Dictionary *) rb_malloc(sizeof(struct Dictionary));
+    struct Dictionary *dtree = (struct Dictionary *) rb_malloc(sizeof(struct Dictionary));
 
-	dtree->compare_cb = compare_cb;
+    dtree->compare_cb = compare_cb;
 
-	if (!elem_heap)
-		elem_heap = rb_bh_create(sizeof(struct DictionaryElement), 1024, "dictionary_elem_heap");
+    if (!elem_heap)
+        elem_heap = rb_bh_create(sizeof(struct DictionaryElement), 1024, "dictionary_elem_heap");
 
-	return dtree;
+    return dtree;
 }
 
 /*
- * irc_dictionary_create_named(const char *name, 
+ * irc_dictionary_create_named(const char *name,
  *     DCF compare_cb)
  *
  * Dictionary object factory.
@@ -84,17 +83,17 @@ struct Dictionary *irc_dictionary_create(DCF compare_cb)
  *       the program will abort.
  */
 struct Dictionary *irc_dictionary_create_named(const char *name,
-	DCF compare_cb)
+        DCF compare_cb)
 {
-	struct Dictionary *dtree = (struct Dictionary *) rb_malloc(sizeof(struct Dictionary));
+    struct Dictionary *dtree = (struct Dictionary *) rb_malloc(sizeof(struct Dictionary));
 
-	dtree->compare_cb = compare_cb;
-	dtree->id = rb_strdup(name);
+    dtree->compare_cb = compare_cb;
+    dtree->id = rb_strdup(name);
 
-	if (!elem_heap)
-		elem_heap = rb_bh_create(sizeof(struct DictionaryElement), 1024, "dictionary_elem_heap");
+    if (!elem_heap)
+        elem_heap = rb_bh_create(sizeof(struct DictionaryElement), 1024, "dictionary_elem_heap");
 
-	return dtree;
+    return dtree;
 }
 
 /*
@@ -115,12 +114,12 @@ struct Dictionary *irc_dictionary_create_named(const char *name,
  *     - the dictionary comparator function is reset.
  */
 void irc_dictionary_set_comparator_func(struct Dictionary *dict,
-	DCF compare_cb)
+                                        DCF compare_cb)
 {
-	s_assert(dict != NULL);
-	s_assert(compare_cb != NULL);
+    s_assert(dict != NULL);
+    s_assert(compare_cb != NULL);
 
-	dict->compare_cb = compare_cb;
+    dict->compare_cb = compare_cb;
 }
 
 /*
@@ -140,9 +139,9 @@ void irc_dictionary_set_comparator_func(struct Dictionary *dict,
 DCF
 irc_dictionary_get_comparator_func(struct Dictionary *dict)
 {
-	s_assert(dict != NULL);
+    s_assert(dict != NULL);
 
-	return dict->compare_cb;
+    return dict->compare_cb;
 }
 
 /*
@@ -164,29 +163,28 @@ irc_dictionary_get_comparator_func(struct Dictionary *dict)
 int
 irc_dictionary_get_linear_index(struct Dictionary *dict, const char *key)
 {
-	struct DictionaryElement *elem;
+    struct DictionaryElement *elem;
 
-	s_assert(dict != NULL);
-	s_assert(key != NULL);
+    s_assert(dict != NULL);
+    s_assert(key != NULL);
 
-	elem = irc_dictionary_find(dict, key);
-	if (elem == NULL)
-		return -1;
+    elem = irc_dictionary_find(dict, key);
+    if (elem == NULL)
+        return -1;
 
-	if (!dict->dirty)
-		return elem->position;
-	else
-	{
-		struct DictionaryElement *delem;
-		int i;
+    if (!dict->dirty)
+        return elem->position;
+    else {
+        struct DictionaryElement *delem;
+        int i;
 
-		for (delem = dict->head, i = 0; delem != NULL; delem = delem->next, i++)
-			delem->position = i;
+        for (delem = dict->head, i = 0; delem != NULL; delem = delem->next, i++)
+            delem->position = i;
 
-		dict->dirty = FALSE;
-	}
+        dict->dirty = FALSE;
+    }
 
-	return elem->position;
+    return elem->position;
 }
 
 /*
@@ -206,79 +204,73 @@ irc_dictionary_get_linear_index(struct Dictionary *dict, const char *key)
 static void
 irc_dictionary_retune(struct Dictionary *dict, const char *key)
 {
-	struct DictionaryElement n, *tn, *left, *right, *node;
-	int ret;
+    struct DictionaryElement n, *tn, *left, *right, *node;
+    int ret;
 
-	s_assert(dict != NULL);
+    s_assert(dict != NULL);
 
-	if (dict->root == NULL)
-		return;
+    if (dict->root == NULL)
+        return;
 
-	/*
-	 * we initialize n with known values, since it's on stack
-	 * memory. otherwise the dict would become corrupted.
-	 *
- 	 * n is used for temporary storage while the tree is retuned.
-	 *    -nenolod
-	 */
-	n.left = n.right = NULL;
-	left = right = &n;
+    /*
+     * we initialize n with known values, since it's on stack
+     * memory. otherwise the dict would become corrupted.
+     *
+     * n is used for temporary storage while the tree is retuned.
+     *    -nenolod
+     */
+    n.left = n.right = NULL;
+    left = right = &n;
 
-	/* this for(;;) loop is the main workhorse of the rebalancing */
-	for (node = dict->root; ; )
-	{
-		if ((ret = dict->compare_cb(key, node->key)) == 0)
-			break;
+    /* this for(;;) loop is the main workhorse of the rebalancing */
+    for (node = dict->root; ; ) {
+        if ((ret = dict->compare_cb(key, node->key)) == 0)
+            break;
 
-		if (ret < 0)
-		{
-			if (node->left == NULL)
-				break;
+        if (ret < 0) {
+            if (node->left == NULL)
+                break;
 
-			if ((ret = dict->compare_cb(key, node->left->key)) < 0)
-			{
-				tn = node->left;
-				node->left = tn->right;
-				tn->right = node;
-				node = tn;
+            if ((ret = dict->compare_cb(key, node->left->key)) < 0) {
+                tn = node->left;
+                node->left = tn->right;
+                tn->right = node;
+                node = tn;
 
-				if (node->left == NULL)
-					break;
-			}
+                if (node->left == NULL)
+                    break;
+            }
 
-			right->left = node;
-			right = node;
-			node = node->left;
-		}
-		else
-		{
-			if (node->right == NULL)
-				break;
+            right->left = node;
+            right = node;
+            node = node->left;
+        } else {
+            if (node->right == NULL)
+                break;
 
-			if ((ret = dict->compare_cb(key, node->right->key)) > 0)
-			{
-				tn = node->right;
-				node->right = tn->left;
-				tn->left = node;
-				node = tn;
+            if ((ret = dict->compare_cb(key, node->right->key)) > 0) {
+                tn = node->right;
+                node->right = tn->left;
+                tn->left = node;
+                node = tn;
 
-				if (node->right == NULL)
-					break;
-			}
+                if (node->right == NULL)
+                    break;
+            }
 
-			left->right = node;
-			left = node;
-			node = node->right;
-		}
-	}
+            left->right = node;
+            left = node;
+            node = node->right;
+        }
+    }
 
-	left->right = node->left;
-	right->left = node->right;
+    left->right = node->left;
+    right->left = node->right;
 
-	node->left = n.right;
-	node->right = n.left;
+    node->left = n.right;
+    node->right = n.left;
 
-	dict->root = node;
+    dict->root = node;
 }
 
 /*
@@ -304,68 +296,60 @@ irc_dictionary_retune(struct Dictionary *dict, const char *key)
  */
 static void
 irc_dictionary_link(struct Dictionary *dict,
-	struct DictionaryElement *delem)
+                    struct DictionaryElement *delem)
 {
-	s_assert(dict != NULL);
-	s_assert(delem != NULL);
+    s_assert(dict != NULL);
+    s_assert(delem != NULL);
 
-	dict->dirty = TRUE;
+    dict->dirty = TRUE;
 
-	dict->count++;
+    dict->count++;
 
-	if (dict->root == NULL)
-	{
-		delem->left = delem->right = NULL;
-		delem->next = delem->prev = NULL;
-		dict->head = dict->tail = dict->root = delem;
-	}
-	else
-	{
-		int ret;
+    if (dict->root == NULL) {
+        delem->left = delem->right = NULL;
+        delem->next = delem->prev = NULL;
+        dict->head = dict->tail = dict->root = delem;
+    } else {
+        int ret;
 
-		irc_dictionary_retune(dict, delem->key);
+        irc_dictionary_retune(dict, delem->key);
 
-		if ((ret = dict->compare_cb(delem->key, dict->root->key)) < 0)
-		{
-			delem->left = dict->root->left;
-			delem->right = dict->root;
-			dict->root->left = NULL;
+        if ((ret = dict->compare_cb(delem->key, dict->root->key)) < 0) {
+            delem->left = dict->root->left;
+            delem->right = dict->root;
+            dict->root->left = NULL;
 
-			if (dict->root->prev)
-				dict->root->prev->next = delem;
-			else
-				dict->head = delem;
+            if (dict->root->prev)
+                dict->root->prev->next = delem;
+            else
+                dict->head = delem;
 
-			delem->prev = dict->root->prev;
-			delem->next = dict->root;
-			dict->root->prev = delem;
-			dict->root = delem;
-		}
-		else if (ret > 0)
-		{
-			delem->right = dict->root->right;
-			delem->left = dict->root;
-			dict->root->right = NULL;
+            delem->prev = dict->root->prev;
+            delem->next = dict->root;
+            dict->root->prev = delem;
+            dict->root = delem;
+        } else if (ret > 0) {
+            delem->right = dict->root->right;
+            delem->left = dict->root;
+            dict->root->right = NULL;
 
-			if (dict->root->next)
-				dict->root->next->prev = delem;
-			else
-				dict->tail = delem;
+            if (dict->root->next)
+                dict->root->next->prev = delem;
+            else
+                dict->tail = delem;
 
-			delem->next = dict->root->next;
-			delem->prev = dict->root;
-			dict->root->next = delem;
-			dict->root = delem;
-		}
-		else
-		{
-			dict->root->key = delem->key;
-			dict->root->data = delem->data;
-			dict->count--;
+            delem->next = dict->root->next;
+            delem->prev = dict->root;
+            dict->root->next = delem;
+            dict->root = delem;
+        } else {
+            dict->root->key = delem->key;
+            dict->root->data = delem->data;
+            dict->count--;
 
-			rb_bh_free(elem_heap, delem);
-		}
-	}
+            rb_bh_free(elem_heap, delem);
+        }
+    }
 }
 
 /*
@@ -385,56 +369,52 @@ irc_dictionary_link(struct Dictionary *dict,
 static void
 irc_dictionary_unlink_root(struct Dictionary *dict)
 {
-	struct DictionaryElement *delem, *nextnode, *parentofnext;
+    struct DictionaryElement *delem, *nextnode, *parentofnext;
 
-	dict->dirty = TRUE;
+    dict->dirty = TRUE;
 
-	delem = dict->root;
-	if (delem == NULL)
-		return;
+    delem = dict->root;
+    if (delem == NULL)
+        return;
 
-	if (dict->root->left == NULL)
-		dict->root = dict->root->right;
-	else if (dict->root->right == NULL)
-		dict->root = dict->root->left;
-	else
-	{
-		/* Make the node with the next highest key the new root.
-		 * This node has a NULL left pointer. */
-		nextnode = delem->next;
-		s_assert(nextnode->left == NULL);
-		if (nextnode == delem->right)
-		{
-			dict->root = nextnode;
-			dict->root->left = delem->left;
-		}
-		else
-		{
-			parentofnext = delem->right;
-			while (parentofnext->left != NULL && parentofnext->left != nextnode)
-				parentofnext = parentofnext->left;
-			s_assert(parentofnext->left == nextnode);
-			parentofnext->left = nextnode->right;
-			dict->root = nextnode;
-			dict->root->left = delem->left;
-			dict->root->right = delem->right;
-		}
-	}
+    if (dict->root->left == NULL)
+        dict->root = dict->root->right;
+    else if (dict->root->right == NULL)
+        dict->root = dict->root->left;
+    else {
+        /* Make the node with the next highest key the new root.
+         * This node has a NULL left pointer. */
+        nextnode = delem->next;
+        s_assert(nextnode->left == NULL);
+        if (nextnode == delem->right) {
+            dict->root = nextnode;
+            dict->root->left = delem->left;
+        } else {
+            parentofnext = delem->right;
+            while (parentofnext->left != NULL && parentofnext->left != nextnode)
+                parentofnext = parentofnext->left;
+            s_assert(parentofnext->left == nextnode);
+            parentofnext->left = nextnode->right;
+            dict->root = nextnode;
+            dict->root->left = delem->left;
+            dict->root->right = delem->right;
+        }
+    }
 
-	/* linked list */
-	if (delem->prev != NULL)
-		delem->prev->next = delem->next;
+    /* linked list */
+    if (delem->prev != NULL)
+        delem->prev->next = delem->next;
 
-	if (dict->head == delem)
-		dict->head = delem->next;
+    if (dict->head == delem)
+        dict->head = delem->next;
 
-	if (delem->next)
-		delem->next->prev = delem->prev;
+    if (delem->next)
+        delem->next->prev = delem->prev;
 
-	if (dict->tail == delem)
-		dict->tail = delem->prev;
+    if (dict->tail == delem)
+        dict->tail = delem->prev;
 
-	dict->count--;
+    dict->count--;
 }
 
 /*
@@ -460,22 +440,21 @@ irc_dictionary_unlink_root(struct Dictionary *dict)
  *       DTree will not be destroyed.
  */
 void irc_dictionary_destroy(struct Dictionary *dtree,
-	void (*destroy_cb)(struct DictionaryElement *delem, void *privdata),
-	void *privdata)
+                            void (*destroy_cb)(struct DictionaryElement *delem, void *privdata),
+                            void *privdata)
 {
-	struct DictionaryElement *n, *tn;
+    struct DictionaryElement *n, *tn;
 
-	s_assert(dtree != NULL);
+    s_assert(dtree != NULL);
 
-	RB_DLINK_FOREACH_SAFE(n, tn, dtree->head)
-	{
-		if (destroy_cb != NULL)
-			(*destroy_cb)(n, privdata);
+    RB_DLINK_FOREACH_SAFE(n, tn, dtree->head) {
+        if (destroy_cb != NULL)
+            (*destroy_cb)(n, privdata);
 
-		rb_bh_free(elem_heap, n);
-	}
+        rb_bh_free(elem_heap, n);
+    }
 
-	rb_free(dtree);
+    rb_free(dtree);
 }
 
 /*
@@ -497,21 +476,20 @@ void irc_dictionary_destroy(struct Dictionary *dtree,
  *     - on success, a dtree is iterated
  */
 void irc_dictionary_foreach(struct Dictionary *dtree,
-	int (*foreach_cb)(struct DictionaryElement *delem, void *privdata),
-	void *privdata)
+                            int (*foreach_cb)(struct DictionaryElement *delem, void *privdata),
+                            void *privdata)
 {
-	struct DictionaryElement *n, *tn;
+    struct DictionaryElement *n, *tn;
 
-	s_assert(dtree != NULL);
+    s_assert(dtree != NULL);
 
-	RB_DLINK_FOREACH_SAFE(n, tn, dtree->head)
-	{
-		/* delem_t is a subclass of node_t. */
-		struct DictionaryElement *delem = (struct DictionaryElement *) n;
+    RB_DLINK_FOREACH_SAFE(n, tn, dtree->head) {
+        /* delem_t is a subclass of node_t. */
+        struct DictionaryElement *delem = (struct DictionaryElement *) n;
 
-		if (foreach_cb != NULL)
-			(*foreach_cb)(delem, privdata);
-	}
+        if (foreach_cb != NULL)
+            (*foreach_cb)(delem, privdata);
+    }
 }
 
 /*
@@ -534,27 +512,26 @@ void irc_dictionary_foreach(struct Dictionary *dtree,
  *     - a dtree is iterated until the requested conditions are met
  */
 void *irc_dictionary_search(struct Dictionary *dtree,
-	void *(*foreach_cb)(struct DictionaryElement *delem, void *privdata),
-	void *privdata)
+                            void *(*foreach_cb)(struct DictionaryElement *delem, void *privdata),
+                            void *privdata)
 {
-	struct DictionaryElement *n, *tn;
-	void *ret = NULL;
+    struct DictionaryElement *n, *tn;
+    void *ret = NULL;
 
-	s_assert(dtree != NULL);
+    s_assert(dtree != NULL);
 
-	RB_DLINK_FOREACH_SAFE(n, tn, dtree->head)
-	{
-		/* delem_t is a subclass of node_t. */
-		struct DictionaryElement *delem = (struct DictionaryElement *) n;
+    RB_DLINK_FOREACH_SAFE(n, tn, dtree->head) {
+        /* delem_t is a subclass of node_t. */
+        struct DictionaryElement *delem = (struct DictionaryElement *) n;
 
-		if (foreach_cb != NULL)
-			ret = (*foreach_cb)(delem, privdata);
+        if (foreach_cb != NULL)
+            ret = (*foreach_cb)(delem, privdata);
 
-		if (ret)
-			break;
-	}
+        if (ret)
+            break;
+    }
 
-	return ret;
+    return ret;
 }
 
 /*
@@ -574,24 +551,24 @@ void *irc_dictionary_search(struct Dictionary *dtree,
  *     - the static iterator, &state, is initialized.
  */
 void irc_dictionary_foreach_start(struct Dictionary *dtree,
-	struct DictionaryIter *state)
+                                  struct DictionaryIter *state)
 {
-	s_assert(dtree != NULL);
-	s_assert(state != NULL);
+    s_assert(dtree != NULL);
+    s_assert(state != NULL);
 
-	state->cur = NULL;
-	state->next = NULL;
+    state->cur = NULL;
+    state->next = NULL;
 
-	/* find first item */
-	state->cur = dtree->head;
+    /* find first item */
+    state->cur = dtree->head;
 
-	if (state->cur == NULL)
-		return;
+    if (state->cur == NULL)
+        return;
 
-	/* make state->cur point to first item and state->next point to
-	 * second item */
-	state->next = state->cur;
-	irc_dictionary_foreach_next(dtree, state);
+    /* make state->cur point to first item and state->next point to
+     * second item */
+    state->next = state->cur;
+    irc_dictionary_foreach_next(dtree, state);
 }
 
 /*
@@ -612,12 +589,12 @@ void irc_dictionary_foreach_start(struct Dictionary *dtree,
  *     - none
  */
 void *irc_dictionary_foreach_cur(struct Dictionary *dtree,
-	struct DictionaryIter *state)
+                                 struct DictionaryIter *state)
 {
-	s_assert(dtree != NULL);
-	s_assert(state != NULL);
+    s_assert(dtree != NULL);
+    s_assert(state != NULL);
 
-	return state->cur != NULL ? state->cur->data : NULL;
+    return state->cur != NULL ? state->cur->data : NULL;
 }
 
 /*
@@ -637,23 +614,22 @@ void *irc_dictionary_foreach_cur(struct Dictionary *dtree,
  *     - the static iterator, &state, is advanced to a new DTree node.
  */
 void irc_dictionary_foreach_next(struct Dictionary *dtree,
-	struct DictionaryIter *state)
+                                 struct DictionaryIter *state)
 {
-	s_assert(dtree != NULL);
-	s_assert(state != NULL);
+    s_assert(dtree != NULL);
+    s_assert(state != NULL);
 
-	if (state->cur == NULL)
-	{
-		ilog(L_MAIN, "irc_dictionary_foreach_next(): called again after iteration finished on dtree<%p>", (void *)dtree);
-		return;
-	}
+    if (state->cur == NULL) {
+        ilog(L_MAIN, "irc_dictionary_foreach_next(): called again after iteration finished on dtree<%p>", (void *)dtree);
+        return;
+    }
 
-	state->cur = state->next;
+    state->cur = state->next;
 
-	if (state->next == NULL)
-		return;
+    if (state->next == NULL)
+        return;
 
-	state->next = state->next->next;
+    state->next = state->next->next;
 }
 
 /*
@@ -674,16 +650,16 @@ void irc_dictionary_foreach_next(struct Dictionary *dtree,
  */
 struct DictionaryElement *irc_dictionary_find(struct Dictionary *dict, const char *key)
 {
-	s_assert(dict != NULL);
-	s_assert(key != NULL);
+    s_assert(dict != NULL);
+    s_assert(key != NULL);
 
-	/* retune for key, key will be the tree's root if it's available */
-	irc_dictionary_retune(dict, key);
+    /* retune for key, key will be the tree's root if it's available */
+    irc_dictionary_retune(dict, key);
 
-	if (dict->root && !dict->compare_cb(key, dict->root->key))
-		return dict->root;
+    if (dict->root && !dict->compare_cb(key, dict->root->key))
+        return dict->root;
 
-	return NULL;
+    return NULL;
 }
 
 /*
@@ -705,27 +681,26 @@ struct DictionaryElement *irc_dictionary_find(struct Dictionary *dict, const cha
  */
 struct DictionaryElement *irc_dictionary_add(struct Dictionary *dict, const char *key, void *data)
 {
-	struct DictionaryElement *delem;
+    struct DictionaryElement *delem;
 
-	s_assert(dict != NULL);
-	s_assert(key != NULL);
-	s_assert(data != NULL);
-	s_assert(irc_dictionary_find(dict, key) == NULL);
+    s_assert(dict != NULL);
+    s_assert(key != NULL);
+    s_assert(data != NULL);
+    s_assert(irc_dictionary_find(dict, key) == NULL);
 
-	delem = rb_bh_alloc(elem_heap);
-	delem->key = key;
-	delem->data = data;
+    delem = rb_bh_alloc(elem_heap);
+    delem->key = key;
+    delem->data = data;
 
-	/* TBD: is this needed? --nenolod */
-	if (delem->key == NULL)
-	{
-		rb_bh_free(elem_heap, delem);
-		return NULL;
-	}
+    /* TBD: is this needed? --nenolod */
+    if (delem->key == NULL) {
+        rb_bh_free(elem_heap, delem);
+        return NULL;
+    }
 
-	irc_dictionary_link(dict, delem);
+    irc_dictionary_link(dict, delem);
 
-	return delem;
+    return delem;
 }
 
 /*
@@ -749,18 +724,18 @@ struct DictionaryElement *irc_dictionary_add(struct Dictionary *dict, const char
  */
 void *irc_dictionary_delete(struct Dictionary *dtree, const char *key)
 {
-	struct DictionaryElement *delem = irc_dictionary_find(dtree, key);
-	void *data;
+    struct DictionaryElement *delem = irc_dictionary_find(dtree, key);
+    void *data;
 
-	if (delem == NULL)
-		return NULL;
+    if (delem == NULL)
+        return NULL;
 
-	data = delem->data;
+    data = delem->data;
 
-	irc_dictionary_unlink_root(dtree);
-	rb_bh_free(elem_heap, delem);	
+    irc_dictionary_unlink_root(dtree);
+    rb_bh_free(elem_heap, delem);
 
-	return data;
+    return data;
 }
 
 /*
@@ -781,12 +756,12 @@ void *irc_dictionary_delete(struct Dictionary *dtree, const char *key)
  */
 void *irc_dictionary_retrieve(struct Dictionary *dtree, const char *key)
 {
-	struct DictionaryElement *delem = irc_dictionary_find(dtree, key);
+    struct DictionaryElement *delem = irc_dictionary_find(dtree, key);
 
-	if (delem != NULL)
-		return delem->data;
+    if (delem != NULL)
+        return delem->data;
 
-	return NULL;
+    return NULL;
 }
 
 /*
@@ -805,25 +780,25 @@ void *irc_dictionary_retrieve(struct Dictionary *dtree, const char *key)
  */
 unsigned int irc_dictionary_size(struct Dictionary *dict)
 {
-	s_assert(dict != NULL);
+    s_assert(dict != NULL);
 
-	return dict->count;
+    return dict->count;
 }
 
 /* returns the sum of the depths of the subtree rooted in delem at depth depth */
 static int
 stats_recurse(struct DictionaryElement *delem, int depth, int *pmaxdepth)
 {
-	int result;
+    int result;
 
-	if (depth > *pmaxdepth)
-		*pmaxdepth = depth;
-	result = depth;
-	if (delem->left)
-		result += stats_recurse(delem->left, depth + 1, pmaxdepth);
-	if (delem->right)
-		result += stats_recurse(delem->right, depth + 1, pmaxdepth);
-	return result;
+    if (depth > *pmaxdepth)
+        *pmaxdepth = depth;
+    result = depth;
+    if (delem->left)
+        result += stats_recurse(delem->left, depth + 1, pmaxdepth);
+    if (delem->right)
+        result += stats_recurse(delem->right, depth + 1, pmaxdepth);
+    return result;
 }
 
 /*
@@ -844,21 +819,21 @@ stats_recurse(struct DictionaryElement *delem, int depth, int *pmaxdepth)
  */
 void irc_dictionary_stats(struct Dictionary *dict, void (*cb)(const char *line, void *privdata), void *privdata)
 {
-	char str[256];
-	int sum, maxdepth;
+    char str[256];
+    int sum, maxdepth;
 
-	s_assert(dict != NULL);
+    s_assert(dict != NULL);
 
-	if (dict->id != NULL)
-		rb_snprintf(str, sizeof str, "Dictionary stats for %s (%d)",
-				dict->id, dict->count);
-	else
-		rb_snprintf(str, sizeof str, "Dictionary stats for <%p> (%d)",
-				(void *)dict, dict->count);
-	cb(str, privdata);
-	maxdepth = 0;
-	sum = stats_recurse(dict->root, 0, &maxdepth);
-	rb_snprintf(str, sizeof str, "Depth sum %d Avg depth %d Max depth %d", sum, sum / dict->count, maxdepth);
-	cb(str, privdata);
-	return;
+    if (dict->id != NULL)
+        rb_snprintf(str, sizeof str, "Dictionary stats for %s (%d)",
+                    dict->id, dict->count);
+    else
+        rb_snprintf(str, sizeof str, "Dictionary stats for <%p> (%d)",
+                    (void *)dict, dict->count);
+    cb(str, privdata);
+    maxdepth = 0;
+    sum = stats_recurse(dict->root, 0, &maxdepth);
+    rb_snprintf(str, sizeof str, "Depth sum %d Avg depth %d Max depth %d", sum, sum / dict->count, maxdepth);
+    cb(str, privdata);
+    return;
 }

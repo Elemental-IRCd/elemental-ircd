@@ -44,13 +44,13 @@
 #ifdef HAVE_WRITEV
 #ifndef UIO_MAXIOV
 # if defined(__FreeBSD__) || defined(__APPLE__) || defined(__NetBSD__)
-			/* FreeBSD 4.7 defines it in sys/uio.h only if _KERNEL is specified */
+/* FreeBSD 4.7 defines it in sys/uio.h only if _KERNEL is specified */
 #  define RB_UIO_MAXIOV 1024
 # elif defined(__sgi)
-			/* IRIX 6.5 has sysconf(_SC_IOV_MAX) which might return 512 or bigger */
+/* IRIX 6.5 has sysconf(_SC_IOV_MAX) which might return 512 or bigger */
 #  define RB_UIO_MAXIOV 512
 # elif defined(__sun)
-			/* Solaris (and SunOS?) defines IOV_MAX instead */
+/* Solaris (and SunOS?) defines IOV_MAX instead */
 #  ifndef IOV_MAX
 #   define RB_UIO_MAXIOV 16
 #  else
@@ -68,24 +68,22 @@
 #else
 #define RB_UIO_MAXIOV 16
 #endif
-struct conndata
-{
-	/* We don't need the host here ? */
-	struct rb_sockaddr_storage S;
-	struct rb_sockaddr_storage hostaddr;
-	time_t t;
-	CNCB *callback;
-	void *data;
-	/* We'd also add the retry count here when we get to that -- adrian */
+struct conndata {
+    /* We don't need the host here ? */
+    struct rb_sockaddr_storage S;
+    struct rb_sockaddr_storage hostaddr;
+    time_t t;
+    CNCB *callback;
+    void *data;
+    /* We'd also add the retry count here when we get to that -- adrian */
 };
 
-struct acceptdata
-{
-	struct rb_sockaddr_storage S;
-	rb_socklen_t addrlen;
-	ACCB *callback;
-	ACPRE *precb;
-	void *data;
+struct acceptdata {
+    struct rb_sockaddr_storage S;
+    rb_socklen_t addrlen;
+    ACCB *callback;
+    ACPRE *precb;
+    void *data;
 };
 
 /* Only have open flags for now, could be more later */
@@ -95,40 +93,38 @@ struct acceptdata
 #define ClearFDOpen(F)	(F->flags &= ~FLAG_OPEN)
 
 
-struct _fde
-{
-	/* New-school stuff, again pretty much ripped from squid */
-	/*
-	 * Yes, this gives us only one pending read and one pending write per
-	 * filedescriptor. Think though: when do you think we'll need more?
-	 */
-	rb_dlink_node node;
-	int fd;			/* So we can use the rb_fde_t as a callback ptr */
-	uint8_t flags;
-	uint8_t type;
-	int pflags;
-	char *desc;
-	PF *read_handler;
-	void *read_data;
-	PF *write_handler;
-	void *write_data;
-	struct timeout_data *timeout;
-	struct conndata *connect;
-	struct acceptdata *accept;
-	void *ssl;
-	unsigned int handshake_count;
-	unsigned long ssl_errno;
+struct _fde {
+    /* New-school stuff, again pretty much ripped from squid */
+    /*
+     * Yes, this gives us only one pending read and one pending write per
+     * filedescriptor. Think though: when do you think we'll need more?
+     */
+    rb_dlink_node node;
+    int fd;			/* So we can use the rb_fde_t as a callback ptr */
+    uint8_t flags;
+    uint8_t type;
+    int pflags;
+    char *desc;
+    PF *read_handler;
+    void *read_data;
+    PF *write_handler;
+    void *write_data;
+    struct timeout_data *timeout;
+    struct conndata *connect;
+    struct acceptdata *accept;
+    void *ssl;
+    unsigned int handshake_count;
+    unsigned long ssl_errno;
 };
 
 typedef void (*comm_event_cb_t) (void *);
 
 #ifdef USE_TIMER_CREATE
-typedef struct timer_data
-{
-	timer_t td_timer_id;
-	comm_event_cb_t td_cb;
-	void *td_udata;
-	int td_repeat;
+typedef struct timer_data {
+    timer_t td_timer_id;
+    comm_event_cb_t td_cb;
+    void *td_udata;
+    int td_repeat;
 } *comm_event_id;
 #endif
 
@@ -137,24 +133,23 @@ extern rb_dlink_list *rb_fd_table;
 static inline rb_fde_t *
 rb_find_fd(int fd)
 {
-	rb_dlink_list *hlist;
-	rb_dlink_node *ptr;
+    rb_dlink_list *hlist;
+    rb_dlink_node *ptr;
 
-	if(rb_unlikely(fd < 0))
-		return NULL;
+    if(rb_unlikely(fd < 0))
+        return NULL;
 
-	hlist = &rb_fd_table[rb_hash_fd(fd)];
+    hlist = &rb_fd_table[rb_hash_fd(fd)];
 
-	if(hlist->head == NULL)
-		return NULL;
+    if(hlist->head == NULL)
+        return NULL;
 
-	RB_DLINK_FOREACH(ptr, hlist->head)
-	{
-		rb_fde_t *F = ptr->data;
-		if(F->fd == fd)
-			return F;
-	}
-	return NULL;
+    RB_DLINK_FOREACH(ptr, hlist->head) {
+        rb_fde_t *F = ptr->data;
+        if(F->fd == fd)
+            return F;
+    }
+    return NULL;
 }
 
 

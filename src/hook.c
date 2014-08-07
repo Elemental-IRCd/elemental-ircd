@@ -67,25 +67,25 @@ int h_can_kick;
 void
 init_hook(void)
 {
-	hooks = rb_malloc(sizeof(hook) * HOOK_INCREMENT);
+    hooks = rb_malloc(sizeof(hook) * HOOK_INCREMENT);
 
 #ifdef USE_IODEBUG_HOOKS
-	h_iosend_id = register_hook("iosend");
-	h_iorecv_id = register_hook("iorecv");
-	h_iorecvctrl_id = register_hook("iorecvctrl");
+    h_iosend_id = register_hook("iosend");
+    h_iorecv_id = register_hook("iorecv");
+    h_iorecvctrl_id = register_hook("iorecvctrl");
 #endif
 
-	h_burst_client = register_hook("burst_client");
-	h_burst_channel = register_hook("burst_channel");
-	h_burst_finished = register_hook("burst_finished");
-	h_server_introduced = register_hook("server_introduced");
-	h_server_eob = register_hook("server_eob");
-	h_client_exit = register_hook("client_exit");
-	h_umode_changed = register_hook("umode_changed");
-	h_new_local_user = register_hook("new_local_user");
-	h_new_remote_user = register_hook("new_remote_user");
-	h_introduce_client = register_hook("introduce_client");
-	h_can_kick = register_hook("can_kick");
+    h_burst_client = register_hook("burst_client");
+    h_burst_channel = register_hook("burst_channel");
+    h_burst_finished = register_hook("burst_finished");
+    h_server_introduced = register_hook("server_introduced");
+    h_server_eob = register_hook("server_eob");
+    h_client_exit = register_hook("client_exit");
+    h_umode_changed = register_hook("umode_changed");
+    h_new_local_user = register_hook("new_local_user");
+    h_new_remote_user = register_hook("new_remote_user");
+    h_introduce_client = register_hook("introduce_client");
+    h_can_kick = register_hook("can_kick");
 }
 
 /* grow_hooktable()
@@ -94,14 +94,14 @@ init_hook(void)
 static void
 grow_hooktable(void)
 {
-	hook *newhooks;
+    hook *newhooks;
 
-	newhooks = rb_malloc(sizeof(hook) * (max_hooks + HOOK_INCREMENT));
-	memcpy(newhooks, hooks, sizeof(hook) * num_hooks);
+    newhooks = rb_malloc(sizeof(hook) * (max_hooks + HOOK_INCREMENT));
+    memcpy(newhooks, hooks, sizeof(hook) * num_hooks);
 
-	rb_free(hooks);
-	hooks = newhooks;
-	max_hooks += HOOK_INCREMENT;
+    rb_free(hooks);
+    hooks = newhooks;
+    max_hooks += HOOK_INCREMENT;
 }
 
 /* find_freehookslot()
@@ -111,19 +111,18 @@ grow_hooktable(void)
 static int
 find_freehookslot(void)
 {
-	int i;
+    int i;
 
-	if((num_hooks + 1) > max_hooks)
-		grow_hooktable();
+    if((num_hooks + 1) > max_hooks)
+        grow_hooktable();
 
-	for(i = 0; i < max_hooks; i++)
-	{
-		if(!hooks[i].name)
-			return i;
-	}
+    for(i = 0; i < max_hooks; i++) {
+        if(!hooks[i].name)
+            return i;
+    }
 
-	/* shouldnt ever get here */
-	return(max_hooks - 1);
+    /* shouldnt ever get here */
+    return(max_hooks - 1);
 }
 
 /* find_hook()
@@ -132,18 +131,17 @@ find_freehookslot(void)
 static int
 find_hook(const char *name)
 {
-	int i;
+    int i;
 
-	for(i = 0; i < max_hooks; i++)
-	{
-		if(!hooks[i].name)
-			continue;
+    for(i = 0; i < max_hooks; i++) {
+        if(!hooks[i].name)
+            continue;
 
-		if(!irccmp(hooks[i].name, name))
-			return i;
-	}
+        if(!irccmp(hooks[i].name, name))
+            return i;
+    }
 
-	return -1;
+    return -1;
 }
 
 /* register_hook()
@@ -153,16 +151,15 @@ find_hook(const char *name)
 int
 register_hook(const char *name)
 {
-	int i;
+    int i;
 
-	if((i = find_hook(name)) < 0)
-	{
-		i = find_freehookslot();
-		hooks[i].name = rb_strdup(name);
-		num_hooks++;
-	}
+    if((i = find_hook(name)) < 0) {
+        i = find_freehookslot();
+        hooks[i].name = rb_strdup(name);
+        num_hooks++;
+    }
 
-	return i;
+    return i;
 }
 
 /* add_hook()
@@ -172,11 +169,11 @@ register_hook(const char *name)
 void
 add_hook(const char *name, hookfn fn)
 {
-	int i;
+    int i;
 
-	i = register_hook(name);
+    i = register_hook(name);
 
-	rb_dlinkAddAlloc(fn, &hooks[i].hooks);
+    rb_dlinkAddAlloc(fn, &hooks[i].hooks);
 }
 
 /* remove_hook()
@@ -185,12 +182,12 @@ add_hook(const char *name, hookfn fn)
 void
 remove_hook(const char *name, hookfn fn)
 {
-	int i;
+    int i;
 
-	if((i = find_hook(name)) < 0)
-		return;
+    if((i = find_hook(name)) < 0)
+        return;
 
-	rb_dlinkFindDestroy(fn, &hooks[i].hooks);
+    rb_dlinkFindDestroy(fn, &hooks[i].hooks);
 }
 
 /* call_hook()
@@ -199,16 +196,15 @@ remove_hook(const char *name, hookfn fn)
 void
 call_hook(int id, void *arg)
 {
-	hookfn fn;
-	rb_dlink_node *ptr;
+    hookfn fn;
+    rb_dlink_node *ptr;
 
-	/* The ID we were passed is the position in the hook table of this
-	 * hook
-	 */
-	RB_DLINK_FOREACH(ptr, hooks[id].hooks.head)
-	{
-		fn = ptr->data;
-		fn(arg);
-	}
+    /* The ID we were passed is the position in the hook table of this
+     * hook
+     */
+    RB_DLINK_FOREACH(ptr, hooks[id].hooks.head) {
+        fn = ptr->data;
+        fn(arg);
+    }
 }
 

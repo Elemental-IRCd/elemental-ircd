@@ -39,7 +39,7 @@
 #   include <alloca.h>
 #  else
 #   ifdef _AIX
- #pragma alloca
+#pragma alloca
 #   else
 #    ifndef alloca /* predefined by HP cc +Olibcalls */
 char *alloca ();
@@ -48,7 +48,7 @@ char *alloca ();
 #  endif
 # endif
 #endif
- 
+
 
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
@@ -142,7 +142,7 @@ extern int errno;
 
 
 #ifdef strdupa
-#define LOCAL_COPY(s) strdupa(s) 
+#define LOCAL_COPY(s) strdupa(s)
 #else
 #if defined(__INTEL_COMPILER) || defined(__GNUC__)
 # define LOCAL_COPY(s) __extension__({ char *_s = alloca(strlen(s) + 1); strcpy(_s, s); _s; })

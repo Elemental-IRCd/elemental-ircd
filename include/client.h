@@ -76,238 +76,231 @@ struct scache_entry;
 /*
  * Client structures
  */
-struct User
-{
-	rb_dlink_list channel;	/* chain of channel pointer blocks */
-	rb_dlink_list invited;	/* chain of invite pointer blocks */
-	char *away;		/* pointer to away message */
-	int refcnt;		/* Number of times this block is referenced */
+struct User {
+    rb_dlink_list channel;	/* chain of channel pointer blocks */
+    rb_dlink_list invited;	/* chain of invite pointer blocks */
+    char *away;		/* pointer to away message */
+    int refcnt;		/* Number of times this block is referenced */
 
-	struct Dictionary *metadata;
+    struct Dictionary *metadata;
 
-	char suser[NICKLEN+1];
+    char suser[NICKLEN+1];
 };
 
-struct Server
-{
-	struct User *user;	/* who activated this connection */
-	char by[NICKLEN];
-	rb_dlink_list servers;
-	rb_dlink_list users;
-	int caps;		/* capabilities bit-field */
-	char *fullcaps;
-	struct scache_entry *nameinfo;
+struct Server {
+    struct User *user;	/* who activated this connection */
+    char by[NICKLEN];
+    rb_dlink_list servers;
+    rb_dlink_list users;
+    int caps;		/* capabilities bit-field */
+    char *fullcaps;
+    struct scache_entry *nameinfo;
 };
 
-struct ZipStats
-{
-	unsigned long long in;
-	unsigned long long in_wire;
-	unsigned long long out;
-	unsigned long long out_wire;
-	double in_ratio;
-	double out_ratio;
+struct ZipStats {
+    unsigned long long in;
+    unsigned long long in_wire;
+    unsigned long long out;
+    unsigned long long out_wire;
+    double in_ratio;
+    double out_ratio;
 };
 
-struct Client
-{
-	rb_dlink_node node;
-	rb_dlink_node lnode;
-	struct User *user;	/* ...defined, if this is a User */
-	struct Server *serv;	/* ...defined, if this is a server */
-	struct Client *servptr;	/* Points to server this Client is on */
-	struct Client *from;	/* == self, if Local Client, *NEVER* NULL! */
+struct Client {
+    rb_dlink_node node;
+    rb_dlink_node lnode;
+    struct User *user;	/* ...defined, if this is a User */
+    struct Server *serv;	/* ...defined, if this is a server */
+    struct Client *servptr;	/* Points to server this Client is on */
+    struct Client *from;	/* == self, if Local Client, *NEVER* NULL! */
 
-	struct Whowas *whowas;	/* Pointers to whowas structs */
-	time_t tsinfo;		/* TS on the nick, SVINFO on server */
-	unsigned int umodes;	/* opers, normal users subset */
-	unsigned int flags;	/* client flags */
-	unsigned int flags2;	/* ugh. overflow */
+    struct Whowas *whowas;	/* Pointers to whowas structs */
+    time_t tsinfo;		/* TS on the nick, SVINFO on server */
+    unsigned int umodes;	/* opers, normal users subset */
+    unsigned int flags;	/* client flags */
+    unsigned int flags2;	/* ugh. overflow */
 
-	unsigned int snomask;	/* server notice mask */
+    unsigned int snomask;	/* server notice mask */
 
-	int hopcount;		/* number of servers to this 0 = local */
-	unsigned short status;	/* Client type */
-	unsigned char handler;	/* Handler index */
-	unsigned long serial;	/* used to enforce 1 send per nick */
+    int hopcount;		/* number of servers to this 0 = local */
+    unsigned short status;	/* Client type */
+    unsigned char handler;	/* Handler index */
+    unsigned long serial;	/* used to enforce 1 send per nick */
 
-	/* client->name is the unique name for a client nick or host */
-	char name[HOSTLEN + 1];
+    /* client->name is the unique name for a client nick or host */
+    char name[HOSTLEN + 1];
 
-	/* 
-	 * client->username is the username from ident or the USER message, 
-	 * If the client is idented the USER message is ignored, otherwise 
-	 * the username part of the USER message is put here prefixed with a 
-	 * tilde depending on the I:line, Once a client has registered, this
-	 * field should be considered read-only.
-	 */
-	char username[USERLEN + 1];	/* client's username */
+    /*
+     * client->username is the username from ident or the USER message,
+     * If the client is idented the USER message is ignored, otherwise
+     * the username part of the USER message is put here prefixed with a
+     * tilde depending on the I:line, Once a client has registered, this
+     * field should be considered read-only.
+     */
+    char username[USERLEN + 1];	/* client's username */
 
-	/*
-	 * client->host contains the resolved name or ip address
-	 * as a string for the user, it may be fiddled with for oper spoofing etc.
-	 */
-	char host[HOSTLEN + 1];	/* client's hostname */
-	char orighost[HOSTLEN + 1]; /* original hostname (before dynamic spoofing) */
-	char sockhost[HOSTIPLEN + 1]; /* clients ip */
-	char info[REALLEN + 1];	/* Free form additional client info */
+    /*
+     * client->host contains the resolved name or ip address
+     * as a string for the user, it may be fiddled with for oper spoofing etc.
+     */
+    char host[HOSTLEN + 1];	/* client's hostname */
+    char orighost[HOSTLEN + 1]; /* original hostname (before dynamic spoofing) */
+    char sockhost[HOSTIPLEN + 1]; /* clients ip */
+    char info[REALLEN + 1];	/* Free form additional client info */
 
-	char id[IDLEN];	/* UID/SID, unique on the network */
+    char id[IDLEN];	/* UID/SID, unique on the network */
 
-	/* list of who has this client on their allow list, its counterpart
-	 * is in LocalUser
-	 */
-	rb_dlink_list on_allow_list;
+    /* list of who has this client on their allow list, its counterpart
+     * is in LocalUser
+     */
+    rb_dlink_list on_allow_list;
 
-	time_t first_received_message_time;
-	int received_number_of_privmsgs;
-	int flood_noticed;
+    time_t first_received_message_time;
+    int received_number_of_privmsgs;
+    int flood_noticed;
 
-	struct LocalUser *localClient;
-	struct PreClient *preClient;
+    struct LocalUser *localClient;
+    struct PreClient *preClient;
 
-	time_t large_ctcp_sent; /* ctcp to large group sent, relax flood checks */
-	char *certfp; /* client certificate fingerprint */
+    time_t large_ctcp_sent; /* ctcp to large group sent, relax flood checks */
+    char *certfp; /* client certificate fingerprint */
 };
 
-struct LocalUser
-{
-	rb_dlink_node tnode;	/* This is the node for the local list type the client is on*/
-	/*
-	 * The following fields are allocated only for local clients
-	 * (directly connected to *this* server with a socket.
-	 */
-	/* Anti flooding part, all because of lamers... */
-	time_t last_join_time;	/* when this client last 
+struct LocalUser {
+    rb_dlink_node tnode;	/* This is the node for the local list type the client is on*/
+    /*
+     * The following fields are allocated only for local clients
+     * (directly connected to *this* server with a socket.
+     */
+    /* Anti flooding part, all because of lamers... */
+    time_t last_join_time;	/* when this client last
 				   joined a channel */
-	time_t last_leave_time;	/* when this client last 
+    time_t last_leave_time;	/* when this client last
 				 * left a channel */
-	int join_leave_count;	/* count of JOIN/LEAVE in less than 
+    int join_leave_count;	/* count of JOIN/LEAVE in less than
 				   MIN_JOIN_LEAVE_TIME seconds */
-	int oper_warn_count_down;	/* warn opers of this possible 
+    int oper_warn_count_down;	/* warn opers of this possible
 					   spambot every time this gets to 0 */
-	time_t last_caller_id_time;
+    time_t last_caller_id_time;
 
-	time_t lasttime;	/* last time we parsed something */
-	time_t firsttime;	/* time client was created */
+    time_t lasttime;	/* last time we parsed something */
+    time_t firsttime;	/* time client was created */
 
-	/* Send and receive linebuf queues .. */
-	buf_head_t buf_sendq;
-	buf_head_t buf_recvq;
-	/*
-	 * we want to use unsigned int here so the sizes have a better chance of
-	 * staying the same on 64 bit machines. The current trend is to use
-	 * I32LP64, (32 bit ints, 64 bit longs and pointers) and since ircd
-	 * will NEVER run on an operating system where ints are less than 32 bits, 
-	 * it's a relatively safe bet to use ints. Since right shift operations are
-	 * performed on these, it's not safe to allow them to become negative, 
-	 * which is possible for long running server connections. Unsigned values 
-	 * generally overflow gracefully. --Bleep
-	 */
-	unsigned int sendM;	/* Statistics: protocol messages send */
-	unsigned int sendK;	/* Statistics: total k-bytes send */
-	unsigned int receiveM;	/* Statistics: protocol messages received */
-	unsigned int receiveK;	/* Statistics: total k-bytes received */
-	unsigned short sendB;	/* counters to count upto 1-k lots of bytes */
-	unsigned short receiveB;	/* sent and received. */
-	struct Listener *listener;	/* listener accepted from */
-	struct ConfItem *att_conf;	/* attached conf */
-	struct server_conf *att_sconf;
+    /* Send and receive linebuf queues .. */
+    buf_head_t buf_sendq;
+    buf_head_t buf_recvq;
+    /*
+     * we want to use unsigned int here so the sizes have a better chance of
+     * staying the same on 64 bit machines. The current trend is to use
+     * I32LP64, (32 bit ints, 64 bit longs and pointers) and since ircd
+     * will NEVER run on an operating system where ints are less than 32 bits,
+     * it's a relatively safe bet to use ints. Since right shift operations are
+     * performed on these, it's not safe to allow them to become negative,
+     * which is possible for long running server connections. Unsigned values
+     * generally overflow gracefully. --Bleep
+     */
+    unsigned int sendM;	/* Statistics: protocol messages send */
+    unsigned int sendK;	/* Statistics: total k-bytes send */
+    unsigned int receiveM;	/* Statistics: protocol messages received */
+    unsigned int receiveK;	/* Statistics: total k-bytes received */
+    unsigned short sendB;	/* counters to count upto 1-k lots of bytes */
+    unsigned short receiveB;	/* sent and received. */
+    struct Listener *listener;	/* listener accepted from */
+    struct ConfItem *att_conf;	/* attached conf */
+    struct server_conf *att_sconf;
 
-	struct rb_sockaddr_storage ip;
-	time_t last_nick_change;
-	int number_of_nick_changes;
+    struct rb_sockaddr_storage ip;
+    time_t last_nick_change;
+    int number_of_nick_changes;
 
-	/*
-	 * XXX - there is no reason to save this, it should be checked when it's
-	 * received and not stored, this is not used after registration
-	 *
-	 * agreed. lets get rid of it someday! --nenolod
-	 */
-	char *passwd;
-	char *auth_user;
-	char *opername; /* name of operator{} block being used or tried (challenge) */
-	char *challenge;
-	char *fullcaps;
+    /*
+     * XXX - there is no reason to save this, it should be checked when it's
+     * received and not stored, this is not used after registration
+     *
+     * agreed. lets get rid of it someday! --nenolod
+     */
+    char *passwd;
+    char *auth_user;
+    char *opername; /* name of operator{} block being used or tried (challenge) */
+    char *challenge;
+    char *fullcaps;
 
-	int caps;		/* capabilities bit-field */
-	rb_fde_t *F;		/* >= 0, for local clients */
+    int caps;		/* capabilities bit-field */
+    rb_fde_t *F;		/* >= 0, for local clients */
 
-	/* time challenge response is valid for */
-	time_t chal_time;
+    /* time challenge response is valid for */
+    time_t chal_time;
 
-	struct DNSQuery *dnsquery; /* for outgoing server's name lookup */
+    struct DNSQuery *dnsquery; /* for outgoing server's name lookup */
 
     time_t next_away;  /* Don't allow next away before... */
-	time_t last;
+    time_t last;
 
-	/* clients allowed to talk through +g */
-	rb_dlink_list allow_list;
+    /* clients allowed to talk through +g */
+    rb_dlink_list allow_list;
 
-	/* nicknames theyre monitoring */
-	rb_dlink_list monitor_list;
+    /* nicknames theyre monitoring */
+    rb_dlink_list monitor_list;
 
-	/*
-	 * Anti-flood stuff. We track how many messages were parsed and how
-	 * many we were allowed in the current second, and apply a simple decay
-	 * to avoid flooding.
-	 *   -- adrian
-	 */
-	int allow_read;		/* how many we're allowed to read in this second */
-	int actually_read;	/* how many we've actually read in this second */
-	int sent_parsed;	/* how many messages we've parsed in this second */
-	time_t last_knock;	/* time of last knock */
-	unsigned long random_ping;
-	struct AuthRequest *auth_request;
+    /*
+     * Anti-flood stuff. We track how many messages were parsed and how
+     * many we were allowed in the current second, and apply a simple decay
+     * to avoid flooding.
+     *   -- adrian
+     */
+    int allow_read;		/* how many we're allowed to read in this second */
+    int actually_read;	/* how many we've actually read in this second */
+    int sent_parsed;	/* how many messages we've parsed in this second */
+    time_t last_knock;	/* time of last knock */
+    unsigned long random_ping;
+    struct AuthRequest *auth_request;
 
-	/* target change stuff */
-	/* targets we're aware of (fnv32(use_id(target_p))):
-	 * 0..TGCHANGE_NUM-1 regular slots
-	 * TGCHANGE_NUM..TGCHANGE_NUM+TGCHANGE_REPLY-1 reply slots
-	 */
-	uint32_t targets[TGCHANGE_NUM + TGCHANGE_REPLY];
-	unsigned int targets_free;	/* free targets */
-	time_t target_last;		/* last time we cleared a slot */
+    /* target change stuff */
+    /* targets we're aware of (fnv32(use_id(target_p))):
+     * 0..TGCHANGE_NUM-1 regular slots
+     * TGCHANGE_NUM..TGCHANGE_NUM+TGCHANGE_REPLY-1 reply slots
+     */
+    uint32_t targets[TGCHANGE_NUM + TGCHANGE_REPLY];
+    unsigned int targets_free;	/* free targets */
+    time_t target_last;		/* last time we cleared a slot */
 
-	struct ListClient *safelist_data;
+    struct ListClient *safelist_data;
 
-	char *mangledhost; /* non-NULL if host mangling module loaded and
+    char *mangledhost; /* non-NULL if host mangling module loaded and
 			      applicable to this client */
 
-	struct _ssl_ctl *ssl_ctl;		/* which ssl daemon we're associate with */
-	struct _ssl_ctl *z_ctl;			/* second ctl for ssl+zlib */
-	uint32_t localflags;
-	struct ZipStats *zipstats;		/* zipstats */
-	uint16_t cork_count;			/* used for corking/uncorking connections */
-	struct ev_entry *event;			/* used for associated events */
+    struct _ssl_ctl *ssl_ctl;		/* which ssl daemon we're associate with */
+    struct _ssl_ctl *z_ctl;			/* second ctl for ssl+zlib */
+    uint32_t localflags;
+    struct ZipStats *zipstats;		/* zipstats */
+    uint16_t cork_count;			/* used for corking/uncorking connections */
+    struct ev_entry *event;			/* used for associated events */
 
-	struct PrivilegeSet *privset;		/* privset... */
+    struct PrivilegeSet *privset;		/* privset... */
 
-	struct ev_entry *override_timeout_event;
+    struct ev_entry *override_timeout_event;
 };
 
-struct PreClient
-{
-	char spoofnick[NICKLEN + 1];
-	char spoofuser[USERLEN + 1];
-	char spoofhost[HOSTLEN + 1];
+struct PreClient {
+    char spoofnick[NICKLEN + 1];
+    char spoofuser[USERLEN + 1];
+    char spoofhost[HOSTLEN + 1];
 
-	char sasl_agent[IDLEN];
-	unsigned char sasl_out;
-	unsigned char sasl_complete;
+    char sasl_agent[IDLEN];
+    unsigned char sasl_out;
+    unsigned char sasl_complete;
 
-	rb_dlink_list dnsbl_queries; /* list of struct BlacklistClient * */
-	struct Blacklist *dnsbl_listed; /* first dnsbl where it's listed */
+    rb_dlink_list dnsbl_queries; /* list of struct BlacklistClient * */
+    struct Blacklist *dnsbl_listed; /* first dnsbl where it's listed */
 
-	struct rb_sockaddr_storage lip; /* address of our side of the connection */
+    struct rb_sockaddr_storage lip; /* address of our side of the connection */
 };
 
-struct ListClient
-{
-	unsigned int hash_indice;
-	unsigned int users_min, users_max;
-	time_t created_min, created_max, topic_min, topic_max;
-	int operspy;
+struct ListClient {
+    unsigned int hash_indice;
+    unsigned int users_min, users_max;
+    time_t created_min, created_max, topic_min, topic_max;
+    int operspy;
 };
 
 /*
