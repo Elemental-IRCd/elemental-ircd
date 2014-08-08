@@ -42,12 +42,12 @@ static int ms_operwall(struct Client *, struct Client *, int, const char **);
 static int ms_wallops(struct Client *, struct Client *, int, const char **);
 
 struct Message wallops_msgtab = {
-	"WALLOPS", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, mg_not_oper, {ms_wallops, 2}, {ms_wallops, 2}, mg_ignore, {ms_wallops, 2}}
+    "WALLOPS", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, mg_not_oper, {ms_wallops, 2}, {ms_wallops, 2}, mg_ignore, {ms_wallops, 2}}
 };
 struct Message operwall_msgtab = {
-	"OPERWALL", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, mg_not_oper, {ms_operwall, 2}, mg_ignore, mg_ignore, {mo_operwall, 2}}
+    "OPERWALL", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, mg_not_oper, {ms_operwall, 2}, mg_ignore, mg_ignore, {mo_operwall, 2}}
 };
 
 mapi_clist_av1 wallops_clist[] = { &wallops_msgtab, &operwall_msgtab, NULL };
@@ -60,18 +60,17 @@ DECLARE_MODULE_AV1(wallops, NULL, NULL, wallops_clist, NULL, NULL, "$Revision: 1
 static int
 mo_operwall(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	if(!IsOperOperwall(source_p))
-	{
-		sendto_one(source_p, form_str(ERR_NOPRIVS),
-			   me.name, source_p->name, "operwall");
-		return 0;
-	}
+    if(!IsOperOperwall(source_p)) {
+        sendto_one(source_p, form_str(ERR_NOPRIVS),
+                   me.name, source_p->name, "operwall");
+        return 0;
+    }
 
-	sendto_wallops_flags(UMODE_OPERWALL, source_p, "OPERWALL - %s", parv[1]);
-	sendto_server(client_p, NULL, CAP_TS6, NOCAPS, ":%s OPERWALL :%s", 
-		      use_id(source_p), parv[1]);
+    sendto_wallops_flags(UMODE_OPERWALL, source_p, "OPERWALL - %s", parv[1]);
+    sendto_server(client_p, NULL, CAP_TS6, NOCAPS, ":%s OPERWALL :%s",
+                  use_id(source_p), parv[1]);
 
-	return 0;
+    return 0;
 }
 
 /*
@@ -82,11 +81,11 @@ mo_operwall(struct Client *client_p, struct Client *source_p, int parc, const ch
 static int
 ms_operwall(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	sendto_server(client_p, NULL, CAP_TS6, NOCAPS, ":%s OPERWALL :%s",
-		      use_id(source_p), parv[1]);
-	sendto_wallops_flags(UMODE_OPERWALL, source_p, "OPERWALL - %s", parv[1]);
+    sendto_server(client_p, NULL, CAP_TS6, NOCAPS, ":%s OPERWALL :%s",
+                  use_id(source_p), parv[1]);
+    sendto_wallops_flags(UMODE_OPERWALL, source_p, "OPERWALL - %s", parv[1]);
 
-	return 0;
+    return 0;
 }
 
 /*
@@ -96,29 +95,27 @@ ms_operwall(struct Client *client_p, struct Client *source_p, int parc, const ch
 static int
 ms_wallops(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	const char *prefix = "";
+    const char *prefix = "";
 
-	if (MyClient(source_p) && !IsOperMassNotice(source_p))
-	{
-		sendto_one(source_p, form_str(ERR_NOPRIVS),
-			   me.name, source_p->name, "mass_notice");
-		return 0;
-	}
+    if (MyClient(source_p) && !IsOperMassNotice(source_p)) {
+        sendto_one(source_p, form_str(ERR_NOPRIVS),
+                   me.name, source_p->name, "mass_notice");
+        return 0;
+    }
 
-	if (IsPerson(source_p))
-	{
-		if (!strncmp(parv[1], "OPERWALL - ", 11) ||
-				!strncmp(parv[1], "LOCOPS - ", 9) ||
-				!strncmp(parv[1], "SLOCOPS - ", 10) ||
-				!strncmp(parv[1], "ADMINWALL - ", 12))
-			prefix = "WALLOPS - ";
-	}
+    if (IsPerson(source_p)) {
+        if (!strncmp(parv[1], "OPERWALL - ", 11) ||
+            !strncmp(parv[1], "LOCOPS - ", 9) ||
+            !strncmp(parv[1], "SLOCOPS - ", 10) ||
+            !strncmp(parv[1], "ADMINWALL - ", 12))
+            prefix = "WALLOPS - ";
+    }
 
-	sendto_wallops_flags(UMODE_WALLOP, source_p, "%s%s", prefix, parv[1]);
+    sendto_wallops_flags(UMODE_WALLOP, source_p, "%s%s", prefix, parv[1]);
 
-	sendto_server(client_p, NULL, CAP_TS6, NOCAPS, ":%s WALLOPS :%s", 
-		      use_id(source_p), parv[1]);
+    sendto_server(client_p, NULL, CAP_TS6, NOCAPS, ":%s WALLOPS :%s",
+                  use_id(source_p), parv[1]);
 
-	return 0;
+    return 0;
 }
 

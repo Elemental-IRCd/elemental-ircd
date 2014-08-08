@@ -42,11 +42,11 @@
 int
 rb_sprintf(char *str, const char *fmt, ...)
 __attribute((format(printf, 2, 3)));
-     int rb_snprintf(char *str, const size_t size, const char *, ...)
-	__attribute__ ((format(printf, 3, 4)));
-     int rb_sprintf_append(char *str, const char *format, ...) __attribute((format(printf, 2, 3)));
-     int rb_snprintf_append(char *str, size_t len, const char *format, ...)
-	__attribute__ ((format(printf, 3, 4)));
+int rb_snprintf(char *str, const size_t size, const char *, ...)
+__attribute__ ((format(printf, 3, 4)));
+int rb_sprintf_append(char *str, const char *format, ...) __attribute((format(printf, 2, 3)));
+int rb_snprintf_append(char *str, size_t len, const char *format, ...)
+__attribute__ ((format(printf, 3, 4)));
 #else
 int rb_sprintf(char *str, const char *format, ...);
 int rb_snprintf(char *str, const size_t size, const char *, ...);

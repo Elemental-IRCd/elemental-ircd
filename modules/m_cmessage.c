@@ -47,12 +47,12 @@ static int m_cprivmsg(struct Client *, struct Client *, int, const char **);
 static int m_cnotice(struct Client *, struct Client *, int, const char **);
 
 struct Message cprivmsg_msgtab = {
-	"CPRIVMSG", 0, 0, 0, MFLG_SLOW,
-	{mg_ignore, {m_cprivmsg, 4}, mg_ignore, mg_ignore, mg_ignore, {m_cprivmsg, 4}}
+    "CPRIVMSG", 0, 0, 0, MFLG_SLOW,
+    {mg_ignore, {m_cprivmsg, 4}, mg_ignore, mg_ignore, mg_ignore, {m_cprivmsg, 4}}
 };
 struct Message cnotice_msgtab = {
-	"CNOTICE", 0, 0, 0, MFLG_SLOW,
-	{mg_ignore, {m_cnotice, 4}, mg_ignore, mg_ignore, mg_ignore, {m_cnotice, 4}}
+    "CNOTICE", 0, 0, 0, MFLG_SLOW,
+    {mg_ignore, {m_cnotice, 4}, mg_ignore, mg_ignore, mg_ignore, {m_cnotice, 4}}
 };
 
 mapi_clist_av1 cmessage_clist[] = { &cprivmsg_msgtab, &cnotice_msgtab, NULL };
@@ -64,104 +64,96 @@ DECLARE_MODULE_AV1(cmessage, NULL, NULL, cmessage_clist, NULL, NULL, "$Revision:
 static int
 m_cprivmsg(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	return m_cmessage(PRIVMSG, "PRIVMSG", client_p, source_p, parc, parv);
+    return m_cmessage(PRIVMSG, "PRIVMSG", client_p, source_p, parc, parv);
 }
 
 static int
 m_cnotice(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	return m_cmessage(NOTICE, "NOTICE", client_p, source_p, parc, parv);
+    return m_cmessage(NOTICE, "NOTICE", client_p, source_p, parc, parv);
 }
 
 static int
 m_cmessage(int p_or_n, const char *command,
-		struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
+           struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	struct Client *target_p;
-	struct Channel *chptr;
-	struct membership *msptr;
+    struct Client *target_p;
+    struct Channel *chptr;
+    struct membership *msptr;
 
-	if(!IsFloodDone(source_p))
-		flood_endgrace(source_p);
+    if(!IsFloodDone(source_p))
+        flood_endgrace(source_p);
 
-	if((target_p = find_named_person(parv[1])) == NULL)
-	{
-		if(p_or_n != NOTICE)
-			sendto_one_numeric(source_p, ERR_NOSUCHNICK,
-					form_str(ERR_NOSUCHNICK), parv[1]);
-		return 0;
-	}
+    if((target_p = find_named_person(parv[1])) == NULL) {
+        if(p_or_n != NOTICE)
+            sendto_one_numeric(source_p, ERR_NOSUCHNICK,
+                               form_str(ERR_NOSUCHNICK), parv[1]);
+        return 0;
+    }
 
-	if((chptr = find_channel(parv[2])) == NULL)
-	{
-		if(p_or_n != NOTICE)
-			sendto_one_numeric(source_p, ERR_NOSUCHCHANNEL,
-					form_str(ERR_NOSUCHCHANNEL), parv[2]);
-		return 0;
-	}
+    if((chptr = find_channel(parv[2])) == NULL) {
+        if(p_or_n != NOTICE)
+            sendto_one_numeric(source_p, ERR_NOSUCHCHANNEL,
+                               form_str(ERR_NOSUCHCHANNEL), parv[2]);
+        return 0;
+    }
 
-	if((msptr = find_channel_membership(chptr, source_p)) == NULL)
-	{
-		if(p_or_n != NOTICE)
-			sendto_one_numeric(source_p, ERR_NOTONCHANNEL,
-					form_str(ERR_NOTONCHANNEL), 
-					chptr->chname);
-		return 0;
-	}
+    if((msptr = find_channel_membership(chptr, source_p)) == NULL) {
+        if(p_or_n != NOTICE)
+            sendto_one_numeric(source_p, ERR_NOTONCHANNEL,
+                               form_str(ERR_NOTONCHANNEL),
+                               chptr->chname);
+        return 0;
+    }
 
-	if(!is_chanop_voiced(msptr))
-	{
-		if(p_or_n != NOTICE)
-			sendto_one(source_p, form_str(ERR_VOICENEEDED),
-				me.name, source_p->name, chptr->chname);
-		return 0;
-	}
+    if(!is_chanop_voiced(msptr)) {
+        if(p_or_n != NOTICE)
+            sendto_one(source_p, form_str(ERR_VOICENEEDED),
+                       me.name, source_p->name, chptr->chname);
+        return 0;
+    }
 
-	if(!IsMember(target_p, chptr))
-	{
-		if(p_or_n != NOTICE)
-			sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
-					form_str(ERR_USERNOTINCHANNEL),
-					target_p->name, chptr->chname);
-		return 0;
-	}
+    if(!IsMember(target_p, chptr)) {
+        if(p_or_n != NOTICE)
+            sendto_one_numeric(source_p, ERR_USERNOTINCHANNEL,
+                               form_str(ERR_USERNOTINCHANNEL),
+                               target_p->name, chptr->chname);
+        return 0;
+    }
 
-	if(MyClient(target_p) && (IsSetCallerId(target_p) || (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])) &&
-	   !accept_message(source_p, target_p) && !IsOper(source_p))
-	{
-		if (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])
-		{
-			if (p_or_n != NOTICE)
-				sendto_one_numeric(source_p, ERR_NONONREG,
-						form_str(ERR_NONONREG),
-						target_p->name);
-			return 0;
-		}
-		if(p_or_n != NOTICE)
-			sendto_one_numeric(source_p, ERR_TARGUMODEG,
-					form_str(ERR_TARGUMODEG), target_p->name);
+    if(MyClient(target_p) && (IsSetCallerId(target_p) || (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0])) &&
+       !accept_message(source_p, target_p) && !IsOper(source_p)) {
+        if (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0]) {
+            if (p_or_n != NOTICE)
+                sendto_one_numeric(source_p, ERR_NONONREG,
+                                   form_str(ERR_NONONREG),
+                                   target_p->name);
+            return 0;
+        }
+        if(p_or_n != NOTICE)
+            sendto_one_numeric(source_p, ERR_TARGUMODEG,
+                               form_str(ERR_TARGUMODEG), target_p->name);
 
-		if((target_p->localClient->last_caller_id_time +
-		    ConfigFileEntry.caller_id_wait) < rb_current_time())
-		{
-			if(p_or_n != NOTICE)
-				sendto_one_numeric(source_p, RPL_TARGNOTIFY,
-						form_str(RPL_TARGNOTIFY),
-						target_p->name);
+        if((target_p->localClient->last_caller_id_time +
+            ConfigFileEntry.caller_id_wait) < rb_current_time()) {
+            if(p_or_n != NOTICE)
+                sendto_one_numeric(source_p, RPL_TARGNOTIFY,
+                                   form_str(RPL_TARGNOTIFY),
+                                   target_p->name);
 
-			sendto_one(target_p, form_str(RPL_UMODEGMSG),
-				me.name, target_p->name, source_p->name,
-				source_p->username, source_p->host);
+            sendto_one(target_p, form_str(RPL_UMODEGMSG),
+                       me.name, target_p->name, source_p->name,
+                       source_p->username, source_p->host);
 
-			target_p->localClient->last_caller_id_time = rb_current_time();
-		}
+            target_p->localClient->last_caller_id_time = rb_current_time();
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 
-	if(p_or_n != NOTICE)
-		source_p->localClient->last = rb_current_time();
+    if(p_or_n != NOTICE)
+        source_p->localClient->last = rb_current_time();
 
-	sendto_anywhere(target_p, source_p, command, ":%s", parv[3]);
-	return 0;
+    sendto_anywhere(target_p, source_p, command, ":%s", parv[3]);
+    return 0;
 }

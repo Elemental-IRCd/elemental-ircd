@@ -1,4 +1,4 @@
-/* 
+/*
  * ircd-ratbox: an advanced Internet Relay Chat Daemon(ircd).
  * monitor.h: Code for server-side notify lists.
  *
@@ -11,11 +11,10 @@
 
 struct rb_bh;
 
-struct monitor
-{
-	struct monitor *hnext;
-	char name[NICKLEN];
-	rb_dlink_list users;
+struct monitor {
+    struct monitor *hnext;
+    char name[NICKLEN];
+    rb_dlink_list users;
 };
 
 extern struct monitor *monitorTable[];

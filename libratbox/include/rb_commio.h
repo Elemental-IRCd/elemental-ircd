@@ -48,16 +48,15 @@ typedef void ACCB(rb_fde_t *, int status, struct sockaddr *addr, rb_socklen_t le
 /* callback for pre-accept callback */
 typedef int ACPRE(rb_fde_t *, struct sockaddr *addr, rb_socklen_t len, void *);
 
-enum
-{
-	RB_OK,
-	RB_ERR_BIND,
-	RB_ERR_DNS,
-	RB_ERR_TIMEOUT,
-	RB_ERR_CONNECT,
-	RB_ERROR,
-	RB_ERROR_SSL,
-	RB_ERR_MAX
+enum {
+    RB_OK,
+    RB_ERR_BIND,
+    RB_ERR_DNS,
+    RB_ERR_TIMEOUT,
+    RB_ERR_CONNECT,
+    RB_ERROR,
+    RB_ERROR_SSL,
+    RB_ERR_MAX
 };
 
 #define RB_FD_NONE		0x01
@@ -78,10 +77,9 @@ enum
 #define RB_RW_SSL_NEED_WRITE	-4	/* SSL Needs write */
 
 
-struct rb_iovec
-{
-	void *iov_base;
-	size_t iov_len;
+struct rb_iovec {
+    void *iov_base;
+    size_t iov_len;
 };
 
 
@@ -115,7 +113,7 @@ int rb_connect_sockaddr(rb_fde_t *, struct sockaddr *addr, int len);
 const char *rb_errstr(int status);
 rb_fde_t *rb_socket(int family, int sock_type, int proto, const char *note);
 int rb_socketpair(int family, int sock_type, int proto, rb_fde_t **F1, rb_fde_t **F2,
-		  const char *note);
+                  const char *note);
 
 void rb_accept_tcp(rb_fde_t *, ACPRE * precb, ACCB * callback, void *data);
 ssize_t rb_write(rb_fde_t *, const void *buf, int count);
@@ -154,14 +152,13 @@ uint8_t rb_get_type(rb_fde_t *F);
 
 const char *rb_get_iotype(void);
 
-typedef enum
-{
-	RB_PRNG_EGD,
-	RB_PRNG_FILE,
+typedef enum {
+    RB_PRNG_EGD,
+    RB_PRNG_FILE,
 #ifdef _WIN32
-	RB_PRNGWIN32,
+    RB_PRNGWIN32,
 #endif
-	RB_PRNG_DEFAULT,
+    RB_PRNG_DEFAULT,
 } prng_seed_t;
 
 int rb_init_prng(const char *path, prng_seed_t seed_type);

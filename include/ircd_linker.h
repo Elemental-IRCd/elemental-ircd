@@ -37,10 +37,9 @@
 
 #include <dlfcn.h>
 
-struct ircd_symbol
-{
-	char *sym;	/* name of symbol to be bound to ptr */
-	void *ptr;	/* ptr to symbol in library */
+struct ircd_symbol {
+    char *sym;	/* name of symbol to be bound to ptr */
+    void *ptr;	/* ptr to symbol in library */
 };
 
 extern void build_symtable(void *, struct ircd_symbol *);

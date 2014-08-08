@@ -31,37 +31,34 @@
 struct Client;
 struct rb_dlink_list;
 
-struct SetOptions
-{
-	int maxclients;		/* max clients allowed */
-	int autoconn;		/* autoconn enabled for all servers? */
+struct SetOptions {
+    int maxclients;		/* max clients allowed */
+    int autoconn;		/* autoconn enabled for all servers? */
 
-	int floodcount;		/* Number of messages in 1 second */
-	int ident_timeout;	/* timeout for identd lookups */
+    int floodcount;		/* Number of messages in 1 second */
+    int ident_timeout;	/* timeout for identd lookups */
 
-	int spam_num;
-	int spam_time;
+    int spam_num;
+    int spam_time;
 
-	char operhost[REALLEN];
-	char operstring[REALLEN];
-	char adminstring[REALLEN];
+    char operhost[REALLEN];
+    char operstring[REALLEN];
+    char adminstring[REALLEN];
 };
 
-struct Metadata
-{
-	const char *name;
-	const char *value;
-	time_t timevalue;
+struct Metadata {
+    const char *name;
+    const char *value;
+    time_t timevalue;
 };
 
-struct Counter
-{
-	int oper;		/* Opers */
-	int total;		/* total clients */
-	int invisi;		/* invisible clients */
-	int max_loc;		/* MAX local clients */
-	int max_tot;		/* MAX global clients */
-	unsigned long totalrestartcount;	/* Total client count ever */
+struct Counter {
+    int oper;		/* Opers */
+    int total;		/* total clients */
+    int invisi;		/* invisible clients */
+    int max_loc;		/* MAX local clients */
+    int max_tot;		/* MAX global clients */
+    unsigned long totalrestartcount;	/* Total client count ever */
 };
 
 extern struct SetOptions GlobalSetOptions;	/* defined in ircd.c */

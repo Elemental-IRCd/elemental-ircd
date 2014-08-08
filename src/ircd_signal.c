@@ -35,19 +35,19 @@
 static void
 dummy_handler(int sig)
 {
-	/* Empty */
+    /* Empty */
 }
 
 
 static void
 sigchld_handler(int sig)
 {
-	int status, olderrno;
+    int status, olderrno;
 
-	olderrno = errno;
-	while (waitpid(-1, &status, WNOHANG) > 0)
-		;
-	errno = olderrno;
+    olderrno = errno;
+    while (waitpid(-1, &status, WNOHANG) > 0)
+        ;
+    errno = olderrno;
 }
 
 /*
@@ -56,16 +56,16 @@ sigchld_handler(int sig)
 static void
 sigterm_handler(int sig)
 {
-	ircd_shutdown("Received SIGTERM");
+    ircd_shutdown("Received SIGTERM");
 }
 
-/* 
+/*
  * sighup_handler - reread the server configuration
  */
 static void
 sighup_handler(int sig)
 {
-	dorehash = 1;
+    dorehash = 1;
 }
 
 /*
@@ -74,13 +74,13 @@ sighup_handler(int sig)
 static void
 sigusr1_handler(int sig)
 {
-	doremotd = 1;
+    doremotd = 1;
 }
 
 static void
 sigusr2_handler(int sig)
 {
-	dorehashbans = 1;
+    dorehashbans = 1;
 }
 
 /*
@@ -89,22 +89,18 @@ sigusr2_handler(int sig)
 static void
 sigint_handler(int sig)
 {
-	static int restarting = 0;
+    static int restarting = 0;
 
-	if(server_state_foreground)
-	{
-		ilog(L_MAIN, "Server exiting on SIGINT");
-		exit(0);
-	}
-	else
-	{
-		ilog(L_MAIN, "Server Restarting on SIGINT");
-		if(restarting == 0)
-		{
-			restarting = 1;
-			server_reboot();
-		}
-	}
+    if(server_state_foreground) {
+        ilog(L_MAIN, "Server exiting on SIGINT");
+        exit(0);
+    } else {
+        ilog(L_MAIN, "Server Restarting on SIGINT");
+        if(restarting == 0) {
+            restarting = 1;
+            server_reboot();
+        }
+    }
 }
 
 /*
@@ -113,52 +109,52 @@ sigint_handler(int sig)
 void
 setup_signals()
 {
-	struct sigaction act;
+    struct sigaction act;
 
-	act.sa_flags = 0;
-	act.sa_handler = SIG_IGN;
-	sigemptyset(&act.sa_mask);
-	sigaddset(&act.sa_mask, SIGPIPE);
-	sigaddset(&act.sa_mask, SIGALRM);
+    act.sa_flags = 0;
+    act.sa_handler = SIG_IGN;
+    sigemptyset(&act.sa_mask);
+    sigaddset(&act.sa_mask, SIGPIPE);
+    sigaddset(&act.sa_mask, SIGALRM);
 #ifdef SIGTRAP
-	sigaddset(&act.sa_mask, SIGTRAP);
+    sigaddset(&act.sa_mask, SIGTRAP);
 #endif
 
 # ifdef SIGWINCH
-	sigaddset(&act.sa_mask, SIGWINCH);
-	sigaction(SIGWINCH, &act, 0);
+    sigaddset(&act.sa_mask, SIGWINCH);
+    sigaction(SIGWINCH, &act, 0);
 # endif
-	sigaction(SIGPIPE, &act, 0);
+    sigaction(SIGPIPE, &act, 0);
 #ifdef SIGTRAP
-	sigaction(SIGTRAP, &act, 0);
+    sigaction(SIGTRAP, &act, 0);
 #endif
 
-	act.sa_handler = dummy_handler;
-	sigaction(SIGALRM, &act, 0);
+    act.sa_handler = dummy_handler;
+    sigaction(SIGALRM, &act, 0);
 
-	act.sa_handler = sighup_handler;
-	sigemptyset(&act.sa_mask);
-	sigaddset(&act.sa_mask, SIGHUP);
-	sigaction(SIGHUP, &act, 0);
+    act.sa_handler = sighup_handler;
+    sigemptyset(&act.sa_mask);
+    sigaddset(&act.sa_mask, SIGHUP);
+    sigaction(SIGHUP, &act, 0);
 
-	act.sa_handler = sigint_handler;
-	sigaddset(&act.sa_mask, SIGINT);
-	sigaction(SIGINT, &act, 0);
+    act.sa_handler = sigint_handler;
+    sigaddset(&act.sa_mask, SIGINT);
+    sigaction(SIGINT, &act, 0);
 
-	act.sa_handler = sigterm_handler;
-	sigaddset(&act.sa_mask, SIGTERM);
-	sigaction(SIGTERM, &act, 0);
+    act.sa_handler = sigterm_handler;
+    sigaddset(&act.sa_mask, SIGTERM);
+    sigaction(SIGTERM, &act, 0);
 
-	act.sa_handler = sigusr1_handler;
-	sigaddset(&act.sa_mask, SIGUSR1);
-	sigaction(SIGUSR1, &act, 0);
+    act.sa_handler = sigusr1_handler;
+    sigaddset(&act.sa_mask, SIGUSR1);
+    sigaction(SIGUSR1, &act, 0);
 
-	act.sa_handler = sigusr2_handler;
-	sigaddset(&act.sa_mask, SIGUSR2);
-	sigaction(SIGUSR2, &act, 0);
+    act.sa_handler = sigusr2_handler;
+    sigaddset(&act.sa_mask, SIGUSR2);
+    sigaction(SIGUSR2, &act, 0);
 
-	act.sa_handler = sigchld_handler;
-	sigaddset(&act.sa_mask, SIGCHLD);
-	sigaction(SIGCHLD, &act, 0);
+    act.sa_handler = sigchld_handler;
+    sigaddset(&act.sa_mask, SIGCHLD);
+    sigaction(SIGCHLD, &act, 0);
 
 }

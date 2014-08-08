@@ -43,12 +43,12 @@ static int mo_uhelp(struct Client *, struct Client *, int, const char **);
 static void dohelp(struct Client *, int, const char *);
 
 struct Message help_msgtab = {
-	"HELP", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, {m_help, 0}, mg_ignore, mg_ignore, mg_ignore, {mo_help, 0}}
+    "HELP", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, {m_help, 0}, mg_ignore, mg_ignore, mg_ignore, {mo_help, 0}}
 };
 struct Message uhelp_msgtab = {
-	"UHELP", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, {m_help, 0}, mg_ignore, mg_ignore, mg_ignore, {mo_uhelp, 0}}
+    "UHELP", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, {m_help, 0}, mg_ignore, mg_ignore, mg_ignore, {mo_uhelp, 0}}
 };
 
 mapi_clist_av1 help_clist[] = { &help_msgtab, &uhelp_msgtab, NULL };
@@ -60,9 +60,9 @@ DECLARE_MODULE_AV1(help, NULL, NULL, help_clist, NULL, NULL, "$Revision: 254 $")
 static int
 m_help(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	dohelp(source_p, HELP_USER, parc > 1 ? parv[1] : NULL);
+    dohelp(source_p, HELP_USER, parc > 1 ? parv[1] : NULL);
 
-	return 0;
+    return 0;
 }
 
 /*
@@ -71,8 +71,8 @@ m_help(struct Client *client_p, struct Client *source_p, int parc, const char *p
 static int
 mo_help(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	dohelp(source_p, HELP_OPER, parc > 1 ? parv[1] : NULL);
-	return 0;
+    dohelp(source_p, HELP_OPER, parc > 1 ? parv[1] : NULL);
+    return 0;
 }
 
 /*
@@ -82,55 +82,52 @@ mo_help(struct Client *client_p, struct Client *source_p, int parc, const char *
 static int
 mo_uhelp(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	dohelp(source_p, HELP_USER, parc > 1 ? parv[1] : NULL);
-	return 0;
+    dohelp(source_p, HELP_USER, parc > 1 ? parv[1] : NULL);
+    return 0;
 }
 
 static void
 dohelp(struct Client *source_p, int flags, const char *topic)
 {
-	static const char ntopic[] = "index";
-	struct cachefile *hptr;
-	struct cacheline *lineptr;
-	rb_dlink_node *ptr;
-	rb_dlink_node *fptr;
+    static const char ntopic[] = "index";
+    struct cachefile *hptr;
+    struct cacheline *lineptr;
+    rb_dlink_node *ptr;
+    rb_dlink_node *fptr;
 
-	if(EmptyString(topic))
-	{
-		topic = ntopic;
-		if(!EmptyString(ServerInfo.helpchan))
-			sendto_one(source_p, ":%s 525 %s :Official Help Channel: %s",
-					me.name, source_p->name, ServerInfo.helpchan);
-		if(!EmptyString(ServerInfo.helpurl))
-			sendto_one(source_p, ":%s 526 %s :Official Help URL: %s",
-					me.name, source_p->name, ServerInfo.helpurl);
-	}
+    if(EmptyString(topic)) {
+        topic = ntopic;
+        if(!EmptyString(ServerInfo.helpchan))
+            sendto_one(source_p, ":%s 525 %s :Official Help Channel: %s",
+                       me.name, source_p->name, ServerInfo.helpchan);
+        if(!EmptyString(ServerInfo.helpurl))
+            sendto_one(source_p, ":%s 526 %s :Official Help URL: %s",
+                       me.name, source_p->name, ServerInfo.helpurl);
+    }
 
-	hptr = irc_dictionary_retrieve(flags & HELP_OPER ? help_dict_oper : help_dict_user, topic);
+    hptr = irc_dictionary_retrieve(flags & HELP_OPER ? help_dict_oper : help_dict_user, topic);
 
-	if(hptr == NULL || !(hptr->flags & flags))
-	{
-		sendto_one(source_p, form_str(ERR_HELPNOTFOUND),
-			   me.name, source_p->name, topic);
-		return;
-	}
+    if(hptr == NULL || !(hptr->flags & flags)) {
+        sendto_one(source_p, form_str(ERR_HELPNOTFOUND),
+                   me.name, source_p->name, topic);
+        return;
+    }
 
-	fptr = hptr->contents.head;
-	lineptr = fptr->data;
+    fptr = hptr->contents.head;
+    lineptr = fptr->data;
 
-	/* first line cant be empty */
-	sendto_one(source_p, form_str(RPL_HELPSTART),
-		   me.name, source_p->name, topic, lineptr->data);
+    /* first line cant be empty */
+    sendto_one(source_p, form_str(RPL_HELPSTART),
+               me.name, source_p->name, topic, lineptr->data);
 
-	RB_DLINK_FOREACH(ptr, fptr->next)
-	{
-		lineptr = ptr->data;
+    RB_DLINK_FOREACH(ptr, fptr->next) {
+        lineptr = ptr->data;
 
-		sendto_one(source_p, form_str(RPL_HELPTXT),
-			   me.name, source_p->name, topic, lineptr->data);
-	}
+        sendto_one(source_p, form_str(RPL_HELPTXT),
+                   me.name, source_p->name, topic, lineptr->data);
+    }
 
-	sendto_one(source_p, form_str(RPL_ENDOFHELP),
-		   me.name, source_p->name, topic);
-	return;
+    sendto_one(source_p, form_str(RPL_ENDOFHELP),
+               me.name, source_p->name, topic);
+    return;
 }

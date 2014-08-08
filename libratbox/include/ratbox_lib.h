@@ -184,7 +184,7 @@ void rb_set_time(void);
 const char *rb_lib_version(void);
 
 void rb_lib_init(log_cb * xilog, restart_cb * irestart, die_cb * idie, int closeall, int maxfds,
-		 size_t dh_size, size_t fd_heap_size);
+                 size_t dh_size, size_t fd_heap_size);
 void rb_lib_loop(long delay);
 
 time_t rb_current_time(void);

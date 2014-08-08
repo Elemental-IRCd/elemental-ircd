@@ -45,22 +45,21 @@ struct Client;
   also removed away information. *tough*
   - Dianora
  */
-struct Whowas
-{
-	int hashv;
-	char name[NICKLEN + 1];
-	char username[USERLEN + 1];
-	char hostname[HOSTLEN + 1];
-	char sockhost[HOSTIPLEN + 1];
-	char realname[REALLEN + 1];
-	char suser[NICKLEN + 1];
-	const char *servername;
-	time_t logoff;
-	struct Client *online;	/* Pointer to new nickname for chasing or NULL */
-	struct Whowas *next;	/* for hash table... */
-	struct Whowas *prev;	/* for hash table... */
-	struct Whowas *cnext;	/* for client struct linked list */
-	struct Whowas *cprev;	/* for client struct linked list */
+struct Whowas {
+    int hashv;
+    char name[NICKLEN + 1];
+    char username[USERLEN + 1];
+    char hostname[HOSTLEN + 1];
+    char sockhost[HOSTIPLEN + 1];
+    char realname[REALLEN + 1];
+    char suser[NICKLEN + 1];
+    const char *servername;
+    time_t logoff;
+    struct Client *online;	/* Pointer to new nickname for chasing or NULL */
+    struct Whowas *next;	/* for hash table... */
+    struct Whowas *prev;	/* for hash table... */
+    struct Whowas *cnext;	/* for client struct linked list */
+    struct Whowas *cprev;	/* for client struct linked list */
 };
 
 /*
@@ -93,8 +92,8 @@ void off_history(struct Client *);
 **      one found...
 */
 struct Client *get_history(const char *, time_t);
-					/* Nick name */
-					/* Time limit in seconds */
+/* Nick name */
+/* Time limit in seconds */
 
 /*
 ** for debugging...counts related structures stored in whowas array.

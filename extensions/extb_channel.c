@@ -20,34 +20,34 @@ DECLARE_MODULE_AV1(extb_channel, _modinit, _moddeinit, NULL, NULL, NULL, "$Revis
 static int
 _modinit(void)
 {
-	extban_table['c'] = eb_channel;
+    extban_table['c'] = eb_channel;
 
-	return 0;
+    return 0;
 }
 
 static void
 _moddeinit(void)
 {
-	extban_table['c'] = NULL;
+    extban_table['c'] = NULL;
 }
 
 static int eb_channel(const char *data, struct Client *client_p,
-		struct Channel *chptr, long mode_type)
+                      struct Channel *chptr, long mode_type)
 {
-	struct Channel *chptr2;
+    struct Channel *chptr2;
 
-	(void)chptr;
-	(void)mode_type;
-	if (data == NULL)
-		return EXTBAN_INVALID;
-	chptr2 = find_channel(data);
-	if (chptr2 == NULL)
-		return EXTBAN_INVALID;
-	/* require consistent target */
-	if (chptr->chname[0] == '#' && data[0] == '&')
-		return EXTBAN_INVALID;
-	/* privacy! don't allow +s/+p channels to influence another channel */
-	if (!PubChannel(chptr2))
-		return EXTBAN_INVALID;
-	return IsMember(client_p, chptr2) ? EXTBAN_MATCH : EXTBAN_NOMATCH;
+    (void)chptr;
+    (void)mode_type;
+    if (data == NULL)
+        return EXTBAN_INVALID;
+    chptr2 = find_channel(data);
+    if (chptr2 == NULL)
+        return EXTBAN_INVALID;
+    /* require consistent target */
+    if (chptr->chname[0] == '#' && data[0] == '&')
+        return EXTBAN_INVALID;
+    /* privacy! don't allow +s/+p channels to influence another channel */
+    if (!PubChannel(chptr2))
+        return EXTBAN_INVALID;
+    return IsMember(client_p, chptr2) ? EXTBAN_MATCH : EXTBAN_NOMATCH;
 }

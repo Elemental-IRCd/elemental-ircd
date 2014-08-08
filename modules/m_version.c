@@ -41,8 +41,8 @@ static int m_version(struct Client *, struct Client *, int, const char **);
 static int mo_version(struct Client *, struct Client *, int, const char **);
 
 struct Message version_msgtab = {
-	"VERSION", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, {m_version, 0}, {mo_version, 0}, {mo_version, 0}, mg_ignore, {mo_version, 0}}
+    "VERSION", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, {m_version, 0}, {mo_version, 0}, {mo_version, 0}, mg_ignore, {mo_version, 0}}
 };
 
 mapi_clist_av1 version_clist[] = { &version_msgtab, NULL };
@@ -55,32 +55,29 @@ DECLARE_MODULE_AV1(version, NULL, NULL, version_clist, NULL, NULL, "$Revision: 1
 static int
 m_version(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	static time_t last_used = 0L;
+    static time_t last_used = 0L;
 
-	if(parc > 1)
-	{
-		if((last_used + ConfigFileEntry.pace_wait) > rb_current_time())
-		{
-			/* safe enough to give this on a local connect only */
-			sendto_one(source_p, form_str(RPL_LOAD2HI),
-				   me.name, source_p->name, "VERSION");
-			return 0;
-		}
-		else
-			last_used = rb_current_time();
+    if(parc > 1) {
+        if((last_used + ConfigFileEntry.pace_wait) > rb_current_time()) {
+            /* safe enough to give this on a local connect only */
+            sendto_one(source_p, form_str(RPL_LOAD2HI),
+                       me.name, source_p->name, "VERSION");
+            return 0;
+        } else
+            last_used = rb_current_time();
 
-		if(hunt_server(client_p, source_p, ":%s VERSION :%s", 1, parc, parv) != HUNTED_ISME)
-			return 0;
-	}
+        if(hunt_server(client_p, source_p, ":%s VERSION :%s", 1, parc, parv) != HUNTED_ISME)
+            return 0;
+    }
 
-	sendto_one_numeric(source_p, RPL_VERSION, form_str(RPL_VERSION),
-			   ircd_version, serno,
-			   me.name, confopts(source_p), TS_CURRENT,
-			   ServerInfo.sid);
+    sendto_one_numeric(source_p, RPL_VERSION, form_str(RPL_VERSION),
+                       ircd_version, serno,
+                       me.name, confopts(source_p), TS_CURRENT,
+                       ServerInfo.sid);
 
-	show_isupport(source_p);
+    show_isupport(source_p);
 
-	return 0;
+    return 0;
 }
 
 /*
@@ -90,16 +87,15 @@ m_version(struct Client *client_p, struct Client *source_p, int parc, const char
 static int
 mo_version(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	if(hunt_server(client_p, source_p, ":%s VERSION :%s", 1, parc, parv) == HUNTED_ISME)
-	{
-		sendto_one_numeric(source_p, RPL_VERSION, form_str(RPL_VERSION),
-				   ircd_version, serno, 
-				   me.name, confopts(source_p), TS_CURRENT,
-				   ServerInfo.sid);
-		show_isupport(source_p);
-	}
+    if(hunt_server(client_p, source_p, ":%s VERSION :%s", 1, parc, parv) == HUNTED_ISME) {
+        sendto_one_numeric(source_p, RPL_VERSION, form_str(RPL_VERSION),
+                           ircd_version, serno,
+                           me.name, confopts(source_p), TS_CURRENT,
+                           ServerInfo.sid);
+        show_isupport(source_p);
+    }
 
-	return 0;
+    return 0;
 }
 
 /* confopts()
@@ -110,43 +106,43 @@ mo_version(struct Client *client_p, struct Client *source_p, int parc, const cha
 static char *
 confopts(struct Client *source_p)
 {
-	static char result[15];
-	char *p;
+    static char result[15];
+    char *p;
 
-	result[0] = '\0';
-	p = result;
+    result[0] = '\0';
+    p = result;
 
-	if(ConfigChannel.use_except)
-		*p++ = 'e';
+    if(ConfigChannel.use_except)
+        *p++ = 'e';
 
-	/* might wanna hide this :P */
-	if(ServerInfo.hub)
-		*p++ = 'H';
+    /* might wanna hide this :P */
+    if(ServerInfo.hub)
+        *p++ = 'H';
 
-	if(ConfigChannel.use_invex)
-		*p++ = 'I';
+    if(ConfigChannel.use_invex)
+        *p++ = 'I';
 
-	if(ConfigChannel.use_knock)
-		*p++ = 'K';
+    if(ConfigChannel.use_knock)
+        *p++ = 'K';
 
-	*p++ = 'M';
-	*p++ = 'p';
+    *p++ = 'M';
+    *p++ = 'p';
 
-	if(opers_see_all_users || ConfigFileEntry.operspy_dont_care_user_info)
-		*p++ = 'S';
+    if(opers_see_all_users || ConfigFileEntry.operspy_dont_care_user_info)
+        *p++ = 'S';
 #ifdef IGNORE_BOGUS_TS
-	*p++ = 'T';
+    *p++ = 'T';
 #endif
 
 #ifdef HAVE_LIBZ
-	*p++ = 'Z';
+    *p++ = 'Z';
 #endif
 
 #ifdef RB_IPV6
-	*p++ = '6';
+    *p++ = '6';
 #endif
 
-	*p = '\0';
+    *p = '\0';
 
-	return result;
+    return result;
 }

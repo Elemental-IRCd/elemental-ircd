@@ -44,7 +44,7 @@ static int pemax;		/* max structs to buffer */
 int
 rb_setup_fd_ports(rb_fde_t *F)
 {
-	return 0;
+    return 0;
 }
 
 /*
@@ -57,16 +57,15 @@ rb_setup_fd_ports(rb_fde_t *F)
 int
 rb_init_netio_ports(void)
 {
-	if((pe = port_create()) < 0)
-	{
-		return errno;
-	}
-	pemax = getdtablesize();
-	pelst = rb_malloc(sizeof(port_event_t) * pemax);
-	zero_timespec.tv_sec = 0;
-	zero_timespec.tv_nsec = 0;
-	rb_set_time();
-	return 0;
+    if((pe = port_create()) < 0) {
+        return errno;
+    }
+    pemax = getdtablesize();
+    pelst = rb_malloc(sizeof(port_event_t) * pemax);
+    zero_timespec.tv_sec = 0;
+    zero_timespec.tv_nsec = 0;
+    rb_set_time();
+    return 0;
 }
 
 /*
@@ -78,36 +77,33 @@ rb_init_netio_ports(void)
 void
 rb_setselect_ports(rb_fde_t *F, unsigned int type, PF * handler, void *client_data)
 {
-	lrb_assert(IsFDOpen(F));
-	int old_flags = F->pflags;
+    lrb_assert(IsFDOpen(F));
+    int old_flags = F->pflags;
 
-	if(type & RB_SELECT_READ)
-	{
-		F->read_handler = handler;
-		F->read_data = client_data;
-	}
-	if(type & RB_SELECT_WRITE)
-	{
-		F->write_handler = handler;
-		F->write_data = client_data;
-	}
-	F->pflags = 0;
+    if(type & RB_SELECT_READ) {
+        F->read_handler = handler;
+        F->read_data = client_data;
+    }
+    if(type & RB_SELECT_WRITE) {
+        F->write_handler = handler;
+        F->write_data = client_data;
+    }
+    F->pflags = 0;
 
-	if(F->read_handler != NULL)
-		F->pflags = POLLIN;
-	if(F->write_handler != NULL)
-		F->pflags |= POLLOUT;
+    if(F->read_handler != NULL)
+        F->pflags = POLLIN;
+    if(F->write_handler != NULL)
+        F->pflags |= POLLOUT;
 
-	if(old_flags == 0 && F->pflags == 0)
-		return;
-	else if(F->pflags <= 0)
-	{
-		port_dissociate(pe, PORT_SOURCE_FD, F->fd);
-		return;
-	}
-	
-	port_associate(pe, PORT_SOURCE_FD, F->fd, F->pflags, F);
-	
+    if(old_flags == 0 && F->pflags == 0)
+        return;
+    else if(F->pflags <= 0) {
+        port_dissociate(pe, PORT_SOURCE_FD, F->fd);
+        return;
+    }
+
+    port_associate(pe, PORT_SOURCE_FD, F->fd, F->pflags, F);
+
 }
 
 /*
@@ -122,163 +118,155 @@ rb_setselect_ports(rb_fde_t *F, unsigned int type, PF * handler, void *client_da
 int
 rb_select_ports(long delay)
 {
-	int i, fd;
-	int nget = 1;
-	struct timespec poll_time;
-	struct timespec *p = NULL;
-	struct ev_entry *ev;
+    int i, fd;
+    int nget = 1;
+    struct timespec poll_time;
+    struct timespec *p = NULL;
+    struct ev_entry *ev;
 
-	if(delay >= 0)
-	{
-		poll_time.tv_sec = delay / 1000;
-		poll_time.tv_nsec = (delay % 1000) * 1000000;
-		p = &poll_time;
-	}
+    if(delay >= 0) {
+        poll_time.tv_sec = delay / 1000;
+        poll_time.tv_nsec = (delay % 1000) * 1000000;
+        p = &poll_time;
+    }
 
 
-	i = port_getn(pe, pelst, pemax, &nget, p);
-	rb_set_time();
+    i = port_getn(pe, pelst, pemax, &nget, p);
+    rb_set_time();
 
-	if(i == -1)
-		return RB_OK;
+    if(i == -1)
+        return RB_OK;
 
-	for(i = 0; i < nget; i++)
-	{
-		if(pelst[i].portev_source == PORT_SOURCE_FD)
-		{
-			fd = pelst[i].portev_object;
-			PF *hdl = NULL;
-			rb_fde_t *F = pelst[i].portev_user;
-			if((pelst[i].portev_events & (POLLIN | POLLHUP | POLLERR)) && (hdl = F->read_handler))
-			{
-				F->read_handler = NULL;
-				hdl(F, F->read_data);
-			}
-			if((pelst[i].portev_events & (POLLOUT | POLLHUP | POLLERR)) && (hdl = F->write_handler))
-			{
-				F->write_handler = NULL;
-				hdl(F, F->write_data);
-			}
-		} else if(pelst[i].portev_source == PORT_SOURCE_TIMER)
-		{
-			ev = (struct ev_entry *)pelst[i].portev_user;
-			rb_run_event(ev);
-		}
-	}
-	return RB_OK;
+    for(i = 0; i < nget; i++) {
+        if(pelst[i].portev_source == PORT_SOURCE_FD) {
+            fd = pelst[i].portev_object;
+            PF *hdl = NULL;
+            rb_fde_t *F = pelst[i].portev_user;
+            if((pelst[i].portev_events & (POLLIN | POLLHUP | POLLERR)) && (hdl = F->read_handler)) {
+                F->read_handler = NULL;
+                hdl(F, F->read_data);
+            }
+            if((pelst[i].portev_events & (POLLOUT | POLLHUP | POLLERR)) && (hdl = F->write_handler)) {
+                F->write_handler = NULL;
+                hdl(F, F->write_data);
+            }
+        } else if(pelst[i].portev_source == PORT_SOURCE_TIMER) {
+            ev = (struct ev_entry *)pelst[i].portev_user;
+            rb_run_event(ev);
+        }
+    }
+    return RB_OK;
 }
 
 int
 rb_ports_supports_event(void)
 {
-	return 1;
+    return 1;
 };
 
 void
 rb_ports_init_event(void)
 {
-	return;
+    return;
 }
 
 int
 rb_ports_sched_event(struct ev_entry *event, int when)
 {
-	timer_t *id;
-	struct sigevent ev;
-	port_notify_t not;
-	struct itimerspec ts;
+    timer_t *id;
+    struct sigevent ev;
+    port_notify_t not;
+    struct itimerspec ts;
 
-	event->comm_ptr = rb_malloc(sizeof(timer_t));
-	id = event->comm_ptr;
-				
-	memset(&ev, 0, sizeof(ev));
-	ev.sigev_notify = SIGEV_PORT;
-	ev.sigev_value.sival_ptr = &not;
-	
-	memset(&not, 0, sizeof(not));	
-	not.portnfy_port = pe;
-	not.portnfy_user = event;
-	
-	if(timer_create(CLOCK_REALTIME, &ev, id) < 0)
-	{
-		rb_lib_log("timer_create: %s\n", strerror(errno));
-		return 0;
-	}
-	
-	memset(&ts, 0, sizeof(ts));
-	ts.it_value.tv_sec = when;
-	ts.it_value.tv_nsec = 0; 
-	if(event->frequency != 0)
-		ts.it_interval = ts.it_value;
+    event->comm_ptr = rb_malloc(sizeof(timer_t));
+    id = event->comm_ptr;
 
-	if(timer_settime(*id, 0, &ts, NULL) < 0)
-	{
-		rb_lib_log("timer_settime: %s\n", strerror(errno));
-		return 0;
-	}
-	return 1;					
+    memset(&ev, 0, sizeof(ev));
+    ev.sigev_notify = SIGEV_PORT;
+    ev.sigev_value.sival_ptr = &not;
+
+    memset(&not, 0, sizeof(not));
+    not.portnfy_port = pe;
+    not.portnfy_user = event;
+
+    if(timer_create(CLOCK_REALTIME, &ev, id) < 0) {
+        rb_lib_log("timer_create: %s\n", strerror(errno));
+        return 0;
+    }
+
+    memset(&ts, 0, sizeof(ts));
+    ts.it_value.tv_sec = when;
+    ts.it_value.tv_nsec = 0;
+    if(event->frequency != 0)
+        ts.it_interval = ts.it_value;
+
+    if(timer_settime(*id, 0, &ts, NULL) < 0) {
+        rb_lib_log("timer_settime: %s\n", strerror(errno));
+        return 0;
+    }
+    return 1;
 }
 
 void
 rb_ports_unsched_event(struct ev_entry *event)
 {
-	timer_delete(*((timer_t *) event->comm_ptr));
-	rb_free(event->comm_ptr);
-	event->comm_ptr = NULL;
+    timer_delete(*((timer_t *) event->comm_ptr));
+    rb_free(event->comm_ptr);
+    event->comm_ptr = NULL;
 }
 #else /* ports not supported */
 
 int
 rb_ports_supports_event(void)
 {
-	errno = ENOSYS;
-	return 0;
+    errno = ENOSYS;
+    return 0;
 }
 
 void
 rb_ports_init_event(void)
 {
-	return;
+    return;
 }
- 
+
 int
 rb_ports_sched_event(struct ev_entry *event, int when)
 {
-	errno = ENOSYS;
-	return -1;
+    errno = ENOSYS;
+    return -1;
 }
- 
+
 void
 rb_ports_unsched_event(struct ev_entry *event)
 {
-	return;
+    return;
 }
 
 int
 rb_init_netio_ports(void)
 {
-	return ENOSYS;
+    return ENOSYS;
 }
 
 void
 rb_setselect_ports(rb_fde_t *F, unsigned int type, PF * handler, void *client_data)
 {
-	errno = ENOSYS;
-	return;
+    errno = ENOSYS;
+    return;
 }
 
 int
 rb_select_ports(long delay)
 {
-	errno = ENOSYS;
-	return -1;
+    errno = ENOSYS;
+    return -1;
 }
 
 int
 rb_setup_fd_ports(rb_fde_t *F)
 {
-	errno = ENOSYS;
-	return -1;
+    errno = ENOSYS;
+    return -1;
 }
 
 

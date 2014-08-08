@@ -53,7 +53,7 @@ static rb_dlink_list event_list;
 static time_t event_time_min = -1;
 
 /*
- * struct ev_entry * 
+ * struct ev_entry *
  * rb_event_find(EVH *func, void *arg)
  *
  * Input: Event function and the argument passed to it
@@ -63,20 +63,19 @@ static time_t event_time_min = -1;
 static struct ev_entry *
 rb_event_find(EVH * func, void *arg)
 {
-	rb_dlink_node *ptr;
-	struct ev_entry *ev;
-	RB_DLINK_FOREACH(ptr, event_list.head)
-	{
-		ev = ptr->data;
-		if((ev->func == func) && (ev->arg == arg))
-			return ev;
-	}
+    rb_dlink_node *ptr;
+    struct ev_entry *ev;
+    RB_DLINK_FOREACH(ptr, event_list.head) {
+        ev = ptr->data;
+        if((ev->func == func) && (ev->arg == arg))
+            return ev;
+    }
 
-	return NULL;
+    return NULL;
 }
 
 /*
- * struct ev_entry * 
+ * struct ev_entry *
  * rb_event_add(const char *name, EVH *func, void *arg, time_t when)
  *
  * Input: Name of event, function to call, arguments to pass, and frequency
@@ -87,42 +86,41 @@ rb_event_find(EVH * func, void *arg)
 struct ev_entry *
 rb_event_add(const char *name, EVH * func, void *arg, time_t when)
 {
-	struct ev_entry *ev;
-	ev = rb_malloc(sizeof(struct ev_entry));
-	ev->func = func;
-	ev->name = rb_strndup(name, EV_NAME_LEN);
-	ev->arg = arg;
-	ev->when = rb_current_time() + when;
-	ev->next = when;
-	ev->frequency = when;
+    struct ev_entry *ev;
+    ev = rb_malloc(sizeof(struct ev_entry));
+    ev->func = func;
+    ev->name = rb_strndup(name, EV_NAME_LEN);
+    ev->arg = arg;
+    ev->when = rb_current_time() + when;
+    ev->next = when;
+    ev->frequency = when;
 
-	if((ev->when < event_time_min) || (event_time_min == -1))
-	{
-		event_time_min = ev->when;
-	}
-	rb_dlinkAdd(ev, &ev->node, &event_list);
-	rb_io_sched_event(ev, when);
-	return ev;
+    if((ev->when < event_time_min) || (event_time_min == -1)) {
+        event_time_min = ev->when;
+    }
+    rb_dlinkAdd(ev, &ev->node, &event_list);
+    rb_io_sched_event(ev, when);
+    return ev;
 }
 
 struct ev_entry *
 rb_event_addonce(const char *name, EVH * func, void *arg, time_t when)
 {
-	struct ev_entry *ev;
-	ev = rb_malloc(sizeof(struct ev_entry));
-	ev->func = func;
-	ev->name = rb_strndup(name, EV_NAME_LEN);
-	ev->arg = arg;
-	ev->when = rb_current_time() + when;
-	ev->next = when;
-	ev->frequency = 0;
+    struct ev_entry *ev;
+    ev = rb_malloc(sizeof(struct ev_entry));
+    ev->func = func;
+    ev->name = rb_strndup(name, EV_NAME_LEN);
+    ev->arg = arg;
+    ev->when = rb_current_time() + when;
+    ev->next = when;
+    ev->frequency = 0;
 
-	if((ev->when < event_time_min) || (event_time_min == -1))
-		event_time_min = ev->when;
+    if((ev->when < event_time_min) || (event_time_min == -1))
+        event_time_min = ev->when;
 
-	rb_dlinkAdd(ev, &ev->node, &event_list);
-	rb_io_sched_event(ev, when);
-	return ev;
+    rb_dlinkAdd(ev, &ev->node, &event_list);
+    rb_io_sched_event(ev, when);
+    return ev;
 }
 
 /*
@@ -135,13 +133,13 @@ rb_event_addonce(const char *name, EVH * func, void *arg, time_t when)
 void
 rb_event_delete(struct ev_entry *ev)
 {
-	if(ev == NULL)
-		return;
+    if(ev == NULL)
+        return;
 
-	rb_dlinkDelete(&ev->node, &event_list);
-	rb_io_unsched_event(ev);
-	rb_free(ev->name);
-	rb_free(ev);
+    rb_dlinkDelete(&ev->node, &event_list);
+    rb_io_unsched_event(ev);
+    rb_free(ev->name);
+    rb_free(ev);
 }
 
 /*
@@ -154,10 +152,10 @@ rb_event_delete(struct ev_entry *ev)
 void
 rb_event_find_delete(EVH * func, void *arg)
 {
-	rb_event_delete(rb_event_find(func, arg));
+    rb_event_delete(rb_event_find(func, arg));
 }
 
-/* 
+/*
  * struct ev_entry *
  * rb_event_addish(const char *name, EVH *func, void *arg, time_t delta_isa)
  *
@@ -170,34 +168,32 @@ rb_event_find_delete(EVH * func, void *arg)
 struct ev_entry *
 rb_event_addish(const char *name, EVH * func, void *arg, time_t delta_ish)
 {
-	if(delta_ish >= 3.0)
-	{
-		const time_t two_third = (2 * delta_ish) / 3;
-		delta_ish = two_third + ((rand() % 1000) * two_third) / 1000;
-		/*
-		 * XXX I hate the above magic, I don't even know if its right.
-		 * Grr. -- adrian
-		 */
-	}
-	return rb_event_add(name, func, arg, delta_ish);
+    if(delta_ish >= 3.0) {
+        const time_t two_third = (2 * delta_ish) / 3;
+        delta_ish = two_third + ((rand() % 1000) * two_third) / 1000;
+        /*
+         * XXX I hate the above magic, I don't even know if its right.
+         * Grr. -- adrian
+         */
+    }
+    return rb_event_add(name, func, arg, delta_ish);
 }
 
 
 void
 rb_run_event(struct ev_entry *ev)
 {
-	rb_strlcpy(last_event_ran, ev->name, sizeof(last_event_ran));
-	ev->func(ev->arg);
-	if(!ev->frequency)
-	{
-		rb_io_unsched_event(ev);
-		rb_dlinkDelete(&ev->node, &event_list);
-		rb_free(ev);
-		return;
-	}
-	ev->when = rb_current_time() + ev->frequency;
-	if((ev->when < event_time_min) || (event_time_min == -1))
-		event_time_min = ev->when;
+    rb_strlcpy(last_event_ran, ev->name, sizeof(last_event_ran));
+    ev->func(ev->arg);
+    if(!ev->frequency) {
+        rb_io_unsched_event(ev);
+        rb_dlinkDelete(&ev->node, &event_list);
+        rb_free(ev);
+        return;
+    }
+    ev->when = rb_current_time() + ev->frequency;
+    if((ev->when < event_time_min) || (event_time_min == -1))
+        event_time_min = ev->when;
 }
 
 /*
@@ -210,56 +206,48 @@ rb_run_event(struct ev_entry *ev)
 void
 rb_event_run(void)
 {
-	rb_dlink_node *ptr, *next;
-	struct ev_entry *ev;
+    rb_dlink_node *ptr, *next;
+    struct ev_entry *ev;
 
-	if(rb_io_supports_event())
-		return;
+    if(rb_io_supports_event())
+        return;
 
-	event_time_min = -1;
-	RB_DLINK_FOREACH_SAFE(ptr, next, event_list.head)
-	{
-		ev = ptr->data;
-		if(ev->when <= rb_current_time())
-		{
-			rb_strlcpy(last_event_ran, ev->name, sizeof(last_event_ran));
-			ev->func(ev->arg);
+    event_time_min = -1;
+    RB_DLINK_FOREACH_SAFE(ptr, next, event_list.head) {
+        ev = ptr->data;
+        if(ev->when <= rb_current_time()) {
+            rb_strlcpy(last_event_ran, ev->name, sizeof(last_event_ran));
+            ev->func(ev->arg);
 
-			/* event is scheduled more than once */
-			if(ev->frequency)
-			{
-				ev->when = rb_current_time() + ev->frequency;
-				if((ev->when < event_time_min) || (event_time_min == -1))
-					event_time_min = ev->when;
-			}
-			else
-			{
-				rb_dlinkDelete(&ev->node, &event_list);
-				rb_free(ev);
-			}
-		}
-		else
-		{
-			if((ev->when < event_time_min) || (event_time_min == -1))
-				event_time_min = ev->when;
-		}
-	}
+            /* event is scheduled more than once */
+            if(ev->frequency) {
+                ev->when = rb_current_time() + ev->frequency;
+                if((ev->when < event_time_min) || (event_time_min == -1))
+                    event_time_min = ev->when;
+            } else {
+                rb_dlinkDelete(&ev->node, &event_list);
+                rb_free(ev);
+            }
+        } else {
+            if((ev->when < event_time_min) || (event_time_min == -1))
+                event_time_min = ev->when;
+        }
+    }
 }
 
 void
 rb_event_io_register_all(void)
 {
-	rb_dlink_node *ptr;
-	struct ev_entry *ev;
+    rb_dlink_node *ptr;
+    struct ev_entry *ev;
 
-	if(!rb_io_supports_event())
-		return;
+    if(!rb_io_supports_event())
+        return;
 
-	RB_DLINK_FOREACH(ptr, event_list.head)
-	{
-		ev = ptr->data;
-		rb_io_sched_event(ev, ev->next);
-	}
+    RB_DLINK_FOREACH(ptr, event_list.head) {
+        ev = ptr->data;
+        rb_io_sched_event(ev, ev->next);
+    }
 }
 
 /*
@@ -267,39 +255,38 @@ rb_event_io_register_all(void)
  *
  * Input: None
  * Output: None
- * Side Effects: Initializes the event system. 
+ * Side Effects: Initializes the event system.
  */
 void
 rb_event_init(void)
 {
-	rb_strlcpy(last_event_ran, "NONE", sizeof(last_event_ran));
+    rb_strlcpy(last_event_ran, "NONE", sizeof(last_event_ran));
 }
 
 void
 rb_dump_events(void (*func) (char *, void *), void *ptr)
 {
-	int len;
-	char buf[512];
-	rb_dlink_node *dptr;
-	struct ev_entry *ev;
-	len = sizeof(buf);
+    int len;
+    char buf[512];
+    rb_dlink_node *dptr;
+    struct ev_entry *ev;
+    len = sizeof(buf);
 
-	rb_snprintf(buf, len, "Last event to run: %s", last_event_ran);
-	func(buf, ptr);
+    rb_snprintf(buf, len, "Last event to run: %s", last_event_ran);
+    func(buf, ptr);
 
-	rb_strlcpy(buf, "Operation                    Next Execution", len);
-	func(buf, ptr);
+    rb_strlcpy(buf, "Operation                    Next Execution", len);
+    func(buf, ptr);
 
-	RB_DLINK_FOREACH(dptr, event_list.head)
-	{
-		ev = dptr->data;
-		rb_snprintf(buf, len, "%-28s %-4ld seconds", ev->name,
-			    ev->when - (long)rb_current_time());
-		func(buf, ptr);
-	}
+    RB_DLINK_FOREACH(dptr, event_list.head) {
+        ev = dptr->data;
+        rb_snprintf(buf, len, "%-28s %-4ld seconds", ev->name,
+                    ev->when - (long)rb_current_time());
+        func(buf, ptr);
+    }
 }
 
-/* 
+/*
  * void rb_set_back_events(time_t by)
  * Input: Time to set back events by.
  * Output: None.
@@ -308,36 +295,35 @@ rb_dump_events(void (*func) (char *, void *), void *ptr)
 void
 rb_set_back_events(time_t by)
 {
-	rb_dlink_node *ptr;
-	struct ev_entry *ev;
-	RB_DLINK_FOREACH(ptr, event_list.head)
-	{
-		ev = ptr->data;
-		if(ev->when > by)
-			ev->when -= by;
-		else
-			ev->when = 0;
-	}
+    rb_dlink_node *ptr;
+    struct ev_entry *ev;
+    RB_DLINK_FOREACH(ptr, event_list.head) {
+        ev = ptr->data;
+        if(ev->when > by)
+            ev->when -= by;
+        else
+            ev->when = 0;
+    }
 }
 
 void
 rb_event_update(struct ev_entry *ev, time_t freq)
 {
-	if(ev == NULL)
-		return;
+    if(ev == NULL)
+        return;
 
-	ev->frequency = freq;
+    ev->frequency = freq;
 
-	/* update when its scheduled to run if its higher
-	 * than the new frequency
-	 */
-	if((rb_current_time() + freq) < ev->when)
-		ev->when = rb_current_time() + freq;
-	return;
+    /* update when its scheduled to run if its higher
+     * than the new frequency
+     */
+    if((rb_current_time() + freq) < ev->when)
+        ev->when = rb_current_time() + freq;
+    return;
 }
 
 time_t
 rb_event_next(void)
 {
-	return event_time_min;
+    return event_time_min;
 }

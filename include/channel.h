@@ -35,110 +35,102 @@
 struct Client;
 
 /* mode structure for channels */
-struct Mode
-{
-	unsigned int mode;
-	int limit;
-	char key[KEYLEN];
-	unsigned int join_num;
-	unsigned int join_time;
-	char forward[LOC_CHANNELLEN + 1];
+struct Mode {
+    unsigned int mode;
+    int limit;
+    char key[KEYLEN];
+    unsigned int join_num;
+    unsigned int join_time;
+    char forward[LOC_CHANNELLEN + 1];
 };
 
 /* channel structure */
-struct Channel
-{
-	rb_dlink_node node;
-	struct Mode mode;
-	char *mode_lock;
-	char *topic;
-	char *topic_info;
-	time_t topic_time;
-	time_t last_knock;	/* don't allow knock to flood */
+struct Channel {
+    rb_dlink_node node;
+    struct Mode mode;
+    char *mode_lock;
+    char *topic;
+    char *topic_info;
+    time_t topic_time;
+    time_t last_knock;	/* don't allow knock to flood */
 
-	rb_dlink_list members;	/* channel members */
-	rb_dlink_list locmembers;	/* local channel members */
+    rb_dlink_list members;	/* channel members */
+    rb_dlink_list locmembers;	/* local channel members */
 
-	rb_dlink_list invites;
-	rb_dlink_list banlist;
-	rb_dlink_list exceptlist;
-	rb_dlink_list invexlist;
-	rb_dlink_list quietlist;
+    rb_dlink_list invites;
+    rb_dlink_list banlist;
+    rb_dlink_list exceptlist;
+    rb_dlink_list invexlist;
+    rb_dlink_list quietlist;
 
-	time_t first_received_message_time;	/* channel flood control */
-	int received_number_of_privmsgs;
-	int flood_noticed;
+    time_t first_received_message_time;	/* channel flood control */
+    int received_number_of_privmsgs;
+    int flood_noticed;
 
-	unsigned int join_count;  /* joins within delta */
-	unsigned int join_delta;  /* last ts of join */
+    unsigned int join_count;  /* joins within delta */
+    unsigned int join_delta;  /* last ts of join */
 
-	struct Dictionary *metadata;
+    struct Dictionary *metadata;
 
-	unsigned long bants;
-	time_t channelts;
-	char *chname;
+    unsigned long bants;
+    time_t channelts;
+    char *chname;
 };
 
-struct membership
-{
-	rb_dlink_node channode;
-	rb_dlink_node locchannode;
-	rb_dlink_node usernode;
+struct membership {
+    rb_dlink_node channode;
+    rb_dlink_node locchannode;
+    rb_dlink_node usernode;
 
-	struct Channel *chptr;
-	struct Client *client_p;
-	unsigned int flags;
+    struct Channel *chptr;
+    struct Client *client_p;
+    unsigned int flags;
 
-	unsigned long bants;
+    unsigned long bants;
 };
 
 #define BANLEN 195
-struct Ban
-{
-	char *banstr;
-	char *who;
-	time_t when;
-	rb_dlink_node node;
+struct Ban {
+    char *banstr;
+    char *who;
+    time_t when;
+    rb_dlink_node node;
 };
 
-struct mode_letter
-{
-	int mode;
-	char letter;
+struct mode_letter {
+    int mode;
+    char letter;
 };
 
-struct ChModeChange
-{
-	char letter;
-	const char *arg;
-	const char *id;
-	int dir;
-	int caps;
-	int nocaps;
-	int mems;
-	int override;
-	struct Client *client;
+struct ChModeChange {
+    char letter;
+    const char *arg;
+    const char *id;
+    int dir;
+    int caps;
+    int nocaps;
+    int mems;
+    int override;
+    struct Client *client;
 };
 
-struct ChCapCombo
-{
-	int count;
-	int cap_yes;
-	int cap_no;
+struct ChCapCombo {
+    int count;
+    int cap_yes;
+    int cap_no;
 };
 
 typedef void (*ChannelModeFunc)(struct Client *source_p, struct Channel *chptr,
-		int alevel, int parc, int *parn,
-		const char **parv, int *errors, int dir, char c, long mode_type);
+                                int alevel, int parc, int *parn,
+                                const char **parv, int *errors, int dir, char c, long mode_type);
 
-struct ChannelMode
-{
-	ChannelModeFunc set_func;
-	long mode_type;
+struct ChannelMode {
+    ChannelModeFunc set_func;
+    long mode_type;
 };
 
 typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
-		struct Channel *chptr, long mode_type);
+                          struct Channel *chptr, long mode_type);
 
 /* can_send results */
 #define CAN_SEND_NO	0
@@ -232,14 +224,14 @@ void free_ban(struct Ban *bptr);
 
 extern void destroy_channel(struct Channel *);
 
-extern int can_send(struct Channel *chptr, struct Client *who, 
-		    struct membership *);
+extern int can_send(struct Channel *chptr, struct Client *who,
+                    struct membership *);
 extern int flood_attack_channel(int p_or_n, struct Client *source_p,
-				struct Channel *chptr, char *chname);
+                                struct Channel *chptr, char *chname);
 extern int is_banned(struct Channel *chptr, struct Client *who,
-		     struct membership *msptr, const char *, const char *);
+                     struct membership *msptr, const char *, const char *);
 extern int is_quieted(struct Channel *chptr, struct Client *who,
-		     struct membership *msptr, const char *, const char *);
+                      struct membership *msptr, const char *, const char *);
 extern int can_join(struct Client *source_p, struct Channel *chptr, char *key);
 
 extern struct membership *find_channel_membership(struct Channel *, struct Client *);
@@ -260,7 +252,7 @@ extern void free_channel_list(rb_dlink_list *);
 extern int check_channel_name(const char *name);
 
 extern void channel_member_names(struct Channel *chptr, struct Client *,
-				 int show_eon);
+                                 int show_eon);
 
 extern void del_invite(struct Channel *chptr, struct Client *who);
 
@@ -277,25 +269,25 @@ extern void check_spambot_warning(struct Client *source_p, const char *name);
 extern void check_splitmode(void *);
 
 void set_channel_topic(struct Channel *chptr, const char *topic,
-		       const char *topic_info, time_t topicts);
+                       const char *topic_info, time_t topicts);
 
 extern void init_chcap_usage_counts(void);
 extern void set_chcap_usage_counts(struct Client *serv_p);
 extern void unset_chcap_usage_counts(struct Client *serv_p);
 extern void send_cap_mode_changes(struct Client *client_p, struct Client *source_p,
-				  struct Channel *chptr, struct ChModeChange foo[], int);
+                                  struct Channel *chptr, struct ChModeChange foo[], int);
 
 void resv_chan_forcepart(const char *name, const char *reason, int temp_time);
 
 extern void set_channel_mode(struct Client *client_p, struct Client *source_p,
-            	struct Channel *chptr, struct membership *msptr, int parc, const char *parv[]);
+                             struct Channel *chptr, struct membership *msptr, int parc, const char *parv[]);
 extern void set_channel_mlock(struct Client *client_p, struct Client *source_p,
-            	struct Channel *chptr, const char *newmlock, int propagate);
+                              struct Channel *chptr, const char *newmlock, int propagate);
 
 extern struct ChannelMode chmode_table[256];
 
 extern int add_id(struct Client *source_p, struct Channel *chptr, const char *banid,
-       rb_dlink_list * list, long mode_type);
+                  rb_dlink_list * list, long mode_type);
 
 extern int del_id(struct Channel *chptr, const char *banid, rb_dlink_list * list, long mode_type);
 

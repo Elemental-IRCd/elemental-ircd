@@ -43,39 +43,36 @@ struct hostent;
 /* used by new parser */
 /* yacc/lex love globals!!! */
 
-struct ip_value
-{
-	struct rb_sockaddr_storage ip;
-	int ip_mask;
-	int type;
+struct ip_value {
+    struct rb_sockaddr_storage ip;
+    int ip_mask;
+    int type;
 };
 
 extern FILE *conf_fbfile_in;
 extern char conf_line_in[256];
 
-struct ConfItem
-{
-	unsigned int status;	/* If CONF_ILLEGAL, delete when no clients */
-	unsigned int flags;
-	int clients;		/* Number of *LOCAL* clients using this */
-	union
-	{
-		char *name;	/* IRC name, nick, server name, or original u@h */
-		const char *oper;
-	} info;
-	char *host;		/* host part of user@host */
-	char *passwd;		/* doubles as kline reason *ugh* */
-	char *spasswd;		/* Password to send. */
-	char *autojoin;		/* channels for users to autojoin to on connect */
-	char *autojoin_opers; /* channels for opers to autojoin on oper-up */
-	char *user;		/* user part of user@host */
-	int port;
-	time_t hold;		/* Hold action until this time (calendar time) */
-	time_t created;		/* Creation time (for klines etc) */
-	time_t lifetime;	/* Propagated lines: remember until this time */
-	char *className;	/* Name of class */
-	struct Class *c_class;	/* Class of connection */
-	rb_patricia_node_t *pnode;	/* Our patricia node */
+struct ConfItem {
+    unsigned int status;	/* If CONF_ILLEGAL, delete when no clients */
+    unsigned int flags;
+    int clients;		/* Number of *LOCAL* clients using this */
+    union {
+        char *name;	/* IRC name, nick, server name, or original u@h */
+        const char *oper;
+    } info;
+    char *host;		/* host part of user@host */
+    char *passwd;		/* doubles as kline reason *ugh* */
+    char *spasswd;		/* Password to send. */
+    char *autojoin;		/* channels for users to autojoin to on connect */
+    char *autojoin_opers; /* channels for opers to autojoin on oper-up */
+    char *user;		/* user part of user@host */
+    int port;
+    time_t hold;		/* Hold action until this time (calendar time) */
+    time_t created;		/* Creation time (for klines etc) */
+    time_t lifetime;	/* Propagated lines: remember until this time */
+    char *className;	/* Name of class */
+    struct Class *c_class;	/* Class of connection */
+    rb_patricia_node_t *pnode;	/* Our patricia node */
 };
 
 #define CONF_ILLEGAL            0x80000000
@@ -137,192 +134,186 @@ struct ConfItem
 
 /* flag definitions for opers now in client.h */
 
-struct config_file_entry
-{
-	const char *dpath;	/* DPATH if set from command line */
-	const char *configfile;
+struct config_file_entry {
+    const char *dpath;	/* DPATH if set from command line */
+    const char *configfile;
 
-	char *egdpool_path;
+    char *egdpool_path;
 
-	char *default_operstring;
-	char *default_adminstring;
-	char *default_operhost;
-	char *static_quit;
-	char *servicestring;
-	char *kline_reason;
+    char *default_operstring;
+    char *default_adminstring;
+    char *default_operhost;
+    char *static_quit;
+    char *servicestring;
+    char *kline_reason;
 
-	char *identifyservice;
-	char *identifycommand;
-	
-	char *fname_userlog;
-	char *fname_fuserlog;
-	char *fname_operlog;
-	char *fname_foperlog;
-	char *fname_serverlog;
-	char *fname_killlog;
-	char *fname_klinelog;
-	char *fname_operspylog;
-	char *fname_ioerrorlog;
+    char *identifyservice;
+    char *identifycommand;
 
-	unsigned char compression_level;
-	int disable_fake_channels;
-	int hide_channel_below_users;
-	int dots_in_ident;
-	int failed_oper_notice;
-	int anti_nick_flood;
-	int use_part_messages;
-	int anti_spam_exit_message_time;
-	int max_accept;
-	int max_monitor;
-	int max_nick_time;
-	int max_nick_changes;
-	int ts_max_delta;
-	int ts_warn_delta;
-	int dline_with_reason;
-	int kline_with_reason;
-	int kline_delay;
-	int warn_no_nline;
-	int nick_delay;
-	int non_redundant_klines;
-	int stats_e_disabled;
-	int stats_c_oper_only;
-	int stats_y_oper_only;
-	int stats_h_oper_only;
-	int stats_o_oper_only;
-	int stats_k_oper_only;
-	int stats_i_oper_only;
-	int stats_P_oper_only;
-	int map_oper_only;
-	int operspy_admin_only;
-	int pace_wait;
-	int pace_wait_simple;
-	int short_motd;
-	int no_oper_flood;
-	int true_no_oper_flood;
-	int hide_server;
-	int hide_spoof_ips;
-	int hide_error_messages;
-	int client_exit;
-	int oper_only_umodes;
-	int oper_umodes;
-	int oper_snomask;
-	int max_targets;
-	int caller_id_wait;
-	int min_nonwildcard;
-	int min_nonwildcard_simple;
-	int default_floodcount;
-	int client_flood;
-	int default_ident_timeout;
-	int use_egd;
-	int ping_cookie;
-	int tkline_expire_notices;
-	int use_whois_actually;
-	int disable_auth;
-	int connect_timeout;
-	int burst_away;
-	int reject_ban_time;
-	int reject_after_count;
-	int reject_duration;
-	int throttle_count;
-	int throttle_duration;
-	int target_change;
-	int collision_fnc;
-	int default_umodes;
-	int global_snotices;
-	int operspy_dont_care_user_info;
-	int use_propagated_bans;
-	int secret_channels_in_whois;
-	int expire_override_time;
+    char *fname_userlog;
+    char *fname_fuserlog;
+    char *fname_operlog;
+    char *fname_foperlog;
+    char *fname_serverlog;
+    char *fname_killlog;
+    char *fname_klinelog;
+    char *fname_operspylog;
+    char *fname_ioerrorlog;
+
+    unsigned char compression_level;
+    int disable_fake_channels;
+    int hide_channel_below_users;
+    int dots_in_ident;
+    int failed_oper_notice;
+    int anti_nick_flood;
+    int use_part_messages;
+    int anti_spam_exit_message_time;
+    int max_accept;
+    int max_monitor;
+    int max_nick_time;
+    int max_nick_changes;
+    int ts_max_delta;
+    int ts_warn_delta;
+    int dline_with_reason;
+    int kline_with_reason;
+    int kline_delay;
+    int warn_no_nline;
+    int nick_delay;
+    int non_redundant_klines;
+    int stats_e_disabled;
+    int stats_c_oper_only;
+    int stats_y_oper_only;
+    int stats_h_oper_only;
+    int stats_o_oper_only;
+    int stats_k_oper_only;
+    int stats_i_oper_only;
+    int stats_P_oper_only;
+    int map_oper_only;
+    int operspy_admin_only;
+    int pace_wait;
+    int pace_wait_simple;
+    int short_motd;
+    int no_oper_flood;
+    int true_no_oper_flood;
+    int hide_server;
+    int hide_spoof_ips;
+    int hide_error_messages;
+    int client_exit;
+    int oper_only_umodes;
+    int oper_umodes;
+    int oper_snomask;
+    int max_targets;
+    int caller_id_wait;
+    int min_nonwildcard;
+    int min_nonwildcard_simple;
+    int default_floodcount;
+    int client_flood;
+    int default_ident_timeout;
+    int use_egd;
+    int ping_cookie;
+    int tkline_expire_notices;
+    int use_whois_actually;
+    int disable_auth;
+    int connect_timeout;
+    int burst_away;
+    int reject_ban_time;
+    int reject_after_count;
+    int reject_duration;
+    int throttle_count;
+    int throttle_duration;
+    int target_change;
+    int collision_fnc;
+    int default_umodes;
+    int global_snotices;
+    int operspy_dont_care_user_info;
+    int use_propagated_bans;
+    int secret_channels_in_whois;
+    int expire_override_time;
     int away_interval;
 };
 
-struct config_channel_entry
-{
-	char * autochanmodes;
-	char * exemptchanops;
-	char * disabledmodes;
-	int admin_on_channel_create;
-	int use_halfop;
-	int use_admin;
-        int use_owner;
-	int use_except;
-	int use_invex;
-	int use_knock;
-	int use_forward;
-	int use_local_channels;
-	int knock_delay;
-	int knock_delay_channel;
-	int max_bans;
-	int max_bans_large;
-	int max_chans_per_user;
-	int no_create_on_split;
-	int no_join_on_split;
-	int default_split_server_count;
-	int default_split_user_count;
-	int burst_topicwho;
-	int kick_on_split_riding;
-	int only_ascii_channels;
-	int cycle_host_change;
-	int host_in_topic;
-	int resv_forcepart;
-	int channel_target_change;
+struct config_channel_entry {
+    char * autochanmodes;
+    char * exemptchanops;
+    char * disabledmodes;
+    int admin_on_channel_create;
+    int use_halfop;
+    int use_admin;
+    int use_owner;
+    int use_except;
+    int use_invex;
+    int use_knock;
+    int use_forward;
+    int use_local_channels;
+    int knock_delay;
+    int knock_delay_channel;
+    int max_bans;
+    int max_bans_large;
+    int max_chans_per_user;
+    int no_create_on_split;
+    int no_join_on_split;
+    int default_split_server_count;
+    int default_split_user_count;
+    int burst_topicwho;
+    int kick_on_split_riding;
+    int only_ascii_channels;
+    int cycle_host_change;
+    int host_in_topic;
+    int resv_forcepart;
+    int channel_target_change;
 
-	int exempt_cmode_c;
-	int exempt_cmode_C;
-	int exempt_cmode_D;
-	int exempt_cmode_T;
-	int exempt_cmode_N;
-	int exempt_cmode_G;
-	int exempt_cmode_K;
+    int exempt_cmode_c;
+    int exempt_cmode_C;
+    int exempt_cmode_D;
+    int exempt_cmode_T;
+    int exempt_cmode_N;
+    int exempt_cmode_G;
+    int exempt_cmode_K;
 };
 
-struct config_server_hide
-{
-	int flatten_links;
-	int links_delay;
-	int hidden;
-	int disable_hidden;
+struct config_server_hide {
+    int flatten_links;
+    int links_delay;
+    int hidden;
+    int disable_hidden;
 };
 
-struct server_info
-{
-	char *name;
-	char sid[4];
-	char *description;
-	char *network_name;
-	char *network_desc;
-	char *helpchan;
-	char *helpurl;
-	int hub;
-	struct sockaddr_in ip;
-	int default_max_clients;
+struct server_info {
+    char *name;
+    char sid[4];
+    char *description;
+    char *network_name;
+    char *network_desc;
+    char *helpchan;
+    char *helpurl;
+    int hub;
+    struct sockaddr_in ip;
+    int default_max_clients;
 #ifdef RB_IPV6
-	struct sockaddr_in6 ip6;
+    struct sockaddr_in6 ip6;
 #endif
-	int specific_ipv4_vhost;
+    int specific_ipv4_vhost;
 #ifdef RB_IPV6
-	int specific_ipv6_vhost;
+    int specific_ipv6_vhost;
 #endif
-	char *ssl_private_key;
-	char *ssl_ca_cert;
-	char *ssl_cert;
-	char *ssl_dh_params;
-	int ssld_count;
+    char *ssl_private_key;
+    char *ssl_ca_cert;
+    char *ssl_cert;
+    char *ssl_dh_params;
+    int ssld_count;
 };
 
-struct admin_info
-{
-	char *name;
-	char *description;
-	char *email;
+struct admin_info {
+    char *name;
+    char *description;
+    char *email;
 };
 
-struct alias_entry
-{
-	char *name;
-	char *target;
-	int flags;			/* reserved for later use */
-	int hits;
+struct alias_entry {
+    char *name;
+    char *target;
+    int flags;			/* reserved for later use */
+    int hits;
 };
 
 /* All variables are GLOBAL */
@@ -339,13 +330,12 @@ extern rb_dlink_list service_list;
 
 extern rb_dlink_list prop_bans;
 
-typedef enum temp_list
-{
-	TEMP_MIN,
-	TEMP_HOUR,
-	TEMP_DAY,
-	TEMP_WEEK,
-	LAST_TEMP_TYPE
+typedef enum temp_list {
+    TEMP_MIN,
+    TEMP_HOUR,
+    TEMP_DAY,
+    TEMP_WEEK,
+    LAST_TEMP_TYPE
 } temp_list;
 
 extern rb_dlink_list temp_klines[LAST_TEMP_TYPE];
@@ -370,10 +360,10 @@ extern int detach_conf(struct Client *);
 extern struct ConfItem *find_tkline(const char *, const char *, struct sockaddr *);
 extern char *show_iline_prefix(struct Client *, struct ConfItem *, char *);
 extern void get_printable_conf(struct ConfItem *,
-			       char **, char **, char **, char **, int *, char **);
+                               char **, char **, char **, char **, int *, char **);
 extern char *get_user_ban_reason(struct ConfItem *aconf);
 extern void get_printable_kline(struct Client *, struct ConfItem *,
-				char **, char **, char **, char **);
+                                char **, char **, char **, char **);
 
 extern void yyerror(const char *);
 extern int conf_yy_fatal_error(const char *);

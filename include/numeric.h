@@ -77,7 +77,7 @@ extern const char *form_str(int);
 #define RPL_STATSYLINE       218
 #define RPL_ENDOFSTATS       219
 /* note ircu uses 217 for STATSPLINE frip. conflict
- * as RPL_STATSQLINE was used in old 2.8 for Q line 
+ * as RPL_STATSQLINE was used in old 2.8 for Q line
  * I'm going to steal 220 for now *sigh*
  * -Dianora
  */
@@ -318,7 +318,7 @@ extern const char *form_str(int);
 
 #define ERR_USERNOTONSERV    504
 
-/* #define ERR_LAST_ERR_MSG 505 
+/* #define ERR_LAST_ERR_MSG 505
  * moved to 999
  */
 #define ERR_WRONGPONG	     513

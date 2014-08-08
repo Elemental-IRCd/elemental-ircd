@@ -65,15 +65,15 @@ static void safelist_iterate_clients(void *unused);
 static void safelist_channel_named(struct Client *source_p, const char *name);
 
 struct Message list_msgtab = {
-	"LIST", 0, 0, 0, MFLG_SLOW,
-	{mg_unreg, {m_list, 0}, mg_ignore, mg_ignore, mg_ignore, {mo_list, 0}}
+    "LIST", 0, 0, 0, MFLG_SLOW,
+    {mg_unreg, {m_list, 0}, mg_ignore, mg_ignore, mg_ignore, {mo_list, 0}}
 };
 
 mapi_clist_av1 list_clist[] = { &list_msgtab, NULL };
 
 mapi_hfn_list_av1 list_hfnlist[] = {
-	{"client_exit", (hookfn) safelist_check_cliexit},
-	{NULL, NULL}
+    {"client_exit", (hookfn) safelist_check_cliexit},
+    {NULL, NULL}
 };
 
 DECLARE_MODULE_AV1(list, _modinit, _moddeinit, list_clist, NULL, list_hfnlist, "$Revision: 3372 $");
@@ -82,39 +82,38 @@ static struct ev_entry *iterate_clients_ev = NULL;
 
 static int _modinit(void)
 {
-	iterate_clients_ev = rb_event_add("safelist_iterate_clients", safelist_iterate_clients, NULL, 3);
+    iterate_clients_ev = rb_event_add("safelist_iterate_clients", safelist_iterate_clients, NULL, 3);
 
-	/* ELIST=[tokens]:
-	 *
-	 * M = mask search
-	 * N = !mask search
-	 * U = user count search (< >)
-	 * C = creation time search (C> C<)
-	 * T = topic search (T> T<)
-	 */
-	add_isupport("SAFELIST", isupport_string, "");
-	add_isupport("ELIST", isupport_string, "CTU");
+    /* ELIST=[tokens]:
+     *
+     * M = mask search
+     * N = !mask search
+     * U = user count search (< >)
+     * C = creation time search (C> C<)
+     * T = topic search (T> T<)
+     */
+    add_isupport("SAFELIST", isupport_string, "");
+    add_isupport("ELIST", isupport_string, "CTU");
 
-	return 0;
+    return 0;
 }
 
 static void _moddeinit(void)
 {
-	rb_event_delete(iterate_clients_ev);
+    rb_event_delete(iterate_clients_ev);
 
-	delete_isupport("SAFELIST");
-	delete_isupport("ELIST");
+    delete_isupport("SAFELIST");
+    delete_isupport("ELIST");
 }
 
 static void safelist_check_cliexit(hook_data_client_exit * hdata)
 {
-	/* Cancel the safelist request if we are disconnecting
-	 * from the server. That way it doesn't core. :P --nenolod
-	 */
-	if (MyClient(hdata->target) && hdata->target->localClient->safelist_data != NULL)
-	{
-		safelist_client_release(hdata->target);
-	}
+    /* Cancel the safelist request if we are disconnecting
+     * from the server. That way it doesn't core. :P --nenolod
+     */
+    if (MyClient(hdata->target) && hdata->target->localClient->safelist_data != NULL) {
+        safelist_client_release(hdata->target);
+    }
 }
 
 /* m_list()
@@ -125,29 +124,25 @@ static void safelist_check_cliexit(hook_data_client_exit * hdata)
  */
 static int m_list(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	static time_t last_used = 0L;
+    static time_t last_used = 0L;
 
-	if (source_p->localClient->safelist_data != NULL)
-	{
-		sendto_one_notice(source_p, ":/LIST aborted");
-		safelist_client_release(source_p);
-		return 0;
-	}
+    if (source_p->localClient->safelist_data != NULL) {
+        sendto_one_notice(source_p, ":/LIST aborted");
+        safelist_client_release(source_p);
+        return 0;
+    }
 
-	if (parc < 2 || !IsChannelName(parv[1]))
-	{
-		/* pace this due to the sheer traffic involved */
-		if (((last_used + ConfigFileEntry.pace_wait) > rb_current_time()))
-		{
-			sendto_one(source_p, form_str(RPL_LOAD2HI), me.name, source_p->name, "LIST");
-			sendto_one(source_p, form_str(RPL_LISTEND), me.name, source_p->name);
-			return 0;
-		}
-		else
-			last_used = rb_current_time();
-	}
+    if (parc < 2 || !IsChannelName(parv[1])) {
+        /* pace this due to the sheer traffic involved */
+        if (((last_used + ConfigFileEntry.pace_wait) > rb_current_time())) {
+            sendto_one(source_p, form_str(RPL_LOAD2HI), me.name, source_p->name, "LIST");
+            sendto_one(source_p, form_str(RPL_LISTEND), me.name, source_p->name);
+            return 0;
+        } else
+            last_used = rb_current_time();
+    }
 
-	return mo_list(client_p, source_p, parc, parv);
+    return mo_list(client_p, source_p, parc, parv);
 }
 
 /* mo_list()
@@ -155,127 +150,104 @@ static int m_list(struct Client *client_p, struct Client *source_p, int parc, co
  */
 static int mo_list(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
-	struct ListClient *params;
-	char *p, *args;
-	int i;
+    struct ListClient *params;
+    char *p, *args;
+    int i;
 
-	if (source_p->localClient->safelist_data != NULL)
-	{
-		sendto_one_notice(source_p, ":/LIST aborted");
-		safelist_client_release(source_p);
-		return 0;
-	}
+    if (source_p->localClient->safelist_data != NULL) {
+        sendto_one_notice(source_p, ":/LIST aborted");
+        safelist_client_release(source_p);
+        return 0;
+    }
 
-	/* Single channel. */
-	if (parc > 1 && IsChannelName(parv[1]))
-	{
-		safelist_channel_named(source_p, parv[1]);
-		return 0;
-	}
+    /* Single channel. */
+    if (parc > 1 && IsChannelName(parv[1])) {
+        safelist_channel_named(source_p, parv[1]);
+        return 0;
+    }
 
-	/* Multiple channels, possibly with parameters. */
-	params = rb_malloc(sizeof(struct ListClient));
+    /* Multiple channels, possibly with parameters. */
+    params = rb_malloc(sizeof(struct ListClient));
 
-	/* Let the user set it */
-	params->users_min = ConfigFileEntry.hide_channel_below_users;
-	params->users_max = INT_MAX;
-	params->operspy = 0;
-	params->created_min = params->topic_min = 
-		params->created_max = params->topic_max = 0;
+    /* Let the user set it */
+    params->users_min = ConfigFileEntry.hide_channel_below_users;
+    params->users_max = INT_MAX;
+    params->operspy = 0;
+    params->created_min = params->topic_min =
+                              params->created_max = params->topic_max = 0;
 
-	if (parc > 1 && !EmptyString(parv[1]))
-	{
-		args = LOCAL_COPY(parv[1]);
+    if (parc > 1 && !EmptyString(parv[1])) {
+        args = LOCAL_COPY(parv[1]);
 
-		/* Cancel out default minimum. */
-		params->users_min = 0;
+        /* Cancel out default minimum. */
+        params->users_min = 0;
 
-		for (i = 0; i < 7; i++)
-		{
-			if ((p = strchr(args, ',')) != NULL)
-				*p++ = '\0';
+        for (i = 0; i < 7; i++) {
+            if ((p = strchr(args, ',')) != NULL)
+                *p++ = '\0';
 
-			if (*args == '<')
-			{
-				args++;
-				if (IsDigit(*args))
-				{
-					params->users_max = atoi(args);
-					if (params->users_max == 0)
-						params->users_max = INT_MAX;
-					else
-						params->users_max--;
-				}
-			}
-			else if (*args == '>')
-			{
-				args++;
-				if (IsDigit(*args))
-					params->users_min = atoi(args) + 1;
-				else
-					params->users_min = 0;
-			}
-			else if (*args == 'C' || *args == 'c')
-			{
-				args++;
-				if (*args == '>')
-				{
-					/* Creation time earlier than last x minutes. */
-					args++;
-					if (IsDigit(*args))
-					{
-						params->created_max = rb_current_time() - (60 * atoi(args));
-					}
-				}
-				else if (*args == '<')
-				{
-					/* Creation time within last x minutes. */
-					args++;
-					if (IsDigit(*args))
-					{
-						params->created_min = rb_current_time() - (60 * atoi(args));
-					}
-				}
-			}
-			else if (*args == 'T' || *args == 't')
-			{
-				args++;
-				if (*args == '>')
-				{
-					/* Topic change time earlier than last x minutes. */
-					args++;
-					if (IsDigit(*args))
-					{
-						params->topic_max = rb_current_time() - (60 * atoi(args));
-					}
-				}
-				else if (*args == '<')
-				{
-					/* Topic change time within last x minutes. */
-					args++;
-					if (IsDigit(*args))
-					{
-						params->topic_min = rb_current_time() - (60 * atoi(args));
-					}
-				}
-			}
-			/* Only accept operspy as the first option. */
-			else if (*args == '!' && IsOperSpy(source_p) && i == 0)
-			{
-				params->operspy = 1;
-				report_operspy(source_p, "LIST", p);
-			}
+            if (*args == '<') {
+                args++;
+                if (IsDigit(*args)) {
+                    params->users_max = atoi(args);
+                    if (params->users_max == 0)
+                        params->users_max = INT_MAX;
+                    else
+                        params->users_max--;
+                }
+            } else if (*args == '>') {
+                args++;
+                if (IsDigit(*args))
+                    params->users_min = atoi(args) + 1;
+                else
+                    params->users_min = 0;
+            } else if (*args == 'C' || *args == 'c') {
+                args++;
+                if (*args == '>') {
+                    /* Creation time earlier than last x minutes. */
+                    args++;
+                    if (IsDigit(*args)) {
+                        params->created_max = rb_current_time() - (60 * atoi(args));
+                    }
+                } else if (*args == '<') {
+                    /* Creation time within last x minutes. */
+                    args++;
+                    if (IsDigit(*args)) {
+                        params->created_min = rb_current_time() - (60 * atoi(args));
+                    }
+                }
+            } else if (*args == 'T' || *args == 't') {
+                args++;
+                if (*args == '>') {
+                    /* Topic change time earlier than last x minutes. */
+                    args++;
+                    if (IsDigit(*args)) {
+                        params->topic_max = rb_current_time() - (60 * atoi(args));
+                    }
+                } else if (*args == '<') {
+                    /* Topic change time within last x minutes. */
+                    args++;
+                    if (IsDigit(*args)) {
+                        params->topic_min = rb_current_time() - (60 * atoi(args));
+                    }
+                }
+            }
+            /* Only accept operspy as the first option. */
+            else if (*args == '!' && IsOperSpy(source_p) && i == 0) {
+                params->operspy = 1;
+                report_operspy(source_p, "LIST", p);
+            }
 
-			if (EmptyString(p))
-				break;
-			else
-				args = p;
-		}
-	}
+            if (EmptyString(p))
+                break;
+            else
+                args = p;
+        }
+    }
 
-	safelist_client_instantiate(source_p, params);
+    safelist_client_instantiate(source_p, params);
 
-	return 0;
+    return 0;
 }
 
 /*
@@ -291,10 +263,10 @@ static int mo_list(struct Client *client_p, struct Client *source_p, int parc, c
  */
 static int safelist_sendq_exceeded(struct Client *client_p)
 {
-	if (rb_linebuf_len(&client_p->localClient->buf_sendq) > (get_sendq(client_p) / 2))
-		return YES;
-	else
-		return NO;
+    if (rb_linebuf_len(&client_p->localClient->buf_sendq) > (get_sendq(client_p) / 2))
+        return YES;
+    else
+        return NO;
 }
 
 /*
@@ -311,18 +283,18 @@ static int safelist_sendq_exceeded(struct Client *client_p)
  */
 static void safelist_client_instantiate(struct Client *client_p, struct ListClient *params)
 {
-	s_assert(MyClient(client_p));
-	s_assert(params != NULL);
+    s_assert(MyClient(client_p));
+    s_assert(params != NULL);
 
-	client_p->localClient->safelist_data = params;
+    client_p->localClient->safelist_data = params;
 
-	sendto_one(client_p, form_str(RPL_LISTSTART), me.name, client_p->name);
+    sendto_one(client_p, form_str(RPL_LISTSTART), me.name, client_p->name);
 
-	/* pop the client onto the queue for processing */
-	rb_dlinkAddAlloc(client_p, &safelisting_clients);
+    /* pop the client onto the queue for processing */
+    rb_dlinkAddAlloc(client_p, &safelisting_clients);
 
-	/* give the user some initial data to work with */
-	safelist_iterate_client(client_p);
+    /* give the user some initial data to work with */
+    safelist_iterate_client(client_p);
 }
 
 /*
@@ -338,15 +310,15 @@ static void safelist_client_instantiate(struct Client *client_p, struct ListClie
  */
 static void safelist_client_release(struct Client *client_p)
 {
-	s_assert(MyClient(client_p));
+    s_assert(MyClient(client_p));
 
-	rb_dlinkFindDestroy(client_p, &safelisting_clients);
+    rb_dlinkFindDestroy(client_p, &safelisting_clients);
 
-	rb_free(client_p->localClient->safelist_data);
+    rb_free(client_p->localClient->safelist_data);
 
-	client_p->localClient->safelist_data = NULL;
+    client_p->localClient->safelist_data = NULL;
 
-	sendto_one(client_p, form_str(RPL_LISTEND), me.name, client_p->name);
+    sendto_one(client_p, form_str(RPL_LISTEND), me.name, client_p->name);
 }
 
 /*
@@ -358,38 +330,36 @@ static void safelist_client_release(struct Client *client_p)
  */
 static void safelist_channel_named(struct Client *source_p, const char *name)
 {
-	struct Channel *chptr;
-	char *p;
-	char *n = LOCAL_COPY(name);
+    struct Channel *chptr;
+    char *p;
+    char *n = LOCAL_COPY(name);
 
-	sendto_one(source_p, form_str(RPL_LISTSTART), me.name, source_p->name);
+    sendto_one(source_p, form_str(RPL_LISTSTART), me.name, source_p->name);
 
-	if ((p = strchr(n, ',')))
-		*p = '\0';
+    if ((p = strchr(n, ',')))
+        *p = '\0';
 
-	if (*n == '\0')
-	{
-		sendto_one_numeric(source_p, ERR_NOSUCHNICK, form_str(ERR_NOSUCHNICK), name);
-		sendto_one(source_p, form_str(RPL_LISTEND), me.name, source_p->name);
-		return;
-	}
+    if (*n == '\0') {
+        sendto_one_numeric(source_p, ERR_NOSUCHNICK, form_str(ERR_NOSUCHNICK), name);
+        sendto_one(source_p, form_str(RPL_LISTEND), me.name, source_p->name);
+        return;
+    }
 
-	chptr = find_channel(n);
+    chptr = find_channel(n);
 
-	if (chptr == NULL)
-	{
-		sendto_one_numeric(source_p, ERR_NOSUCHNICK, form_str(ERR_NOSUCHNICK), n);
-		sendto_one(source_p, form_str(RPL_LISTEND), me.name, source_p->name);
-		return;
-	}
+    if (chptr == NULL) {
+        sendto_one_numeric(source_p, ERR_NOSUCHNICK, form_str(ERR_NOSUCHNICK), n);
+        sendto_one(source_p, form_str(RPL_LISTEND), me.name, source_p->name);
+        return;
+    }
 
-	if (!SecretChannel(chptr) || IsMember(source_p, chptr))
-		sendto_one(source_p, form_str(RPL_LIST), me.name, source_p->name, "",
-			   chptr->chname, rb_dlink_list_length(&chptr->members),
-			   chptr->topic == NULL ? "" : chptr->topic);
+    if (!SecretChannel(chptr) || IsMember(source_p, chptr))
+        sendto_one(source_p, form_str(RPL_LIST), me.name, source_p->name, "",
+                   chptr->chname, rb_dlink_list_length(&chptr->members),
+                   chptr->topic == NULL ? "" : chptr->topic);
 
-	sendto_one(source_p, form_str(RPL_LISTEND), me.name, source_p->name);
-	return;
+    sendto_one(source_p, form_str(RPL_LISTEND), me.name, source_p->name);
+    return;
 }
 
 /*
@@ -402,33 +372,33 @@ static void safelist_channel_named(struct Client *source_p, const char *name)
  */
 static void safelist_one_channel(struct Client *source_p, struct Channel *chptr)
 {
-	struct ListClient *safelist_data = source_p->localClient->safelist_data;
+    struct ListClient *safelist_data = source_p->localClient->safelist_data;
 
-	if (SecretChannel(chptr) && !IsMember(source_p, chptr) && !safelist_data->operspy)
-		return;
+    if (SecretChannel(chptr) && !IsMember(source_p, chptr) && !safelist_data->operspy)
+        return;
 
-	if ((unsigned int)chptr->members.length < safelist_data->users_min
-	    || (unsigned int)chptr->members.length > safelist_data->users_max)
-		return;
+    if ((unsigned int)chptr->members.length < safelist_data->users_min
+        || (unsigned int)chptr->members.length > safelist_data->users_max)
+        return;
 
-	if (safelist_data->topic_min && chptr->topic_time < safelist_data->topic_min)
-		return;
+    if (safelist_data->topic_min && chptr->topic_time < safelist_data->topic_min)
+        return;
 
-	/* If a topic TS is provided, don't show channels without a topic set. */
-	if (safelist_data->topic_max && (chptr->topic_time > safelist_data->topic_max
-		|| chptr->topic_time == 0))
-		return;
+    /* If a topic TS is provided, don't show channels without a topic set. */
+    if (safelist_data->topic_max && (chptr->topic_time > safelist_data->topic_max
+                                     || chptr->topic_time == 0))
+        return;
 
-	if (safelist_data->created_min && chptr->channelts < safelist_data->created_min)
-		return;
+    if (safelist_data->created_min && chptr->channelts < safelist_data->created_min)
+        return;
 
-	if (safelist_data->created_max && chptr->channelts > safelist_data->created_max)
-		return;
+    if (safelist_data->created_max && chptr->channelts > safelist_data->created_max)
+        return;
 
-	sendto_one(source_p, form_str(RPL_LIST), me.name, source_p->name,
-		   (safelist_data->operspy && SecretChannel(chptr)) ? "!" : "",
-		   chptr->chname, rb_dlink_list_length(&chptr->members),
-		   chptr->topic == NULL ? "" : chptr->topic);
+    sendto_one(source_p, form_str(RPL_LIST), me.name, source_p->name,
+               (safelist_data->operspy && SecretChannel(chptr)) ? "!" : "",
+               chptr->chname, rb_dlink_list_length(&chptr->members),
+               chptr->topic == NULL ? "" : chptr->topic);
 }
 
 /*
@@ -440,28 +410,26 @@ static void safelist_one_channel(struct Client *source_p, struct Channel *chptr)
  */
 static void safelist_iterate_client(struct Client *source_p)
 {
-	rb_dlink_node *ptr;
-	int iter;
+    rb_dlink_node *ptr;
+    int iter;
 
-	for (iter = source_p->localClient->safelist_data->hash_indice; iter < CH_MAX; iter++)
-	{
-		if (safelist_sendq_exceeded(source_p->from) == YES)
-		{
-			source_p->localClient->safelist_data->hash_indice = iter;
-			return;
-		}
+    for (iter = source_p->localClient->safelist_data->hash_indice; iter < CH_MAX; iter++) {
+        if (safelist_sendq_exceeded(source_p->from) == YES) {
+            source_p->localClient->safelist_data->hash_indice = iter;
+            return;
+        }
 
-		RB_DLINK_FOREACH(ptr, channelTable[iter].head) 
-			safelist_one_channel(source_p, (struct Channel *) ptr->data);
-	}
+        RB_DLINK_FOREACH(ptr, channelTable[iter].head)
+        safelist_one_channel(source_p, (struct Channel *) ptr->data);
+    }
 
-	safelist_client_release(source_p);
+    safelist_client_release(source_p);
 }
 
 static void safelist_iterate_clients(void *unused)
 {
-	rb_dlink_node *n, *n2;
+    rb_dlink_node *n, *n2;
 
-	RB_DLINK_FOREACH_SAFE(n, n2, safelisting_clients.head) 
-		safelist_iterate_client((struct Client *)n->data);
+    RB_DLINK_FOREACH_SAFE(n, n2, safelisting_clients.head)
+    safelist_iterate_client((struct Client *)n->data);
 }

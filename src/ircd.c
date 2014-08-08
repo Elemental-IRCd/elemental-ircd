@@ -123,30 +123,28 @@ int eob_count;
 void
 ircd_shutdown(const char *reason)
 {
-	struct Client *target_p;
-	rb_dlink_node *ptr;
+    struct Client *target_p;
+    rb_dlink_node *ptr;
 
-	RB_DLINK_FOREACH(ptr, lclient_list.head)
-	{
-		target_p = ptr->data;
+    RB_DLINK_FOREACH(ptr, lclient_list.head) {
+        target_p = ptr->data;
 
-		sendto_one(target_p, ":%s NOTICE %s :Server Terminating. %s",
-			me.name, target_p->name, reason);
-	}
+        sendto_one(target_p, ":%s NOTICE %s :Server Terminating. %s",
+                   me.name, target_p->name, reason);
+    }
 
-	RB_DLINK_FOREACH(ptr, serv_list.head)
-	{
-		target_p = ptr->data;
+    RB_DLINK_FOREACH(ptr, serv_list.head) {
+        target_p = ptr->data;
 
-		sendto_one(target_p, ":%s ERROR :Terminated by %s",
-			me.name, reason);
-	}
+        sendto_one(target_p, ":%s ERROR :Terminated by %s",
+                   me.name, reason);
+    }
 
-	ilog(L_MAIN, "Server Terminating. %s", reason);
-	close_logfiles();
+    ilog(L_MAIN, "Server Terminating. %s", reason);
+    close_logfiles();
 
-	unlink(pidFileName);
-	exit(0);
+    unlink(pidFileName);
+    exit(0);
 }
 
 /*
@@ -155,20 +153,20 @@ ircd_shutdown(const char *reason)
 static void
 print_startup(int pid)
 {
-	inotice("now running in %s mode from %s as pid %d ...",
-	       !server_state_foreground ? "background" : "foreground",
-        	ConfigFileEntry.dpath, pid);
+    inotice("now running in %s mode from %s as pid %d ...",
+            !server_state_foreground ? "background" : "foreground",
+            ConfigFileEntry.dpath, pid);
 
-	/* let the parent process know the initialization was successful
-	 * -- jilles */
-	if (!server_state_foreground)
-		write(0, ".", 1);
-	fclose(stdin);
-	fclose(stdout);
-	fclose(stderr);
-	open("/dev/null", O_RDWR);
-	dup2(0, 1);
-	dup2(0, 2);
+    /* let the parent process know the initialization was successful
+     * -- jilles */
+    if (!server_state_foreground)
+        write(0, ".", 1);
+    fclose(stdin);
+    fclose(stdout);
+    fclose(stderr);
+    open("/dev/null", O_RDWR);
+    dup2(0, 1);
+    dup2(0, 2);
 }
 
 /*
@@ -182,108 +180,111 @@ static void
 init_sys(void)
 {
 #if defined(RLIMIT_NOFILE) && defined(HAVE_SYS_RESOURCE_H)
-	struct rlimit limit;
+    struct rlimit limit;
 
-	if(!getrlimit(RLIMIT_NOFILE, &limit))
-	{
-		maxconnections = limit.rlim_cur;
-		if(maxconnections <= MAX_BUFFER)
-		{
-			fprintf(stderr, "ERROR: Shell FD limits are too low.\n");
-			fprintf(stderr, "ERROR: charybdis reserves %d FDs, shell limits must be above this\n", MAX_BUFFER);
-			exit(EXIT_FAILURE);
-		}
-		return;
-	}
+    if(!getrlimit(RLIMIT_NOFILE, &limit)) {
+        maxconnections = limit.rlim_cur;
+        if(maxconnections <= MAX_BUFFER) {
+            fprintf(stderr, "ERROR: Shell FD limits are too low.\n");
+            fprintf(stderr, "ERROR: charybdis reserves %d FDs, shell limits must be above this\n", MAX_BUFFER);
+            exit(EXIT_FAILURE);
+        }
+        return;
+    }
 #endif /* RLIMIT_FD_MAX */
-	maxconnections = MAXCONNECTIONS;
+    maxconnections = MAXCONNECTIONS;
 }
 
 static int
 make_daemon(void)
 {
-	int pid;
-	int pip[2];
-	char c;
+    int pid;
+    int pip[2];
+    char c;
 
-	if (pipe(pip) < 0)
-	{
-		perror("pipe");
-		exit(EXIT_FAILURE);
-	}
-	dup2(pip[1], 0);
-	close(pip[1]);
-	if((pid = fork()) < 0)
-	{
-		perror("fork");
-		exit(EXIT_FAILURE);
-	}
-	else if(pid > 0)
-	{
-		close(0);
-		/* Wait for initialization to finish, successfully or
-		 * unsuccessfully. Until this point the child may still
-		 * write to stdout/stderr.
-		 * -- jilles */
-		if (read(pip[0], &c, 1) > 0)
-			exit(EXIT_SUCCESS);
-		else
-			exit(EXIT_FAILURE);
-	}
+    if (pipe(pip) < 0) {
+        perror("pipe");
+        exit(EXIT_FAILURE);
+    }
+    dup2(pip[1], 0);
+    close(pip[1]);
+    if((pid = fork()) < 0) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    } else if(pid > 0) {
+        close(0);
+        /* Wait for initialization to finish, successfully or
+         * unsuccessfully. Until this point the child may still
+         * write to stdout/stderr.
+         * -- jilles */
+        if (read(pip[0], &c, 1) > 0)
+            exit(EXIT_SUCCESS);
+        else
+            exit(EXIT_FAILURE);
+    }
 
-	close(pip[0]);
-	setsid();
-/*	fclose(stdin);
-	fclose(stdout);
-	fclose(stderr); */
+    close(pip[0]);
+    setsid();
+    /*	fclose(stdin);
+    	fclose(stdout);
+    	fclose(stderr); */
 
-	return 0;
+    return 0;
 }
 
 static int printVersion = 0;
 
 struct lgetopt myopts[] = {
-	{"configfile", &ConfigFileEntry.configfile,
-	 STRING, "File to use for ircd.conf"},
-	{"logfile", &logFileName,
-	 STRING, "File to use for ircd.log"},
-	{"pidfile", &pidFileName,
-	 STRING, "File to use for process ID"},
-	{"foreground", &server_state_foreground,
-	 YESNO, "Run in foreground (don't detach)"},
-	{"version", &printVersion,
-	 YESNO, "Print version and exit"},
-	{"conftest", &testing_conf,
-	 YESNO, "Test the configuration files and exit"},
-	{"help", NULL, USAGE, "Print this text"},
-	{NULL, NULL, STRING, NULL},
+    {
+        "configfile", &ConfigFileEntry.configfile,
+        STRING, "File to use for ircd.conf"
+    },
+    {
+        "logfile", &logFileName,
+        STRING, "File to use for ircd.log"
+    },
+    {
+        "pidfile", &pidFileName,
+        STRING, "File to use for process ID"
+    },
+    {
+        "foreground", &server_state_foreground,
+        YESNO, "Run in foreground (don't detach)"
+    },
+    {
+        "version", &printVersion,
+        YESNO, "Print version and exit"
+    },
+    {
+        "conftest", &testing_conf,
+        YESNO, "Test the configuration files and exit"
+    },
+    {"help", NULL, USAGE, "Print this text"},
+    {NULL, NULL, STRING, NULL},
 };
 
 static void
 check_rehash(void *unused)
 {
-	/*
-	 * Check to see whether we have to rehash the configuration ..
-	 */
-	if(dorehash)
-	{
-		rehash(1);
-		dorehash = 0;
-	}
+    /*
+     * Check to see whether we have to rehash the configuration ..
+     */
+    if(dorehash) {
+        rehash(1);
+        dorehash = 0;
+    }
 
-	if(dorehashbans)
-	{
-		rehash_bans(1);
-		dorehashbans = 0;
-	}
+    if(dorehashbans) {
+        rehash_bans(1);
+        dorehashbans = 0;
+    }
 
-	if(doremotd)
-	{
-		sendto_realops_snomask(SNO_GENERAL, L_ALL,
-				     "Got signal SIGUSR1, reloading ircd motd file");
-		cache_user_motd();
-		doremotd = 0;
-	}
+    if(doremotd) {
+        sendto_realops_snomask(SNO_GENERAL, L_ALL,
+                               "Got signal SIGUSR1, reloading ircd motd file");
+        cache_user_motd();
+        doremotd = 0;
+    }
 }
 
 /*
@@ -291,61 +292,60 @@ check_rehash(void *unused)
  *
  * inputs       - none
  * output       - none
- * side effects - This sets all global set options needed 
+ * side effects - This sets all global set options needed
  */
 static void
 initialize_global_set_options(void)
 {
-	memset(&GlobalSetOptions, 0, sizeof(GlobalSetOptions));
-	/* memset( &ConfigFileEntry, 0, sizeof(ConfigFileEntry)); */
+    memset(&GlobalSetOptions, 0, sizeof(GlobalSetOptions));
+    /* memset( &ConfigFileEntry, 0, sizeof(ConfigFileEntry)); */
 
-	GlobalSetOptions.maxclients = ServerInfo.default_max_clients;
+    GlobalSetOptions.maxclients = ServerInfo.default_max_clients;
 
-	if(GlobalSetOptions.maxclients > (maxconnections - MAX_BUFFER) || (GlobalSetOptions.maxclients <= 0))
-		GlobalSetOptions.maxclients = maxconnections - MAX_BUFFER;
+    if(GlobalSetOptions.maxclients > (maxconnections - MAX_BUFFER) || (GlobalSetOptions.maxclients <= 0))
+        GlobalSetOptions.maxclients = maxconnections - MAX_BUFFER;
 
-	GlobalSetOptions.autoconn = 1;
+    GlobalSetOptions.autoconn = 1;
 
-	GlobalSetOptions.spam_time = MIN_JOIN_LEAVE_TIME;
-	GlobalSetOptions.spam_num = MAX_JOIN_LEAVE_COUNT;
+    GlobalSetOptions.spam_time = MIN_JOIN_LEAVE_TIME;
+    GlobalSetOptions.spam_num = MAX_JOIN_LEAVE_COUNT;
 
-	if(ConfigFileEntry.default_floodcount)
-		GlobalSetOptions.floodcount = ConfigFileEntry.default_floodcount;
-	else
-		GlobalSetOptions.floodcount = 10;
+    if(ConfigFileEntry.default_floodcount)
+        GlobalSetOptions.floodcount = ConfigFileEntry.default_floodcount;
+    else
+        GlobalSetOptions.floodcount = 10;
 
-	split_servers = ConfigChannel.default_split_server_count;
-	split_users = ConfigChannel.default_split_user_count;
+    split_servers = ConfigChannel.default_split_server_count;
+    split_users = ConfigChannel.default_split_user_count;
 
-	if(split_users && split_servers
-	   && (ConfigChannel.no_create_on_split || ConfigChannel.no_join_on_split))
-	{
-		splitmode = 1;
-		splitchecking = 1;
-	}
+    if(split_users && split_servers
+       && (ConfigChannel.no_create_on_split || ConfigChannel.no_join_on_split)) {
+        splitmode = 1;
+        splitchecking = 1;
+    }
 
-	if(ConfigFileEntry.default_ident_timeout)
-		GlobalSetOptions.ident_timeout = ConfigFileEntry.default_ident_timeout;
-	else
-		GlobalSetOptions.ident_timeout = IDENT_TIMEOUT;
+    if(ConfigFileEntry.default_ident_timeout)
+        GlobalSetOptions.ident_timeout = ConfigFileEntry.default_ident_timeout;
+    else
+        GlobalSetOptions.ident_timeout = IDENT_TIMEOUT;
 
-	if(ConfigFileEntry.default_operhost)
-		rb_strlcpy(GlobalSetOptions.operhost,
-			ConfigFileEntry.default_operhost,
-			sizeof(GlobalSetOptions.operhost));
-	else
-		rb_strlcpy(GlobalSetOptions.operhost, "", sizeof(GlobalSetOptions.operhost));
+    if(ConfigFileEntry.default_operhost)
+        rb_strlcpy(GlobalSetOptions.operhost,
+                   ConfigFileEntry.default_operhost,
+                   sizeof(GlobalSetOptions.operhost));
+    else
+        rb_strlcpy(GlobalSetOptions.operhost, "", sizeof(GlobalSetOptions.operhost));
 
-	rb_strlcpy(GlobalSetOptions.operstring,
-		ConfigFileEntry.default_operstring,
-		sizeof(GlobalSetOptions.operstring));
-	rb_strlcpy(GlobalSetOptions.adminstring,
-		ConfigFileEntry.default_adminstring,
-		sizeof(GlobalSetOptions.adminstring));
+    rb_strlcpy(GlobalSetOptions.operstring,
+               ConfigFileEntry.default_operstring,
+               sizeof(GlobalSetOptions.operstring));
+    rb_strlcpy(GlobalSetOptions.adminstring,
+               ConfigFileEntry.default_adminstring,
+               sizeof(GlobalSetOptions.adminstring));
 
-	/* memset( &ConfigChannel, 0, sizeof(ConfigChannel)); */
+    /* memset( &ConfigChannel, 0, sizeof(ConfigChannel)); */
 
-	/* End of global set options */
+    /* End of global set options */
 
 }
 
@@ -358,7 +358,7 @@ initialize_global_set_options(void)
 static void
 initialize_server_capabs(void)
 {
-	default_server_capabs &= ~CAP_ZIP;
+    default_server_capabs &= ~CAP_ZIP;
 }
 
 
@@ -372,25 +372,21 @@ initialize_server_capabs(void)
 static void
 write_pidfile(const char *filename)
 {
-	FILE *fb;
-	char buff[32];
-	if((fb = fopen(filename, "w")))
-	{
-		unsigned int pid = (unsigned int) getpid();
+    FILE *fb;
+    char buff[32];
+    if((fb = fopen(filename, "w"))) {
+        unsigned int pid = (unsigned int) getpid();
 
-		rb_snprintf(buff, sizeof(buff), "%u\n", pid);
-		if((fputs(buff, fb) == -1))
-		{
-			ilog(L_MAIN, "Error writing %u to pid file %s (%s)",
-			     pid, filename, strerror(errno));
-		}
-		fclose(fb);
-		return;
-	}
-	else
-	{
-		ilog(L_MAIN, "Error opening pid file %s", filename);
-	}
+        rb_snprintf(buff, sizeof(buff), "%u\n", pid);
+        if((fputs(buff, fb) == -1)) {
+            ilog(L_MAIN, "Error writing %u to pid file %s (%s)",
+                 pid, filename, strerror(errno));
+        }
+        fclose(fb);
+        return;
+    } else {
+        ilog(L_MAIN, "Error opening pid file %s", filename);
+    }
 }
 
 /*
@@ -405,24 +401,21 @@ write_pidfile(const char *filename)
 static void
 check_pidfile(const char *filename)
 {
-	FILE *fb;
-	char buff[32];
-	pid_t pidfromfile;
+    FILE *fb;
+    char buff[32];
+    pid_t pidfromfile;
 
-	/* Don't do logging here, since we don't have log() initialised */
-	if((fb = fopen(filename, "r")))
-	{
-		if(fgets(buff, 20, fb) != NULL)
-		{
-			pidfromfile = atoi(buff);
-			if(!kill(pidfromfile, 0))
-			{
-				printf("ircd: daemon is already running\n");
-				exit(-1);
-			}
-		}
-		fclose(fb);
-	}
+    /* Don't do logging here, since we don't have log() initialised */
+    if((fb = fopen(filename, "r"))) {
+        if(fgets(buff, 20, fb) != NULL) {
+            pidfromfile = atoi(buff);
+            if(!kill(pidfromfile, 0)) {
+                printf("ircd: daemon is already running\n");
+                exit(-1);
+            }
+        }
+        fclose(fb);
+    }
 }
 
 /*
@@ -437,28 +430,27 @@ static void
 setup_corefile(void)
 {
 #ifdef HAVE_SYS_RESOURCE_H
-	struct rlimit rlim;	/* resource limits */
+    struct rlimit rlim;	/* resource limits */
 
-	/* Set corefilesize to maximum */
-	if(!getrlimit(RLIMIT_CORE, &rlim))
-	{
-		rlim.rlim_cur = rlim.rlim_max;
-		setrlimit(RLIMIT_CORE, &rlim);
-	}
+    /* Set corefilesize to maximum */
+    if(!getrlimit(RLIMIT_CORE, &rlim)) {
+        rlim.rlim_cur = rlim.rlim_max;
+        setrlimit(RLIMIT_CORE, &rlim);
+    }
 #endif
 }
 
 static void
 ircd_log_cb(const char *str)
 {
-	ilog(L_MAIN, "libratbox reports: %s", str);
+    ilog(L_MAIN, "libratbox reports: %s", str);
 }
 
 static void
 ircd_restart_cb(const char *str)
 {
-	inotice("libratbox has called the restart callback: %s", str);
-	restart(str);
+    inotice("libratbox has called the restart callback: %s", str);
+    restart(str);
 }
 
 /*
@@ -471,17 +463,15 @@ ircd_restart_cb(const char *str)
 static void
 ircd_die_cb(const char *str)
 {
-	if(str != NULL)
-	{
-		/* Try to get the message out to currently logged in operators. */
-		sendto_realops_snomask(SNO_GENERAL, L_NETWIDE, "libratbox has called the die callback..aborting: %s", str);
-		inotice("libratbox has called the die callback..aborting: %s", str);
-	}
-	else
-		inotice("libratbox has called the die callback..aborting");
+    if(str != NULL) {
+        /* Try to get the message out to currently logged in operators. */
+        sendto_realops_snomask(SNO_GENERAL, L_NETWIDE, "libratbox has called the die callback..aborting: %s", str);
+        inotice("libratbox has called the die callback..aborting: %s", str);
+    } else
+        inotice("libratbox has called the die callback..aborting");
 
-	unlink(pidFileName);
-	exit(EXIT_FAILURE);
+    unlink(pidFileName);
+    exit(EXIT_FAILURE);
 }
 
 struct ev_entry *check_splitmode_ev = NULL;
@@ -489,42 +479,39 @@ struct ev_entry *check_splitmode_ev = NULL;
 static int
 seed_with_urandom(void)
 {
-	unsigned int seed;
-	int fd;
+    unsigned int seed;
+    int fd;
 
-	fd = open("/dev/urandom", O_RDONLY);
-	if(fd >= 0)
-	{
-		if(read(fd, &seed, sizeof(seed)) == sizeof(seed))
-		{
-			close(fd);
-			srand(seed);
-			return 1;
-		}
-	}
-	return 0;
+    fd = open("/dev/urandom", O_RDONLY);
+    if(fd >= 0) {
+        if(read(fd, &seed, sizeof(seed)) == sizeof(seed)) {
+            close(fd);
+            srand(seed);
+            return 1;
+        }
+    }
+    return 0;
 }
 
 static void
 seed_with_clock(void)
 {
- 	const struct timeval *tv;	
-	rb_set_time();
-	tv = rb_current_time_tv();
-	srand(tv->tv_sec ^ (tv->tv_usec | (getpid() << 20)));
+    const struct timeval *tv;
+    rb_set_time();
+    tv = rb_current_time_tv();
+    srand(tv->tv_sec ^ (tv->tv_usec | (getpid() << 20)));
 }
 
 static void
 seed_random(void *unused)
 {
-	unsigned int seed;
-	if(rb_get_random(&seed, sizeof(seed)) == -1)
-	{
-		if(!seed_with_urandom())
-			seed_with_clock();
-		return;
-	}
-	srand(seed);
+    unsigned int seed;
+    if(rb_get_random(&seed, sizeof(seed)) == -1) {
+        if(!seed_with_urandom())
+            seed_with_clock();
+        return;
+    }
+    srand(seed);
 }
 
 /*
@@ -539,231 +526,218 @@ seed_random(void *unused)
 int
 main(int argc, char *argv[])
 {
-	int fd;
+    int fd;
 
-	/* Check to see if the user is running us as root, which is a nono */
-	if(geteuid() == 0)
-	{
-		fprintf(stderr, "Don't run ircd as root!!!\n");
-		return -1;
-	}
+    /* Check to see if the user is running us as root, which is a nono */
+    if(geteuid() == 0) {
+        fprintf(stderr, "Don't run ircd as root!!!\n");
+        return -1;
+    }
 
-	init_sys();
+    init_sys();
 
-	ConfigFileEntry.dpath = DPATH;
-	ConfigFileEntry.configfile = CPATH;	/* Server configuration file */
-	ConfigFileEntry.connect_timeout = 30;	/* Default to 30 */
-	
-	umask(077);		/* better safe than sorry --SRB */
+    ConfigFileEntry.dpath = DPATH;
+    ConfigFileEntry.configfile = CPATH;	/* Server configuration file */
+    ConfigFileEntry.connect_timeout = 30;	/* Default to 30 */
 
-	myargv = argv;
-	parseargs(&argc, &argv, myopts);
+    umask(077);		/* better safe than sorry --SRB */
 
-	if(chdir(ConfigFileEntry.dpath))
-	{
-		fprintf(stderr, "Unable to chdir to %s: %s\n", ConfigFileEntry.dpath, strerror(errno));
-		exit(EXIT_FAILURE);
-	}
+    myargv = argv;
+    parseargs(&argc, &argv, myopts);
 
-	rb_set_time();
+    if(chdir(ConfigFileEntry.dpath)) {
+        fprintf(stderr, "Unable to chdir to %s: %s\n", ConfigFileEntry.dpath, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
 
-	/*
-	 * Setup corefile size immediately after boot -kre
-	 */
-	setup_corefile();
+    rb_set_time();
 
-	memset(&me, 0, sizeof(me));
-	memset(&meLocalUser, 0, sizeof(meLocalUser));
-	me.localClient = &meLocalUser;
+    /*
+     * Setup corefile size immediately after boot -kre
+     */
+    setup_corefile();
 
-	/* Make sure all lists are zeroed */
-	memset(&unknown_list, 0, sizeof(unknown_list));
-	memset(&lclient_list, 0, sizeof(lclient_list));
-	memset(&serv_list, 0, sizeof(serv_list));
-	memset(&global_serv_list, 0, sizeof(global_serv_list));
-	memset(&local_oper_list, 0, sizeof(local_oper_list));
-	memset(&oper_list, 0, sizeof(oper_list));
+    memset(&me, 0, sizeof(me));
+    memset(&meLocalUser, 0, sizeof(meLocalUser));
+    me.localClient = &meLocalUser;
 
-	rb_dlinkAddTail(&me, &me.node, &global_client_list);
+    /* Make sure all lists are zeroed */
+    memset(&unknown_list, 0, sizeof(unknown_list));
+    memset(&lclient_list, 0, sizeof(lclient_list));
+    memset(&serv_list, 0, sizeof(serv_list));
+    memset(&global_serv_list, 0, sizeof(global_serv_list));
+    memset(&local_oper_list, 0, sizeof(local_oper_list));
+    memset(&oper_list, 0, sizeof(oper_list));
 
-	memset(&Count, 0, sizeof(Count));
-	memset(&ServerInfo, 0, sizeof(ServerInfo));
-	memset(&AdminInfo, 0, sizeof(AdminInfo));
-	memset(&ServerStats, 0, sizeof(struct ServerStatistics));
+    rb_dlinkAddTail(&me, &me.node, &global_client_list);
 
-	/* Initialise the channel capability usage counts... */
-	init_chcap_usage_counts();
+    memset(&Count, 0, sizeof(Count));
+    memset(&ServerInfo, 0, sizeof(ServerInfo));
+    memset(&AdminInfo, 0, sizeof(AdminInfo));
+    memset(&ServerStats, 0, sizeof(struct ServerStatistics));
 
-	if(printVersion)
-	{
-		printf("ircd: version %s(%s)\n", ircd_version, serno);
-		printf("ircd: %s\n", rb_lib_version());
-		exit(EXIT_SUCCESS);
-	}
+    /* Initialise the channel capability usage counts... */
+    init_chcap_usage_counts();
+
+    if(printVersion) {
+        printf("ircd: version %s(%s)\n", ircd_version, serno);
+        printf("ircd: %s\n", rb_lib_version());
+        exit(EXIT_SUCCESS);
+    }
 
 
 
-	setup_signals();
+    setup_signals();
 
-	if (testing_conf)
-		server_state_foreground = 1;
+    if (testing_conf)
+        server_state_foreground = 1;
 
-	/* Make sure fd 0, 1 and 2 are in use -- jilles */
-	do
-	{
-		fd = open("/dev/null", O_RDWR);
-	} while (fd < 2 && fd != -1);
-	if (fd > 2)
-		close(fd);
-	else if (fd == -1)
-		exit(1);
+    /* Make sure fd 0, 1 and 2 are in use -- jilles */
+    do {
+        fd = open("/dev/null", O_RDWR);
+    } while (fd < 2 && fd != -1);
+    if (fd > 2)
+        close(fd);
+    else if (fd == -1)
+        exit(1);
 
-	/* Check if there is pidfile and daemon already running */
-	if(!testing_conf)
-	{
-		check_pidfile(pidFileName);
+    /* Check if there is pidfile and daemon already running */
+    if(!testing_conf) {
+        check_pidfile(pidFileName);
 
-		if(!server_state_foreground)
-			make_daemon();
-		inotice("starting %s ...", ircd_version);
-		inotice("%s", rb_lib_version());
-	}
+        if(!server_state_foreground)
+            make_daemon();
+        inotice("starting %s ...", ircd_version);
+        inotice("%s", rb_lib_version());
+    }
 
-	/* Init the event subsystem */
-	rb_lib_init(ircd_log_cb, ircd_restart_cb, ircd_die_cb, !server_state_foreground, maxconnections, DNODE_HEAP_SIZE, FD_HEAP_SIZE);
-	rb_linebuf_init(LINEBUF_HEAP_SIZE);
+    /* Init the event subsystem */
+    rb_lib_init(ircd_log_cb, ircd_restart_cb, ircd_die_cb, !server_state_foreground, maxconnections, DNODE_HEAP_SIZE, FD_HEAP_SIZE);
+    rb_linebuf_init(LINEBUF_HEAP_SIZE);
 
-	if(ConfigFileEntry.use_egd && (ConfigFileEntry.egdpool_path != NULL))
-	{
-		rb_init_prng(ConfigFileEntry.egdpool_path, RB_PRNG_EGD);
-	} else
-		rb_init_prng(NULL, RB_PRNG_DEFAULT);
+    if(ConfigFileEntry.use_egd && (ConfigFileEntry.egdpool_path != NULL)) {
+        rb_init_prng(ConfigFileEntry.egdpool_path, RB_PRNG_EGD);
+    } else
+        rb_init_prng(NULL, RB_PRNG_DEFAULT);
 
-	seed_random(NULL);
+    seed_random(NULL);
 
-	init_main_logfile();
-	newconf_init();
-	init_s_conf();
-	init_s_newconf();
-	init_hash();
-	clear_scache_hash_table();	/* server cache name table */
-	init_host_hash();
-	clear_hash_parse();
-	init_client();
-	init_hook();
-	init_channels();
-	initclass();
-	initwhowas();
-	init_reject();
-	init_cache();
-	init_monitor();
-	init_isupport();
+    init_main_logfile();
+    newconf_init();
+    init_s_conf();
+    init_s_newconf();
+    init_hash();
+    clear_scache_hash_table();	/* server cache name table */
+    init_host_hash();
+    clear_hash_parse();
+    init_client();
+    init_hook();
+    init_channels();
+    initclass();
+    initwhowas();
+    init_reject();
+    init_cache();
+    init_monitor();
+    init_isupport();
 
-        construct_cflags_strings();
+    construct_cflags_strings();
 
-	load_all_modules(1);
+    load_all_modules(1);
 #ifndef STATIC_MODULES
-	load_core_modules(1);
+    load_core_modules(1);
 #endif
-	init_auth();		/* Initialise the auth code */
-	init_resolver();	/* Needs to be setup before the io loop */
-	privilegeset_set_new("default", "", 0);
+    init_auth();		/* Initialise the auth code */
+    init_resolver();	/* Needs to be setup before the io loop */
+    privilegeset_set_new("default", "", 0);
 
-	if (testing_conf)
-		fprintf(stderr, "\nBeginning config test\n");
-	read_conf_files(YES);	/* cold start init conf files */
+    if (testing_conf)
+        fprintf(stderr, "\nBeginning config test\n");
+    read_conf_files(YES);	/* cold start init conf files */
 #ifndef STATIC_MODULES
 
-	mod_add_path(MODULE_DIR); 
-	mod_add_path(MODULE_DIR "/autoload"); 
+    mod_add_path(MODULE_DIR);
+    mod_add_path(MODULE_DIR "/autoload");
 #endif
 
-	init_bandb();
-	init_ssld();
+    init_bandb();
+    init_ssld();
 
-	rehash_bans(0);
+    rehash_bans(0);
 
-	initialize_server_capabs();	/* Set up default_server_capabs */
-	initialize_global_set_options();
+    initialize_server_capabs();	/* Set up default_server_capabs */
+    initialize_global_set_options();
 
-	if(ServerInfo.name == NULL)
-	{
-		ierror("no server name specified in serverinfo block.");
-		return -1;
-	}
-	rb_strlcpy(me.name, ServerInfo.name, sizeof(me.name));
+    if(ServerInfo.name == NULL) {
+        ierror("no server name specified in serverinfo block.");
+        return -1;
+    }
+    rb_strlcpy(me.name, ServerInfo.name, sizeof(me.name));
 
-	if(ServerInfo.sid[0] == '\0')
-	{
-		ierror("no server sid specified in serverinfo block.");
-		return -2;
-	}
-	strcpy(me.id, ServerInfo.sid);
-	init_uid();
+    if(ServerInfo.sid[0] == '\0') {
+        ierror("no server sid specified in serverinfo block.");
+        return -2;
+    }
+    strcpy(me.id, ServerInfo.sid);
+    init_uid();
 
-	/* serverinfo{} description must exist.  If not, error out. */
-	if(ServerInfo.description == NULL)
-	{
-		ierror("no server description specified in serverinfo block.");
-		return -3;
-	}
-	rb_strlcpy(me.info, ServerInfo.description, sizeof(me.info));
+    /* serverinfo{} description must exist.  If not, error out. */
+    if(ServerInfo.description == NULL) {
+        ierror("no server description specified in serverinfo block.");
+        return -3;
+    }
+    rb_strlcpy(me.info, ServerInfo.description, sizeof(me.info));
 
-	if(ServerInfo.ssl_cert != NULL && ServerInfo.ssl_private_key != NULL)
-	{
-		/* just do the rb_setup_ssl_server to validate the config */
-		if(!rb_setup_ssl_server(ServerInfo.ssl_cert, ServerInfo.ssl_private_key, ServerInfo.ssl_dh_params))
-		{
-			ilog(L_MAIN, "WARNING: Unable to setup SSL.");
-			ssl_ok = 0;
-		}
-		else
-			ssl_ok = 1;
-	}
+    if(ServerInfo.ssl_cert != NULL && ServerInfo.ssl_private_key != NULL) {
+        /* just do the rb_setup_ssl_server to validate the config */
+        if(!rb_setup_ssl_server(ServerInfo.ssl_cert, ServerInfo.ssl_private_key, ServerInfo.ssl_dh_params)) {
+            ilog(L_MAIN, "WARNING: Unable to setup SSL.");
+            ssl_ok = 0;
+        } else
+            ssl_ok = 1;
+    }
 
-	if (testing_conf)
-	{
-		fprintf(stderr, "\nConfig testing complete.\n");
-		fflush(stderr);
-		return 0;	/* Why? We want the launcher to exit out. */
-	}
+    if (testing_conf) {
+        fprintf(stderr, "\nConfig testing complete.\n");
+        fflush(stderr);
+        return 0;	/* Why? We want the launcher to exit out. */
+    }
 
-	me.from = &me;
-	me.servptr = &me;
-	SetMe(&me);
-	make_server(&me);
-	startup_time = rb_current_time();
-	add_to_client_hash(me.name, &me);
-	add_to_id_hash(me.id, &me);
-	me.serv->nameinfo = scache_connect(me.name, me.info, 0);
+    me.from = &me;
+    me.servptr = &me;
+    SetMe(&me);
+    make_server(&me);
+    startup_time = rb_current_time();
+    add_to_client_hash(me.name, &me);
+    add_to_id_hash(me.id, &me);
+    me.serv->nameinfo = scache_connect(me.name, me.info, 0);
 
-	rb_dlinkAddAlloc(&me, &global_serv_list);
+    rb_dlinkAddAlloc(&me, &global_serv_list);
 
-	construct_umodebuf();
+    construct_umodebuf();
 
-	check_class();
-	write_pidfile(pidFileName);
-	load_help();
-	open_logfiles();
+    check_class();
+    write_pidfile(pidFileName);
+    load_help();
+    open_logfiles();
 
-	ilog(L_MAIN, "Server Ready");
+    ilog(L_MAIN, "Server Ready");
 
-	/* We want try_connections to be called as soon as possible now! -- adrian */
-	/* No, 'cause after a restart it would cause all sorts of nick collides */
-	/* um.  by waiting even longer, that just means we have even *more*
-	 * nick collisions.  what a stupid idea. set an event for the IO loop --fl
-	 */
-	rb_event_addish("try_connections", try_connections, NULL, STARTUP_CONNECTIONS_TIME);
-	rb_event_addonce("try_connections_startup", try_connections, NULL, 2);
-	rb_event_add("check_rehash", check_rehash, NULL, 3);
-	rb_event_addish("reseed_srand", seed_random, NULL, 300); /* reseed every 10 minutes */
+    /* We want try_connections to be called as soon as possible now! -- adrian */
+    /* No, 'cause after a restart it would cause all sorts of nick collides */
+    /* um.  by waiting even longer, that just means we have even *more*
+     * nick collisions.  what a stupid idea. set an event for the IO loop --fl
+     */
+    rb_event_addish("try_connections", try_connections, NULL, STARTUP_CONNECTIONS_TIME);
+    rb_event_addonce("try_connections_startup", try_connections, NULL, 2);
+    rb_event_add("check_rehash", check_rehash, NULL, 3);
+    rb_event_addish("reseed_srand", seed_random, NULL, 300); /* reseed every 10 minutes */
 
-	if(splitmode)
-		check_splitmode_ev = rb_event_add("check_splitmode", check_splitmode, NULL, 5);
+    if(splitmode)
+        check_splitmode_ev = rb_event_add("check_splitmode", check_splitmode, NULL, 5);
 
-	print_startup(getpid());
+    print_startup(getpid());
 
-	rb_lib_loop(0);
+    rb_lib_loop(0);
 
-	return 0;
+    return 0;
 }
