@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM deis/init
 MAINTAINER Xena <xena@yolo-swag.com>
 
 # Update base system
@@ -13,6 +13,7 @@ RUN mkdir /home/ircd/src
 RUN chmod 777 /home/ircd/src
 
 ADD . /home/ircd/src
+ADD extra/runit/ /etc/service/ircd/
 
 RUN cd /home/ircd/src; ./configure --prefix=/home/ircd/run ; make ; make install
 ADD doc/example.conf /home/ircd//run/etc/ircd.conf
@@ -20,7 +21,5 @@ ADD doc/example.conf /home/ircd//run/etc/ircd.conf
 RUN chmod -R 777 /home/ircd/run
 
 EXPOSE 6667
-USER ircd
 
-CMD /home/ircd/run/bin/ircd -foreground
-
+ENTRYPOINT /sbin/my_init

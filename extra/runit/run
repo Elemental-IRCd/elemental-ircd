@@ -1,0 +1,3 @@
+#!/bin/sh
+
+setuser ircd /home/ircd/run/bin/ircd -foreground
