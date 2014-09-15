@@ -1076,11 +1076,11 @@ sendto_realops_snomask(int flags, int level, const char *pattern, ...)
     struct Client *client_p;
     rb_dlink_node *ptr;
     rb_dlink_node *next_ptr;
-    va_list args;
+    va_list args, args_hook;
     buf_head_t linebuf;
+    hook_data_snomask hd = { NULL, flags, level, NULL, 0 };
 
     rb_linebuf_newbuf(&linebuf);
-
 
     const char sno_type = (
         level & L_NETWIDE && ConfigFileEntry.global_snotices ? STYPE_GLOBAL :
@@ -1089,14 +1089,24 @@ sendto_realops_snomask(int flags, int level, const char *pattern, ...)
 
     /* rather a lot of copying around, oh well -- jilles */
     va_start(args, pattern);
+    va_copy(args_hook, args);
+    rb_vsnprintf(buf, sizeof(buf), pattern, args_hook);
+    hd.buf = buf;
+    call_hook(h_on_snomask, &hd);
+    if (hd.stop) {
+        va_end(args_hook);
+        va_end(args);
+        rb_linebuf_donebuf(&linebuf);
+        return;
+    }
+
     if (sno_type != STYPE_LOCAL) {
-        rb_vsnprintf(buf, sizeof(buf), pattern, args);
         rb_linebuf_putmsg(&linebuf, pattern, NULL,
           ":%s NOTICE * :*** Notice -- %s", me.name, buf);
-    }
-    else
+    } else
         rb_linebuf_putmsg(&linebuf, pattern, &args,
                           ":%s NOTICE * :*** Notice -- ", me.name);
+    va_end(args_hook);
     va_end(args);
 
     /* Be very sure not to do things like "Trying to send to myself"
@@ -1139,17 +1149,29 @@ void
 sendto_realops_snomask_from(int flags, int level, struct Client *source_p,
                             const char *pattern, ...)
 {
+    static char buf[BUFSIZE];
     struct Client *client_p;
     rb_dlink_node *ptr;
     rb_dlink_node *next_ptr;
-    va_list args;
+    va_list args, args_hook;
     buf_head_t linebuf;
+    hook_data_snomask hd = { source_p, flags, level, NULL, 0 };
 
     rb_linebuf_newbuf(&linebuf);
-
     va_start(args, pattern);
+    va_copy(args_hook, args);
+    hd.buf = buf;
+    call_hook(h_on_snomask, &hd);
+    if (hd.stop) {
+        va_end(args_hook);
+        va_end(args);
+        rb_linebuf_donebuf(&linebuf);
+        return;
+    }
+    rb_vsnprintf(buf, sizeof(buf), pattern, args_hook);
     rb_linebuf_putmsg(&linebuf, pattern, &args,
                       ":%s NOTICE * :*** Notice -- ", source_p->name);
+    va_end(args_hook);
     va_end(args);
 
     RB_DLINK_FOREACH_SAFE(ptr, next_ptr, local_oper_list.head) {

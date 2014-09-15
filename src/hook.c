@@ -63,6 +63,7 @@ int h_new_local_user;
 int h_new_remote_user;
 int h_introduce_client;
 int h_can_kick;
+int h_on_snomask;
 
 void
 init_hook(void)
@@ -86,6 +87,7 @@ init_hook(void)
     h_new_remote_user = register_hook("new_remote_user");
     h_introduce_client = register_hook("introduce_client");
     h_can_kick = register_hook("can_kick");
+    h_on_snomask = register_hook("on_snomask");
 }
 
 /* grow_hooktable()
