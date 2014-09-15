@@ -9,3 +9,12 @@ follow the current coding style of the file you are in. If all else fails,
 please use the [Linux Kernel](https://www.kernel.org/doc/Documentation/CodingStyle)
 coding style.
 
+Please run all code against the following `astyle` command before sending in 
+a pull request:
+
+```console
+$ astyle --style=linux --mode=c -n $file
+```
+
+It should be trivial to set up your text editor to do this for you.
+
