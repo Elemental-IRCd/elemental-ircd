@@ -1,0 +1,2 @@
+au BufWritePost *.c execute 'silent !astyle --style=linux --mode=c -n' shellescape(expand('%'), 1) ' >/dev/null'
+au BufWritePost *.h execute 'silent !astyle --style=linux --mode=c -n' shellescape(expand('%'), 1) ' >/dev/null'
