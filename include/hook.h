@@ -28,6 +28,7 @@ extern int h_new_local_user;
 extern int h_new_remote_user;
 extern int h_introduce_client;
 extern int h_can_kick;
+extern int h_on_snomask;
 
 void init_hook(void);
 int register_hook(const char *name);
@@ -82,6 +83,14 @@ typedef struct {
     struct Client *from; /* causing client (could be &me or target) */
     const char *comment;
 } hook_data_client_exit;
+
+typedef struct {
+	struct Client *source_p;
+	int flag;
+	int level;
+	const char *buf;
+	unsigned char stop;
+} hook_data_snomask;
 
 typedef struct {
     struct Client *client;

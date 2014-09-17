@@ -1067,44 +1067,60 @@ sendto_anywhere(struct Client *target_p, struct Client *source_p,
 void
 sendto_realops_snomask(int flags, int level, const char *pattern, ...)
 {
+    #define STYPE_LOCAL     0x01
+    #define STYPE_GLOBAL    0x02
+    #define STYPE_REMOTE    0x04
+
     static char buf[BUFSIZE];
     char *snobuf;
     struct Client *client_p;
     rb_dlink_node *ptr;
     rb_dlink_node *next_ptr;
-    va_list args;
+    va_list args, args_hook;
     buf_head_t linebuf;
+    hook_data_snomask hd = { NULL, flags, level, NULL, 0 };
 
     rb_linebuf_newbuf(&linebuf);
 
+    const char sno_type = (
+        level & L_NETWIDE && ConfigFileEntry.global_snotices ? STYPE_GLOBAL :
+        remote_rehash_oper_p ? STYPE_REMOTE : STYPE_LOCAL
+    );
+
+    /* rather a lot of copying around, oh well -- jilles */
+    va_start(args, pattern);
+    va_copy(args_hook, args);
+    rb_vsnprintf(buf, sizeof(buf), pattern, args_hook);
+    hd.buf = buf;
+    call_hook(h_on_snomask, &hd);
+    if (hd.stop) {
+        va_end(args_hook);
+        va_end(args);
+        rb_linebuf_donebuf(&linebuf);
+        return;
+    }
+
+    if (sno_type != STYPE_LOCAL) {
+        rb_linebuf_putmsg(&linebuf, pattern, NULL,
+          ":%s NOTICE * :*** Notice -- %s", me.name, buf);
+    } else
+        rb_linebuf_putmsg(&linebuf, pattern, &args,
+                          ":%s NOTICE * :*** Notice -- ", me.name);
+    va_end(args_hook);
+    va_end(args);
+
     /* Be very sure not to do things like "Trying to send to myself"
      * L_NETWIDE, otherwise infinite recursion may result! -- jilles */
-    if (level & L_NETWIDE && ConfigFileEntry.global_snotices) {
-        /* rather a lot of copying around, oh well -- jilles */
-        va_start(args, pattern);
-        rb_vsnprintf(buf, sizeof(buf), pattern, args);
-        va_end(args);
-        rb_linebuf_putmsg(&linebuf, pattern, NULL,
-                          ":%s NOTICE * :*** Notice -- %s", me.name, buf);
+    if (sno_type == STYPE_GLOBAL) {
         snobuf = construct_snobuf(flags);
         if (snobuf[1] != '\0')
             sendto_server(NULL, NULL, CAP_ENCAP|CAP_TS6, NOCAPS,
-                          ":%s ENCAP * SNOTE %c :%s",
-                          me.id, snobuf[1], buf);
-    } else if (remote_rehash_oper_p != NULL) {
-        /* rather a lot of copying around, oh well -- jilles */
-        va_start(args, pattern);
-        rb_vsnprintf(buf, sizeof(buf), pattern, args);
-        va_end(args);
-        rb_linebuf_putmsg(&linebuf, pattern, NULL,
-                          ":%s NOTICE * :*** Notice -- %s", me.name, buf);
-        sendto_one_notice(remote_rehash_oper_p, ":*** Notice -- %s", buf);
-    } else {
-        va_start(args, pattern);
-        rb_linebuf_putmsg(&linebuf, pattern, &args,
-                          ":%s NOTICE * :*** Notice -- ", me.name);
-        va_end(args);
+                ":%s ENCAP * SNOTE %c :%s",
+                me.id, snobuf[1], buf);
+        } else if (sno_type == STYPE_REMOTE) {
+            sendto_one_notice(remote_rehash_oper_p, ":*** Notice -- %s", buf);
     }
+
     level &= ~L_NETWIDE;
 
     RB_DLINK_FOREACH_SAFE(ptr, next_ptr, local_oper_list.head) {
@@ -1133,17 +1149,29 @@ void
 sendto_realops_snomask_from(int flags, int level, struct Client *source_p,
                             const char *pattern, ...)
 {
+    static char buf[BUFSIZE];
     struct Client *client_p;
     rb_dlink_node *ptr;
     rb_dlink_node *next_ptr;
-    va_list args;
+    va_list args, args_hook;
     buf_head_t linebuf;
+    hook_data_snomask hd = { source_p, flags, level, NULL, 0 };
 
     rb_linebuf_newbuf(&linebuf);
-
     va_start(args, pattern);
+    va_copy(args_hook, args);
+    hd.buf = buf;
+    call_hook(h_on_snomask, &hd);
+    if (hd.stop) {
+        va_end(args_hook);
+        va_end(args);
+        rb_linebuf_donebuf(&linebuf);
+        return;
+    }
+    rb_vsnprintf(buf, sizeof(buf), pattern, args_hook);
     rb_linebuf_putmsg(&linebuf, pattern, &args,
                       ":%s NOTICE * :*** Notice -- ", source_p->name);
+    va_end(args_hook);
     va_end(args);
 
     RB_DLINK_FOREACH_SAFE(ptr, next_ptr, local_oper_list.head) {

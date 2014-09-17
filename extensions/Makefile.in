@@ -64,6 +64,7 @@ SRCS =                          \
   m_findforwards.c		\
   m_force.c			\
   m_identify.c			\
+  m_chanlog.c			\
   m_mkpasswd.c                  \
   m_oaccept.c			\
   m_ojoin.c			\
