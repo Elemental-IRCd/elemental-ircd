@@ -522,7 +522,7 @@ rb_init_prng(const char *path, prng_seed_t seed_type)
 {
 /* We may not have EGD (old OpenSSL / LibreSSL), fall back to default */
 #ifndef HAVE_SSL_RAND_EGD
-	seed_type = RB_PRNG_DEFAULT;
+    seed_type = RB_PRNG_DEFAULT;
 #endif
 
     if(seed_type == RB_PRNG_DEFAULT) {
