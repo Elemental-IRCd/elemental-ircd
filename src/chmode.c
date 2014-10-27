@@ -216,6 +216,23 @@ get_channel_access(struct Client *source_p, struct membership *msptr)
     return CHFL_PEON;
 }
 
+/* check_bans_number()
+ *
+ * inputs	- client, channel ban list
+ * outputs	- 0 on ban being allowed, 1 on ban being disallowed
+ * side effects	- none
+ */
+int
+check_bans_number(struct Client *source_p, struct Channel *chptr, rb_dlink_list *list)
+{
+    if (rb_dlink_list_length(list) >= (chptr->mode.mode & MODE_EXLIMIT ?
+                                       ConfigChannel.max_bans_large : ConfigChannel.max_bans)) {
+        return 0;
+    }
+
+    return 1;
+}
+
 /* add_id()
  *
  * inputs	- client, channel, id to add, type
@@ -235,12 +252,14 @@ add_id(struct Client *source_p, struct Channel *chptr, const char *banid,
      * bans
      */
     if(MyClient(source_p)) {
-        if((rb_dlink_list_length(&chptr->banlist) + rb_dlink_list_length(&chptr->exceptlist) + rb_dlink_list_length(&chptr->invexlist) + rb_dlink_list_length(&chptr->quietlist)) >= (chptr->mode.mode & MODE_EXLIMIT ? ConfigChannel.max_bans_large : ConfigChannel.max_bans)) {
+        // don't let local client overflow the banlist
+        if (check_bans_number(source_p, chptr, list)) {
             sendto_one(source_p, form_str(ERR_BANLISTFULL),
                        me.name, source_p->name, chptr->chname, realban);
             return 0;
         }
 
+        // also don't let local client set a redundant ban
         RB_DLINK_FOREACH(ptr, list->head) {
             actualBan = ptr->data;
             if(mask_match(actualBan->banstr, realban))
