@@ -12,8 +12,8 @@
 
 #include "module.h"
 #include "modules/cs_mode.h"
+#include "modules/sasl.h"
 
-static bool sasl = true;
 static Anope::string UplinkSID;
 
 static ServiceReference<IRCDProto> ratbox("IRCDProto", "ratbox");
@@ -141,6 +141,18 @@ class ElementalProto : public IRCDProto
 	{
 		this->SendVhost(u, "", u->host);
 	}
+
+	void SendSASLMessage(const SASL::Message &message) anope_override
+	{
+		Server *s = Server::Find(message.target.substr(0, 3));
+		UplinkSocket::Message(Me) << "ENCAP " << (s ? s->GetName() : message.target.substr(0, 3)) << " SASL " << message.source << " " << message.target << " " << message.type << " " << message.data << (message.ext.empty() ? "" : (" " + message.ext));
+	}
+
+	void SendSVSLogin(const Anope::string &uid, const Anope::string &acc) anope_override
+	{
+		Server *s = Server::Find(uid.substr(0, 3));
+		UplinkSocket::Message(Me) << "ENCAP " << (s ? s->GetName() : uid.substr(0, 3)) << " SVSLOGIN " << uid << " * * * " << acc;
+	}
 };
 
 
@@ -175,84 +187,18 @@ struct IRCDMessageEncap : IRCDMessage
 		 * termination: 'A' for abort, 'F' for authentication failure, 'S' for
 		 * authentication success).
 		 *
-		 * Elemental only accepts messages from SASL agents; these must have umode +S
+		 * Charybdis only accepts messages from SASL agents; these must have umode +S
 		 */
-		if (params[1] == "SASL" && sasl && params.size() == 6)
+		if (params[1] == "SASL" && SASL::sasl && params.size() >= 6)
 		{
-			class ElementalSASLIdentifyRequest : public IdentifyRequest
-			{
-				Anope::string uid;
-				MessageSource msource;
+			SASL::Message m;
+			m.source = params[2];
+			m.target = params[3];
+			m.type = params[4];
+			m.data = params[5];
+			m.ext = params.size() > 6 ? params[6] : "";
 
-			 public:
-				ElementalSASLIdentifyRequest(Module *m, MessageSource &source_, const Anope::string &id, const Anope::string &acc, const Anope::string &pass) : IdentifyRequest(m, acc, pass), uid(id), msource(source_) { }
-
-				void OnSuccess() anope_override
-				{
-					BotInfo *NickServ = Config->GetClient("NickServ");
-					if (!NickServ)
-						return;
-
-					/* SVSLOGIN
-					 * parameters: target, new nick, new username, new visible hostname, new login name
-					 * Sent after successful SASL authentication.
-					 * The target is a UID, typically an unregistered one.
-					 * Any of the "new" parameters can be '*' to leave the corresponding field
-					 * unchanged. The new login name can be '0' to log the user out.
-					 * If the UID is registered on the network, a SIGNON with the changes will be
-					 * broadcast, otherwise the changes will be stored, to be used when registration
-					 * completes.
-					 */
-					UplinkSocket::Message(Me) << "ENCAP " << msource.GetName() << " SVSLOGIN " << this->uid << " * * * " << this->GetAccount();
-					UplinkSocket::Message(Me) << "ENCAP " << msource.GetName() << " SASL " << NickServ->GetUID() << " " << this->uid << " D S";
-				}
-
-				void OnFail() anope_override
-				{
-					BotInfo *NickServ = Config->GetClient("NickServ");
-					if (!NickServ)
-						return;
-
-					UplinkSocket::Message(Me) << "ENCAP " << msource.GetName() << " SASL " << NickServ->GetUID() << " " << this->uid << " " << " D F";
-
-					Log(NickServ) << "A user failed to identify for account " << this->GetAccount() << " using SASL";
-				}
-			};
-			if (params[4] == "S")
-			{
-				BotInfo *NickServ = Config->GetClient("NickServ");
-				if (!NickServ)
-					return;
-
-				if (params[5] == "PLAIN")
-					UplinkSocket::Message(Me) << "ENCAP " << source.GetName() << " SASL " << NickServ->GetUID() << " " << params[2] << " C +";
-				else
-					UplinkSocket::Message(Me) << "ENCAP " << source.GetName() << " SASL " << NickServ->GetUID() << " " << params[2] << " D F";
-			}
-			else if (params[4] == "C")
-			{
-				Anope::string decoded;
-				Anope::B64Decode(params[5], decoded);
-
-				size_t p = decoded.find('\0');
-				if (p == Anope::string::npos)
-					return;
-				decoded = decoded.substr(p + 1);
-
-				p = decoded.find('\0');
-				if (p == Anope::string::npos)
-					return;
-
-				Anope::string acc = decoded.substr(0, p),
-					pass = decoded.substr(p + 1);
-
-				if (acc.empty() || pass.empty())
-					return;
-
-				IdentifyRequest *req = new ElementalSASLIdentifyRequest(this->owner, source, params[2], acc, pass);
-				FOREACH_MOD(OnCheckAuthentication, (NULL, req));
-				req->Dispatch();
-			}
+			SASL::sasl->ProcessMessage(m);
 		}
 	}
 };
@@ -280,7 +226,7 @@ struct IRCDMessageEUID : IRCDMessage
 		if (params[9] != "*")
 			na = NickAlias::Find(params[9]);
 
-		new User(params[0], params[4], params[8], params[5], params[6], source.GetServer(), params[10], params[2].is_pos_number_only() ? convertTo<time_t>(params[2]) : Anope::CurTime, params[3], params[7], na ? *na->nc : NULL);
+		User::OnIntroduce(params[0], params[4], params[8], params[5], params[6], source.GetServer(), params[10], params[2].is_pos_number_only() ? convertTo<time_t>(params[2]) : Anope::CurTime, params[3], params[7], na ? *na->nc : NULL);
 	}
 };
 
@@ -353,6 +299,11 @@ class ProtoElemental : public Module
 
 	void AddModes()
 	{
+
+		ModeManager::AddChannelMode(new ChannelModeStatus("HALFOP", 'h', '%', 1));
+		ModeManager::AddChannelMode(new ChannelModeStatus("PROTECT", 'a', '!', 3));
+		ModeManager::AddChannelMode(new ChannelModeStatus("OWNER", 'y', '~', 4));
+
 		/* Add user modes */
 		ModeManager::AddUserMode(new UserMode("NOFORWARD", 'Q'));
 		ModeManager::AddUserMode(new UserMode("REGPRIV", 'R'));
@@ -373,13 +324,6 @@ class ProtoElemental : public Module
 		ModeManager::AddChannelMode(new ChannelMode("PERM", 'P'));
 		ModeManager::AddChannelMode(new ChannelMode("NOFORWARD", 'Q'));
 		ModeManager::AddChannelMode(new ChannelMode("OPMODERATED", 'z'));
-
-		/* Add status modes */
-		ModeManager::AddChannelMode(new ChannelModeStatus("VOICE", 'v', '+', 0));
-		ModeManager::AddChannelMode(new ChannelModeStatus("HALFOP", 'h', '%', 1));
-		ModeManager::AddChannelMode(new ChannelModeStatus("OP", 'o', '@', 2);
-		ModeManager::AddChannelMode(new ChannelModeStatus("PROTECT", 'a', '!', 3));
-		ModeManager::AddChannelMode(new ChannelModeStatus("OWNER", 'y', '~', 4));
 	}
 
  public:
@@ -425,7 +369,6 @@ class ProtoElemental : public Module
 	void OnReload(Configuration::Conf *conf) anope_override
 	{
 		use_server_side_mlock = conf->GetModule(this)->Get<bool>("use_server_side_mlock");
-		sasl = conf->GetModule(this)->Get<bool>("sasl");
 	}
 
 	void OnChannelSync(Channel *c) anope_override
