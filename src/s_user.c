@@ -609,8 +609,7 @@ introduce_client(struct Client *client_p, struct Client *source_p, struct User *
                       source_p->hopcount + 1,
                       (long) source_p->tsinfo, ubuf,
                       source_p->username, source_p->host,
-                      IsIPSpoof(source_p) ? "0" : sockhost,
-                      source_p->id,
+                      sockhost, source_p->id,
                       IsDynSpoof(source_p) ? source_p->orighost : "*",
                       EmptyString(source_p->user->suser) ? "*" : source_p->user->suser,
                       source_p->info);
@@ -621,8 +620,7 @@ introduce_client(struct Client *client_p, struct Client *source_p, struct User *
                   source_p->hopcount + 1,
                   (long) source_p->tsinfo, ubuf,
                   source_p->username, source_p->host,
-                  IsIPSpoof(source_p) ? "0" : sockhost,
-                  source_p->id, source_p->info);
+                  sockhost, source_p->id, source_p->info);
 
     if(!EmptyString(source_p->certfp))
         sendto_server(client_p, NULL, CAP_TS6, NOCAPS,
