@@ -1,5 +1,25 @@
-This is elemental-ircd 6.5, Copyright (c) 2013 elemental-ircd team.
+This is elemental-ircd 6.6.1, Copyright (c) 2014 elemental-ircd team.
 See LICENSE for licensing details (GPL v2).
+
+-- elemental-ircd 6.6.1
+
+All code is now in the linux kernel coding style. Patches that do not
+follow this coding style are at risk of being rejected. It is suggested
+that your editor be set up to automatically style your code in the
+desired format. A vim resource file is provided in the repository root.
+
+additions
+ - automatic code styling for vim
+ - Dockerfile and nightly docker builds
+ - show cloaked I:Line vhost IP address remotely
+
+bugfixes
+ - all channel lists have their own limit instead of sharing one.
+   5ba9c76d224afac877d9500d6ac1eb8f2bddd076
+ - fix potential undefined behavior with m_away
+   7d3966bc9bd9e9ab7833b4ecb0751671bdd085e7
+ - fix Anope 2.0 protocol module
+   79a3bf79ae66c43470c4bed25c33053b13a032d1
 
 -- elemental-ircd 6.6
 

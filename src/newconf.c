@@ -296,6 +296,7 @@ static struct mode_table umode_table[] = {
     {"noinvite",	UMODE_NOINVITE	},
     {"bot",		UMODE_BOT	},
     {"override",	UMODE_OVERRIDE	},
+    {"hidechans",	UMODE_HIDECHANS	},
     {NULL, 0}
 };
 
