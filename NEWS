@@ -1,6 +1,10 @@
 This is elemental-ircd 6.6.1, Copyright (c) 2014 elemental-ircd team.
 See LICENSE for licensing details (GPL v2).
 
+-- elemental-ircd 6.6.2
+
+Fix ban logic
+
 -- elemental-ircd 6.6.1
 
 All code is now in the linux kernel coding style. Patches that do not
