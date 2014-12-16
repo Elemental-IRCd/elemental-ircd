@@ -219,7 +219,7 @@ get_channel_access(struct Client *source_p, struct membership *msptr)
 /* check_bans_number()
  *
  * inputs	- client, channel ban list
- * outputs	- 0 on ban being allowed, 1 on ban being disallowed
+ * outputs	- 1 on ban being allowed, 0 on ban being disallowed
  * side effects	- none
  */
 int
@@ -227,10 +227,10 @@ check_bans_number(struct Client *source_p, struct Channel *chptr, rb_dlink_list 
 {
     if (rb_dlink_list_length(list) >= (chptr->mode.mode & MODE_EXLIMIT ?
                                        ConfigChannel.max_bans_large : ConfigChannel.max_bans)) {
-        return 0;
+        return 1;
     }
 
-    return 1;
+    return 0;
 }
 
 /* add_id()
