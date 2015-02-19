@@ -1,0 +1,3 @@
+#!/bin/bash
+
+setuser atheme /home/atheme/atheme/bin/atheme-services -n
