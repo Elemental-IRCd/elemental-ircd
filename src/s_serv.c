@@ -71,26 +71,27 @@ static char buf[BUFSIZE];
  * extra argument to "PASS" takes care of checking that.  -orabidoo
  */
 struct Capability captab[] = {
-    /*  name     cap     */
-    { "QS",		CAP_QS },
-    { "EX",		CAP_EX },
-    { "CHW",	CAP_CHW},
-    { "IE", 	CAP_IE},
-    { "KLN",	CAP_KLN},
-    { "KNOCK",	CAP_KNOCK},
-    { "ZIP",	CAP_ZIP},
-    { "TB",		CAP_TB},
-    { "UNKLN",	CAP_UNKLN},
-    { "CLUSTER",	CAP_CLUSTER},
-    { "ENCAP",	CAP_ENCAP },
-    { "SERVICES",	CAP_SERVICE },
-    { "RSFNC",	CAP_RSFNC },
-    { "SAVE",	CAP_SAVE },
-    { "EUID",	CAP_EUID },
-    { "EOPMOD",	CAP_EOPMOD },
-    { "BAN",	CAP_BAN },
-    { "MLOCK",	CAP_MLOCK },
-    {0, 0}
+    /*name      cap             required?*/
+    { "QS",	CAP_QS,		1 },
+    { "EX",	CAP_EX,		1 },
+    { "CHW",	CAP_CHW,	0 },
+    { "IE",	CAP_IE,		0 },
+    { "KLN",	CAP_KLN,	0 },
+    { "KNOCK",	CAP_KNOCK,	1 },
+    { "ZIP",	CAP_ZIP,	0 },
+    { "TB",	CAP_TB,		1 },
+    { "UNKLN",	CAP_UNKLN,	0 },
+    { "CLUSTER",CAP_CLUSTER,	1 },
+    { "ENCAP",	CAP_ENCAP,	1 },
+    { "SERVICES",CAP_SERVICE,	1 },
+    { "RSFNC",	CAP_RSFNC,	1 },
+    { "SAVE",	CAP_SAVE,	0 },
+    { "EUID",	CAP_EUID,	1 },
+    { "EOPMOD",	CAP_EOPMOD,	0 },
+    { "BAN",	CAP_BAN,	1 },
+    { "MLOCK",	CAP_MLOCK,	1 },
+    { "QAOHV",	CAP_QAOHV,	1 },
+    { 0,	0,		0 }
 };
 
 static CNCB serv_connect_callback;
