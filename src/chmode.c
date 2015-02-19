@@ -147,7 +147,7 @@ construct_cflag_param_string(void)
                 ConfigChannel.use_forward ? "f" : "",
                 ConfigChannel.use_halfop ? "h" : "",
                 strchr(ConfigChannel.disabledmodes, 'j') ? "" : "j",
-                strchr(ConfigChannel.disabledmodes, 'q') ? "" : "q",
+                strchr(ConfigChannel.disabledmodes, 'y') ? "" : "y",
                 ConfigChannel.use_invex ? "I" : "");
 }
 
@@ -1874,7 +1874,7 @@ struct ChannelMode chmode_table[256] = {
     {chm_voice,	0 },			/* v */
     {chm_nosuch,	0 },			/* w */
     {chm_nosuch,	0 },			/* x */
-    {chm_nosuch,   0 },    		/* y */
+    {chm_ban,	CHFL_QUIET },		/* y */
     {chm_simple,	MODE_OPMODERATE },	/* z */
 
     {chm_nosuch,  0 },			/* 0x7b */

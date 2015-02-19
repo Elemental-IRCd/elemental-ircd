@@ -947,8 +947,8 @@ validate_conf(void)
                 cflag_orphan('Q');
                 continue;
             }
-            if(*dm == 'q') {
-                cflag_orphan('q');
+            if(*dm == 'y') {
+                cflag_orphan('y');
                 continue;
             }
             if(*dm == 'I') {

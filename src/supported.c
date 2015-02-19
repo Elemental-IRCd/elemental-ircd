@@ -222,7 +222,7 @@ isupport_chanmodes(const void *ptr)
     rb_snprintf(result, sizeof result, "%s%sb%s,k,%sl%s,%s",
                 ConfigChannel.use_except ? "e" : "",
                 ConfigChannel.use_invex ? "I" : "",
-                strchr(ConfigChannel.disabledmodes, 'q') ? "" : "q",
+                strchr(ConfigChannel.disabledmodes, 'y') ? "" : "y",
                 ConfigChannel.use_forward ? "f" : "",
                 strchr(ConfigChannel.disabledmodes, 'j') ? "" : "j",
                 cflagsbuf);
