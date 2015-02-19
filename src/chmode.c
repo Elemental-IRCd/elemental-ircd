@@ -141,7 +141,7 @@ construct_cflag_param_string(void)
 
     *cflagsparaminfo = '\0';
     rb_snprintf(cflagsparaminfo, sizeof cflagsparaminfo, "%s%sb%s%s%s%sklov%s%s",
-                ConfigChannel.use_owner ? "y" : "",
+                ConfigChannel.use_owner ? "q" : "",
                 ConfigChannel.use_admin ? "a" : "",
                 ConfigChannel.use_except ? "e" : "",
                 ConfigChannel.use_forward ? "f" : "",
@@ -1866,7 +1866,7 @@ struct ChannelMode chmode_table[256] = {
     {chm_simple,	MODE_NOPRIVMSGS },	/* n */
     {chm_op,	0 },			/* o */
     {chm_simple,	MODE_PRIVATE },		/* p */
-    {chm_ban,	CHFL_QUIET },		/* q */
+    {chm_owner,		0 },		/* q */
     {chm_simple, MODE_REGONLY },		/* r */
     {chm_simple,	MODE_SECRET },		/* s */
     {chm_simple,	MODE_TOPICLIMIT },	/* t */
@@ -1874,7 +1874,7 @@ struct ChannelMode chmode_table[256] = {
     {chm_voice,	0 },			/* v */
     {chm_nosuch,	0 },			/* w */
     {chm_nosuch,	0 },			/* x */
-    {chm_owner,   0 },    		/* y */
+    {chm_nosuch,   0 },    		/* y */
     {chm_simple,	MODE_OPMODERATE },	/* z */
 
     {chm_nosuch,  0 },			/* 0x7b */

@@ -252,7 +252,7 @@ isupport_prefix(const void *ptr)
     static char result[13];
 
     rb_snprintf(result, sizeof result, "(%s%so%sv)%s%s@%s+",
-                ConfigChannel.use_owner ? "y" : "",
+                ConfigChannel.use_owner ? "q" : "",
                 ConfigChannel.use_admin ? "a" : "",
                 ConfigChannel.use_halfop ? "h" : "",
                 ConfigChannel.use_owner ? "~" : "",
@@ -305,7 +305,7 @@ isupport_ownermode(const void *ptr)
     if(!ConfigChannel.use_owner)
         return NULL;
 
-    rb_snprintf(result, sizeof result, "y");
+    rb_snprintf(result, sizeof result, "q");
 
     return result;
 }
