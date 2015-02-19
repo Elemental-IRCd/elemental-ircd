@@ -81,16 +81,16 @@ struct Capability captab[] = {
     { "ZIP",	CAP_ZIP,	0 },
     { "TB",	CAP_TB,		1 },
     { "UNKLN",	CAP_UNKLN,	0 },
-    { "CLUSTER",CAP_CLUSTER,	1 },
+    { "CLUSTER",CAP_CLUSTER,	0 },
     { "ENCAP",	CAP_ENCAP,	1 },
     { "SERVICES",CAP_SERVICE,	1 },
-    { "RSFNC",	CAP_RSFNC,	1 },
+    { "RSFNC",	CAP_RSFNC,	0 },
     { "SAVE",	CAP_SAVE,	0 },
     { "EUID",	CAP_EUID,	1 },
     { "EOPMOD",	CAP_EOPMOD,	0 },
-    { "BAN",	CAP_BAN,	1 },
+    { "BAN",	CAP_BAN,	0 },
     { "MLOCK",	CAP_MLOCK,	1 },
-    { "QAOHV",	CAP_QAOHV,	1 },
+    { "QAOHV",	CAP_QAOHV,	0 },
     { 0,	0,		0 }
 };
 
