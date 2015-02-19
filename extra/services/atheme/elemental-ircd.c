@@ -14,12 +14,12 @@
 #include "pmodule.h"
 #include "protocol/shadowircd.h"
 
-DECLARE_MODULE_V1("protocol/elemental-ircd", true, _modinit, NULL, PACKAGE_STRING, "PonyChat Development Group <http://www.ponychat.net>");
+DECLARE_MODULE_V1("protocol/elemental-ircd", true, _modinit, NULL, PACKAGE_STRING, "Elemental-IRCd Development Team http://github.com/elemental-ircd/elemental-ircd");
 
 /* *INDENT-OFF* */
 
 ircd_t elemental_ircd = {
-    "elemental-ircd",		/* IRCd name */
+    "Elemental-IRCd 7.0",		/* IRCd name */
     "$$",                           /* TLD Prefix, used by Global. */
     true,                           /* Whether or not we use IRCNet/TS6 UID */
     false,                          /* Whether or not we use RCOMMAND */
@@ -32,13 +32,13 @@ ircd_t elemental_ircd = {
     CSTATUS_OWNER,                  /* Integer flag for owner channel flag. */
     CSTATUS_PROTECT,                  /* Integer flag for protect channel flag. */
     CSTATUS_HALFOP,                   /* Integer flag for halfops. */
-    "+y",                           /* Mode we set for owner. */
+    "+q",                           /* Mode we set for owner. */
     "+a",                           /* Mode we set for protect. */
     "+h",                           /* Mode we set for halfops. */
     PROTOCOL_SHADOWIRCD,		/* Protocol type */
     CMODE_PERM,                     /* Permanent cmodes */
     CMODE_IMMUNE,                   /* Oper-immune cmode */
-    "beIq",                         /* Ban-like cmodes */
+    "beIy",                         /* Ban-like cmodes */
     'e',                            /* Except mchar */
     'I',                            /* Invex mchar */
     IRCD_CIDR_BANS | IRCD_HOLDNICK  /* Flags */
@@ -75,7 +75,7 @@ struct cmode_ elemental_mode_list[] = {
 };
 
 struct cmode_ elemental_status_mode_list[] = {
-    { 'y', CSTATUS_OWNER },
+    { 'q', CSTATUS_OWNER },
     { 'a', CSTATUS_PROTECT },
     { 'o', CSTATUS_OP    },
     { 'h', CSTATUS_HALFOP },
@@ -85,7 +85,7 @@ struct cmode_ elemental_status_mode_list[] = {
 
 struct cmode_ elemental_prefix_mode_list[] = {
     { '~', CSTATUS_OWNER },
-    { '!', CSTATUS_PROTECT },
+    { '&', CSTATUS_PROTECT },
     { '@', CSTATUS_OP    },
     { '%', CSTATUS_HALFOP },
     { '+', CSTATUS_VOICE },

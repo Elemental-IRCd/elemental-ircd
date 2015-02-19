@@ -301,8 +301,8 @@ class ProtoElemental : public Module
 	{
 
 		ModeManager::AddChannelMode(new ChannelModeStatus("HALFOP", 'h', '%', 1));
-		ModeManager::AddChannelMode(new ChannelModeStatus("PROTECT", 'a', '!', 3));
-		ModeManager::AddChannelMode(new ChannelModeStatus("OWNER", 'y', '~', 4));
+		ModeManager::AddChannelMode(new ChannelModeStatus("PROTECT", 'a', '&', 3));
+		ModeManager::AddChannelMode(new ChannelModeStatus("OWNER", 'q', '~', 4));
 
 		/* Add user modes */
 		ModeManager::AddUserMode(new UserMode("NOFORWARD", 'Q'));
@@ -311,7 +311,7 @@ class ProtoElemental : public Module
 		ModeManager::AddUserMode(new UserModeNoone("SSL", 'Z')); 
 
 		/* b/e/I */
-		ModeManager::AddChannelMode(new ChannelModeList("QUIET", 'q'));
+		ModeManager::AddChannelMode(new ChannelModeList("QUIET", 'y'));
 
 		/* Add channel modes */
 		ModeManager::AddChannelMode(new ChannelMode("BLOCKCOLOR", 'c'));

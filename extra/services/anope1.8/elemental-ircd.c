@@ -18,7 +18,7 @@
 
 IRCDVar myIrcd[] = {
     {
-        "Elemental-IRCd 6.5",           /* ircd name */
+        "Elemental-IRCd 7.0",       /* ircd name */
         "+oiS",                     /* nickserv mode */
         "+oiS",                     /* chanserv mode */
         "+oiS",                     /* memoserv mode */
@@ -44,8 +44,8 @@ IRCDVar myIrcd[] = {
         1,                         /* SVSNICK */
         1,                         /* Vhost  */
         1,                         /* Has Owner */
-        "+y",                      /* Mode to set for an owner */
-        "-y",                      /* Mode to unset for an owner */
+        "+q",                      /* Mode to set for an owner */
+        "-q",                      /* Mode to unset for an owner */
         "+a",                      /* Mode to set for chan admin */
         "-a",                      /* Mode to unset for chan admin */
         NULL,                      /* Mode On Reg          */
@@ -443,7 +443,7 @@ CUMode myCumodes[128] = {
     {0},                        /* n */
     {CUS_OP, CUF_PROTECT_BOTSERV, check_valid_op},
     {0},                        /* p */
-    {0},                        /* q */
+    {CUS_OP, CUF_PROTECT_BOTSERV, check_valid_op},                        /* q */
     {0},                        /* r */
     {0},                        /* s */
     {0},                        /* t */
@@ -451,7 +451,7 @@ CUMode myCumodes[128] = {
     {CUS_VOICE, 0, NULL},
     {0},                        /* w */
     {0},                        /* x */
-    {CUS_OP, CUF_PROTECT_BOTSERV, check_valid_op},                        /* y */
+    {0},                        /* y */
     {0},                        /* z */
     {0}, {0}, {0}, {0}, {0}
 };
