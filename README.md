@@ -1,5 +1,13 @@
 # Elemental-IRCd
 
+IMPORTANT
+---------
+
+This branch is **NOT PRODUCTION READY**, **WILL BREAK THINGS** and **SHOULD NOT 
+BE USED IF STABILITY OR PREDICTABLE BEHAVIOR IS AT ALL DESIRED**.
+
+---
+
 **Elemental-IRCd** is a high performance, lightweight, and scalable
 IRC daemon. It is a fork of the now-defunct ShadowIRCD and seeks to continue in
 the direction ShadowIRCD was headed.
