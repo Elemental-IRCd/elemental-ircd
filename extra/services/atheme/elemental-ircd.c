@@ -100,12 +100,38 @@ struct cmode_ elemental_user_mode_list[] = {
     { '\0', 0 }
 };
 
-/* *INDENT-ON* */
+/* login to our uplink */
+static unsigned int elemental_server_login(void)
+{
+    int ret = 1;
+
+    if (!me.numeric) {
+        ircd->uses_uid = false;
+        ret = sts("PASS %s :TS", curr_uplink->send_pass);
+    } else if (strlen(me.numeric) == 3 && isdigit((unsigned char)*me.numeric)) {
+        ircd->uses_uid = true;
+        ret = sts("PASS %s TS 6 :%s", curr_uplink->send_pass, me.numeric);
+    } else {
+        slog(LG_ERROR, "Invalid numeric (SID) %s", me.numeric);
+    }
+    if (ret == 1)
+        return 1;
+
+    me.bursting = true;
+
+    sts("CAPAB :QS EX IE KLN UNKLN ENCAP TB SERVICES EUID EOPMOD MLOCK QAOHV");
+    sts("SERVER %s 1 :%s%s", me.name, me.hidden ? "(H) " : "", me.desc);
+    sts("SVINFO %d 3 0 :%lu", ircd->uses_uid ? 6 : 5,
+        (unsigned long)CURRTIME);
+
+    return 0;
+}
 
 void _modinit(module_t * m)
 {
     MODULE_TRY_REQUEST_DEPENDENCY(m, "protocol/charybdis");
 
+    server_login = &elemental_server_login;
     mode_list = elemental_mode_list;
     user_mode_list = elemental_user_mode_list;
     status_mode_list = elemental_status_mode_list;
