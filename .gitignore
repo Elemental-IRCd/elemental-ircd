@@ -40,3 +40,4 @@ tools/mkpasswd
 tools/viconf
 include/serno.h
 libratbox/src/version.c.last
+*.pyc
