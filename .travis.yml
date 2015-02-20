@@ -5,8 +5,8 @@ compiler:
 before-install:
 - sudo apt-get update
 install:
-- sudo apt-get install build-essential libssl-dev flex bison
-script: "./configure && make"
+- sudo apt-get install build-essential libssl-dev flex bison astyle
+script: "(cd ./testsuite/astyle && ./check_style.sh) ./configure && make"
 
 notifications:
   irc: "irc.yolo-swag.com#elemental-ircd"
