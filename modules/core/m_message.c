@@ -485,6 +485,10 @@ msg_channel(int p_or_n, const char *command,
         rb_strlcpy(text2, text, BUFSIZE);
         strip_unprintable(text2);
 
+        if !MyClient(source_p) {
+            goto skip_NOCAPS_check;
+        }
+
         // Don't count the "ACTION" part of action as part of the message --SnoFox
         if (p_or_n != NOTICE && *text == '\001' &&
             !strncasecmp(text + 1, "ACTION ", 7)) {
@@ -503,6 +507,7 @@ msg_channel(int p_or_n, const char *command,
             return;
         }
     }
+skip_NOCAPS_check:
 
     if(chptr->mode.mode & MODE_NOCOLOR && (!ConfigChannel.exempt_cmode_c || !is_any_op(msptr))) {
         rb_strlcpy(text2, text, BUFSIZE);
