@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+set -x
+
 cd ../..
 
 for file in $(find **/*.c)
