@@ -485,7 +485,7 @@ msg_channel(int p_or_n, const char *command,
         rb_strlcpy(text2, text, BUFSIZE);
         strip_unprintable(text2);
 
-        if !MyClient(source_p) {
+        if(!MyClient(source_p)) {
             goto skip_NOCAPS_check;
         }
 
