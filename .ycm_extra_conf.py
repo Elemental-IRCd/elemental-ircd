@@ -10,8 +10,8 @@ flags = [
 '-Werror',
 '-g',
 '-g',
-'-I../include',
-'-I../libratbox/include',
+'-Iinclude',
+'-Ilibratbox/include',
 ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the
