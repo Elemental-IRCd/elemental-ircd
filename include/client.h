@@ -425,6 +425,7 @@ struct ListClient {
 #define UMODE_OPER         0x1000	/* Operator */
 #define UMODE_ADMIN        0x2000	/* Admin on server */
 #define UMODE_SSLCLIENT    0x4000	/* using SSL */
+#define UMODE_WEBCLIENT    0x100000	/* user is connected via a web client */
 #define UMODE_OVERRIDE     0x20000  /* able to override */
 
 #define IsOverride(x)      ((x)->umodes & UMODE_OVERRIDE)
