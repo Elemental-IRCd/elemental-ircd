@@ -28,3 +28,4 @@ User modes: (* designates that the umode is oper only)
          +I     - Prevents non-opers from seeing your channel list in
                   a whois query.
          +Z     - Is connected via SSL (set only on connection).
+         +W     - Is connected via a web client (set only on connection).
