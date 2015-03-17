@@ -851,9 +851,9 @@ send_conf_options(struct Client *source_p)
      */
     for (i = 0; info_table[i].name; i++) {
         switch (info_table[i].output_type) {
-            /*
-             * For "char *" references
-             */
+        /*
+         * For "char *" references
+         */
         case OUTPUT_STRING: {
             char *option = *((char **) info_table[i].option);
 
@@ -935,8 +935,8 @@ send_conf_options(struct Client *source_p)
                        me.name, RPL_INFO, source_p->name,
                        info_table[i].name,
                        option ? ((option == 1) ? "MASK" : "YES") : "NO",
-                           info_table[i].desc ? info_table[i].desc : "<none>");
-        }		/* switch (info_table[i].output_type) */
+                       info_table[i].desc ? info_table[i].desc : "<none>");
+            }		/* switch (info_table[i].output_type) */
         }
     }			/* forloop */
 

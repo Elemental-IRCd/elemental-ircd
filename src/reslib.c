@@ -594,7 +594,7 @@ special(int ch)
     case 0x5C: /* '\\' */
     case 0x28: /* '('  */
     case 0x29: /* ')'  */
-        /* Special modifiers in zone files. */
+    /* Special modifiers in zone files. */
     case 0x40: /* '@'  */
     case 0x24: /* '$'  */
         return(1);

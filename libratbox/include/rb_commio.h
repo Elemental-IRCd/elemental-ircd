@@ -21,6 +21,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *  USA
  *
+ *  $Id: rb_commio.h 26092 2008-09-19 15:13:52Z androsyn $
  */
 
 #ifndef RB_LIB_H
@@ -153,7 +154,6 @@ uint8_t rb_get_type(rb_fde_t *F);
 const char *rb_get_iotype(void);
 
 typedef enum {
-    RB_PRNG_EGD,
     RB_PRNG_FILE,
 #ifdef _WIN32
     RB_PRNGWIN32,

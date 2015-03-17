@@ -28,6 +28,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *  USA
  *
+ *  $Id: balloc.c 26100 2008-09-20 01:27:19Z androsyn $
  */
 
 /*
@@ -234,6 +235,7 @@ newblock(rb_bh *bh)
 
     b->elems = get_block(b->alloc_size);
     if(rb_unlikely(b->elems == NULL)) {
+        rb_free(b);
         return (1);
     }
     offset = (uintptr_t)b->elems;

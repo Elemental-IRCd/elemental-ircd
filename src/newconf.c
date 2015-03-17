@@ -1564,7 +1564,7 @@ conf_set_general_default_umodes(void *data)
             what = MODE_DEL;
             break;
 
-            /* don't allow +o */
+        /* don't allow +o */
         case 'o':
         case 'S':
         case 'Z':
@@ -2136,7 +2136,6 @@ static struct ConfEntry conf_general_table[] = {
     { "default_operhost",	CF_QSTRING, NULL, REALLEN,    &ConfigFileEntry.default_operhost },
     { "static_quit",	CF_QSTRING, NULL, REALLEN,	  &ConfigFileEntry.static_quit	},
     { "servicestring",	CF_QSTRING, NULL, REALLEN,    &ConfigFileEntry.servicestring },
-    { "egdpool_path",	CF_QSTRING, NULL, MAXPATHLEN, &ConfigFileEntry.egdpool_path },
     { "kline_reason",	CF_QSTRING, NULL, REALLEN, &ConfigFileEntry.kline_reason },
     { "identify_service",	CF_QSTRING, NULL, REALLEN, &ConfigFileEntry.identifyservice },
     { "identify_command",	CF_QSTRING, NULL, REALLEN, &ConfigFileEntry.identifycommand },
@@ -2195,7 +2194,6 @@ static struct ConfEntry conf_general_table[] = {
     { "stats_y_oper_only",	CF_YESNO, NULL, 0, &ConfigFileEntry.stats_y_oper_only	},
     { "target_change",	CF_YESNO, NULL, 0, &ConfigFileEntry.target_change	},
     { "ts_max_delta",	CF_TIME,  NULL, 0, &ConfigFileEntry.ts_max_delta	},
-    { "use_egd",		CF_YESNO, NULL, 0, &ConfigFileEntry.use_egd		},
     { "ts_warn_delta",	CF_TIME,  NULL, 0, &ConfigFileEntry.ts_warn_delta	},
     { "use_whois_actually", CF_YESNO, NULL, 0, &ConfigFileEntry.use_whois_actually	},
     { "warn_no_nline",	CF_YESNO, NULL, 0, &ConfigFileEntry.warn_no_nline	},

@@ -94,7 +94,7 @@ parseargs(int *argc, char ***argv, struct lgetopt *opts)
 
                 case USAGE:
                     usage(progname);
-                /*NOTREACHED*/ default:
+            /*NOTREACHED*/ default:
                     fprintf(stderr,
                             "Error: internal error in parseargs() at %s:%d\n",
                             __FILE__, __LINE__);

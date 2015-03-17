@@ -280,7 +280,7 @@ ms_bmask(struct Client *client_p, struct Client *source_p, int parc, const char 
         mems = ALL_MEMBERS;
         break;
 
-        /* maybe we should just blindly propagate this? */
+    /* maybe we should just blindly propagate this? */
     default:
         return 0;
     }

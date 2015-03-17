@@ -170,7 +170,7 @@ mr_server(struct Client *client_p, struct Client *source_p, int parc, const char
         /* NOT REACHED */
         break;
 
-        /* servername is > HOSTLEN */
+    /* servername is > HOSTLEN */
     case -4:
         sendto_realops_snomask(SNO_GENERAL, L_ALL,
                                "Invalid servername %s from %s",

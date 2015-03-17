@@ -39,6 +39,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *  USA
  *
+ *  $Id: event.c 26272 2008-12-10 05:55:10Z androsyn $
  */
 
 #include <libratbox_config.h>
@@ -86,6 +87,11 @@ rb_event_find(EVH * func, void *arg)
 struct ev_entry *
 rb_event_add(const char *name, EVH * func, void *arg, time_t when)
 {
+    if (rb_unlikely(when <= 0)) {
+        rb_lib_log("rb_event_add: tried to schedule %s event with a delay of "
+                   "%d seconds", name, (int) when);
+        when = 1;
+    }
     struct ev_entry *ev;
     ev = rb_malloc(sizeof(struct ev_entry));
     ev->func = func;
@@ -106,6 +112,11 @@ rb_event_add(const char *name, EVH * func, void *arg, time_t when)
 struct ev_entry *
 rb_event_addonce(const char *name, EVH * func, void *arg, time_t when)
 {
+    if (rb_unlikely(when <= 0)) {
+        rb_lib_log("rb_event_addonce: tried to schedule %s event to run in "
+                   "%d seconds", name, (int) when);
+        when = 1;
+    }
     struct ev_entry *ev;
     ev = rb_malloc(sizeof(struct ev_entry));
     ev->func = func;
@@ -186,9 +197,7 @@ rb_run_event(struct ev_entry *ev)
     rb_strlcpy(last_event_ran, ev->name, sizeof(last_event_ran));
     ev->func(ev->arg);
     if(!ev->frequency) {
-        rb_io_unsched_event(ev);
-        rb_dlinkDelete(&ev->node, &event_list);
-        rb_free(ev);
+        rb_event_delete(ev);
         return;
     }
     ev->when = rb_current_time() + ev->frequency;

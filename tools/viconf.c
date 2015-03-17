@@ -34,46 +34,43 @@ static char lockpath[PATH_MAX + 1];
 
 int main(int argc, char *argv[])
 {
-  const char *ed, *p, *filename = CPATH;
+    const char *ed, *p, *filename = CPATH;
 
-  if( chdir(DPATH) < 0 )
-    {
-      fprintf(stderr,"Cannot chdir to %s\n", DPATH);
-      exit(errno);
+    if( chdir(DPATH) < 0 ) {
+        fprintf(stderr,"Cannot chdir to %s\n", DPATH);
+        exit(errno);
     }
 
-  if((p = strrchr(argv[0], '/')) == NULL)
-    p = argv[0];
-  else
-    p++;
+    if((p = strrchr(argv[0], '/')) == NULL)
+        p = argv[0];
+    else
+        p++;
 
-  if(strcmp(p, PROGRAM_PREFIX "vimotd") == 0)
-    filename = MPATH;
+    if(strcmp(p, PROGRAM_PREFIX "vimotd") == 0)
+        filename = MPATH;
 
-  if(LockedFile(filename))
-    {
-      fprintf(stderr,"Can't lock %s\n", filename);
-      exit(errno);
+    if(LockedFile(filename)) {
+        fprintf(stderr,"Can't lock %s\n", filename);
+        exit(errno);
     }
 
-  /* ed config file */
-  switch(fork())
-    {
+    /* ed config file */
+    switch(fork()) {
     case -1:
-      fprintf(stderr, "error forking, %d\n", errno);
-      exit(errno);
+        fprintf(stderr, "error forking, %d\n", errno);
+        exit(errno);
     case 0:		/* Child */
-      if((ed = getenv("EDITOR")) == NULL)
-	ed = "vi";
-      execlp(ed, ed, filename, NULL);
-      fprintf(stderr, "error running editor, %d\n", errno);
-      exit(errno);
+        if((ed = getenv("EDITOR")) == NULL)
+            ed = "vi";
+        execlp(ed, ed, filename, NULL);
+        fprintf(stderr, "error running editor, %d\n", errno);
+        exit(errno);
     default:
-      wait(0);
+        wait(0);
     }
 
-  unlink(lockpath);
-  return 0;
+    unlink(lockpath);
+    return 0;
 }
 
 /*
@@ -95,58 +92,54 @@ LockedFile(const char *filename)
 
 {
 
-  char buffer[1024];
-  FILE *fileptr;
-  int killret;
-  int fd;
+    char buffer[1024];
+    FILE *fileptr;
+    int killret;
+    int fd;
 
-  if (!filename)
+    if (!filename)
+        return (0);
+
+    sprintf(lockpath, "%s.lock", filename);
+
+    if ((fileptr = fopen(lockpath, "r")) != NULL) {
+        if (fgets(buffer, sizeof(buffer) - 1, fileptr)) {
+            /*
+             * If it is a valid lockfile, 'buffer' should now
+             * contain the pid number of the editing process.
+             * Send the pid a SIGCHLD to see if it is a valid
+             * pid - it could be a remnant left over from a
+             * crashed editor or system reboot etc.
+             */
+
+            killret = kill(atoi(buffer), SIGCHLD);
+            if (killret == 0) {
+                fclose(fileptr);
+                return (1);
+            }
+
+            /*
+             * killret must be -1, which indicates an error (most
+             * likely ESRCH - No such process), so it is ok to
+             * proceed writing klines.
+             */
+        }
+        fclose(fileptr);
+    }
+
+    /*
+     * Delete the outdated lock file
+     */
+    unlink(lockpath);
+
+    /* create exclusive lock */
+    if((fd = open(lockpath, O_WRONLY|O_CREAT|O_EXCL, 0666)) < 0) {
+        fprintf(stderr, "ircd config file locked\n");
+        return (-1);
+    }
+
+    fileptr = fdopen(fd,"w");
+    fprintf(fileptr,"%d\n",(int)getpid());
+    fclose(fileptr);
     return (0);
-  
-  sprintf(lockpath, "%s.lock", filename);
-  
-  if ((fileptr = fopen(lockpath, "r")) != NULL)
-    {
-      if (fgets(buffer, sizeof(buffer) - 1, fileptr))
-	{
-	  /*
-	   * If it is a valid lockfile, 'buffer' should now
-	   * contain the pid number of the editing process.
-	   * Send the pid a SIGCHLD to see if it is a valid
-	   * pid - it could be a remnant left over from a
-	   * crashed editor or system reboot etc.
-	   */
-      
-	  killret = kill(atoi(buffer), SIGCHLD);
-	  if (killret == 0)
-	    {
-	      fclose(fileptr);
-	      return (1);
-	    }
-
-	  /*
-	   * killret must be -1, which indicates an error (most
-	   * likely ESRCH - No such process), so it is ok to
-	   * proceed writing klines.
-	   */
-	}
-      fclose(fileptr);
-    }
-
-  /*
-   * Delete the outdated lock file
-   */
-  unlink(lockpath);
-
-  /* create exclusive lock */
-  if((fd = open(lockpath, O_WRONLY|O_CREAT|O_EXCL, 0666)) < 0)
-    {
-      fprintf(stderr, "ircd config file locked\n");
-      return (-1);
-    }
-
-  fileptr = fdopen(fd,"w");
-  fprintf(fileptr,"%d\n",(int)getpid());
-  fclose(fileptr);
-  return (0);
 } /* LockedFile() */

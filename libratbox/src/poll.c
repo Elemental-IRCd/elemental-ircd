@@ -22,6 +22,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *  USA
  *
+ *  $Id: poll.c 26092 2008-09-19 15:13:52Z androsyn $
  */
 #include <libratbox_config.h>
 #include <ratbox_lib.h>

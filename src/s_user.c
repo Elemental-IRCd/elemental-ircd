@@ -1011,11 +1011,11 @@ user_mode(struct Client *client_p, struct Client *source_p, int parc, const char
             }
             break;
 
-            /* we may not get these,
-             * but they shouldnt be in default
-             */
+        /* we may not get these,
+         * but they shouldnt be in default
+         */
 
-            /* can only be set on burst */
+        /* can only be set on burst */
         case 'S':
         case 'Z':
         case ' ':
@@ -1046,7 +1046,7 @@ user_mode(struct Client *client_p, struct Client *source_p, int parc, const char
                     source_p->umodes &= ~UMODE_SERVNOTICE;
                 break;
             }
-            /* FALLTHROUGH */
+        /* FALLTHROUGH */
         default:
             if (MyConnect(source_p) && *pm == 'Q' && !ConfigChannel.use_forward) {
                 badflag = YES;
