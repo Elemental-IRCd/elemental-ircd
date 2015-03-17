@@ -84,7 +84,7 @@ backtrack:
                     for (n_tmp = n; *n && ToLower(*n) != ToLower(*m); n++);
                 }
             }
-            /* and fall through */
+        /* and fall through */
         default:
             if (!*n)
                 return (*m != '\0' ? 0 : 1);
@@ -149,7 +149,7 @@ backtrack:
                     for (n_tmp = n; *n && ToLower(*n) != ToLower(*m); n++);
                 }
             }
-            /* and fall through */
+        /* and fall through */
         default:
             if (!*n)
                 return (*m != '\0' ? 0 : 1);

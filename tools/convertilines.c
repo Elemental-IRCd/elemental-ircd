@@ -1,6 +1,6 @@
 /* tools/convertilines.c
  * Copyright (c) 2002 Hybrid Development Team
- * 
+ *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are
  *  met:
@@ -40,28 +40,25 @@
 #define FLAGS_NEEDIDENT		0x010
 #define FLAGS_NOTILDE		0x020
 
-struct flag_table_struct
-{
-	const char *name;
-	int flag;
+struct flag_table_struct {
+    const char *name;
+    int flag;
 };
-static struct flag_table_struct flag_table[] =
-{
-	{ "restricted",		FLAGS_RESTRICTED	},
-	{ "exceed_limit",	FLAGS_EXCEEDLIMIT	},
-	{ "kline_exempt",	FLAGS_KLINEEXEMPT	},
-	{ "need_ident",		FLAGS_NEEDIDENT		},
-	{ "no_tilde",		FLAGS_NOTILDE		},
-	{ NULL, 0 }
+static struct flag_table_struct flag_table[] = {
+    { "restricted",		FLAGS_RESTRICTED	},
+    { "exceed_limit",	FLAGS_EXCEEDLIMIT	},
+    { "kline_exempt",	FLAGS_KLINEEXEMPT	},
+    { "need_ident",		FLAGS_NEEDIDENT		},
+    { "no_tilde",		FLAGS_NOTILDE		},
+    { NULL, 0 }
 };
 
-struct AuthBlock
-{
+struct AuthBlock {
     struct AuthBlock *next;
 
     char **hostname;
     int hostnum;
-    
+
     char *spoof;
     char *passwd;
     int class;
@@ -91,27 +88,25 @@ static int match(struct AuthBlock *, struct AuthBlock *);
 
 int main(int argc,char *argv[])
 {
-  FILE *in;
-  FILE *out;
+    FILE *in;
+    FILE *out;
 
-  if(argc < 3)
-    usage();
+    if(argc < 3)
+        usage();
 
-  if((in = fopen(argv[1],"r")) == NULL)
-  {
-      fprintf(stderr, "Can't open %s for reading\n", argv[1]);
-      usage();
-  }
+    if((in = fopen(argv[1],"r")) == NULL) {
+        fprintf(stderr, "Can't open %s for reading\n", argv[1]);
+        usage();
+    }
 
-  if((out = fopen(argv[2],"w")) == NULL)
-  {
-      fprintf(stderr, "Can't open %s for writing\n", argv[2]);
-      usage();
-  }
-  
-  ConvertConf(in, out);
+    if((out = fopen(argv[2],"w")) == NULL) {
+        fprintf(stderr, "Can't open %s for writing\n", argv[2]);
+        usage();
+    }
 
-  return 0;
+    ConvertConf(in, out);
+
+    return 0;
 }
 
 void usage()
@@ -121,7 +116,7 @@ void usage()
 }
 
 /*
- * ConvertConf() 
+ * ConvertConf()
  *    Read configuration file.
  *
  *
@@ -134,57 +129,52 @@ void usage()
 
 static void ConvertConf(FILE* file, FILE *out)
 {
-  char             line[BUFSIZE];
-  char             quotedLine[BUFSIZE];
-  char*            p;
+    char             line[BUFSIZE];
+    char             quotedLine[BUFSIZE];
+    char*            p;
 
-  while (fgets(line, sizeof(line), file))
-  {
-      if ((p = strchr(line, '\n')))
-          *p = '\0';
+    while (fgets(line, sizeof(line), file)) {
+        if ((p = strchr(line, '\n')))
+            *p = '\0';
 
-      ReplaceQuotes(quotedLine,line);
+        ReplaceQuotes(quotedLine,line);
 
-      if(!*quotedLine || quotedLine[0] == '#' || quotedLine[0] == '\n' ||
-        quotedLine[0] == ' ' || quotedLine[0] == '\t')
-          continue;
+        if(!*quotedLine || quotedLine[0] == '#' || quotedLine[0] == '\n' ||
+           quotedLine[0] == ' ' || quotedLine[0] == '\t')
+            continue;
 
-      if(quotedLine[0] == '.')
-      {
-          char *filename;
-          char *back;
+        if(quotedLine[0] == '.') {
+            char *filename;
+            char *back;
 
-          if(!strncmp(quotedLine+1,"include ",8))
-          {
-              if( (filename = strchr(quotedLine+8,'"')) )
-                  filename++;
-              else
-              {
-                  fprintf(stderr, "Bad config line: %s", quotedLine);
-                  continue;
-              }
+            if(!strncmp(quotedLine+1,"include ",8)) {
+                if( (filename = strchr(quotedLine+8,'"')) )
+                    filename++;
+                else {
+                    fprintf(stderr, "Bad config line: %s", quotedLine);
+                    continue;
+                }
 
-              if((back = strchr(filename,'"')))
-                  *back = '\0';
-              else
-              {
-                  fprintf(stderr, "Bad config line: %s", quotedLine);
-                  continue;
-              }
+                if((back = strchr(filename,'"')))
+                    *back = '\0';
+                else {
+                    fprintf(stderr, "Bad config line: %s", quotedLine);
+                    continue;
+                }
 
-	  }
-      }
+            }
+        }
 
-      /* Could we test if it's conf line at all?        -Vesa */
-      if (quotedLine[1] == ':')
-          oldParseOneLine(out,quotedLine);
+        /* Could we test if it's conf line at all?        -Vesa */
+        if (quotedLine[1] == ':')
+            oldParseOneLine(out,quotedLine);
 
-  }
+    }
 
-  fclose(file);
+    fclose(file);
 
-  write_auth_entries(out);
-  fclose(out);
+    write_auth_entries(out);
+    fclose(out);
 }
 
 /*
@@ -197,198 +187,177 @@ static void ConvertConf(FILE* file, FILE *out)
  */
 static void ReplaceQuotes(char* quotedLine,char *inputLine)
 {
-  char *in;
-  char *out;
-  static char  quotes[] = {
-    0,    /*  */
-    0,    /* a */
-    '\b', /* b */
-    0,    /* c */
-    0,    /* d */
-    0,    /* e */
-    '\f', /* f */
-    0,    /* g */
-    0,    /* h */
-    0,    /* i */
-    0,    /* j */
-    0,    /* k */
-    0,    /* l */
-    0,    /* m */
-    '\n', /* n */
-    0,    /* o */
-    0,    /* p */
-    0,    /* q */
-    '\r', /* r */
-    0,    /* s */
-    '\t', /* t */
-    0,    /* u */
-    '\v', /* v */
-    0,    /* w */
-    0,    /* x */
-    0,    /* y */
-    0,    /* z */
-    0,0,0,0,0,0 
+    char *in;
+    char *out;
+    static char  quotes[] = {
+        0,    /*  */
+        0,    /* a */
+        '\b', /* b */
+        0,    /* c */
+        0,    /* d */
+        0,    /* e */
+        '\f', /* f */
+        0,    /* g */
+        0,    /* h */
+        0,    /* i */
+        0,    /* j */
+        0,    /* k */
+        0,    /* l */
+        0,    /* m */
+        '\n', /* n */
+        0,    /* o */
+        0,    /* p */
+        0,    /* q */
+        '\r', /* r */
+        0,    /* s */
+        '\t', /* t */
+        0,    /* u */
+        '\v', /* v */
+        0,    /* w */
+        0,    /* x */
+        0,    /* y */
+        0,    /* z */
+        0,0,0,0,0,0
     };
 
-  /*
-   * Do quoting of characters and # detection.
-   */
-  for (out = quotedLine,in = inputLine; *in; out++, in++)
-    {
-      if (*in == '\\')
-	{
-          in++;
-          if(*in == '\\')
-            *out = '\\';
-          else if(*in == '#')
-            *out = '#';
-	  else
-	    *out = quotes[ (unsigned int) (*in & 0x1F) ];
-	}
-      else if (*in == '#')
-        {
-	  *out = '\0';
-          return;
-	}
-      else
-        *out = *in;
+    /*
+     * Do quoting of characters and # detection.
+     */
+    for (out = quotedLine,in = inputLine; *in; out++, in++) {
+        if (*in == '\\') {
+            in++;
+            if(*in == '\\')
+                *out = '\\';
+            else if(*in == '#')
+                *out = '#';
+            else
+                *out = quotes[ (unsigned int) (*in & 0x1F) ];
+        } else if (*in == '#') {
+            *out = '\0';
+            return;
+        } else
+            *out = *in;
     }
-  *out = '\0';
+    *out = '\0';
 }
 
 /*
  * oldParseOneLine
  * Inputs       - pointer to line to parse
  *		- pointer to output to write
- * Output       - 
+ * Output       -
  * Side Effects - Parse one old style conf line.
  */
 
 static void oldParseOneLine(FILE *out,char* line)
 {
-  char conf_letter;
-  char* tmp;
-  const char* host_field=NULL;
-  const char* passwd_field=NULL;
-  const char* user_field=NULL;
-  const char* port_field = NULL;
-  const char* classconf_field = NULL;
-  int class_field = 0;
+    char conf_letter;
+    char* tmp;
+    const char* host_field=NULL;
+    const char* passwd_field=NULL;
+    const char* user_field=NULL;
+    const char* port_field = NULL;
+    const char* classconf_field = NULL;
+    int class_field = 0;
 
-  tmp = getfield(line);
+    tmp = getfield(line);
 
-  conf_letter = *tmp;
+    conf_letter = *tmp;
 
-  for (;;) /* Fake loop, that I can use break here --msa */
-  {
-      /* host field */
-      if ((host_field = getfield(NULL)) == NULL)
-	return;
-      
-      /* pass field */
-      if ((passwd_field = getfield(NULL)) == NULL)
-	break;
+    for (;;) { /* Fake loop, that I can use break here --msa */
+        /* host field */
+        if ((host_field = getfield(NULL)) == NULL)
+            return;
 
-      /* user field */
-      if ((user_field = getfield(NULL)) == NULL)
-	break;
+        /* pass field */
+        if ((passwd_field = getfield(NULL)) == NULL)
+            break;
 
-      /* port field */
-      if ((port_field = getfield(NULL)) == NULL)
-	break;
+        /* user field */
+        if ((user_field = getfield(NULL)) == NULL)
+            break;
 
-      /* class field */
-      if ((classconf_field = getfield(NULL)) == NULL)
-	break;
+        /* port field */
+        if ((port_field = getfield(NULL)) == NULL)
+            break;
 
-      break;
-  }
+        /* class field */
+        if ((classconf_field = getfield(NULL)) == NULL)
+            break;
 
-  if (!passwd_field)
-    passwd_field = "";
-  if (!user_field)
-    user_field = "";
-  if (!port_field)    
-    port_field = "";
-  if (classconf_field)
-    class_field = atoi(classconf_field);
+        break;
+    }
 
-  switch( conf_letter )
-  {
-    case 'i': 
-    case 'I': 
-    {
+    if (!passwd_field)
+        passwd_field = "";
+    if (!user_field)
+        user_field = "";
+    if (!port_field)
+        port_field = "";
+    if (classconf_field)
+        class_field = atoi(classconf_field);
+
+    switch( conf_letter ) {
+    case 'i':
+    case 'I': {
         struct AuthBlock *ptr;
-	struct AuthBlock *tempptr;
+        struct AuthBlock *tempptr;
 
-	tempptr = malloc(sizeof(struct AuthBlock));
-	memset(tempptr, 0, sizeof(*tempptr));
+        tempptr = malloc(sizeof(struct AuthBlock));
+        memset(tempptr, 0, sizeof(*tempptr));
 
-	if(conf_letter == 'i')
-	{
-	    tempptr->flags |= FLAGS_RESTRICTED;
-	    tempptr->specialk = 1;
-	}
+        if(conf_letter == 'i') {
+            tempptr->flags |= FLAGS_RESTRICTED;
+            tempptr->specialk = 1;
+        }
 
         if(passwd_field && *passwd_field)
-	    tempptr->passwd = strdup(passwd_field);
+            tempptr->passwd = strdup(passwd_field);
 
-	tempptr->class = class_field;
+        tempptr->class = class_field;
 
-	set_flags(tempptr, user_field, host_field);
+        set_flags(tempptr, user_field, host_field);
 
-	/* dont add specials/passworded ones to existing auth blocks */
-        if((ptr = find_matching_conf(tempptr)))
-	{
+        /* dont add specials/passworded ones to existing auth blocks */
+        if((ptr = find_matching_conf(tempptr))) {
             int authindex;
 
-	    authindex = ptr->hostnum;
-	    ptr->hostnum++;
+            authindex = ptr->hostnum;
+            ptr->hostnum++;
 
-	    ptr->hostname = realloc((void *)ptr->hostname, ptr->hostnum * sizeof(void *));
+            ptr->hostname = realloc((void *)ptr->hostname, ptr->hostnum * sizeof(void *));
 
-	    ptr->hostname[authindex] = strdup(tempptr->hostname[0]);
+            ptr->hostname[authindex] = strdup(tempptr->hostname[0]);
 
-	    free(tempptr->hostname[0]);
-	    free(tempptr->hostname);
-	    free(tempptr);
-	}
-	else
-	{
-	    ptr = tempptr;
+            free(tempptr->hostname[0]);
+            free(tempptr->hostname);
+            free(tempptr);
+        } else {
+            ptr = tempptr;
 
-            if(ptr->spoof)
-  	    {
-	        ptr->next = auth_spoof;
-	        auth_spoof = ptr;
- 	    }
-	    else if(ptr->special)
-	    {
-	        ptr->next = auth_special;
-	        auth_special = ptr;
-	    }
-	    else if(ptr->passwd)
-	    {
-	        ptr->next = auth_passwd;
-	        auth_passwd = ptr;
-	    }
-	    else if(ptr->specialk)
-	    {
-	        ptr->next = auth_restricted;
-	        auth_restricted = ptr;
-	    }
-	    else
- 	    {
-	        ptr->next = auth_general;
-	        auth_general = ptr;
-	    }
-	}
+            if(ptr->spoof) {
+                ptr->next = auth_spoof;
+                auth_spoof = ptr;
+            } else if(ptr->special) {
+                ptr->next = auth_special;
+                auth_special = ptr;
+            } else if(ptr->passwd) {
+                ptr->next = auth_passwd;
+                auth_passwd = ptr;
+            } else if(ptr->specialk) {
+                ptr->next = auth_restricted;
+                auth_restricted = ptr;
+            } else {
+                ptr->next = auth_general;
+                auth_general = ptr;
+            }
+        }
     }
     break;
-      
+
     default:
-      break;
-  }
+        break;
+    }
 }
 
 static void write_auth_entries(FILE *out)
@@ -396,22 +365,22 @@ static void write_auth_entries(FILE *out)
     struct AuthBlock *ptr;
 
     for(ptr = auth_spoof; ptr; ptr = ptr->next)
-	write_specific(out, ptr);
+        write_specific(out, ptr);
 
     for(ptr = auth_special; ptr; ptr = ptr->next)
-	write_specific(out, ptr);
+        write_specific(out, ptr);
 
     for(ptr = auth_passwd; ptr; ptr = ptr->next)
-	write_specific(out, ptr);
+        write_specific(out, ptr);
 
     for(ptr = auth_general; ptr; ptr = ptr->next)
-	write_specific(out, ptr);
+        write_specific(out, ptr);
 
     for(ptr = auth_restricted; ptr; ptr = ptr->next)
-	write_specific(out, ptr);
+        write_specific(out, ptr);
 }
 
-    
+
 static void write_specific(FILE *out, struct AuthBlock *ptr)
 {
     int i;
@@ -423,27 +392,24 @@ static void write_specific(FILE *out, struct AuthBlock *ptr)
         fprintf(out, "\tuser = \"%s\";\n", ptr->hostname[i]);
 
     if(ptr->spoof)
-	fprintf(out, "\tspoof = \"%s\";\n", ptr->spoof);
+        fprintf(out, "\tspoof = \"%s\";\n", ptr->spoof);
 
     if(ptr->passwd)
-	fprintf(out, "\tpassword = \"%s\";\n", ptr->passwd);
+        fprintf(out, "\tpassword = \"%s\";\n", ptr->passwd);
 
-    if(ptr->flags)
-    {
-	    fprintf(out, "\tflags = ");
+    if(ptr->flags) {
+        fprintf(out, "\tflags = ");
 
-	    for(i = 0; flag_table[i].flag; i++)
-	    {
-		    if(ptr->flags & flag_table[i].flag)
-		    {
-			    fprintf(out, "%s%s", 
-					prev ? ", " : "", 
-					flag_table[i].name);
-			    prev = 1;
-		    }
-	    }
+        for(i = 0; flag_table[i].flag; i++) {
+            if(ptr->flags & flag_table[i].flag) {
+                fprintf(out, "%s%s",
+                        prev ? ", " : "",
+                        flag_table[i].name);
+                prev = 1;
+            }
+        }
 
-	    fprintf(out, ";\n");
+        fprintf(out, ";\n");
     }
 
     fprintf(out, "\tclass = \"%d\";\n", ptr->class);
@@ -455,60 +421,53 @@ static void write_specific(FILE *out, struct AuthBlock *ptr)
  */
 static char *getfield(char *newline)
 {
-  static char *line = NULL;
-  char  *end, *field;
-        
-  if (newline)
-    line = newline;
+    static char *line = NULL;
+    char  *end, *field;
 
-  if (line == NULL)
-    return(NULL);
+    if (newline)
+        line = newline;
 
-  field = line;
-  if ((end = strchr(line,':')) == NULL)
-    {
-      line = NULL;
-      if ((end = strchr(field,'\n')) == NULL)
-        end = field + strlen(field);
-    }
-  else
-    line = end + 1;
-  *end = '\0';
-  return(field);
+    if (line == NULL)
+        return(NULL);
+
+    field = line;
+    if ((end = strchr(line,':')) == NULL) {
+        line = NULL;
+        if ((end = strchr(field,'\n')) == NULL)
+            end = field + strlen(field);
+    } else
+        line = end + 1;
+    *end = '\0';
+    return(field);
 }
 
 struct AuthBlock *find_matching_conf(struct AuthBlock *acptr)
 {
     struct AuthBlock *ptr;
 
-    for(ptr = auth_spoof; ptr; ptr = ptr->next)
-    {
-	if(match(ptr, acptr))
-	    return ptr;
-    }
-
-    for(ptr = auth_special; ptr; ptr = ptr->next)
-    {
-	if(match(ptr, acptr))
-	    return ptr;
-    }
-
-    for(ptr = auth_passwd; ptr; ptr = ptr->next)
-    {
-	if(match(ptr, acptr))
-	    return ptr;
-    }
-
-    for(ptr = auth_restricted; ptr; ptr = ptr->next)
-    {
-	if(match(ptr, acptr))
-	    return ptr;
-    }
-	
-    for(ptr = auth_general; ptr; ptr = ptr->next)
-    {
+    for(ptr = auth_spoof; ptr; ptr = ptr->next) {
         if(match(ptr, acptr))
-	    return ptr;
+            return ptr;
+    }
+
+    for(ptr = auth_special; ptr; ptr = ptr->next) {
+        if(match(ptr, acptr))
+            return ptr;
+    }
+
+    for(ptr = auth_passwd; ptr; ptr = ptr->next) {
+        if(match(ptr, acptr))
+            return ptr;
+    }
+
+    for(ptr = auth_restricted; ptr; ptr = ptr->next) {
+        if(match(ptr, acptr))
+            return ptr;
+    }
+
+    for(ptr = auth_general; ptr; ptr = ptr->next) {
+        if(match(ptr, acptr))
+            return ptr;
     }
 
 
@@ -518,39 +477,38 @@ struct AuthBlock *find_matching_conf(struct AuthBlock *acptr)
 static int match(struct AuthBlock *ptr, struct AuthBlock *acptr)
 {
     if((ptr->class == acptr->class) &&
-       (ptr->flags == acptr->flags))
-    {
-	const char *p1, *p2;
-	
-	/* check the spoofs match.. */
-	if(ptr->spoof)
-	   p1 = ptr->spoof;
-	else
-	   p1 = "";
+       (ptr->flags == acptr->flags)) {
+        const char *p1, *p2;
 
-	if(acptr->spoof)
-	   p2 = acptr->spoof;
-	else
-	   p2 = "";
+        /* check the spoofs match.. */
+        if(ptr->spoof)
+            p1 = ptr->spoof;
+        else
+            p1 = "";
 
-	if(strcmp(p1, p2))
-	    return 0;
+        if(acptr->spoof)
+            p2 = acptr->spoof;
+        else
+            p2 = "";
 
-	/* now check the passwords match.. */
-	if(ptr->passwd)
-	    p1 = ptr->passwd;
-	else
-	    p1 = "";
+        if(strcmp(p1, p2))
+            return 0;
 
-	if(acptr->passwd)
-	    p2 = acptr->passwd;
-	else
-	    p2 = "";
+        /* now check the passwords match.. */
+        if(ptr->passwd)
+            p1 = ptr->passwd;
+        else
+            p1 = "";
 
-	if(strcmp(p1, p2))
-	    return 0;
+        if(acptr->passwd)
+            p2 = acptr->passwd;
+        else
+            p2 = "";
 
-	return 1;
+        if(strcmp(p1, p2))
+            return 0;
+
+        return 1;
     }
 
     return 0;
@@ -558,62 +516,59 @@ static int match(struct AuthBlock *ptr, struct AuthBlock *acptr)
 
 void set_flags(struct AuthBlock *ptr, const char *user_field, const char *host_field)
 {
-  for(; *user_field; user_field++)
-  {
-      switch(*user_field)
-      {
-          case '=':
-	      if(host_field)
-	          ptr->spoof = strdup(host_field);
+    for(; *user_field; user_field++) {
+        switch(*user_field) {
+        case '=':
+            if(host_field)
+                ptr->spoof = strdup(host_field);
 
-	      ptr->special = 1;
-              break;
+            ptr->special = 1;
+            break;
 
-          case '-':
-	      ptr->flags |= FLAGS_NOTILDE;
-	      ptr->special = 1;
-              break;
+        case '-':
+            ptr->flags |= FLAGS_NOTILDE;
+            ptr->special = 1;
+            break;
 
-          case '+':
-	      ptr->flags |= FLAGS_NEEDIDENT;
-	      ptr->specialk = 1;
-              break;
+        case '+':
+            ptr->flags |= FLAGS_NEEDIDENT;
+            ptr->specialk = 1;
+            break;
 
-          case '^':        /* is exempt from k/g lines */
-	      ptr->flags |= FLAGS_KLINEEXEMPT;
-	      ptr->special = 1;
-              break;
+        case '^':        /* is exempt from k/g lines */
+            ptr->flags |= FLAGS_KLINEEXEMPT;
+            ptr->special = 1;
+            break;
 
-	  case '>':
-	      ptr->flags |= FLAGS_EXCEEDLIMIT;
-	      ptr->special = 1;
-	      break;
+        case '>':
+            ptr->flags |= FLAGS_EXCEEDLIMIT;
+            ptr->special = 1;
+            break;
 
-	  case '!':
-          case '$':
-          case '%':
-          case '&':
-	  case '<':
-              break;
+        case '!':
+        case '$':
+        case '%':
+        case '&':
+        case '<':
+            break;
 
-          default:
-	  {
-	      int authindex;
-	      authindex = ptr->hostnum;
-	      ptr->hostnum++;
+        default: {
+            int authindex;
+            authindex = ptr->hostnum;
+            ptr->hostnum++;
 
-              ptr->hostname = realloc((void *)ptr->hostname, ptr->hostnum * sizeof(void *));
+            ptr->hostname = realloc((void *)ptr->hostname, ptr->hostnum * sizeof(void *));
 
-	      /* if the IP field contains something useful, use that */
-	      if(strcmp(host_field, "NOMATCH") && (*host_field != 'x') && 
-	        strcmp(host_field, "*") && !ptr->spoof)
-		  ptr->hostname[authindex] = strdup(host_field);
-	      else
-	          ptr->hostname[authindex] = strdup(user_field);
+            /* if the IP field contains something useful, use that */
+            if(strcmp(host_field, "NOMATCH") && (*host_field != 'x') &&
+               strcmp(host_field, "*") && !ptr->spoof)
+                ptr->hostname[authindex] = strdup(host_field);
+            else
+                ptr->hostname[authindex] = strdup(user_field);
 
-	      return;
-	  }
-      }
-  }
+            return;
+        }
+        }
+    }
 }
 

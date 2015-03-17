@@ -21,6 +21,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *  USA
  *
+ *  $Id: commio.c 26254 2008-12-10 04:04:38Z androsyn $
  */
 #include <libratbox_config.h>
 #include <ratbox_lib.h>
@@ -57,7 +58,8 @@ static struct ev_entry *rb_timeout_ev;
 static const char *rb_err_str[] = { "Comm OK", "Error during bind()",
                                     "Error during DNS lookup", "connect timeout",
                                     "Error during connect()",
-                                    "Comm Error"
+                                    "Comm Error",
+                                    "Error with SSL"
                                   };
 
 /* Highest FD and number of open FDs .. */
@@ -731,12 +733,11 @@ rb_listen(rb_fde_t *F, int backlog, int defer_accept)
     int result;
 
     F->type = RB_FD_SOCKET | RB_FD_LISTEN;
-
     result = listen(F->fd, backlog);
 
 #ifdef TCP_DEFER_ACCEPT
     if (defer_accept && !result) {
-        setsockopt(F->fd, IPPROTO_TCP, TCP_DEFER_ACCEPT, &backlog, sizeof(int));
+        (void)setsockopt(F->fd, IPPROTO_TCP, TCP_DEFER_ACCEPT, &backlog, sizeof(int));
     }
 #endif
 #ifdef SO_ACCEPTFILTER
@@ -2084,7 +2085,7 @@ rb_send_fd_buf(rb_fde_t *xF, rb_fde_t **F, int count, void *data, size_t datasiz
     char empty = '0';
     char *buf;
 
-    memset(&msg, 0, sizeof(&msg));
+    memset(&msg, 0, sizeof msg);
     if(datasize == 0) {
         iov[0].iov_base = &empty;
         iov[0].iov_len = 1;

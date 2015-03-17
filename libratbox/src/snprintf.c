@@ -4,6 +4,7 @@
  * The original headers are below..
  * Note that this implementation does not process floating point numbers so
  * you will likely need to fall back to using sprintf yourself to do those...
+ * $Id: snprintf.c 26092 2008-09-19 15:13:52Z androsyn $
  */
 
 /*
@@ -465,7 +466,7 @@ repeat:
             ++idx;
             continue;
 
-            /* integer number formats - set up the flags and "break" */
+        /* integer number formats - set up the flags and "break" */
         case 'o':
             base = 8;
             break;

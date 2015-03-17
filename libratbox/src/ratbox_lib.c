@@ -20,6 +20,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *  USA
  *
+ *  $Id: ratbox_lib.c 26282 2008-12-10 20:33:21Z androsyn $
  */
 
 #include <libratbox_config.h>
@@ -158,6 +159,7 @@ rb_lib_restart(const char *format, ...)
     rb_vsnprintf(errbuf, sizeof(errbuf), format, args);
     va_end(args);
     rb_restart(errbuf);
+    abort();
 }
 
 void
@@ -388,6 +390,7 @@ rb_base64_decode(const unsigned char *str, int length, int *ret)
             return NULL;
         case 2:
             k++;
+        /* FALLTHROUGH */
         case 3:
             result[k++] = 0;
         }

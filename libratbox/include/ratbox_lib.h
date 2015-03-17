@@ -1,4 +1,5 @@
 /*
+ * $Id: ratbox_lib.h 26256 2008-12-10 04:05:26Z androsyn $
  */
 
 #ifndef RB_LIB_H
@@ -74,8 +75,8 @@ char *alloca();
 #ifdef _WIN32
 #include <process.h>
 
-#ifndef MAXPATHLEN
-#define MAXPATHLEN 128
+#ifndef PATH_MAX
+#define PATH_MAX 128
 #endif
 
 #ifdef strerror

@@ -138,8 +138,6 @@ struct config_file_entry {
     const char *dpath;	/* DPATH if set from command line */
     const char *configfile;
 
-    char *egdpool_path;
-
     char *default_operstring;
     char *default_adminstring;
     char *default_operhost;
@@ -209,7 +207,6 @@ struct config_file_entry {
     int default_floodcount;
     int client_flood;
     int default_ident_timeout;
-    int use_egd;
     int ping_cookie;
     int tkline_expire_notices;
     int use_whois_actually;
