@@ -129,7 +129,9 @@ mr_webirc(struct Client *client_p, struct Client *source_p, int parc, const char
             return 0;
         }
     }
-
+         /* Set UMODE_WEBCLIENT */
+         source_p->umodes = source_p->umodes | UMODE_WEBCLIENT;
+         
     sendto_one(source_p, "NOTICE * :CGI:IRC host/IP set to %s %s", parv[3], parv[4]);
     return 0;
 }
