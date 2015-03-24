@@ -88,7 +88,7 @@ int user_modes[256] = {
     0,			/* T */
     0,			/* U */
     UMODE_NOINVITE,		/* V */
-    0,			/* W */
+    UMODE_WEBCLIENT,	/* W */
     0,			/* X */
     0,			/* Y */
     UMODE_SSLCLIENT,	/* Z */
@@ -1018,6 +1018,7 @@ user_mode(struct Client *client_p, struct Client *source_p, int parc, const char
             /* can only be set on burst */
         case 'S':
         case 'Z':
+        case 'W':
         case ' ':
         case '\n':
         case '\r':

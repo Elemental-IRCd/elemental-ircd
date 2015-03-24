@@ -693,7 +693,7 @@ static  const char *  replies[] = {
 /* 669 */	NULL,
 /* 670 */	NULL,
 /* 671 RPL_WHOISSECURE, */	"%s :is using a secure connection",
-/* 672 */	NULL,
+/* 672 RPL_WHOISWEBIRC, */	"%s :is using a web IRC client",
 /* 673 */	NULL,
 /* 674 */	NULL,
 /* 675 */	NULL,
