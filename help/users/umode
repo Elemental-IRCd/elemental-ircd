@@ -22,3 +22,4 @@ User modes: (? designates that the umode is provided by an extension
                   anyone who's in a common channel with you to message you.
          +V     - Prevents you from receiving invites.
          +Z     - Is connected via SSL (set only on connection).
+         +W     - Is connected via a web client (set only on connection).
