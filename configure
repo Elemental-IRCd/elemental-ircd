@@ -9587,7 +9587,7 @@ _ACEOF
 
 fi
 
-ac_config_files="$ac_config_files Makefile bandb/Makefile ssld/Makefile extensions/Makefile unsupported/Makefile src/Makefile modules/Makefile tools/Makefile tools/genssl.sh doc/Makefile help/Makefile"
+ac_config_files="$ac_config_files Makefile bandb/Makefile ssld/Makefile extensions/Makefile src/Makefile modules/Makefile tools/Makefile tools/genssl.sh doc/Makefile help/Makefile"
 
 ac_config_commands="$ac_config_commands tools/genssl.sh_chmod"
 
@@ -10293,7 +10293,6 @@ do
     "bandb/Makefile") CONFIG_FILES="$CONFIG_FILES bandb/Makefile" ;;
     "ssld/Makefile") CONFIG_FILES="$CONFIG_FILES ssld/Makefile" ;;
     "extensions/Makefile") CONFIG_FILES="$CONFIG_FILES extensions/Makefile" ;;
-    "unsupported/Makefile") CONFIG_FILES="$CONFIG_FILES unsupported/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "modules/Makefile") CONFIG_FILES="$CONFIG_FILES modules/Makefile" ;;
     "tools/Makefile") CONFIG_FILES="$CONFIG_FILES tools/Makefile" ;;
