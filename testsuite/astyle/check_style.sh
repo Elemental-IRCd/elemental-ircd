@@ -4,6 +4,8 @@ cd ../..
 
 code=0
 
+command -v astyle >/dev/null 2>&1 || { echo "astyle not found"; exit 1; }
+
 for file in $(find **/*.c)
 do
 	if [[ $file = "bandb/sqlite3.c" ]]
