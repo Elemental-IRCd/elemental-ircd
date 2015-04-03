@@ -152,16 +152,6 @@ ms_ban(struct Client *client_p, struct Client *source_p, int parc, const char *p
             return 0;
         /* Deactivate, it will be reactivated later if appropriate. */
         deactivate_conf(aconf, ptr);
-        rb_free(aconf->user);
-        aconf->user = NULL;
-        rb_free(aconf->host);
-        aconf->host = NULL;
-        operhash_delete(aconf->info.oper);
-        aconf->info.oper = NULL;
-        rb_free(aconf->passwd);
-        aconf->passwd = NULL;
-        rb_free(aconf->spasswd);
-        aconf->spasswd = NULL;
     } else {
         /* New ban mask. */
         aconf = make_conf();
