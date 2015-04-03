@@ -56,10 +56,8 @@ do
 		continue
 	fi
 
-	if [[ $(astyle --style=linux --mode=c -n $file 2>&1 | cut -f1 -d' ') = "Unchanged" ]]
+	if [[ $(astyle --style=linux --mode=c -n $file 2>&1 | cut -f1 -d' ') != "Unchanged" ]]
 	then
-		echo "$file passed coding standards"
-	else
 		echo "$file is not at coding standards."
 		code=1
 	fi
