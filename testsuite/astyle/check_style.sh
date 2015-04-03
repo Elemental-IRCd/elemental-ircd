@@ -2,6 +2,8 @@
 
 cd ../..
 
+code=0
+
 for file in $(find **/*.c)
 do
 	if [[ $file = "bandb/sqlite3.c" ]]
@@ -59,6 +61,8 @@ do
 		echo "$file passed coding standards"
 	else
 		echo "$file is not at coding standards."
-		exit 1
+		code=1
 	fi
 done
+
+exit $code
