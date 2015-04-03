@@ -176,7 +176,7 @@ find_channel_membership(struct Channel *chptr, struct Client *client_p)
 const char *
 find_channel_status(struct membership *msptr, int combine)
 {
-    static char buffer[5];
+    static char buffer[6];
     char *p;
 
     p = buffer;
