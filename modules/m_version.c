@@ -134,10 +134,6 @@ confopts(struct Client *source_p)
     *p++ = 'T';
 #endif
 
-#ifdef HAVE_LIBZ
-    *p++ = 'Z';
-#endif
-
 #ifdef RB_IPV6
     *p++ = '6';
 #endif

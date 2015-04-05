@@ -1095,12 +1095,6 @@
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry>
-	    <term>Z</term>
-	    <listitem>
-	      <para>Show ziplinks statistics</para>
-	    </listitem>
-	  </varlistentry>
-	  <varlistentry>
 	    <term>?</term>
 	    <listitem>
 	      <para>Show connected servers and link information about them</para>

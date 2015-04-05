@@ -339,12 +339,8 @@ check_server(const char *name, struct Client *client_p)
 
     attach_server_conf(client_p, server_p);
 
-    /* clear ZIP/TB if they support but we dont want them */
-#ifdef HAVE_LIBZ
-    server_test = !ServerConfCompressed(server_p);
-#endif
-    if (server_test)
-        ClearCap(client_p, CAP_ZIP);
+    /* clear ZIP/TB, no support on our side */
+    ClearCap(client_p, CAP_ZIP);
 
     if(!ServerConfTb(server_p))
         ClearCap(client_p, CAP_TB);
@@ -780,10 +776,6 @@ server_estab(struct Client *client_p)
     if(!rb_set_buffers(client_p->localClient->F, READBUF_SIZE))
         ilog_error("rb_set_buffers failed for server");
 
-    /* Enable compression now */
-    if(IsCapable(client_p, CAP_ZIP)) {
-        start_zlib_session(client_p);
-    }
     sendto_one(client_p, "SVINFO %d %d 0 :%ld", TS_CURRENT, TS_MIN, (long int)rb_current_time());
 
     client_p->servptr = &me;
