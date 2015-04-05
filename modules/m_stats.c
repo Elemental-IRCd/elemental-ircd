@@ -116,7 +116,6 @@ static void stats_class(struct Client *);
 static void stats_memory(struct Client *);
 static void stats_servlinks(struct Client *);
 static void stats_ltrace(struct Client *, int, const char **);
-static void stats_ziplinks(struct Client *);
 static void stats_comm(struct Client *);
 /* This table contains the possible stats items, in order:
  * stats letter,  function to call, operonly? adminonly?
@@ -167,7 +166,6 @@ static struct StatsStruct stats_cmd_table[] = {
     {'y', stats_class,		0, 0, },
     {'Y', stats_class,		0, 0, },
     {'z', stats_memory,		1, 0, },
-    {'Z', stats_ziplinks,		1, 0, },
     {'?', stats_servlinks,		0, 0, },
     {(char) 0, (void (*)()) 0, 	0, 0, }
 };
@@ -1303,36 +1301,6 @@ stats_memory (struct Client *source_p)
                        "z :Remote client Memory in use: %ld(%ld)",
                        (long)remote_client_count,
                        (long)remote_client_memory_used);
-}
-
-static void
-stats_ziplinks (struct Client *source_p)
-{
-    rb_dlink_node *ptr;
-    struct Client *target_p;
-    struct ZipStats *zipstats;
-    int sent_data = 0;
-    char buf[128], buf1[128];
-    RB_DLINK_FOREACH (ptr, serv_list.head) {
-        target_p = ptr->data;
-        if(IsCapable (target_p, CAP_ZIP)) {
-            zipstats = target_p->localClient->zipstats;
-            sprintf(buf, "%.2f%%", zipstats->out_ratio);
-            sprintf(buf1, "%.2f%%", zipstats->in_ratio);
-            sendto_one_numeric(source_p, RPL_STATSDEBUG,
-                               "Z :ZipLinks stats for %s send[%s compression "
-                               "(%llu kB data/%llu kB wire)] recv[%s compression "
-                               "(%llu kB data/%llu kB wire)]",
-                               target_p->name,
-                               buf, zipstats->out >> 10,
-                               zipstats->out_wire >> 10, buf1,
-                               zipstats->in >> 10, zipstats->in_wire >> 10);
-            sent_data++;
-        }
-    }
-
-    sendto_one_numeric(source_p, RPL_STATSDEBUG,
-                       "Z :%u ziplink(s)", sent_data);
 }
 
 static void

@@ -29,9 +29,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 
 PROGRAM_PREFIX   = @PROGRAM_PREFIX@
 
-ZIP_LIB		= @ZLIB_LD@
-
-IRCDLIBS	= @MODULES_LIBS@ -L../libratbox/src/.libs -lratbox @LIBS@ $(SSL_LIBS) $(ZIP_LIB)
+IRCDLIBS	= @MODULES_LIBS@ -L../libratbox/src/.libs -lratbox @LIBS@ $(SSL_LIBS)
 
 INCLUDES        = -I. -I../include -I../libratbox/include $(SSL_INCLUDES)
 CPPFLAGS        = ${INCLUDES} @CPPFLAGS@
