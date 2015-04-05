@@ -214,6 +214,11 @@ static void mod_cmd_write_queue(mod_ctl_t * ctl, const void *data, size_t len);
 static const char *remote_closed = "Remote host closed the connection";
 static int ssl_ok;
 
+static void send_nossl_support(mod_ctl_t * ctl);
+static void send_i_am_useless(mod_ctl_t * ctl);
+static void send_config_error(mod_ctl_t * ctl);
+
+
 static conn_t *
 conn_find_by_id(int32_t id)
 {
@@ -256,6 +261,7 @@ clean_dead_conns(void *unused)
 }
 
 
+/* Close a connection and send a human readable reason */
 static void
 close_conn(conn_t * conn, int wait_plain, const char *fmt, ...)
 {
@@ -285,6 +291,7 @@ close_conn(conn_t * conn, int wait_plain, const char *fmt, ...)
     rb_vsnprintf(reason, sizeof(reason), fmt, ap);
     va_end(ap);
 
+    /* Send dead fd message */
     buf[0] = 'D';
     int32_to_buf(&buf[1], conn->id);
     strcpy(&buf[5], reason);
@@ -292,6 +299,7 @@ close_conn(conn_t * conn, int wait_plain, const char *fmt, ...)
     mod_cmd_write_queue(conn->ctl, buf, len);
 }
 
+/* Create a new connection from file descriptors */
 static conn_t *
 make_conn(mod_ctl_t * ctl, rb_fde_t *mod_fd, rb_fde_t *plain_fd)
 {
@@ -393,6 +401,7 @@ conn_plain_write(conn_t * conn, void *data, size_t len)
     rb_rawbuf_append(conn->plainbuf_out, data, len);
 }
 
+/* Queue a control message */
 static void
 mod_cmd_write_queue(mod_ctl_t * ctl, const void *data, size_t len)
 {
@@ -557,7 +566,6 @@ conn_plain_write_sendq(rb_fde_t *fd, void *data)
         return;
     }
 
-
     if(rb_rawbuf_length(conn->plainbuf_out) > 0)
         rb_setselect(conn->plain_fd, RB_SELECT_WRITE, conn_plain_write_sendq, conn);
     else
@@ -585,9 +593,10 @@ ssl_process_accept_cb(rb_fde_t *F, int status, struct sockaddr *addr, rb_socklen
 
     if(status == RB_OK) {
         if(rb_get_ssl_certfp(F, &buf[5])) {
+            /* Send client certificate fingerprint */
             buf[0] = 'F';
             int32_to_buf(&buf[1], conn->id);
-            mod_cmd_write_queue(conn->ctl, buf, sizeof buf);
+            mod_cmd_write_queue(conn->ctl, buf, sizeof(buf));
         }
         conn_mod_read_cb(conn->mod_fd, conn);
         conn_plain_read_cb(conn->plain_fd, conn);
@@ -620,17 +629,6 @@ ssl_process_connect_cb(rb_fde_t *F, int status, void *data)
         close_conn(conn, WAIT_PLAIN, "SSL handshake failed");
 }
 
-
-static void
-cleanup_bad_message(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
-{
-    int i;
-
-    /* XXX should log this somehow */
-    for (i = 0; i < ctlb->nfds; i++)
-        rb_close(ctlb->F[i]);
-}
-
 static void
 ssl_process_accept(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
 {
@@ -645,11 +643,10 @@ ssl_process_accept(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
         conn_add_id_hash(conn, id);
     SetSSL(conn);
 
-    if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN) {
-
+    if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->mod_fd, RB_FD_SOCKET);
-    }
-    if(rb_get_type(conn->mod_fd) == RB_FD_UNKNOWN)
+
+    if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->plain_fd, RB_FD_SOCKET);
 
     rb_ssl_start_accepted(ctlb->F[0], ssl_process_accept_cb, conn, 10);
@@ -660,6 +657,7 @@ ssl_process_connect(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
 {
     conn_t *conn;
     int32_t id;
+
     conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
 
     id = buf_to_int32(&ctlb->buf[1]);
@@ -668,12 +666,11 @@ ssl_process_connect(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
         conn_add_id_hash(conn, id);
     SetSSL(conn);
 
-    if(rb_get_type(conn->mod_fd) == RB_FD_UNKNOWN)
+    if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->mod_fd, RB_FD_SOCKET);
 
-    if(rb_get_type(conn->mod_fd) == RB_FD_UNKNOWN)
+    if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->plain_fd, RB_FD_SOCKET);
-
 
     rb_ssl_start_connected(ctlb->F[0], ssl_process_connect_cb, conn, 10);
 }
@@ -705,28 +702,14 @@ ssl_new_keys(mod_ctl_t * ctl, mod_ctl_buf_t * ctl_buf)
     if(strlen(dhparam) == 0)
         dhparam = NULL;
 
-    if(!rb_setup_ssl_server(cert, key, dhparam)) {
-        const char *invalid = "I";
-        mod_cmd_write_queue(ctl, invalid, strlen(invalid));
-        return;
-    }
+    if(!rb_setup_ssl_server(cert, key, dhparam))
+        send_config_error(ctl);
 }
 
 static void
-send_nossl_support(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
+send_nossl_support(mod_ctl_t * ctl)
 {
     static const char *nossl_cmd = "N";
-    conn_t *conn;
-    int32_t id;
-
-    if(ctlb != NULL) {
-        conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
-        id = buf_to_int32(&ctlb->buf[1]);
-
-        if(id >= 0)
-            conn_add_id_hash(conn, id);
-        close_conn(conn, WAIT_PLAIN, "libratbox reports no SSL/TLS support");
-    }
     mod_cmd_write_queue(ctl, nossl_cmd, strlen(nossl_cmd));
 }
 
@@ -738,6 +721,14 @@ send_i_am_useless(mod_ctl_t * ctl)
 }
 
 static void
+send_config_error(mod_ctl_t * ctl)
+{
+    static const char invalid[] = "I";
+    mod_cmd_write_queue(ctl, invalid, strlen(invalid));
+}
+
+/* Pass queued control message to the apropriate handler */
+static void
 mod_process_cmd_recv(mod_ctl_t * ctl)
 {
     rb_dlink_node *ptr, *next;
@@ -747,41 +738,19 @@ mod_process_cmd_recv(mod_ctl_t * ctl)
         ctl_buf = ptr->data;
 
         switch (*ctl_buf->buf) {
-        case 'A': {
-            if (ctl_buf->nfds != 2 || ctl_buf->buflen != 5) {
-                cleanup_bad_message(ctl, ctl_buf);
-                break;
-            }
 
-            if(!ssl_ok) {
-                send_nossl_support(ctl, ctl_buf);
-                break;
-            }
+        case 'A':
             ssl_process_accept(ctl, ctl_buf);
             break;
-        }
-        case 'C': {
-            if (ctl_buf->nfds != 2 || ctl_buf->buflen != 5) {
-                cleanup_bad_message(ctl, ctl_buf);
-                break;
-            }
 
-            if(!ssl_ok) {
-                send_nossl_support(ctl, ctl_buf);
-                break;
-            }
+        case 'C':
             ssl_process_connect(ctl, ctl_buf);
             break;
-        }
 
-        case 'K': {
-            if(!ssl_ok) {
-                send_nossl_support(ctl, ctl_buf);
-                break;
-            }
+        case 'K':
             ssl_new_keys(ctl, ctl_buf);
             break;
-        }
+
         case 'I':
             init_prng(ctl, ctl_buf);
             break;
@@ -797,8 +766,7 @@ mod_process_cmd_recv(mod_ctl_t * ctl)
 
 }
 
-
-
+/* Accept and queue a control message and its descriptors */
 static void
 mod_read_ctl(rb_fde_t *F, void *data)
 {
@@ -832,6 +800,7 @@ mod_read_ctl(rb_fde_t *F, void *data)
     rb_setselect(ctl->F, RB_SELECT_READ, mod_read_ctl, ctl);
 }
 
+/* Attempt to write a control message */
 static void
 mod_write_ctl(rb_fde_t *F, void *data)
 {
@@ -881,7 +850,7 @@ main(int argc, char **argv)
 
     ctlfd = atoi(s_ctlfd);
     ppid = atoi(s_pid);
-    x = 0;
+
 #ifndef _WIN32
     for(x = 0; x < maxfd; x++) {
         if(x != ctlfd && x > 2)
@@ -919,7 +888,7 @@ main(int argc, char **argv)
     }
 
     if(!ssl_ok)
-        send_nossl_support(mod_ctl, NULL);
+        send_nossl_support(mod_ctl);
     rb_lib_loop(0);
     return 0;
 }
