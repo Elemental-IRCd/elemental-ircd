@@ -21,6 +21,67 @@
  *  $Id$
  */
 
+/**
+ * IPC spec
+ *
+ * a dgram socket is created and inherited by to ssld.
+ *
+ * s_ctlfd = getenv("CTL_FD");
+ *
+ *----------------------------------------------------------------------
+ * Commands passed via ctl fd to ssld:
+ *
+ * Accept and Connect:
+ *  u8   u32
+ * ['A'|connection id]
+ * ['C'|connection id]
+ *
+ * Descriptors:
+ * [0]: mod_fd, ssl socket
+ * [1]: plain_fd, socket to the ircd for plaintext
+ *
+ *
+ * New keys:
+ *  u8  char[]
+ * ['K'|cert\0priv key\0(opt)dh params\0]
+ *
+ * Certificates and keys are passed as concantenated null terminated
+ * ascii (probably openssl format).
+ * dh params are optional
+ *
+ * Init PRNG:
+ *  u8  u8        char[]
+ * ['I'|seed_type|path'\0']
+ *
+ * This is intended to be passed to rb_init_prng pretty much unmodified
+ * seed_type is of type prng_seed_t, defined in rb_commio.h
+ *
+ *----------------------------------------------------------------------
+ * Commands passed via ctl fd from the ssld:
+ *
+ * Dead fd:
+ *  u8  u32           char[]
+ * ['D'|connection id|reason\0]
+ *
+ * Indicates a session has disconnected
+ *
+ * Cert fp:
+ *  u8  u32           u8[RB_SSL_CERTFP_LEN]
+ * ['F'|connection id|fingerprint]
+ *
+ * Certificate fingerprint for sasl authentication
+ *
+ * Nossl/I am useless/cannot initialize:
+ *  u8
+ * ['N'] 
+ * ['U']
+ * ['I']
+ *
+ * indicates that ssld can't do ssl (?)
+ * 'N' unknown
+ * 'U' ssld compiled without ssl support
+ * 'I' configuration error
+ **/
 
 #include "stdinc.h"
 
@@ -77,7 +138,6 @@ typedef struct _mod_ctl {
     rb_dlink_node node;
     int cli_count;
     rb_fde_t *F;
-    rb_fde_t *F_pipe;
     rb_dlink_list readq;
     rb_dlink_list writeq;
 } mod_ctl_t;
@@ -800,32 +860,17 @@ mod_write_ctl(rb_fde_t *F, void *data)
         rb_setselect(ctl->F, RB_SELECT_WRITE, mod_write_ctl, ctl);
 }
 
-
-static void
-read_pipe_ctl(rb_fde_t *F, void *data)
-{
-    int retlen;
-    while((retlen = rb_read(F, inbuf, sizeof(inbuf))) > 0) {
-        ;;		/* we don't do anything with the pipe really, just care if the other process dies.. */
-    }
-    if(retlen == 0 || (retlen < 0 && !rb_ignore_errno(errno)))
-        exit(0);
-    rb_setselect(F, RB_SELECT_READ, read_pipe_ctl, NULL);
-
-}
-
 int
 main(int argc, char **argv)
 {
-    const char *s_ctlfd, *s_pipe, *s_pid;
-    int ctlfd, pipefd, x, maxfd;
+    const char *s_ctlfd, *s_pid;
+    int ctlfd, x, maxfd;
     maxfd = maxconn();
 
     s_ctlfd = getenv("CTL_FD");
-    s_pipe = getenv("CTL_PIPE");
     s_pid = getenv("CTL_PPID");
 
-    if(s_ctlfd == NULL || s_pipe == NULL || s_pid == NULL) {
+    if(s_ctlfd == NULL || s_pid == NULL) {
         fprintf(stderr,
                 "This is ircd-ratbox ssld.  You know you aren't supposed to run me directly?\n");
         fprintf(stderr,
@@ -835,22 +880,21 @@ main(int argc, char **argv)
     }
 
     ctlfd = atoi(s_ctlfd);
-    pipefd = atoi(s_pipe);
     ppid = atoi(s_pid);
     x = 0;
 #ifndef _WIN32
     for(x = 0; x < maxfd; x++) {
-        if(x != ctlfd && x != pipefd && x > 2)
+        if(x != ctlfd && x > 2)
             close(x);
     }
     x = open("/dev/null", O_RDWR);
 
     if(x >= 0) {
-        if(ctlfd != 0 && pipefd != 0)
+        if(ctlfd != 0)
             dup2(x, 0);
-        if(ctlfd != 1 && pipefd != 1)
+        if(ctlfd != 1)
             dup2(x, 1);
-        if(ctlfd != 2 && pipefd != 2)
+        if(ctlfd != 2)
             dup2(x, 2);
         if(x > 2)
             close(x);
@@ -862,12 +906,9 @@ main(int argc, char **argv)
     ssl_ok = rb_supports_ssl();
     mod_ctl = rb_malloc(sizeof(mod_ctl_t));
     mod_ctl->F = rb_open(ctlfd, RB_FD_SOCKET, "ircd control socket");
-    mod_ctl->F_pipe = rb_open(pipefd, RB_FD_PIPE, "ircd pipe");
     rb_set_nb(mod_ctl->F);
-    rb_set_nb(mod_ctl->F_pipe);
     rb_event_addish("clean_dead_conns", clean_dead_conns, NULL, 10);
     rb_event_add("check_handshake_flood", check_handshake_flood, NULL, 10);
-    read_pipe_ctl(mod_ctl->F_pipe, NULL);
     mod_read_ctl(mod_ctl->F, mod_ctl);
     if(!ssl_ok) {
         /* this is really useless... */

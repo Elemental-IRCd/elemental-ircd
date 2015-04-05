@@ -57,7 +57,6 @@ struct _ssl_ctl {
     rb_dlink_node node;
     int cli_count;
     rb_fde_t *F;
-    rb_fde_t *P;
     pid_t pid;
     rb_dlink_list readq;
     rb_dlink_list writeq;
@@ -104,7 +103,7 @@ uint16_to_buf(char *buf, uint16_t x)
 
 
 static ssl_ctl_t *
-allocate_ssl_daemon(rb_fde_t * F, rb_fde_t * P, int pid)
+allocate_ssl_daemon(rb_fde_t * F, int pid)
 {
     ssl_ctl_t *ctl;
 
@@ -112,7 +111,6 @@ allocate_ssl_daemon(rb_fde_t * F, rb_fde_t * P, int pid)
         return NULL;
     ctl = rb_malloc(sizeof(ssl_ctl_t));
     ctl->F = F;
-    ctl->P = P;
     ctl->pid = pid;
     ssld_count++;
     rb_dlinkAdd(ctl, &ctl->node, &ssl_daemons);
@@ -146,7 +144,6 @@ free_ssl_daemon(ssl_ctl_t * ctl)
         rb_free(ctl_buf);
     }
     rb_close(ctl->F);
-    rb_close(ctl->P);
     rb_dlinkDelete(&ctl->node, &ssl_daemons);
     rb_free(ctl);
 }
@@ -188,19 +185,6 @@ ssl_dead(ssl_ctl_t * ctl)
 }
 
 static void
-ssl_do_pipe(rb_fde_t * F, void *data)
-{
-    int retlen;
-    ssl_ctl_t *ctl = data;
-    retlen = rb_write(F, "0", 1);
-    if(retlen == 0 || (retlen < 0 && !rb_ignore_errno(errno))) {
-        ssl_dead(ctl);
-        return;
-    }
-    rb_setselect(F, RB_SELECT_READ, ssl_do_pipe, data);
-}
-
-static void
 restart_ssld_event(void *unused)
 {
     ssld_spin_count = 0;
@@ -218,7 +202,6 @@ int
 start_ssldaemon(int count, const char *ssl_cert, const char *ssl_private_key, const char *ssl_dh_params)
 {
     rb_fde_t *F1, *F2;
-    rb_fde_t *P1, *P2;
 #ifdef _WIN32
     const char *suffix = ".exe";
 #else
@@ -278,12 +261,6 @@ start_ssldaemon(int count, const char *ssl_cert, const char *ssl_private_key, co
         rb_set_buffers(F2, READBUF_SIZE);
         rb_snprintf(fdarg, sizeof(fdarg), "%d", rb_get_fd(F2));
         rb_setenv("CTL_FD", fdarg, 1);
-        if(rb_pipe(&P1, &P2, "SSL/TLS pipe") == -1) {
-            ilog(L_MAIN, "Unable to create ssld - rb_pipe failed: %s", strerror(errno));
-            return started;
-        }
-        rb_snprintf(fdarg, sizeof(fdarg), "%d", rb_get_fd(P1));
-        rb_setenv("CTL_PIPE", fdarg, 1);
         rb_snprintf(s_pid, sizeof(s_pid), "%d", (int)getpid());
         rb_setenv("CTL_PPID", s_pid, 1);
 #ifdef _WIN32
@@ -296,14 +273,11 @@ start_ssldaemon(int count, const char *ssl_cert, const char *ssl_private_key, co
             ilog(L_MAIN, "Unable to create ssld: %s\n", strerror(errno));
             rb_close(F1);
             rb_close(F2);
-            rb_close(P1);
-            rb_close(P2);
             return started;
         }
         started++;
         rb_close(F2);
-        rb_close(P1);
-        ctl = allocate_ssl_daemon(F1, P2, pid);
+        ctl = allocate_ssl_daemon(F1, pid);
         if(ssl_ok) {
             if(ConfigFileEntry.use_egd && (ConfigFileEntry.egdpool_path != NULL))
                 send_init_prng(ctl, RB_PRNG_EGD, ConfigFileEntry.egdpool_path);
@@ -314,7 +288,6 @@ start_ssldaemon(int count, const char *ssl_cert, const char *ssl_private_key, co
             send_new_ssl_certs_one(ctl, ssl_cert, ssl_private_key,
                                    ssl_dh_params != NULL ? ssl_dh_params : "");
         ssl_read_ctl(ctl->F, ctl);
-        ssl_do_pipe(P2, ctl);
 
     }
     return started;
@@ -373,6 +346,10 @@ ssl_process_certfp(ssl_ctl_t * ctl, ssl_ctl_buf_t * ctl_buf)
                     certfp[i]);
     client_p->certfp = certfp_string;
 }
+
+/**
+ * See ssld.c for documentation on the ipc used here
+ **/
 
 static void
 ssl_process_cmd_recv(ssl_ctl_t * ctl)
