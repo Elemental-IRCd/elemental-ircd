@@ -163,29 +163,21 @@ typedef struct _conn {
     void *stream;
 } conn_t;
 
-#define FLAG_SSL	0x01
-//define FLAG_ZIP	0x02
-#define FLAG_CORK	0x04
-#define FLAG_DEAD	0x08
-#define FLAG_SSL_W_WANTS_R 0x10	/* output needs to wait until input possible */
-#define FLAG_SSL_R_WANTS_W 0x20	/* input needs to wait until output possible */
+#define FLAG_CORK          (1 << 0)
+#define FLAG_DEAD          (1 << 1)
+#define FLAG_SSL_W_WANTS_R (1 << 2)   /* output needs to wait until input possible */
+#define FLAG_SSL_R_WANTS_W (1 << 3)   /* input needs to wait until output possible */
 
-#define IsSSL(x) ((x)->flags & FLAG_SSL)
-//define IsZip(x) ((x)->flags & FLAG_ZIP)
 #define IsCork(x) ((x)->flags & FLAG_CORK)
 #define IsDead(x) ((x)->flags & FLAG_DEAD)
 #define IsSSLWWantsR(x) ((x)->flags & FLAG_SSL_W_WANTS_R)
 #define IsSSLRWantsW(x) ((x)->flags & FLAG_SSL_R_WANTS_W)
 
-#define SetSSL(x) ((x)->flags |= FLAG_SSL)
-//define SetZip(x) ((x)->flags |= FLAG_ZIP)
 #define SetCork(x) ((x)->flags |= FLAG_CORK)
 #define SetDead(x) ((x)->flags |= FLAG_DEAD)
 #define SetSSLWWantsR(x) ((x)->flags |= FLAG_SSL_W_WANTS_R)
 #define SetSSLRWantsW(x) ((x)->flags |= FLAG_SSL_R_WANTS_W)
 
-#define ClearSSL(x) ((x)->flags &= ~FLAG_SSL)
-//define ClearZip(x) ((x)->flags &= ~FLAG_ZIP)
 #define ClearCork(x) ((x)->flags &= ~FLAG_CORK)
 #define ClearDead(x) ((x)->flags &= ~FLAG_DEAD)
 #define ClearSSLWWantsR(x) ((x)->flags &= ~FLAG_SSL_W_WANTS_R)
@@ -325,8 +317,6 @@ check_handshake_flood(void *unused)
     int i;
     HASH_WALK_SAFE(i, CONN_HASH_SIZE, ptr, next, connid_hash_table) {
         conn = ptr->data;
-        if(!IsSSL(conn))
-            continue;
 
         count = rb_ssl_handshake_count(conn->mod_fd);
         /* nothing needs to do this more than twice in ten seconds i don't think */
@@ -360,7 +350,7 @@ conn_mod_write_sendq(rb_fde_t *fd, void *data)
     if(retlen == 0 || (retlen < 0 && !rb_ignore_errno(errno))) {
         if(retlen == 0)
             close_conn(conn, WAIT_PLAIN, "%s", remote_closed);
-        if(IsSSL(conn) && retlen == RB_RW_SSL_ERROR)
+        if(retlen == RB_RW_SSL_ERROR)
             err = rb_get_ssl_strerror(conn->mod_fd);
         else
             err = strerror(errno);
@@ -431,6 +421,7 @@ plain_check_cork(conn_t * conn)
 }
 
 
+/* Read plaintext from the ircd and send to the client */
 static void
 conn_plain_read_cb(rb_fde_t *fd, void *data)
 {
@@ -496,6 +487,7 @@ conn_plain_read_shutdown_cb(rb_fde_t *fd, void *data)
     }
 }
 
+/* Read ciphertext from the client and forward to the ircd */
 static void
 conn_mod_read_cb(rb_fde_t *fd, void *data)
 {
@@ -526,7 +518,7 @@ conn_mod_read_cb(rb_fde_t *fd, void *data)
                 return;
             }
 
-            if(IsSSL(conn) && length == RB_RW_SSL_ERROR)
+            if(length == RB_RW_SSL_ERROR)
                 err = rb_get_ssl_strerror(conn->mod_fd);
             else
                 err = strerror(errno);
@@ -641,7 +633,6 @@ ssl_process_accept(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
 
     if(id >= 0)
         conn_add_id_hash(conn, id);
-    SetSSL(conn);
 
     if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->mod_fd, RB_FD_SOCKET);
@@ -664,7 +655,6 @@ ssl_process_connect(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
 
     if(id >= 0)
         conn_add_id_hash(conn, id);
-    SetSSL(conn);
 
     if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->mod_fd, RB_FD_SOCKET);
