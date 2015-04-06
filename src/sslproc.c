@@ -424,6 +424,7 @@ ssl_read_ctl(rb_fde_t * F, void *data)
     rb_setselect(ctl->F, RB_SELECT_READ, ssl_read_ctl, ctl);
 }
 
+/* Return the ssld with the fewest clients */
 static ssl_ctl_t *
 which_ssld(void)
 {
