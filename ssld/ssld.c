@@ -32,9 +32,9 @@
  * Commands passed via ctl fd to ssld:
  *
  * Accept and Connect:
- *  u8   u32
- * ['A'|connection id]
- * ['C'|connection id]
+ *  u8  u32  u32
+ * ['A'|type|connection id]
+ * ['C'|type|connection id]
  *
  * Descriptors:
  * [0]: mod_fd, ssl socket
@@ -150,6 +150,7 @@ typedef struct _conn {
     rawbuf_head_t *plainbuf_out;
 
     int32_t id;
+    int32_t type;
 
     rb_fde_t *mod_fd;
     rb_fde_t *plain_fd;
@@ -160,6 +161,12 @@ typedef struct _conn {
     uint8_t flags;
     void *stream;
 } conn_t;
+
+/* Duplicated in listener.h */
+#define PLAIN_PORT (0)
+#define SSL_PORT (1 << 0)
+
+#define IsSSL(x)   ((x)->type & SSL_PORT)
 
 #define FLAG_CORK          (1 << 0)
 #define FLAG_DEAD          (1 << 1)
@@ -223,10 +230,9 @@ conn_find_by_id(int32_t id)
 }
 
 static void
-conn_add_id_hash(conn_t * conn, int32_t id)
+conn_add_id_hash(conn_t * conn)
 {
-    conn->id = id;
-    rb_dlinkAdd(conn, &conn->node, connid_hash(id));
+    rb_dlinkAdd(conn, &conn->node, connid_hash(conn->id));
 }
 
 static void
@@ -574,6 +580,14 @@ maxconn(void)
     return MAXCONNECTIONS;
 }
 
+/* Called when handshaking is done */
+static void
+conn_ready(conn_t *conn)
+{
+    conn_mod_read_cb(conn->mod_fd, conn);
+    conn_plain_read_cb(conn->plain_fd, conn);
+}
+
 static void
 ssl_process_accept_cb(rb_fde_t *F, int status, struct sockaddr *addr, rb_socklen_t len, void *data)
 {
@@ -587,8 +601,7 @@ ssl_process_accept_cb(rb_fde_t *F, int status, struct sockaddr *addr, rb_socklen
             int32_to_buf(&buf[1], conn->id);
             mod_cmd_write_queue(conn->ctl, buf, sizeof(buf));
         }
-        conn_mod_read_cb(conn->mod_fd, conn);
-        conn_plain_read_cb(conn->plain_fd, conn);
+        conn_ready(conn);
         return;
     }
     /* ircd doesn't care about the reason for this */
@@ -608,8 +621,7 @@ ssl_process_connect_cb(rb_fde_t *F, int status, void *data)
             int32_to_buf(&buf[1], conn->id);
             mod_cmd_write_queue(conn->ctl, buf, sizeof buf);
         }
-        conn_mod_read_cb(conn->mod_fd, conn);
-        conn_plain_read_cb(conn->plain_fd, conn);
+        conn_ready(conn);
     } else if(status == RB_ERR_TIMEOUT)
         close_conn(conn, WAIT_PLAIN, "SSL handshake timed out");
     else if(status == RB_ERROR_SSL)
@@ -622,14 +634,17 @@ static void
 ssl_process_accept(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
 {
     conn_t *conn;
-    int32_t id;
-
-    conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
+    int32_t id, type;
 
     id = buf_to_int32(&ctlb->buf[1]);
+    type = buf_to_int32(&ctlb->buf[4]);
+
+    conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
+    conn->id = id;
+    conn->type = type;
 
     if(id >= 0)
-        conn_add_id_hash(conn, id);
+        conn_add_id_hash(conn);
 
     if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->mod_fd, RB_FD_SOCKET);
@@ -637,21 +652,27 @@ ssl_process_accept(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
     if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->plain_fd, RB_FD_SOCKET);
 
-    rb_ssl_start_accepted(ctlb->F[0], ssl_process_accept_cb, conn, 10);
+    if(IsSSL(conn))
+        rb_ssl_start_accepted(ctlb->F[0], ssl_process_accept_cb, conn, 10);
+    else
+        conn_ready(conn);
 }
 
 static void
 ssl_process_connect(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
 {
     conn_t *conn;
-    int32_t id;
-
-    conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
+    int32_t id, type;
 
     id = buf_to_int32(&ctlb->buf[1]);
+    type = buf_to_int32(&ctlb->buf[4]);
+
+    conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
+    conn->id = id;
+    conn->type = type;
 
     if(id >= 0)
-        conn_add_id_hash(conn, id);
+        conn_add_id_hash(conn);
 
     if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->mod_fd, RB_FD_SOCKET);
@@ -659,7 +680,10 @@ ssl_process_connect(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
     if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->plain_fd, RB_FD_SOCKET);
 
-    rb_ssl_start_connected(ctlb->F[0], ssl_process_connect_cb, conn, 10);
+    if(IsSSL(conn))
+        rb_ssl_start_connected(ctlb->F[0], ssl_process_connect_cb, conn, 10);
+    else
+        conn_ready(conn);
 }
 
 static void

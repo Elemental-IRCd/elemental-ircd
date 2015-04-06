@@ -561,16 +561,17 @@ send_new_ssl_certs(const char *ssl_cert, const char *ssl_private_key, const char
 
 
 ssl_ctl_t *
-start_ssld_accept(rb_fde_t * sslF, rb_fde_t * plainF, int32_t id)
+start_ssld_accept(rb_fde_t * sslF, rb_fde_t * plainF, int32_t id, int32_t type)
 {
     rb_fde_t *F[2];
     ssl_ctl_t *ctl;
-    char buf[5];
+    char buf[9];
     F[0] = sslF;
     F[1] = plainF;
 
     buf[0] = 'A';
     int32_to_buf(&buf[1], id);
+    int32_to_buf(&buf[4], type);
     ctl = which_ssld();
     ctl->cli_count++;
     ssl_cmd_write_queue(ctl, F, 2, buf, sizeof(buf));
@@ -578,17 +579,17 @@ start_ssld_accept(rb_fde_t * sslF, rb_fde_t * plainF, int32_t id)
 }
 
 ssl_ctl_t *
-start_ssld_connect(rb_fde_t * sslF, rb_fde_t * plainF, int32_t id)
+start_ssld_connect(rb_fde_t * sslF, rb_fde_t * plainF, int32_t id, int32_t type)
 {
     rb_fde_t *F[2];
     ssl_ctl_t *ctl;
-    char buf[5];
+    char buf[9];
     F[0] = sslF;
     F[1] = plainF;
 
     buf[0] = 'C';
     int32_to_buf(&buf[1], id);
-
+    int32_to_buf(&buf[4], type);
     ctl = which_ssld();
     ctl->cli_count++;
     ssl_cmd_write_queue(ctl, F, 2, buf, sizeof(buf));

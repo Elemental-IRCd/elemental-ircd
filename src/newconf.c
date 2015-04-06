@@ -837,7 +837,7 @@ conf_set_listen_defer_accept(void *data)
 }
 
 static void
-conf_set_listen_port_both(void *data, int ssl)
+conf_set_listen_port_both(void *data, int type)
 {
     conf_parm_t *args = data;
     for (; args; args = args->next) {
@@ -847,9 +847,9 @@ conf_set_listen_port_both(void *data, int ssl)
             continue;
         }
         if(listener_address == NULL) {
-            add_listener(args->v.number, listener_address, AF_INET, ssl, yy_defer_accept);
+            add_listener(args->v.number, listener_address, AF_INET, type, yy_defer_accept);
 #ifdef RB_IPV6
-            add_listener(args->v.number, listener_address, AF_INET6, ssl, yy_defer_accept);
+            add_listener(args->v.number, listener_address, AF_INET6, type, yy_defer_accept);
 #endif
         } else {
             int family;
@@ -860,7 +860,7 @@ conf_set_listen_port_both(void *data, int ssl)
 #endif
                 family = AF_INET;
 
-            add_listener(args->v.number, listener_address, family, ssl, yy_defer_accept);
+            add_listener(args->v.number, listener_address, family, type, yy_defer_accept);
 
         }
 
@@ -870,13 +870,13 @@ conf_set_listen_port_both(void *data, int ssl)
 static void
 conf_set_listen_port(void *data)
 {
-    conf_set_listen_port_both(data, 0);
+    conf_set_listen_port_both(data, PLAIN_PORT);
 }
 
 static void
 conf_set_listen_sslport(void *data)
 {
-    conf_set_listen_port_both(data, 1);
+    conf_set_listen_port_both(data, SSL_PORT);
 }
 
 static void

@@ -1206,7 +1206,7 @@ serv_connect_ssl_callback(rb_fde_t *F, int status, void *data)
     client_p->localClient->F = xF[0];
     add_to_cli_fd_hash(client_p);
 
-    client_p->localClient->ssl_ctl = start_ssld_connect(F, xF[1], rb_get_fd(xF[0]));
+    client_p->localClient->ssl_ctl = start_ssld_connect(F, xF[1], rb_get_fd(xF[0]), 1 /* SSL_PORT */);
     SetSSL(client_p);
     serv_connect_callback(client_p->localClient->F, RB_OK, client_p);
 }
