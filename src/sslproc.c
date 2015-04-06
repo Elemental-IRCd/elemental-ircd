@@ -363,9 +363,6 @@ ssl_process_cmd_recv(ssl_ctl_t * ctl)
     RB_DLINK_FOREACH_SAFE(ptr, next, ctl->readq.head) {
         ctl_buf = ptr->data;
         switch (*ctl_buf->buf) {
-        case 'N':
-            ssl_ok = 0;	/* ssld says it can't do ssl/tls */
-            break;
         case 'D':
             ssl_process_dead_fd(ctl, ctl_buf);
             break;

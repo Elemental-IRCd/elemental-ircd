@@ -71,15 +71,13 @@
  *
  * Certificate fingerprint for sasl authentication
  *
- * Nossl/I am useless/cannot initialize:
+ * I am useless/cannot initialize:
  *  u8
- * ['N'] 
  * ['U']
  * ['I']
  *
  * indicates that ssld can't do ssl (?)
- * 'N' unknown
- * 'U' ssld compiled without ssl support
+ * 'U' libratbox reports no ssl support
  * 'I' configuration error
  **/
 
@@ -206,7 +204,6 @@ static void mod_cmd_write_queue(mod_ctl_t * ctl, const void *data, size_t len);
 static const char *remote_closed = "Remote host closed the connection";
 static int ssl_ok;
 
-static void send_nossl_support(mod_ctl_t * ctl);
 static void send_i_am_useless(mod_ctl_t * ctl);
 static void send_config_error(mod_ctl_t * ctl);
 
@@ -697,13 +694,6 @@ ssl_new_keys(mod_ctl_t * ctl, mod_ctl_buf_t * ctl_buf)
 }
 
 static void
-send_nossl_support(mod_ctl_t * ctl)
-{
-    static const char *nossl_cmd = "N";
-    mod_cmd_write_queue(ctl, nossl_cmd, strlen(nossl_cmd));
-}
-
-static void
 send_i_am_useless(mod_ctl_t * ctl)
 {
     static const char *useless = "U";
@@ -877,8 +867,6 @@ main(int argc, char **argv)
         exit(1);
     }
 
-    if(!ssl_ok)
-        send_nossl_support(mod_ctl);
     rb_lib_loop(0);
     return 0;
 }
