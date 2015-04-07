@@ -433,14 +433,10 @@ conn_plain_read_cb(rb_fde_t *fd, void *data)
     if(conn == NULL)
         return;
 
-    if(IsDead(conn))
-        return;
-
-    if(plain_check_cork(conn))
-        return;
-
     while(1) {
         if(IsDead(conn))
+            return;
+        if(plain_check_cork(conn))
             return;
 
         length = rb_read(conn->plain_fd, inbuf, sizeof(inbuf));
@@ -457,11 +453,6 @@ conn_plain_read_cb(rb_fde_t *fd, void *data)
         }
         conn->plain_in += length;
         conn_mod_write(conn, inbuf, length);
-
-        if(IsDead(conn))
-            return;
-        if(plain_check_cork(conn))
-            return;
     }
 }
 
@@ -505,8 +496,6 @@ conn_mod_read_cb(rb_fde_t *fd, void *data)
     if(IsSSLRWantsW(conn)) {
         ClearSSLRWantsW(conn);
         conn_mod_write_sendq(conn->mod_fd, conn);
-        if(IsDead(conn))
-            return;
     }
 
     while(1) {
