@@ -171,21 +171,29 @@ typedef struct _conn {
 #define FLAG_DEAD          (1 << 1)
 #define FLAG_SSL_W_WANTS_R (1 << 2)   /* output needs to wait until input possible */
 #define FLAG_SSL_R_WANTS_W (1 << 3)   /* input needs to wait until output possible */
+#define FLAG_SSL_HANDSHAKE (1 << 4)   /* SSL handshake completed */
+#define FLAG_WS_HANDSHAKE  (1 << 5)   /* Websocket handshake completed */
 
 #define IsCork(x) ((x)->flags & FLAG_CORK)
 #define IsDead(x) ((x)->flags & FLAG_DEAD)
 #define IsSSLWWantsR(x) ((x)->flags & FLAG_SSL_W_WANTS_R)
 #define IsSSLRWantsW(x) ((x)->flags & FLAG_SSL_R_WANTS_W)
+#define IsSSLHandshakeDone(x) ((x)->flags & FLAG_SSL_HANDSHAKE)
+#define IsWSHandshakeDone(x)  ((x)->flags & FLAG_WS_HANDSHAKE)
 
 #define SetCork(x) ((x)->flags |= FLAG_CORK)
 #define SetDead(x) ((x)->flags |= FLAG_DEAD)
 #define SetSSLWWantsR(x) ((x)->flags |= FLAG_SSL_W_WANTS_R)
 #define SetSSLRWantsW(x) ((x)->flags |= FLAG_SSL_R_WANTS_W)
+#define SetSSLHandshakeDone(x) ((x)->flags |= FLAG_SSL_HANDSHAKE)
+#define SetWSHandshakeDone(x)  ((x)->flags |= FLAG_WS_HANDSHAKE)
 
 #define ClearCork(x) ((x)->flags &= ~FLAG_CORK)
 #define ClearDead(x) ((x)->flags &= ~FLAG_DEAD)
 #define ClearSSLWWantsR(x) ((x)->flags &= ~FLAG_SSL_W_WANTS_R)
 #define ClearSSLRWantsW(x) ((x)->flags &= ~FLAG_SSL_R_WANTS_W)
+#define ClearSSLHandshakeDone(x) ((x)->flags &= ~FLAG_SSL_HANDSHAKE)
+#define ClearWSHandshakeDone(x)  ((x)->flags &= ~FLAG_WS_HANDSHAKE)
 
 #define NO_WAIT 0x0
 #define WAIT_PLAIN 0x1
@@ -209,6 +217,10 @@ static void conn_plain_read_shutdown_cb(rb_fde_t *fd, void *data);
 static void mod_cmd_write_queue(mod_ctl_t * ctl, const void *data, size_t len);
 static const char *remote_closed = "Remote host closed the connection";
 static int ssl_ok;
+
+static void conn_handshake_accept(conn_t *);
+static void conn_handshake_connect(conn_t *);
+static void conn_ready(conn_t *);
 
 static void send_i_am_useless(mod_ctl_t * ctl);
 static void send_config_error(mod_ctl_t * ctl);
@@ -570,13 +582,6 @@ maxconn(void)
     return MAXCONNECTIONS;
 }
 
-/* Called when handshaking is done */
-static void
-conn_ready(conn_t *conn)
-{
-    conn_mod_read_cb(conn->mod_fd, conn);
-    conn_plain_read_cb(conn->plain_fd, conn);
-}
 
 static void
 ssl_process_accept_cb(rb_fde_t *F, int status, struct sockaddr *addr, rb_socklen_t len, void *data)
@@ -591,7 +596,8 @@ ssl_process_accept_cb(rb_fde_t *F, int status, struct sockaddr *addr, rb_socklen
             int32_to_buf(&buf[1], conn->id);
             mod_cmd_write_queue(conn->ctl, buf, sizeof(buf));
         }
-        conn_ready(conn);
+        SetSSLHandshakeDone(conn);
+        conn_handshake_accept(conn);
         return;
     }
     /* ircd doesn't care about the reason for this */
@@ -611,7 +617,8 @@ ssl_process_connect_cb(rb_fde_t *F, int status, void *data)
             int32_to_buf(&buf[1], conn->id);
             mod_cmd_write_queue(conn->ctl, buf, sizeof buf);
         }
-        conn_ready(conn);
+        SetSSLHandshakeDone(conn);
+        conn_handshake_connect(conn);
     } else if(status == RB_ERR_TIMEOUT)
         close_conn(conn, WAIT_PLAIN, "SSL handshake timed out");
     else if(status == RB_ERROR_SSL)
@@ -642,10 +649,7 @@ ssl_process_accept(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
     if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->plain_fd, RB_FD_SOCKET);
 
-    if(IsSSL(conn))
-        rb_ssl_start_accepted(ctlb->F[0], ssl_process_accept_cb, conn, 10);
-    else
-        conn_ready(conn);
+    conn_handshake_accept(conn);
 }
 
 static void
@@ -670,10 +674,37 @@ ssl_process_connect(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
     if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->plain_fd, RB_FD_SOCKET);
 
-    if(IsSSL(conn))
-        rb_ssl_start_connected(ctlb->F[0], ssl_process_connect_cb, conn, 10);
-    else
-        conn_ready(conn);
+    conn_handshake_connect(conn);
+}
+
+static void
+conn_handshake_accept(conn_t * conn)
+{
+    if(IsSSL(conn) && !IsSSLHandshakeDone(conn)) {
+        rb_ssl_start_accepted(conn->mod_fd, ssl_process_accept_cb, conn, 10);
+        return;
+    }
+
+    conn_ready(conn);
+}
+
+static void
+conn_handshake_connect(conn_t * conn)
+{
+    if(IsSSL(conn) && !IsSSLHandshakeDone(conn)) {
+        rb_ssl_start_connected(conn->mod_fd, ssl_process_connect_cb, conn, 10);
+        return;
+    }
+
+    conn_ready(conn);
+}
+
+/* Called when handshaking is done */
+static void
+conn_ready(conn_t *conn)
+{
+    conn_mod_read_cb(conn->mod_fd, conn);
+    conn_plain_read_cb(conn->plain_fd, conn);
 }
 
 static void
