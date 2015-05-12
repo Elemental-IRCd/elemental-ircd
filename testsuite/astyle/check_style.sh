@@ -2,6 +2,10 @@
 
 cd ../..
 
+code=0
+
+command -v astyle >/dev/null 2>&1 || { echo "astyle not found"; exit 1; }
+
 for file in $(find **/*.c)
 do
 	if [[ $file = "bandb/sqlite3.c" ]]
@@ -54,11 +58,11 @@ do
 		continue
 	fi
 
-	if [[ $(astyle --style=linux --mode=c -n $file 2>&1 | cut -f1 -d' ') = "Unchanged" ]]
+	if [[ $(astyle --style=linux --mode=c -n $file 2>&1 | cut -f1 -d' ') != "Unchanged" ]]
 	then
-		echo "$file passed coding standards"
-	else
 		echo "$file is not at coding standards."
-		exit 1
+		code=1
 	fi
 done
+
+exit $code
