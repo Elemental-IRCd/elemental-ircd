@@ -1,0 +1,8 @@
+OQUIT :[message]
+
+OQUIT is the same as normal QUIT, in that it sends a message to the IRC daemon
+letting it know that you would like to disconnect with the given message.
+The key differences between QUIT and OQUIT are that firstly only IRC operators
+can use OQUIT, and secondly that when OQUIT is used, the IRC daemon will not
+prefix the quit message with "Quit: ". This allows IRC operators to "spoof"
+quit messages for themselves, such as ping timeouts or netsplits.
