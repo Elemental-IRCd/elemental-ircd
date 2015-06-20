@@ -2,8 +2,24 @@ language: c
 compiler:
 - gcc
 
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "Glbq3TqHAvxEiaxiTyV+pP+1aE+giEV7L5qJzQrUzs8k+XjvvgR6ixI7wezV4520lz8tHcvEakLJd2dD8YLJbjKnSEmamn4oSF0a0/Lvv/eoytHeKMKjN6LHZ/87DgA+gKGskJc4Ai6CYFliCwcqGlGVPmgcKDy9bZn28Csu6o0="
+
 before-install:
 - sudo apt-get update
 install:
 - sudo apt-get install build-essential libssl-dev flex bison astyle
 script: "./configure && make"
+
+addons:
+  coverity_scan:
+    project:
+      name: "Elemental-IRCd/elemental-ircd"
+      description: "Continuation of ShadowIRCD to meet people's needs"
+    notification_email: xena@yolo-swag.com
+    build_command_prepend: ./configure
+    build_command: make
+    branch_pattern: coverity_scan
