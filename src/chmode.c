@@ -1854,7 +1854,7 @@ struct ChannelMode chmode_table[256] = {
 
     {chm_admin,    0 },                   /* a */
     {chm_ban,      CHFL_BAN },            /* b */
-    {chm_simple,   MODE_NOCOLOR },        /* c */
+    {chm_nosuch,   0 },                   /* c */
     {chm_simple,   MODE_NONICK },         /* d */
     {chm_ban,      CHFL_EXCEPTION },      /* e */
     {chm_forward,  0 },                   /* f */

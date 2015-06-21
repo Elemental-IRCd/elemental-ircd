@@ -508,19 +508,6 @@ msg_channel(enum message_type msgtype,
         }
     }
 
-    if(chptr->mode.mode & MODE_NOCOLOR && (!ConfigChannel.exempt_cmode_c || !is_any_op(msptr))) {
-        rb_strlcpy(text2, text, BUFSIZE);
-        strip_colour(text2);
-        text = text2;
-        if (EmptyString(text)) {
-            /* could be empty after colour stripping and
-             * that would cause problems later */
-            if(msgtype != MESSAGE_TYPE_NOTICE)
-                sendto_one(source_p, form_str(ERR_NOTEXTTOSEND), me.name, source_p->name);
-            return;
-        }
-    }
-
     hdata.msgtype = msgtype;
     hdata.source_p = source_p;
     hdata.chptr = chptr;
@@ -607,19 +594,6 @@ msg_channel_opmod(enum message_type msgtype,
 {
     char text2[BUFSIZE];
     hook_data_privmsg_channel hdata;
-
-    if(chptr->mode.mode & MODE_NOCOLOR) {
-        rb_strlcpy(text2, text, BUFSIZE);
-        strip_colour(text2);
-        text = text2;
-        if (EmptyString(text)) {
-            /* could be empty after colour stripping and
-             * that would cause problems later */
-            if(msgtype != MESSAGE_TYPE_NOTICE)
-                sendto_one(source_p, form_str(ERR_NOTEXTTOSEND), me.name, source_p->name);
-            return;
-        }
-    }
 
     hdata.msgtype = msgtype;
     hdata.source_p = source_p;

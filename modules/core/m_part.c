@@ -123,11 +123,6 @@ part_one_client(struct Client *client_p, struct Client *source_p, char *name, ch
                      ((can_send(chptr, source_p, msptr) > 0 && ConfigFileEntry.use_part_messages &&
                        (source_p->localClient->firsttime +
                         ConfigFileEntry.anti_spam_exit_message_time) < rb_current_time())))) {
-        if(chptr->mode.mode & MODE_NOCOLOR && (!ConfigChannel.exempt_cmode_c || !is_any_op(msptr))) {
-            rb_strlcpy(reason2, reason, BUFSIZE);
-            strip_colour(reason2);
-            reason = reason2;
-        }
         sendto_server(client_p, chptr, CAP_TS6, NOCAPS,
                       ":%s PART %s :%s", use_id(source_p), chptr->chname, reason);
         sendto_channel_local(ALL_MEMBERS, chptr, ":%s!%s@%s PART %s :\"%s\"",
