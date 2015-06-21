@@ -173,7 +173,6 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define MODE_FREEINVITE 0x0800  /* allow free use of /invite */
 #define MODE_FREETARGET 0x1000  /* can be forwarded to without authorization */
 #define MODE_DISFORWARD 0x2000  /* disable channel forwarding */
-#define MODE_NOCTCP     0x8000  /* Block CTCPs directed to this channel */
 #define MODE_NONOTICE	0x10000	/* Block notices directed to this channel */
 #define MODE_NOACTION	0x20000 /* Block CTCP ACTION directed to this channel */
 #define MODE_NOKICK	0x40000 /* Disable /kick on this channel */

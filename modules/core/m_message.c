@@ -546,10 +546,7 @@ msg_channel(enum message_type msgtype,
             }
             if (msgtype != MESSAGE_TYPE_NOTICE && *text == '\001' &&
                 strncasecmp(text + 1, "ACTION ", 7)) {
-                if (chptr->mode.mode & MODE_NOCTCP && (!ConfigChannel.exempt_cmode_C || !is_any_op(msptr))) {
-                    sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - CTCPs to this channel are disallowed (+C set)", chptr->chname);
-                    return;
-                } else if (rb_dlink_list_length(&chptr->locmembers) > (unsigned)(GlobalSetOptions.floodcount / 2))
+                if (rb_dlink_list_length(&chptr->locmembers) > (unsigned)(GlobalSetOptions.floodcount / 2))
                     source_p->large_ctcp_sent = rb_current_time();
             }
             sendto_channel_flags(client_p, ALL_MEMBERS, source_p, chptr,
@@ -798,13 +795,8 @@ msg_client(enum message_type msgtype,
             return;
         }
 
-        if (IsSetNoCTCP(target_p) && (msgtype != MESSAGE_TYPE_NOTICE) && *text == '\001' && strncasecmp(text + 1, "ACTION", 6)) {
-            sendto_one_numeric(source_p, ERR_NOCTCP,
-                               form_str(ERR_NOCTCP),
-                               target_p->name);
-        }
         /* If opers want to go through +g, they should load oaccept.*/
-        else if(!IsServer(source_p) && !IsService(source_p) && (IsSetCallerId(target_p) ||
+        if(!IsServer(source_p) && !IsService(source_p) && (IsSetCallerId(target_p) ||
                 (IsSetSCallerId(target_p) && !has_common_channel(source_p, target_p)) ||
                 (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0]))) {
             if (IsOper(source_p)) {

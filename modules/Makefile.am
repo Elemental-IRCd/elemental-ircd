@@ -22,6 +22,7 @@ module_DATA =  core/m_ban.so             \
 
 
 automod_DATA = chm_nocolour.so           \
+               chm_noctcp.so             \
                m_accept.so               \
                m_admin.so                \
                m_away.so                 \
