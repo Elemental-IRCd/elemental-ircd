@@ -6,6 +6,7 @@ AM_CPPFLAGS = -I../include -I../libratbox/include
 extensiondir=@moduledir@/extensions
 
 extension_DATA = chm_adminonly.so         \
+                 chm_norepeat.so          \
                  chm_operonly_compat.so   \
                  chm_operonly.so          \
                  chm_quietunreg_compat.so \

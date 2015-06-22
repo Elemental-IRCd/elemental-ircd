@@ -459,7 +459,6 @@ msg_channel(enum message_type msgtype,
     int caps = 0;
     int len = 0;
     struct membership *msptr = find_channel_membership(chptr, source_p);
-    struct Metadata *md;
     hook_data_privmsg_channel hdata;
 
     if(MyClient(source_p)) {
@@ -467,21 +466,6 @@ msg_channel(enum message_type msgtype,
         if(msgtype != MESSAGE_TYPE_NOTICE) {
             source_p->localClient->last = rb_current_time();
         }
-    }
-
-    if(chptr->mode.mode & MODE_NOREPEAT) {
-        rb_strlcpy(text2, text, BUFSIZE);
-        strip_unprintable(text2);
-        md = channel_metadata_find(chptr, "NOREPEAT");
-        if(md && (!ConfigChannel.exempt_cmode_K || !is_any_op(msptr))) {
-            if(!(strcmp(md->value, text2))) {
-                if(msgtype != MESSAGE_TYPE_NOTICE)
-                    sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - Message blocked due to repeating (+K set)", chptr->chname);
-                return;
-            }
-        }
-        channel_metadata_delete(chptr, "NOREPEAT", 0);
-        channel_metadata_add(chptr, "NOREPEAT", text2, 0);
     }
 
     // Must be processed before chmode c --SnoFox
@@ -589,7 +573,6 @@ msg_channel_opmod(enum message_type msgtype,
                   struct Client *client_p, struct Client *source_p,
                   struct Channel *chptr, const char *text)
 {
-    char text2[BUFSIZE];
     hook_data_privmsg_channel hdata;
 
     hdata.msgtype = msgtype;
