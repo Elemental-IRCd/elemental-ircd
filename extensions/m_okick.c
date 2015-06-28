@@ -132,7 +132,7 @@ mo_okick(struct Client *client_p, struct Client *source_p, int parc, const char 
                   ":%s KICK %s %s :%s", me.id, chptr->chname, who->id, comment);
     remove_user_from_channel(msptr);
 
-    rb_snprintf(text, sizeof(text), "K%s", who->id);
+    snprintf(text, sizeof(text), "K%s", who->id);
 
     /* we don't need to track NOREJOIN stuff unless it's our client being kicked */
     if(MyClient(who) && chptr->mode.mode & MODE_NOREJOIN)

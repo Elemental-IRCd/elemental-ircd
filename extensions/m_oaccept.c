@@ -36,7 +36,7 @@ mo_oaccept(struct Client *client_p, struct Client *source_p, int parc, const cha
         return 0;
     }
 
-    rb_snprintf(text, sizeof(text), "O%s", source_p->id);
+    snprintf(text, sizeof(text), "O%s", source_p->id);
 
     /* Provide a nice error message if you try to OACCEPT someone
      * who you've already OACCEPTed. */

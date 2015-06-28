@@ -1134,7 +1134,7 @@ inetntoa(const char *in)
  * SOFTWARE.
  */
 
-#define SPRINTF(x) ((size_t)rb_sprintf x)
+#define SPRINTF(x) ((size_t)sprintf x)
 
 /*
  * WARNING: Don't even consider trying to compile this on a system where
@@ -1513,7 +1513,7 @@ rb_inet_pton(int af, const char *src, void *dst)
         /* Somebody might have passed as an IPv4 address this is sick but it works */
         if(inet_pton4(src, dst)) {
             char tmp[HOSTIPLEN];
-            rb_sprintf(tmp, "::ffff:%s", src);
+            sprintf(tmp, "::ffff:%s", src);
             return (inet_pton6(tmp, dst));
         } else
             return (inet_pton6(src, dst));

@@ -768,7 +768,7 @@ msg_client(int p_or_n, const char *command,
                 (IsSetSCallerId(target_p) && !has_common_channel(source_p, target_p)) ||
                 (IsSetRegOnlyMsg(target_p) && !source_p->user->suser[0]))) {
             if (IsOper(source_p)) {
-                rb_snprintf(text3, sizeof(text3), "O%s", source_p->id);
+                snprintf(text3, sizeof(text3), "O%s", source_p->id);
                 DICTIONARY_FOREACH(md, &iter, target_p->user->metadata) {
                     if(!strcmp(md->value, "OACCEPT") && !strcmp(md->name, text3)) {
                         oaccept = 1;

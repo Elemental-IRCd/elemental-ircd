@@ -311,7 +311,7 @@ ms_uid(struct Client *client_p, struct Client *source_p, int parc, const char *p
                                "with %d arguments (expecting 10)", client_p->name, parc);
         ilog(L_SERVER, "Excess parameters (%d) for command 'UID' from %s.",
              parc, client_p->name);
-        rb_snprintf(squitreason, sizeof squitreason,
+        snprintf(squitreason, sizeof squitreason,
                     "Excess parameters (%d) to %s command, expecting %d",
                     parc, "UID", 10);
         exit_client(client_p, client_p, client_p, squitreason);
@@ -325,7 +325,7 @@ ms_uid(struct Client *client_p, struct Client *source_p, int parc, const char *p
     }
 
     if(!clean_uid(parv[8])) {
-        rb_snprintf(squitreason, sizeof squitreason,
+        snprintf(squitreason, sizeof squitreason,
                     "Invalid UID %s for nick %s on %s",
                     parv[8], parv[1], source_p->name);
         exit_client(client_p, client_p, client_p, squitreason);
@@ -394,7 +394,7 @@ ms_euid(struct Client *client_p, struct Client *source_p, int parc, const char *
                                "with %d arguments (expecting 12)", client_p->name, parc);
         ilog(L_SERVER, "Excess parameters (%d) for command 'EUID' from %s.",
              parc, client_p->name);
-        rb_snprintf(squitreason, sizeof squitreason,
+        snprintf(squitreason, sizeof squitreason,
                     "Excess parameters (%d) to %s command, expecting %d",
                     parc, "EUID", 12);
         exit_client(client_p, client_p, client_p, squitreason);
@@ -408,7 +408,7 @@ ms_euid(struct Client *client_p, struct Client *source_p, int parc, const char *
     }
 
     if(!clean_uid(parv[8])) {
-        rb_snprintf(squitreason, sizeof squitreason,
+        snprintf(squitreason, sizeof squitreason,
                     "Invalid UID %s for nick %s on %s",
                     parv[8], parv[1], source_p->name);
         exit_client(client_p, client_p, client_p, squitreason);
@@ -601,7 +601,7 @@ set_initial_nick(struct Client *client_p, struct Client *source_p, char *nick)
     strcpy(source_p->name, nick);
     add_to_client_hash(nick, source_p);
 
-    rb_snprintf(note, sizeof(note), "Nick: %s", nick);
+    snprintf(note, sizeof(note), "Nick: %s", nick);
     rb_note(client_p->localClient->F, note);
 
     if(source_p->flags & FLAGS_SENTUSER) {
@@ -710,7 +710,7 @@ change_local_nick(struct Client *client_p, struct Client *source_p,
         rb_dlinkDestroy(ptr, &source_p->on_allow_list);
     }
 
-    rb_snprintf(note, sizeof(note), "Nick: %s", nick);
+    snprintf(note, sizeof(note), "Nick: %s", nick);
     rb_note(client_p->localClient->F, note);
 
     return;
@@ -1158,7 +1158,7 @@ static void bad_nickname(struct Client *client_p, const char *nick)
     ilog(L_SERVER, "Link %s cancelled, bad nickname %s sent (NICKLEN mismatch?)",
          client_p->name, nick);
 
-    rb_snprintf(squitreason, sizeof squitreason,
+    snprintf(squitreason, sizeof squitreason,
                 "Bad nickname introduced [%s]", nick);
     exit_client(client_p, client_p, &me, squitreason);
 }

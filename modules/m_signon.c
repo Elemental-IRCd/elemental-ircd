@@ -201,7 +201,7 @@ me_svslogin(struct Client *client_p, struct Client *source_p,
         kill_client_serv_butone(NULL, exist_p, "%s (Nickname regained by services)",
                                 me.name);
 
-        rb_snprintf(buf, sizeof(buf), "Killed (%s (Nickname regained by services))",
+        snprintf(buf, sizeof(buf), "Killed (%s (Nickname regained by services))",
                     me.name);
         exit_client(NULL, exist_p, &me, buf);
     } else if((exist_p = find_client(nick)) && IsUnknown(exist_p) && exist_p != target_p) {
@@ -240,7 +240,7 @@ me_svslogin(struct Client *client_p, struct Client *source_p,
 
         send_signon(NULL, target_p, nick, user, host, rb_current_time(), login);
 
-        rb_snprintf(note, NICKLEN + 10, "Nick: %s", target_p->name);
+        snprintf(note, NICKLEN + 10, "Nick: %s", target_p->name);
         rb_note(target_p->localClient->F, note);
     }
 
