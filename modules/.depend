@@ -338,7 +338,7 @@ m_cap.so: m_cap.c ../include/stdinc.h ../libratbox/include/ratbox_lib.h \
  ../include/ircd.h ../include/numeric.h ../include/msg.h \
  ../include/parse.h ../include/irc_dictionary.h ../include/modules.h \
  ../include/parse.h ../include/msg.h ../include/hook.h \
- ../include/s_serv.h ../include/s_user.h
+ ../include/s_serv.h ../include/s_user.h ../include/hash.h
 m_capab.so: m_capab.c ../include/stdinc.h \
  ../libratbox/include/ratbox_lib.h ../libratbox/include/librb-config.h \
  ../libratbox/include/rb_tools.h ../libratbox/include/rb_memory.h \
