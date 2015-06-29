@@ -88,7 +88,7 @@ install: build
 
 .PHONY: depend clean distclean
 depend:
-	@${MKDEP} ${CPPFLAGS} ${SOURCES} > .depend.tmp
+	@${MKDEP} ${CPPFLAGS} ${BANDB_SOURCES} > .depend.tmp
 	@sed -e '/^# DO NOT DELETE THIS LINE/,$$d' <Makefile >Makefile.depend
 	@echo '# DO NOT DELETE THIS LINE!!!' >>Makefile.depend
 	@echo '# make depend needs it.' >>Makefile.depend

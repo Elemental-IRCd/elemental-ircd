@@ -1310,13 +1310,13 @@ get_oper_name(struct Client *client_p)
     static char buffer[NICKLEN + USERLEN + HOSTLEN + HOSTLEN + 5];
 
     if(MyOper(client_p)) {
-        rb_snprintf(buffer, sizeof(buffer), "%s!%s@%s{%s}",
+        snprintf(buffer, sizeof(buffer), "%s!%s@%s{%s}",
                     client_p->name, client_p->username,
                     client_p->host, client_p->localClient->opername);
         return buffer;
     }
 
-    rb_snprintf(buffer, sizeof(buffer), "%s!%s@%s{%s}",
+    snprintf(buffer, sizeof(buffer), "%s!%s@%s{%s}",
                 client_p->name, client_p->username,
                 client_p->host, client_p->servptr->name);
     return buffer;
@@ -1360,7 +1360,7 @@ get_user_ban_reason(struct ConfItem *aconf)
 
     if (aconf->flags & CONF_FLAGS_TEMPORARY &&
         (aconf->status == CONF_KILL || aconf->status == CONF_DLINE))
-        rb_snprintf(reasonbuf, sizeof reasonbuf,
+        snprintf(reasonbuf, sizeof reasonbuf,
                     "Temporary %c-line %d min. - ",
                     aconf->status == CONF_DLINE ? 'D' : 'K',
                     (int)((aconf->hold - aconf->created) / 60));
@@ -1394,7 +1394,7 @@ get_printable_kline(struct Client *source_p, struct ConfItem *aconf,
     if(!IsOper(source_p))
         *oper_reason = NULL;
     else {
-        rb_snprintf(operreasonbuf, sizeof operreasonbuf, "%s%s(%s)",
+        snprintf(operreasonbuf, sizeof operreasonbuf, "%s%s(%s)",
                     EmptyString(aconf->spasswd) ? "" : aconf->spasswd,
                     EmptyString(aconf->spasswd) ? "" : " ",
                     aconf->info.oper);

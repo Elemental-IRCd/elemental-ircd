@@ -193,7 +193,7 @@ propagate_generic(struct Client *source_p, const char *command,
     va_list args;
 
     va_start(args, format);
-    rb_vsnprintf(buffer, sizeof(buffer), format, args);
+    vsnprintf(buffer, sizeof(buffer), format, args);
     va_end(args);
 
     sendto_match_servs(source_p, target, cap, NOCAPS,
@@ -214,7 +214,7 @@ cluster_generic(struct Client *source_p, const char *command,
     rb_dlink_node *ptr;
 
     va_start(args, format);
-    rb_vsnprintf(buffer, sizeof(buffer), format, args);
+    vsnprintf(buffer, sizeof(buffer), format, args);
     va_end(args);
 
     RB_DLINK_FOREACH(ptr, cluster_conf_list.head) {

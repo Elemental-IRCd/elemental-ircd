@@ -121,7 +121,7 @@ static void initiate_blacklist_dnsquery(struct Blacklist *blptr, struct Client *
         ip = (uint8_t *)&((struct sockaddr_in *)&client_p->localClient->ip)->sin_addr.s_addr;
 
         /* becomes 2.0.0.127.torbl.ahbl.org or whatever */
-        rb_snprintf(buf, sizeof buf, "%d.%d.%d.%d.%s",
+        snprintf(buf, sizeof buf, "%d.%d.%d.%d.%s",
                     (unsigned int) ip[3],
                     (unsigned int) ip[2],
                     (unsigned int) ip[1],
@@ -147,8 +147,8 @@ static void initiate_blacklist_dnsquery(struct Blacklist *blptr, struct Client *
             uint8_t hi = (ip[i] >> 4) & 0x0F;
             uint8_t lo = ip[i] & 0x0F;
 
-            /* One part... (why 5? rb_snprintf adds \0) */
-            rb_snprintf(bufptr, 5, "%1x.%1x.",
+            /* One part... (why 5? snprintf adds \0) */
+            snprintf(bufptr, 5, "%1x.%1x.",
                         (unsigned int) lo, /* Remember, backwards */
                         (unsigned int) hi);
 

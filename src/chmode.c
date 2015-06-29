@@ -140,7 +140,7 @@ construct_cflag_param_string(void)
 {
 
     *cflagsparaminfo = '\0';
-    rb_snprintf(cflagsparaminfo, sizeof cflagsparaminfo, "%s%sb%s%s%s%sklov%s%s",
+    snprintf(cflagsparaminfo, sizeof cflagsparaminfo, "%s%sb%s%s%s%sklov%s%s",
                 ConfigChannel.use_owner ? "y" : "",
                 ConfigChannel.use_admin ? "a" : "",
                 ConfigChannel.use_except ? "e" : "",
@@ -277,7 +277,7 @@ add_id(struct Client *source_p, struct Channel *chptr, const char *banid,
 
 
     if(IsPerson(source_p))
-        rb_sprintf(who, "%s!%s@%s", source_p->name, source_p->username, source_p->host);
+        sprintf(who, "%s!%s@%s", source_p->name, source_p->username, source_p->host);
     else
         rb_strlcpy(who, source_p->name, sizeof(who));
 
@@ -383,7 +383,7 @@ pretty_mask(const char *idmask)
     old_mask_pos = mask_pos;
 
     if (*mask == '$') {
-        mask_pos += rb_sprintf(mask_buf + mask_pos, "%s", mask) + 1;
+        mask_pos += sprintf(mask_buf + mask_pos, "%s", mask) + 1;
         t = mask_buf + old_mask_pos + 1;
         if (*t == '!')
             *t = '~';
@@ -440,7 +440,7 @@ pretty_mask(const char *idmask)
         host[HOSTLEN] = '\0';
     }
 
-    mask_pos += rb_sprintf(mask_buf + mask_pos, "%s!%s@%s", nick, user, host) + 1;
+    mask_pos += sprintf(mask_buf + mask_pos, "%s!%s@%s", nick, user, host) + 1;
 
     /* restore mask, since we may need to use it again later */
     if(at)
@@ -1462,7 +1462,7 @@ chm_limit(struct Client *source_p, struct Channel *chptr,
         if(EmptyString(lstr) || (limit = atoi(lstr)) <= 0)
             return;
 
-        rb_sprintf(limitstr, "%d", limit);
+        sprintf(limitstr, "%d", limit);
 
         mode_changes[mode_count].letter = c;
         mode_changes[mode_count].dir = MODE_ADD;
@@ -2096,9 +2096,9 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
         return;
 
     if(IsServer(source_p))
-        rb_sprintf(cmdbuf, ":%s MODE %s ", fakesource_p->name, chptr->chname);
+        sprintf(cmdbuf, ":%s MODE %s ", fakesource_p->name, chptr->chname);
     else
-        rb_sprintf(cmdbuf, ":%s!%s@%s MODE %s ",
+        sprintf(cmdbuf, ":%s!%s@%s MODE %s ",
                    source_p->name, source_p->username,
                    source_p->host, chptr->chname);
 
@@ -2180,7 +2180,7 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
 
                 if(mode_changes[i].arg != NULL) {
                     paracount++;
-                    len = rb_sprintf(pbuf, "%s ", mode_changes[i].arg);
+                    len = sprintf(pbuf, "%s ", mode_changes[i].arg);
                     pbuf += len;
                     paralen += len;
                 }
