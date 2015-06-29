@@ -411,7 +411,7 @@ repeat:
                 abort();	/* prefer blowing up vs corrupt data */
             }
             len = rb_strnlen(s, precision);
-
+            process_string:
             if(!(flags & LEFT)) {
                 while(len < field_width--) {
                     if(idx < size)
