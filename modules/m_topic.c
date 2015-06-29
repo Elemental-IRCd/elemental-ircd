@@ -135,7 +135,7 @@ m_topic(struct Client *client_p, struct Client *source_p, int parc, const char *
         }
 
         if(ConfigChannel.host_in_topic)
-            rb_sprintf(topic_info, "%s!%s@%s",
+            sprintf(topic_info, "%s!%s@%s",
                        source_p->name, source_p->username, source_p->host);
         else
             rb_strlcpy(topic_info, source_p->name, sizeof(topic_info));

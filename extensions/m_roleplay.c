@@ -172,9 +172,9 @@ m_displaymsg(struct Client *source_p, const char *channel, int underline, int ac
     }
 
     if(underline)
-        rb_snprintf(nick2, sizeof(nick2), "\x1F%s\x1F", strip_unprintable(nick3));
+        snprintf(nick2, sizeof(nick2), "\x1F%s\x1F", strip_unprintable(nick3));
     else
-        rb_snprintf(nick2, sizeof(nick2), "%s", strip_unprintable(nick3));
+        snprintf(nick2, sizeof(nick2), "%s", strip_unprintable(nick3));
 
     /* don't allow nicks to be empty after stripping
      * this prevents nastiness like fake factions, etc. */
@@ -184,9 +184,9 @@ m_displaymsg(struct Client *source_p, const char *channel, int underline, int ac
     }
 
     if(action)
-        rb_snprintf(text2, sizeof(text2), "\1ACTION %s\1", text);
+        snprintf(text2, sizeof(text2), "\1ACTION %s\1", text);
     else
-        rb_snprintf(text2, sizeof(text2), "%s", text);
+        snprintf(text2, sizeof(text2), "%s", text);
 
     sendto_channel_local(ALL_MEMBERS, chptr, ":%s!%s@npc.fakeuser.invalid PRIVMSG %s :%s (%s)", nick2, source_p->name, channel, text2, source_p->name);
     sendto_match_servs(source_p, "*", CAP_ENCAP, NOCAPS, "ENCAP * ROLEPLAY %s %s :%s",

@@ -123,7 +123,7 @@ do_restart(struct Client *source_p, const char *servername)
                    me.name, get_client_name(source_p, HIDE_IP));
     }
 
-    rb_sprintf(buf, "Server RESTART by %s", get_client_name(source_p, HIDE_IP));
+    sprintf(buf, "Server RESTART by %s", get_client_name(source_p, HIDE_IP));
     restart(buf);
 
     return 0;

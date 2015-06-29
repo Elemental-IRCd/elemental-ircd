@@ -190,7 +190,7 @@ const char *
 isupport_intptr(const void *ptr)
 {
     static char buf[15];
-    rb_snprintf(buf, sizeof buf, "%d", *(const int *)ptr);
+    snprintf(buf, sizeof buf, "%d", *(const int *)ptr);
     return buf;
 }
 
@@ -219,7 +219,7 @@ isupport_chanmodes(const void *ptr)
 {
     static char result[80];
 
-    rb_snprintf(result, sizeof result, "%s%sb%s,k,%sl%s,%s",
+    snprintf(result, sizeof result, "%s%sb%s,k,%sl%s,%s",
                 ConfigChannel.use_except ? "e" : "",
                 ConfigChannel.use_invex ? "I" : "",
                 strchr(ConfigChannel.disabledmodes, 'q') ? "" : "q",
@@ -240,7 +240,7 @@ isupport_chanlimit(const void *ptr)
 {
     static char result[30];
 
-    rb_snprintf(result, sizeof result, "%s:%i",
+    snprintf(result, sizeof result, "%s:%i",
                 ConfigChannel.use_local_channels ? "&#" : "#",
                 ConfigChannel.max_chans_per_user);
     return result;
@@ -251,7 +251,7 @@ isupport_prefix(const void *ptr)
 {
     static char result[13];
 
-    rb_snprintf(result, sizeof result, "(%s%so%sv)%s%s@%s+",
+    snprintf(result, sizeof result, "(%s%so%sv)%s%s@%s+",
                 ConfigChannel.use_owner ? "y" : "",
                 ConfigChannel.use_admin ? "a" : "",
                 ConfigChannel.use_halfop ? "h" : "",
@@ -266,7 +266,7 @@ isupport_maxlist(const void *ptr)
 {
     static char result[30];
 
-    rb_snprintf(result, sizeof result, "bq%s%s:%i",
+    snprintf(result, sizeof result, "bq%s%s:%i",
                 ConfigChannel.use_except ? "e" : "",
                 ConfigChannel.use_invex ? "I" : "",
                 ConfigChannel.max_bans);
@@ -278,7 +278,7 @@ isupport_targmax(const void *ptr)
 {
     static char result[200];
 
-    rb_snprintf(result, sizeof result, "NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:%d,NOTICE:%d,ACCEPT:,MONITOR:",
+    snprintf(result, sizeof result, "NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:%d,NOTICE:%d,ACCEPT:,MONITOR:",
                 ConfigFileEntry.max_targets,
                 ConfigFileEntry.max_targets);
     return result;
@@ -293,7 +293,7 @@ isupport_extban(const void *ptr)
     p = get_extban_string();
     if (EmptyString(p))
         return NULL;
-    rb_snprintf(result, sizeof result, "$,%s", p);
+    snprintf(result, sizeof result, "$,%s", p);
     return result;
 }
 
@@ -305,7 +305,7 @@ isupport_ownermode(const void *ptr)
     if(!ConfigChannel.use_owner)
         return NULL;
 
-    rb_snprintf(result, sizeof result, "y");
+    snprintf(result, sizeof result, "y");
 
     return result;
 }
