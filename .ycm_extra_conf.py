@@ -12,6 +12,7 @@ flags = [
 '-g',
 '-Iinclude',
 '-Ilibratbox/include',
+'-std=gnu99',
 ]
 
 # Set this to the absolute path to the folder (NOT the file!) containing the
