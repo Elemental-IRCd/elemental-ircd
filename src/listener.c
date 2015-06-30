@@ -142,7 +142,7 @@ show_ports(struct Client *source_p)
 #endif
                            IsOperAdmin(source_p) ? listener->name : me.name,
                            listener->ref_count, (listener->active) ? "active" : "disabled",
-                           listener->ssl ? " ssl" : "");
+                           listener->type & SSL_PORT ? " ssl" : "");
     }
 }
 
@@ -284,7 +284,7 @@ find_listener(struct rb_sockaddr_storage *addr)
  * the format "255.255.255.255"
  */
 void
-add_listener(int port, const char *vhost_ip, int family, int ssl, int defer_accept)
+add_listener(int port, const char *vhost_ip, int family, int type, int defer_accept)
 {
     struct Listener *listener;
     struct rb_sockaddr_storage vaddr;
@@ -347,7 +347,7 @@ add_listener(int port, const char *vhost_ip, int family, int ssl, int defer_acce
     }
 
     listener->F = NULL;
-    listener->ssl = ssl;
+    listener->type = type;
     listener->defer_accept = defer_accept;
 
     if(inetport(listener))
@@ -451,7 +451,8 @@ accept_precallback(rb_fde_t *F, struct sockaddr *addr, rb_socklen_t addrlen, voi
     static time_t last_oper_notice = 0;
     int len;
 
-    if(listener->ssl && (!ssl_ok || !get_ssld_count())) {
+    /* connection on an ssl port, but we cant ssl */
+    if(listener->type && !get_ssld_count()) {
         rb_close(F);
         return 0;
     }
@@ -520,7 +521,7 @@ accept_ssld(rb_fde_t *F, struct sockaddr *addr, struct sockaddr *laddr, struct L
         rb_close(F);
         return;
     }
-    ctl = start_ssld_accept(F, xF[1], rb_get_fd(xF[0])); /* this will close F for us */
+    ctl = start_ssld_accept(F, xF[1], rb_get_fd(xF[0]), listener->type); /* this will close F for us */
     add_connection(listener, xF[0], addr, laddr, ctl);
 }
 
@@ -539,7 +540,7 @@ accept_callback(rb_fde_t *F, int status, struct sockaddr *addr, rb_socklen_t add
         return;
     }
 
-    if(listener->ssl)
+    if(listener->type)
         accept_ssld(F, addr, (struct sockaddr *)&lip, listener);
     else
         add_connection(listener, F, addr, (struct sockaddr *)&lip, NULL);

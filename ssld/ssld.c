@@ -1,5 +1,5 @@
 /*
- *  ssld.c: The ircd-ratbox ssl/zlib helper daemon thingy
+ *  ssld.c: The ircd-ratbox ssl helper daemon thingy
  *  Copyright (C) 2007 Aaron Sethman <androsyn@ratbox.org>
  *  Copyright (C) 2007 ircd-ratbox development team
  *
@@ -21,12 +21,67 @@
  *  $Id$
  */
 
+/**
+ * IPC spec
+ *
+ * a dgram socket is created and inherited by to ssld.
+ *
+ * s_ctlfd = getenv("CTL_FD");
+ *
+ *----------------------------------------------------------------------
+ * Commands passed via ctl fd to ssld:
+ *
+ * Accept and Connect:
+ *  u8  u32  u32
+ * ['A'|type|connection id]
+ * ['C'|type|connection id]
+ *
+ * Descriptors:
+ * [0]: mod_fd, ssl socket
+ * [1]: plain_fd, socket to the ircd for plaintext
+ *
+ *
+ * New keys:
+ *  u8  char[]
+ * ['K'|cert\0priv key\0(opt)dh params\0]
+ *
+ * Certificates and keys are passed as concantenated null terminated
+ * ascii (probably openssl format).
+ * dh params are optional
+ *
+ * Init PRNG:
+ *  u8  u8        char[]
+ * ['I'|seed_type|path'\0']
+ *
+ * This is intended to be passed to rb_init_prng pretty much unmodified
+ * seed_type is of type prng_seed_t, defined in rb_commio.h
+ *
+ *----------------------------------------------------------------------
+ * Commands passed via ctl fd from the ssld:
+ *
+ * Dead fd:
+ *  u8  u32           char[]
+ * ['D'|connection id|reason\0]
+ *
+ * Indicates a session has disconnected
+ *
+ * Cert fp:
+ *  u8  u32           u8[RB_SSL_CERTFP_LEN]
+ * ['F'|connection id|fingerprint]
+ *
+ * Certificate fingerprint for sasl authentication
+ *
+ * I am useless/cannot initialize:
+ *  u8
+ * ['U']
+ * ['I']
+ *
+ * indicates that ssld can't do ssl (?)
+ * 'U' libratbox reports no ssl support
+ * 'I' configuration error
+ **/
 
 #include "stdinc.h"
-
-#ifdef HAVE_LIBZ
-#include <zlib.h>
-#endif
 
 #define MAXPASSFD 4
 #ifndef READBUF_SIZE
@@ -68,9 +123,6 @@ uint16_to_buf(char *buf, uint16_t x)
 
 
 static char inbuf[READBUF_SIZE];
-#ifdef HAVE_LIBZ
-static char outbuf[READBUF_SIZE];
-#endif
 
 typedef struct _mod_ctl_buf {
     rb_dlink_node node;
@@ -84,20 +136,12 @@ typedef struct _mod_ctl {
     rb_dlink_node node;
     int cli_count;
     rb_fde_t *F;
-    rb_fde_t *F_pipe;
     rb_dlink_list readq;
     rb_dlink_list writeq;
 } mod_ctl_t;
 
 static mod_ctl_t *mod_ctl;
 
-
-#ifdef HAVE_LIBZ
-typedef struct _zlib_stream {
-    z_stream instream;
-    z_stream outstream;
-} zlib_stream_t;
-#endif
 
 typedef struct _conn {
     rb_dlink_node node;
@@ -106,6 +150,7 @@ typedef struct _conn {
     rawbuf_head_t *plainbuf_out;
 
     int32_t id;
+    int32_t type;
 
     rb_fde_t *mod_fd;
     rb_fde_t *plain_fd;
@@ -114,40 +159,41 @@ typedef struct _conn {
     unsigned long long plain_in;
     unsigned long long plain_out;
     uint8_t flags;
-    void *stream;
 } conn_t;
 
-#define FLAG_SSL	0x01
-#define FLAG_ZIP	0x02
-#define FLAG_CORK	0x04
-#define FLAG_DEAD	0x08
-#define FLAG_SSL_W_WANTS_R 0x10	/* output needs to wait until input possible */
-#define FLAG_SSL_R_WANTS_W 0x20	/* input needs to wait until output possible */
-#define FLAG_ZIPSSL	0x40
+/* Duplicated in listener.h */
+#define PLAIN_PORT (0)
+#define SSL_PORT (1 << 0)
 
-#define IsSSL(x) ((x)->flags & FLAG_SSL)
-#define IsZip(x) ((x)->flags & FLAG_ZIP)
+#define IsSSL(x)   ((x)->type & SSL_PORT)
+
+#define FLAG_CORK          (1 << 0)
+#define FLAG_DEAD          (1 << 1)
+#define FLAG_SSL_W_WANTS_R (1 << 2)   /* output needs to wait until input possible */
+#define FLAG_SSL_R_WANTS_W (1 << 3)   /* input needs to wait until output possible */
+#define FLAG_SSL_HANDSHAKE (1 << 4)   /* SSL handshake completed */
+#define FLAG_WS_HANDSHAKE  (1 << 5)   /* Websocket handshake completed */
+
 #define IsCork(x) ((x)->flags & FLAG_CORK)
 #define IsDead(x) ((x)->flags & FLAG_DEAD)
 #define IsSSLWWantsR(x) ((x)->flags & FLAG_SSL_W_WANTS_R)
 #define IsSSLRWantsW(x) ((x)->flags & FLAG_SSL_R_WANTS_W)
-#define IsZipSSL(x)	((x)->flags & FLAG_ZIPSSL)
+#define IsSSLHandshakeDone(x) ((x)->flags & FLAG_SSL_HANDSHAKE)
+#define IsWSHandshakeDone(x)  ((x)->flags & FLAG_WS_HANDSHAKE)
 
-#define SetSSL(x) ((x)->flags |= FLAG_SSL)
-#define SetZip(x) ((x)->flags |= FLAG_ZIP)
 #define SetCork(x) ((x)->flags |= FLAG_CORK)
 #define SetDead(x) ((x)->flags |= FLAG_DEAD)
 #define SetSSLWWantsR(x) ((x)->flags |= FLAG_SSL_W_WANTS_R)
 #define SetSSLRWantsW(x) ((x)->flags |= FLAG_SSL_R_WANTS_W)
-#define SetZipSSL(x)	((x)->flags |= FLAG_ZIPSSL)
+#define SetSSLHandshakeDone(x) ((x)->flags |= FLAG_SSL_HANDSHAKE)
+#define SetWSHandshakeDone(x)  ((x)->flags |= FLAG_WS_HANDSHAKE)
 
-#define ClearSSL(x) ((x)->flags &= ~FLAG_SSL)
-#define ClearZip(x) ((x)->flags &= ~FLAG_ZIP)
 #define ClearCork(x) ((x)->flags &= ~FLAG_CORK)
 #define ClearDead(x) ((x)->flags &= ~FLAG_DEAD)
 #define ClearSSLWWantsR(x) ((x)->flags &= ~FLAG_SSL_W_WANTS_R)
 #define ClearSSLRWantsW(x) ((x)->flags &= ~FLAG_SSL_R_WANTS_W)
-#define ClearZipSSL(x)	((x)->flags &= ~FLAG_ZIPSSL)
+#define ClearSSLHandshakeDone(x) ((x)->flags &= ~FLAG_SSL_HANDSHAKE)
+#define ClearWSHandshakeDone(x)  ((x)->flags &= ~FLAG_WS_HANDSHAKE)
 
 #define NO_WAIT 0x0
 #define WAIT_PLAIN 0x1
@@ -171,26 +217,14 @@ static void conn_plain_read_shutdown_cb(rb_fde_t *fd, void *data);
 static void mod_cmd_write_queue(mod_ctl_t * ctl, const void *data, size_t len);
 static const char *remote_closed = "Remote host closed the connection";
 static int ssl_ok;
-#ifdef HAVE_LIBZ
-static int zlib_ok = 1;
-#else
-static int zlib_ok = 0;
-#endif
 
+static void conn_handshake_accept(conn_t *);
+static void conn_handshake_connect(conn_t *);
+static void conn_ready(conn_t *);
 
-#ifdef HAVE_LIBZ
-static void *
-ssld_alloc(void *unused, size_t count, size_t size)
-{
-    return rb_malloc(count * size);
-}
+static void send_i_am_useless(mod_ctl_t * ctl);
+static void send_config_error(mod_ctl_t * ctl);
 
-static void
-ssld_free(void *unused, void *ptr)
-{
-    rb_free(ptr);
-}
-#endif
 
 static conn_t *
 conn_find_by_id(int32_t id)
@@ -207,10 +241,9 @@ conn_find_by_id(int32_t id)
 }
 
 static void
-conn_add_id_hash(conn_t * conn, int32_t id)
+conn_add_id_hash(conn_t * conn)
 {
-    conn->id = id;
-    rb_dlinkAdd(conn, &conn->node, connid_hash(id));
+    rb_dlinkAdd(conn, &conn->node, connid_hash(conn->id));
 }
 
 static void
@@ -218,13 +251,6 @@ free_conn(conn_t * conn)
 {
     rb_free_rawbuffer(conn->modbuf_out);
     rb_free_rawbuffer(conn->plainbuf_out);
-#ifdef HAVE_LIBZ
-    if(IsZip(conn)) {
-        zlib_stream_t *stream = conn->stream;
-        inflateEnd(&stream->instream);
-        deflateEnd(&stream->outstream);
-    }
-#endif
     rb_free(conn);
 }
 
@@ -241,6 +267,7 @@ clean_dead_conns(void *unused)
 }
 
 
+/* Close a connection and send a human readable reason */
 static void
 close_conn(conn_t * conn, int wait_plain, const char *fmt, ...)
 {
@@ -256,7 +283,7 @@ close_conn(conn_t * conn, int wait_plain, const char *fmt, ...)
     rb_close(conn->mod_fd);
     SetDead(conn);
 
-    if(conn->id >= 0 && !IsZipSSL(conn))
+    if(conn->id >= 0)
         rb_dlinkDelete(&conn->node, connid_hash(conn->id));
 
     if(!wait_plain || fmt == NULL) {
@@ -270,6 +297,7 @@ close_conn(conn_t * conn, int wait_plain, const char *fmt, ...)
     rb_vsnprintf(reason, sizeof(reason), fmt, ap);
     va_end(ap);
 
+    /* Send dead fd message */
     buf[0] = 'D';
     int32_to_buf(&buf[1], conn->id);
     strcpy(&buf[5], reason);
@@ -277,6 +305,7 @@ close_conn(conn_t * conn, int wait_plain, const char *fmt, ...)
     mod_cmd_write_queue(conn->ctl, buf, len);
 }
 
+/* Create a new connection from file descriptors */
 static conn_t *
 make_conn(mod_ctl_t * ctl, rb_fde_t *mod_fd, rb_fde_t *plain_fd)
 {
@@ -287,7 +316,6 @@ make_conn(mod_ctl_t * ctl, rb_fde_t *mod_fd, rb_fde_t *plain_fd)
     conn->mod_fd = mod_fd;
     conn->plain_fd = plain_fd;
     conn->id = -1;
-    conn->stream = NULL;
     rb_set_nb(mod_fd);
     rb_set_nb(plain_fd);
     return conn;
@@ -302,8 +330,6 @@ check_handshake_flood(void *unused)
     int i;
     HASH_WALK_SAFE(i, CONN_HASH_SIZE, ptr, next, connid_hash_table) {
         conn = ptr->data;
-        if(!IsSSL(conn))
-            continue;
 
         count = rb_ssl_handshake_count(conn->mod_fd);
         /* nothing needs to do this more than twice in ten seconds i don't think */
@@ -334,10 +360,13 @@ conn_mod_write_sendq(rb_fde_t *fd, void *data)
     while((retlen = rb_rawbuf_flush(conn->modbuf_out, fd)) > 0)
         conn->mod_out += retlen;
 
-    if(retlen == 0 || (retlen < 0 && !rb_ignore_errno(errno))) {
-        if(retlen == 0)
-            close_conn(conn, WAIT_PLAIN, "%s", remote_closed);
-        if(IsSSL(conn) && retlen == RB_RW_SSL_ERROR)
+    if(retlen == 0) {
+        close_conn(conn, WAIT_PLAIN, "%s", remote_closed);
+        return;
+    }
+
+    if(retlen < 0 && !rb_ignore_errno(errno)) {
+        if(retlen == RB_RW_SSL_ERROR)
             err = rb_get_ssl_strerror(conn->mod_fd);
         else
             err = strerror(errno);
@@ -378,6 +407,7 @@ conn_plain_write(conn_t * conn, void *data, size_t len)
     rb_rawbuf_append(conn->plainbuf_out, data, len);
 }
 
+/* Queue a control message */
 static void
 mod_cmd_write_queue(mod_ctl_t * ctl, const void *data, size_t len)
 {
@@ -390,72 +420,6 @@ mod_cmd_write_queue(mod_ctl_t * ctl, const void *data, size_t len)
     rb_dlinkAddTail(ctl_buf, &ctl_buf->node, &ctl->writeq);
     mod_write_ctl(ctl->F, ctl);
 }
-
-#ifdef HAVE_LIBZ
-static void
-common_zlib_deflate(conn_t * conn, void *buf, size_t len)
-{
-    int ret, have;
-    z_stream *outstream = &((zlib_stream_t *) conn->stream)->outstream;
-    outstream->next_in = buf;
-    outstream->avail_in = len;
-    outstream->next_out = (Bytef *) outbuf;
-    outstream->avail_out = sizeof(outbuf);
-
-    ret = deflate(outstream, Z_SYNC_FLUSH);
-    if(ret != Z_OK) {
-        /* deflate error */
-        close_conn(conn, WAIT_PLAIN, "Deflate failed: %s", zError(ret));
-        return;
-    }
-    if(outstream->avail_out == 0) {
-        /* avail_out empty */
-        close_conn(conn, WAIT_PLAIN, "error compressing data, avail_out == 0");
-        return;
-    }
-    if(outstream->avail_in != 0) {
-        /* avail_in isn't empty... */
-        close_conn(conn, WAIT_PLAIN, "error compressing data, avail_in != 0");
-        return;
-    }
-    have = sizeof(outbuf) - outstream->avail_out;
-    conn_mod_write(conn, outbuf, have);
-}
-
-static void
-common_zlib_inflate(conn_t * conn, void *buf, size_t len)
-{
-    int ret, have = 0;
-    ((zlib_stream_t *) conn->stream)->instream.next_in = buf;
-    ((zlib_stream_t *) conn->stream)->instream.avail_in = len;
-    ((zlib_stream_t *) conn->stream)->instream.next_out = (Bytef *) outbuf;
-    ((zlib_stream_t *) conn->stream)->instream.avail_out = sizeof(outbuf);
-
-    while(((zlib_stream_t *) conn->stream)->instream.avail_in) {
-        ret = inflate(&((zlib_stream_t *) conn->stream)->instream, Z_NO_FLUSH);
-        if(ret != Z_OK) {
-            if(!strncmp("ERROR ", buf, 6)) {
-                close_conn(conn, WAIT_PLAIN, "Received uncompressed ERROR");
-                return;
-            }
-            close_conn(conn, WAIT_PLAIN, "Inflate failed: %s", zError(ret));
-            return;
-        }
-        have = sizeof(outbuf) - ((zlib_stream_t *) conn->stream)->instream.avail_out;
-
-        if(((zlib_stream_t *) conn->stream)->instream.avail_in) {
-            conn_plain_write(conn, outbuf, have);
-            have = 0;
-            ((zlib_stream_t *) conn->stream)->instream.next_out = (Bytef *) outbuf;
-            ((zlib_stream_t *) conn->stream)->instream.avail_out = sizeof(outbuf);
-        }
-    }
-    if(have == 0)
-        return;
-
-    conn_plain_write(conn, outbuf, have);
-}
-#endif
 
 static int
 plain_check_cork(conn_t * conn)
@@ -473,6 +437,7 @@ plain_check_cork(conn_t * conn)
 }
 
 
+/* Read plaintext from the ircd and send to the client */
 static void
 conn_plain_read_cb(rb_fde_t *fd, void *data)
 {
@@ -481,14 +446,10 @@ conn_plain_read_cb(rb_fde_t *fd, void *data)
     if(conn == NULL)
         return;
 
-    if(IsDead(conn))
-        return;
-
-    if(plain_check_cork(conn))
-        return;
-
     while(1) {
         if(IsDead(conn))
+            return;
+        if(plain_check_cork(conn))
             return;
 
         length = rb_read(conn->plain_fd, inbuf, sizeof(inbuf));
@@ -504,17 +465,7 @@ conn_plain_read_cb(rb_fde_t *fd, void *data)
             return;
         }
         conn->plain_in += length;
-
-#ifdef HAVE_LIBZ
-        if(IsZip(conn))
-            common_zlib_deflate(conn, inbuf, length);
-        else
-#endif
-            conn_mod_write(conn, inbuf, length);
-        if(IsDead(conn))
-            return;
-        if(plain_check_cork(conn))
-            return;
+        conn_mod_write(conn, inbuf, length);
     }
 }
 
@@ -530,19 +481,20 @@ conn_plain_read_shutdown_cb(rb_fde_t *fd, void *data)
     while(1) {
         length = rb_read(conn->plain_fd, inbuf, sizeof(inbuf));
 
-        if(length == 0 || (length < 0 && !rb_ignore_errno(errno))) {
-            rb_close(conn->plain_fd);
-            rb_dlinkAdd(conn, &conn->node, &dead_list);
-            return;
-        }
+        if(length > 0)
+            continue;
 
-        if(length < 0) {
+        if(length < 0 && rb_ignore_errno(errno)) {
             rb_setselect(conn->plain_fd, RB_SELECT_READ, conn_plain_read_shutdown_cb, conn);
             return;
         }
+
+        rb_close(conn->plain_fd);
+        rb_dlinkAdd(conn, &conn->node, &dead_list);
     }
 }
 
+/* Read ciphertext from the client and forward to the ircd */
 static void
 conn_mod_read_cb(rb_fde_t *fd, void *data)
 {
@@ -557,8 +509,6 @@ conn_mod_read_cb(rb_fde_t *fd, void *data)
     if(IsSSLRWantsW(conn)) {
         ClearSSLRWantsW(conn);
         conn_mod_write_sendq(conn->mod_fd, conn);
-        if(IsDead(conn))
-            return;
     }
 
     while(1) {
@@ -567,13 +517,13 @@ conn_mod_read_cb(rb_fde_t *fd, void *data)
 
         length = rb_read(conn->mod_fd, inbuf, sizeof(inbuf));
 
-        if(length == 0 || (length < 0 && !rb_ignore_errno(errno))) {
-            if(length == 0) {
-                close_conn(conn, WAIT_PLAIN, "%s", remote_closed);
-                return;
-            }
+        if(length == 0) {
+            close_conn(conn, WAIT_PLAIN, "%s", remote_closed);
+            return;
+        }
 
-            if(IsSSL(conn) && length == RB_RW_SSL_ERROR)
+        if((length < 0 && !rb_ignore_errno(errno))) {
+            if(length == RB_RW_SSL_ERROR)
                 err = rb_get_ssl_strerror(conn->mod_fd);
             else
                 err = strerror(errno);
@@ -592,12 +542,7 @@ conn_mod_read_cb(rb_fde_t *fd, void *data)
             return;
         }
         conn->mod_in += length;
-#ifdef HAVE_LIBZ
-        if(IsZip(conn))
-            common_zlib_inflate(conn, inbuf, length);
-        else
-#endif
-            conn_plain_write(conn, inbuf, length);
+        conn_plain_write(conn, inbuf, length);
     }
 }
 
@@ -618,7 +563,6 @@ conn_plain_write_sendq(rb_fde_t *fd, void *data)
         return;
     }
 
-
     if(rb_rawbuf_length(conn->plainbuf_out) > 0)
         rb_setselect(conn->plain_fd, RB_SELECT_WRITE, conn_plain_write_sendq, conn);
     else
@@ -638,6 +582,7 @@ maxconn(void)
     return MAXCONNECTIONS;
 }
 
+
 static void
 ssl_process_accept_cb(rb_fde_t *F, int status, struct sockaddr *addr, rb_socklen_t len, void *data)
 {
@@ -646,12 +591,13 @@ ssl_process_accept_cb(rb_fde_t *F, int status, struct sockaddr *addr, rb_socklen
 
     if(status == RB_OK) {
         if(rb_get_ssl_certfp(F, &buf[5])) {
+            /* Send client certificate fingerprint */
             buf[0] = 'F';
             int32_to_buf(&buf[1], conn->id);
-            mod_cmd_write_queue(conn->ctl, buf, sizeof buf);
+            mod_cmd_write_queue(conn->ctl, buf, sizeof(buf));
         }
-        conn_mod_read_cb(conn->mod_fd, conn);
-        conn_plain_read_cb(conn->plain_fd, conn);
+        SetSSLHandshakeDone(conn);
+        conn_handshake_accept(conn);
         return;
     }
     /* ircd doesn't care about the reason for this */
@@ -671,8 +617,8 @@ ssl_process_connect_cb(rb_fde_t *F, int status, void *data)
             int32_to_buf(&buf[1], conn->id);
             mod_cmd_write_queue(conn->ctl, buf, sizeof buf);
         }
-        conn_mod_read_cb(conn->mod_fd, conn);
-        conn_plain_read_cb(conn->plain_fd, conn);
+        SetSSLHandshakeDone(conn);
+        conn_handshake_connect(conn);
     } else if(status == RB_ERR_TIMEOUT)
         close_conn(conn, WAIT_PLAIN, "SSL handshake timed out");
     else if(status == RB_ERROR_SSL)
@@ -681,162 +627,85 @@ ssl_process_connect_cb(rb_fde_t *F, int status, void *data)
         close_conn(conn, WAIT_PLAIN, "SSL handshake failed");
 }
 
-
-static void
-cleanup_bad_message(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
-{
-    int i;
-
-    /* XXX should log this somehow */
-    for (i = 0; i < ctlb->nfds; i++)
-        rb_close(ctlb->F[i]);
-}
-
 static void
 ssl_process_accept(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
 {
     conn_t *conn;
-    int32_t id;
-
-    conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
+    int32_t id, type;
 
     id = buf_to_int32(&ctlb->buf[1]);
+    type = buf_to_int32(&ctlb->buf[4]);
+
+    conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
+    conn->id = id;
+    conn->type = type;
 
     if(id >= 0)
-        conn_add_id_hash(conn, id);
-    SetSSL(conn);
+        conn_add_id_hash(conn);
 
-    if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN) {
-
+    if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->mod_fd, RB_FD_SOCKET);
-    }
-    if(rb_get_type(conn->mod_fd) == RB_FD_UNKNOWN)
+
+    if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->plain_fd, RB_FD_SOCKET);
 
-    rb_ssl_start_accepted(ctlb->F[0], ssl_process_accept_cb, conn, 10);
+    conn_handshake_accept(conn);
 }
 
 static void
 ssl_process_connect(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
 {
     conn_t *conn;
-    int32_t id;
-    conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
+    int32_t id, type;
 
     id = buf_to_int32(&ctlb->buf[1]);
+    type = buf_to_int32(&ctlb->buf[4]);
+
+    conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
+    conn->id = id;
+    conn->type = type;
 
     if(id >= 0)
-        conn_add_id_hash(conn, id);
-    SetSSL(conn);
+        conn_add_id_hash(conn);
 
-    if(rb_get_type(conn->mod_fd) == RB_FD_UNKNOWN)
+    if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->mod_fd, RB_FD_SOCKET);
 
-    if(rb_get_type(conn->mod_fd) == RB_FD_UNKNOWN)
+    if(rb_get_type(conn->mod_fd) & RB_FD_UNKNOWN)
         rb_set_type(conn->plain_fd, RB_FD_SOCKET);
 
-
-    rb_ssl_start_connected(ctlb->F[0], ssl_process_connect_cb, conn, 10);
+    conn_handshake_connect(conn);
 }
 
 static void
-process_stats(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
+conn_handshake_accept(conn_t * conn)
 {
-    char outstat[512];
-    conn_t *conn;
-    const char *odata;
-    int32_t id;
-
-    id = buf_to_int32(&ctlb->buf[1]);
-
-    if(id < 0)
+    if(IsSSL(conn) && !IsSSLHandshakeDone(conn)) {
+        rb_ssl_start_accepted(conn->mod_fd, ssl_process_accept_cb, conn, 10);
         return;
+    }
 
-    odata = &ctlb->buf[5];
-    conn = conn_find_by_id(id);
+    conn_ready(conn);
+}
 
-    if(conn == NULL)
+static void
+conn_handshake_connect(conn_t * conn)
+{
+    if(IsSSL(conn) && !IsSSLHandshakeDone(conn)) {
+        rb_ssl_start_connected(conn->mod_fd, ssl_process_connect_cb, conn, 10);
         return;
+    }
 
-    rb_snprintf(outstat, sizeof(outstat), "S %s %llu %llu %llu %llu", odata,
-                conn->plain_out, conn->mod_in, conn->plain_in, conn->mod_out);
-    conn->plain_out = 0;
-    conn->plain_in = 0;
-    conn->mod_in = 0;
-    conn->mod_out = 0;
-    mod_cmd_write_queue(ctl, outstat, strlen(outstat) + 1);	/* +1 is so we send the \0 as well */
+    conn_ready(conn);
 }
 
+/* Called when handshaking is done */
 static void
-change_connid(mod_ctl_t *ctl, mod_ctl_buf_t *ctlb)
+conn_ready(conn_t *conn)
 {
-    int32_t id = buf_to_int32(&ctlb->buf[1]);
-    int32_t newid = buf_to_int32(&ctlb->buf[5]);
-    conn_t *conn = conn_find_by_id(id);
-    if(conn->id >= 0)
-        rb_dlinkDelete(&conn->node, connid_hash(conn->id));
-    SetZipSSL(conn);
-    conn->id = newid;
-}
-
-#ifdef HAVE_LIBZ
-static void
-zlib_process(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
-{
-    uint8_t level;
-    size_t recvqlen;
-    size_t hdr = (sizeof(uint8_t) * 2) + sizeof(int32_t);
-    void *recvq_start;
-    z_stream *instream, *outstream;
-    conn_t *conn;
-    int32_t id;
-
-    conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
-    if(rb_get_type(conn->mod_fd) == RB_FD_UNKNOWN)
-        rb_set_type(conn->mod_fd, RB_FD_SOCKET);
-
-    if(rb_get_type(conn->plain_fd) == RB_FD_UNKNOWN)
-        rb_set_type(conn->plain_fd, RB_FD_SOCKET);
-
-    id = buf_to_int32(&ctlb->buf[1]);
-    conn_add_id_hash(conn, id);
-
-    level = (uint8_t)ctlb->buf[5];
-
-    recvqlen = ctlb->buflen - hdr;
-    recvq_start = &ctlb->buf[6];
-
-    SetZip(conn);
-    conn->stream = rb_malloc(sizeof(zlib_stream_t));
-    instream = &((zlib_stream_t *) conn->stream)->instream;
-    outstream = &((zlib_stream_t *) conn->stream)->outstream;
-
-    instream->total_in = 0;
-    instream->total_out = 0;
-    instream->zalloc = (alloc_func) ssld_alloc;
-    instream->zfree = (free_func) ssld_free;
-    instream->data_type = Z_ASCII;
-    inflateInit(&((zlib_stream_t *) conn->stream)->instream);
-
-    outstream->total_in = 0;
-    outstream->total_out = 0;
-    outstream->zalloc = (alloc_func) ssld_alloc;
-    outstream->zfree = (free_func) ssld_free;
-    outstream->data_type = Z_ASCII;
-
-    if(level > 9)
-        level = Z_DEFAULT_COMPRESSION;
-
-    deflateInit(&((zlib_stream_t *) conn->stream)->outstream, level);
-    if(recvqlen > 0)
-        common_zlib_inflate(conn, recvq_start, recvqlen);
-
     conn_mod_read_cb(conn->mod_fd, conn);
     conn_plain_read_cb(conn->plain_fd, conn);
-    return;
-
 }
-#endif
 
 static void
 init_prng(mod_ctl_t * ctl, mod_ctl_buf_t * ctl_buf)
@@ -865,29 +734,8 @@ ssl_new_keys(mod_ctl_t * ctl, mod_ctl_buf_t * ctl_buf)
     if(strlen(dhparam) == 0)
         dhparam = NULL;
 
-    if(!rb_setup_ssl_server(cert, key, dhparam)) {
-        const char *invalid = "I";
-        mod_cmd_write_queue(ctl, invalid, strlen(invalid));
-        return;
-    }
-}
-
-static void
-send_nossl_support(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
-{
-    static const char *nossl_cmd = "N";
-    conn_t *conn;
-    int32_t id;
-
-    if(ctlb != NULL) {
-        conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
-        id = buf_to_int32(&ctlb->buf[1]);
-
-        if(id >= 0)
-            conn_add_id_hash(conn, id);
-        close_conn(conn, WAIT_PLAIN, "libratbox reports no SSL/TLS support");
-    }
-    mod_cmd_write_queue(ctl, nossl_cmd, strlen(nossl_cmd));
+    if(!rb_setup_ssl_server(cert, key, dhparam))
+        send_config_error(ctl);
 }
 
 static void
@@ -898,22 +746,13 @@ send_i_am_useless(mod_ctl_t * ctl)
 }
 
 static void
-send_nozlib_support(mod_ctl_t * ctl, mod_ctl_buf_t * ctlb)
+send_config_error(mod_ctl_t * ctl)
 {
-    static const char *nozlib_cmd = "z";
-    conn_t *conn;
-    int32_t id;
-    if(ctlb != NULL) {
-        conn = make_conn(ctl, ctlb->F[0], ctlb->F[1]);
-        id = buf_to_int32(&ctlb->buf[1]);
-
-        if(id >= 0)
-            conn_add_id_hash(conn, id);
-        close_conn(conn, WAIT_PLAIN, "libratbox reports no zlib support");
-    }
-    mod_cmd_write_queue(ctl, nozlib_cmd, strlen(nozlib_cmd));
+    static const char invalid[] = "I";
+    mod_cmd_write_queue(ctl, invalid, strlen(invalid));
 }
 
+/* Pass queued control message to the apropriate handler */
 static void
 mod_process_cmd_recv(mod_ctl_t * ctl)
 {
@@ -924,71 +763,23 @@ mod_process_cmd_recv(mod_ctl_t * ctl)
         ctl_buf = ptr->data;
 
         switch (*ctl_buf->buf) {
-        case 'A': {
-            if (ctl_buf->nfds != 2 || ctl_buf->buflen != 5) {
-                cleanup_bad_message(ctl, ctl_buf);
-                break;
-            }
 
-            if(!ssl_ok) {
-                send_nossl_support(ctl, ctl_buf);
-                break;
-            }
+        case 'A':
             ssl_process_accept(ctl, ctl_buf);
             break;
-        }
-        case 'C': {
-            if (ctl_buf->nfds != 2 || ctl_buf->buflen != 5) {
-                cleanup_bad_message(ctl, ctl_buf);
-                break;
-            }
 
-            if(!ssl_ok) {
-                send_nossl_support(ctl, ctl_buf);
-                break;
-            }
+        case 'C':
             ssl_process_connect(ctl, ctl_buf);
             break;
-        }
 
-        case 'K': {
-            if(!ssl_ok) {
-                send_nossl_support(ctl, ctl_buf);
-                break;
-            }
+        case 'K':
             ssl_new_keys(ctl, ctl_buf);
             break;
-        }
+
         case 'I':
             init_prng(ctl, ctl_buf);
             break;
-        case 'S': {
-            process_stats(ctl, ctl_buf);
-            break;
-        }
-        case 'Y': {
-            change_connid(ctl, ctl_buf);
-            break;
-        }
 
-#ifdef HAVE_LIBZ
-        case 'Z': {
-            if (ctl_buf->nfds != 2 || ctl_buf->buflen < 6) {
-                cleanup_bad_message(ctl, ctl_buf);
-                break;
-            }
-
-            /* just zlib only */
-            zlib_process(ctl, ctl_buf);
-            break;
-        }
-#else
-
-        case 'Z':
-            send_nozlib_support(ctl, ctl_buf);
-            break;
-
-#endif
         default:
             break;
             /* Log unknown commands */
@@ -1000,8 +791,7 @@ mod_process_cmd_recv(mod_ctl_t * ctl)
 
 }
 
-
-
+/* Accept and queue a control message and its descriptors */
 static void
 mod_read_ctl(rb_fde_t *F, void *data)
 {
@@ -1035,6 +825,7 @@ mod_read_ctl(rb_fde_t *F, void *data)
     rb_setselect(ctl->F, RB_SELECT_READ, mod_read_ctl, ctl);
 }
 
+/* Attempt to write a control message */
 static void
 mod_write_ctl(rb_fde_t *F, void *data)
 {
@@ -1063,32 +854,17 @@ mod_write_ctl(rb_fde_t *F, void *data)
         rb_setselect(ctl->F, RB_SELECT_WRITE, mod_write_ctl, ctl);
 }
 
-
-static void
-read_pipe_ctl(rb_fde_t *F, void *data)
-{
-    int retlen;
-    while((retlen = rb_read(F, inbuf, sizeof(inbuf))) > 0) {
-        ;;		/* we don't do anything with the pipe really, just care if the other process dies.. */
-    }
-    if(retlen == 0 || (retlen < 0 && !rb_ignore_errno(errno)))
-        exit(0);
-    rb_setselect(F, RB_SELECT_READ, read_pipe_ctl, NULL);
-
-}
-
 int
 main(int argc, char **argv)
 {
-    const char *s_ctlfd, *s_pipe, *s_pid;
-    int ctlfd, pipefd, x, maxfd;
+    const char *s_ctlfd, *s_pid;
+    int ctlfd, x, maxfd;
     maxfd = maxconn();
 
     s_ctlfd = getenv("CTL_FD");
-    s_pipe = getenv("CTL_PIPE");
     s_pid = getenv("CTL_PPID");
 
-    if(s_ctlfd == NULL || s_pipe == NULL || s_pid == NULL) {
+    if(s_ctlfd == NULL || s_pid == NULL) {
         fprintf(stderr,
                 "This is ircd-ratbox ssld.  You know you aren't supposed to run me directly?\n");
         fprintf(stderr,
@@ -1098,22 +874,21 @@ main(int argc, char **argv)
     }
 
     ctlfd = atoi(s_ctlfd);
-    pipefd = atoi(s_pipe);
     ppid = atoi(s_pid);
-    x = 0;
+
 #ifndef _WIN32
     for(x = 0; x < maxfd; x++) {
-        if(x != ctlfd && x != pipefd && x > 2)
+        if(x != ctlfd && x > 2)
             close(x);
     }
     x = open("/dev/null", O_RDWR);
 
     if(x >= 0) {
-        if(ctlfd != 0 && pipefd != 0)
+        if(ctlfd != 0)
             dup2(x, 0);
-        if(ctlfd != 1 && pipefd != 1)
+        if(ctlfd != 1)
             dup2(x, 1);
-        if(ctlfd != 2 && pipefd != 2)
+        if(ctlfd != 2)
             dup2(x, 2);
         if(x > 2)
             close(x);
@@ -1125,14 +900,11 @@ main(int argc, char **argv)
     ssl_ok = rb_supports_ssl();
     mod_ctl = rb_malloc(sizeof(mod_ctl_t));
     mod_ctl->F = rb_open(ctlfd, RB_FD_SOCKET, "ircd control socket");
-    mod_ctl->F_pipe = rb_open(pipefd, RB_FD_PIPE, "ircd pipe");
     rb_set_nb(mod_ctl->F);
-    rb_set_nb(mod_ctl->F_pipe);
     rb_event_addish("clean_dead_conns", clean_dead_conns, NULL, 10);
     rb_event_add("check_handshake_flood", check_handshake_flood, NULL, 10);
-    read_pipe_ctl(mod_ctl->F_pipe, NULL);
     mod_read_ctl(mod_ctl->F, mod_ctl);
-    if(!zlib_ok && !ssl_ok) {
+    if(!ssl_ok) {
         /* this is really useless... */
         send_i_am_useless(mod_ctl);
         /* sleep until the ircd kills us */
@@ -1140,10 +912,6 @@ main(int argc, char **argv)
         exit(1);
     }
 
-    if(!zlib_ok)
-        send_nozlib_support(mod_ctl, NULL);
-    if(!ssl_ok)
-        send_nossl_support(mod_ctl, NULL);
     rb_lib_loop(0);
     return 0;
 }

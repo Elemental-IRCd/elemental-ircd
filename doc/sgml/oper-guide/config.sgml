@@ -695,16 +695,6 @@ connect "<replaceable>name</replaceable>" {
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry>
-	    <term>compressed</term>
-	    <listitem>
-	      <para>Ziplinks should be used with this server connection.
-	      This compresses traffic using zlib, saving some bandwidth
-	      and speeding up netbursts.</para>
-	      <para>If you have trouble setting up a link, you should
-	      turn this off as it often hides error messages.</para>
-	    </listitem>
-	  </varlistentry>
-	  <varlistentry>
 	    <term>topicburst</term>
 	    <listitem>
 	      <para>Topics should be bursted to this server.</para>

@@ -239,9 +239,6 @@ free_local_client(struct Client *client_p)
     if(IsSSL(client_p))
         ssld_decrement_clicount(client_p->localClient->ssl_ctl);
 
-    if(IsCapable(client_p, CAP_ZIP))
-        ssld_decrement_clicount(client_p->localClient->z_ctl);
-
     rb_bh_free(lclient_heap, client_p->localClient);
     client_p->localClient = NULL;
 }
