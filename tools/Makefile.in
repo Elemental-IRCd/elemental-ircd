@@ -29,7 +29,7 @@ libexecdir	= @libexecdir@
 sysconfdir	= @sysconfdir@
 localstatedir	= @localstatedir@
 
-PROGS		= viconf mkpasswd convertilines convertklines genssl.sh
+PROGS		= viconf mkpasswd genssl.sh
 
 all: $(PROGS)
 
@@ -40,12 +40,6 @@ mkpasswd: mkpasswd.c
 
 viconf: viconf.c ../include/setup.h ../include/config.h
 	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) viconf.c -o viconf $(IRCDLIBS)
-
-convertilines: convertilines.c
-	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) convertilines.c -o convertilines $(IRCDLIBS)
-
-convertklines: convertklines.c
-	$(CC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) convertklines.c -o convertklines $(IRCDLIBS)
 
 genssl.sh: genssl.sh.in
 	cd .. && ./config.status tools/genssl.sh && ./config.status tools/genssl.sh_chmod
