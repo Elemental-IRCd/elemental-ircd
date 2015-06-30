@@ -12,7 +12,7 @@ before-install:
 - sudo apt-get update
 install:
 - sudo apt-get install build-essential libssl-dev flex bison astyle
-script: "./configure && make"
+script: "./configure --enable-assert && make"
 
 addons:
   coverity_scan:
@@ -20,6 +20,6 @@ addons:
       name: "Elemental-IRCd/elemental-ircd"
       description: "Continuation of ShadowIRCD to meet people's needs"
     notification_email: xena@yolo-swag.com
-    build_command_prepend: ./configure
+    build_command_prepend: ./configure --enable-assert
     build_command: make
     branch_pattern: coverity_scan
