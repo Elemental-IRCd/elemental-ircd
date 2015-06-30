@@ -11,7 +11,7 @@ env:
 before-install:
 - sudo apt-get update
 install:
-- sudo apt-get install build-essential libssl-dev flex bison astyle
+- sudo apt-get install build-essential libssl-dev flex bison astyle libsqlite3-dev
 script: "./configure --enable-assert && make"
 
 addons:
