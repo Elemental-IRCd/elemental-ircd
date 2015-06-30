@@ -13,6 +13,7 @@ Debian packages:
  - `flex`
  - `bison`
  - `build-essential`
+ - `libsqlite3-dev`
 
 ```
 Cassy | If you put something on a platform which cannot support it
