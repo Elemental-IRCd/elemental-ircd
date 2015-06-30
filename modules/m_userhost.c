@@ -62,7 +62,7 @@ m_userhost(struct Client *client_p, struct Client *source_p, int parc, const cha
     int cur_len;
     int rl;
 
-    cur_len = rb_sprintf(buf, form_str(RPL_USERHOST), me.name, source_p->name, "");
+    cur_len = sprintf(buf, form_str(RPL_USERHOST), me.name, source_p->name, "");
     t = buf + cur_len;
 
     for (i = 1; i <= 5; i++) {
@@ -77,14 +77,14 @@ m_userhost(struct Client *client_p, struct Client *source_p, int parc, const cha
              * is.  Useful for things like NAT, and dynamic dial-up users.
              */
             if(MyClient(target_p) && (target_p == source_p)) {
-                rl = rb_sprintf(response, "%s%s=%c%s@%s ",
+                rl = sprintf(response, "%s%s=%c%s@%s ",
                                 target_p->name,
                                 IsOper(target_p) ? "*" : "",
                                 (target_p->user->away) ? '-' : '+',
                                 target_p->username,
                                 target_p->sockhost);
             } else {
-                rl = rb_sprintf(response, "%s%s=%c%s@%s ",
+                rl = sprintf(response, "%s%s=%c%s@%s ",
                                 target_p->name,
                                 IsOper(target_p) ? "*" : "",
                                 (target_p->user->away) ? '-' : '+',
@@ -92,7 +92,7 @@ m_userhost(struct Client *client_p, struct Client *source_p, int parc, const cha
             }
 
             if((rl + cur_len) < (BUFSIZE - 10)) {
-                rb_sprintf(t, "%s", response);
+                sprintf(t, "%s", response);
                 t += rl;
                 cur_len += rl;
             } else

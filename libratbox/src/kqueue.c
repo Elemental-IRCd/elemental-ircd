@@ -5,7 +5,7 @@
  *  Copyright (C) 1990 Jarkko Oikarinen and University of Oulu, Co Center
  *  Copyright (C) 1996-2002 Hybrid Development Team
  *  Copyright (C) 2001 Adrian Chadd <adrian@creative.net.au>
- *  Copyright (C) 2002-2005 ircd-ratbox development team
+ *  Copyright (C) 2002-2012 ircd-ratbox development team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -145,7 +145,12 @@ rb_init_netio_kqueue(void)
     kqmax = getdtablesize();
     kqlst = rb_malloc(sizeof(struct kevent) * kqmax);
     kqout = rb_malloc(sizeof(struct kevent) * kqmax);
-    rb_open(kq, RB_FD_UNKNOWN, "kqueue fd");
+	if(rb_open(kq, RB_FD_UNKNOWN, "kqueue fd") == NULL)
+	{
+		rb_lib_log("rb_init_netio_kqueue: unable to rb_open kqueue fd");
+		return -1;
+	}
+	
     zero_timespec.tv_sec = 0;
     zero_timespec.tv_nsec = 0;
 

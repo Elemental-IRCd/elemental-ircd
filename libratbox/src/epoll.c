@@ -5,7 +5,7 @@
  *  Copyright (C) 1990 Jarkko Oikarinen and University of Oulu, Co Center
  *  Copyright (C) 1996-2002 Hybrid Development Team
  *  Copyright (C) 2001 Adrian Chadd <adrian@creative.net.au>
- *  Copyright (C) 2002-2005 ircd-ratbox development team
+ *  Copyright (C) 2002-2012 ircd-ratbox development team
  *  Copyright (C) 2002 Aaron Sethman <androsyn@ratbox.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -74,7 +74,12 @@ rb_init_netio_epoll(void)
     if(ep_info->ep < 0) {
         return -1;
     }
-    rb_open(ep_info->ep, RB_FD_UNKNOWN, "epoll file descriptor");
+
+	if(rb_open(ep_info->ep, RB_FD_UNKNOWN, "epoll file descriptor") == NULL)
+	{
+		rb_lib_log("Unable to rb_open epoll fd");
+		return -1;
+	}
     ep_info->pfd = rb_malloc(sizeof(struct epoll_event) * ep_info->pfd_size);
 
     return 0;
@@ -454,7 +459,7 @@ rb_epoll_sched_event_timerfd(struct ev_entry *event, int when)
         close(fd);
         return 0;
     }
-    rb_snprintf(buf, sizeof(buf), "timerfd: %s", event->name);
+    snprintf(buf, sizeof(buf), "timerfd: %s", event->name);
     F = rb_open(fd, RB_FD_UNKNOWN, buf);
     rb_set_nb(F);
     event->comm_ptr = F;

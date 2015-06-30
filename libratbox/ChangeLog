@@ -1,3 +1,193 @@
+jilles      2013/03/05 23:32:36 UTC	(20130305_0-27444)
+  Log:
+  Add necessary casts to unsigned char for isXXX() and toXXX().
+  
+
+  Modified:
+	libratbox/trunk/src/commio.c (File Modified) 
+	libratbox/trunk/src/snprintf.c (File Modified) 
+
+
+dubkat      2012/03/16 23:11:44 UTC	(20120316_1-27383)
+  Log:
+  more copyright changes
+
+  Modified:
+	libratbox/trunk/src/version.c.SH (File Modified) 
+
+
+dubkat      2012/03/16 06:26:10 UTC	(20120316_0-27375)
+  Log:
+  House cleaning - update our copyright notices
+
+  Modified:
+	libratbox/trunk/include/commio-int.h (File Modified) 
+	libratbox/trunk/include/commio-ssl.h (File Modified) 
+	libratbox/trunk/include/event-int.h (File Modified) 
+	libratbox/trunk/include/rb_balloc.h (File Modified) 
+	libratbox/trunk/include/rb_commio.h (File Modified) 
+	libratbox/trunk/include/rb_event.h (File Modified) 
+	libratbox/trunk/include/rb_linebuf.h (File Modified) 
+	libratbox/trunk/include/rb_memory.h (File Modified) 
+	libratbox/trunk/include/rb_rawbuf.h (File Modified) 
+	libratbox/trunk/include/rb_snprintf.h (File Modified) 
+	libratbox/trunk/include/rb_tools.h (File Modified) 
+	libratbox/trunk/src/balloc.c (File Modified) 
+	libratbox/trunk/src/commio.c (File Modified) 
+	libratbox/trunk/src/devpoll.c (File Modified) 
+	libratbox/trunk/src/epoll.c (File Modified) 
+	libratbox/trunk/src/event.c (File Modified) 
+	libratbox/trunk/src/gnutls.c (File Modified) 
+	libratbox/trunk/src/kqueue.c (File Modified) 
+	libratbox/trunk/src/linebuf.c (File Modified) 
+	libratbox/trunk/src/nossl.c (File Modified) 
+	libratbox/trunk/src/openssl.c (File Modified) 
+	libratbox/trunk/src/poll.c (File Modified) 
+	libratbox/trunk/src/rawbuf.c (File Modified) 
+	libratbox/trunk/src/rb_memory.c (File Modified) 
+	libratbox/trunk/src/select.c (File Modified) 
+	libratbox/trunk/src/tools.c (File Modified) 
+	libratbox/trunk/src/unix.c (File Modified) 
+	libratbox/trunk/src/version.c.SH (File Modified) 
+	libratbox/trunk/src/win32.c (File Modified) 
+
+
+jilles      2011/10/21 15:35:00 UTC	(20111021_0-27263)
+  Log:
+  Add AC_LANG_SOURCE where new autoconf wants it.
+  
+
+  Modified:
+	libratbox/trunk/configure.ac (File Modified) 
+
+
+androsyn    2011/05/12 14:45:54 UTC	(20110512_0-27193)
+  Log:
+  call GCC_STACK_PROTECT_LIB so that libratbox gets linked against it on platforms that need it
+
+  Modified:
+	libratbox/trunk/configure (File Modified) 
+	libratbox/trunk/configure.ac (File Modified) 
+
+
+androsyn    2010/12/27 22:09:24 UTC	(20101227_0-27163)
+  Log:
+  return on RB_ERROR_SSL, do not do two callbacks
+
+  Modified:
+	libratbox/trunk/src/gnutls.c (File Modified) 
+
+
+androsyn    2010/10/14 18:46:35 UTC	(20101014_0-27110)
+  Log:
+  Rerun libtoolize/autoconf and make autoconf check for /bin/cp
+  
+
+  Modified:
+	libratbox/trunk/Makefile.in (File Modified) 
+	libratbox/trunk/aclocal.m4 (File Modified) 
+	libratbox/trunk/configure (File Modified) 
+	libratbox/trunk/configure.ac (File Modified) 
+	libratbox/trunk/ltmain.sh (File Modified) 
+	libratbox/trunk/src/Makefile.in (File Modified) 
+
+
+androsyn    2010/10/08 13:33:44 UTC	(20101008_0-27106)
+  Log:
+  Remove rtsigio code.  It was always just buggy enough to cause issues.
+  
+  
+
+  Modified:
+	libratbox/trunk/src/commio.c (File Modified) 
+	libratbox/trunk/src/sigio.c (File Deleted) 
+
+
+androsyn    2010/09/25 20:47:43 UTC	(20100925_0-27080)
+  Log:
+  add rb_dlinkMoveListTail which rserv will need
+
+  Modified:
+	libratbox/trunk/include/rb_tools.h (File Modified) 
+
+
+androsyn    2009/06/22 03:28:05 UTC	(20090622_0-26602)
+  Log:
+  Add support for %m to sprintf and friends.  This basically does %s strerror(errno).  
+  Based on the GNU extension...gcc format string checking is already aware of it too so.
+  
+  
+
+  Modified:
+	libratbox/trunk/src/snprintf.c (File Modified) 
+
+
+androsyn    2009/05/15 22:07:36 UTC	(20090515_0-26545)
+  Log:
+  remove check for libssp
+
+  Modified:
+	libratbox/trunk/configure (File Modified) 
+	libratbox/trunk/configure.ac (File Modified) 
+
+
+androsyn    2009/05/13 15:22:46 UTC	(20090513_2-26521)
+  Log:
+  add some logic to give warnings when certain functions return values are not checked and fix some cases of these values not being checked
+
+  Modified:
+	libratbox/trunk/include/commio-int.h (File Modified) 
+	libratbox/trunk/include/ratbox_lib.h (File Modified) 
+	libratbox/trunk/include/rb_commio.h (File Modified) 
+	libratbox/trunk/include/rb_helper.h (File Modified) 
+	libratbox/trunk/src/devpoll.c (File Modified) 
+	libratbox/trunk/src/epoll.c (File Modified) 
+	libratbox/trunk/src/kqueue.c (File Modified) 
+
+
+androsyn    2009/05/13 15:16:39 UTC	(20090513_1-26519)
+  Log:
+  forgot to commit libratbox_config.h.in
+
+  Modified:
+	libratbox/trunk/include/libratbox_config.h.in (File Modified) 
+
+
+androsyn    2009/05/13 01:46:48 UTC	(20090513_0-26513)
+  Log:
+  add checks for -fstack-protector support
+
+  Modified:
+	libratbox/trunk/acinclude.m4 (File Modified) 
+	libratbox/trunk/configure (File Modified) 
+	libratbox/trunk/configure.ac (File Modified) 
+
+
+androsyn    2009/03/10 18:54:50 UTC	(20090310_0-26475)
+  Log:
+  add the approriate shared library opening stuff for openssl
+
+  Modified:
+	libratbox/trunk/configure (File Modified) 
+	libratbox/trunk/configure.ac (File Modified) 
+
+
+androsyn    2009/01/12 03:55:33 UTC	(20090112_0-26393)
+  Log:
+  its useful if you actually *set* the time
+
+  Modified:
+	libratbox/trunk/src/sigio.c (File Modified) 
+
+
+androsyn    2008/12/22 00:52:25 UTC	(20081222_0-26353)
+  Log:
+  change a free case to rb_free
+
+  Modified:
+	libratbox/trunk/src/ratbox_lib.c (File Modified) 
+
+
 androsyn    2008/12/13 03:36:00 UTC	(20081213_1-26296)
   Log:
   fix a gnutls related double free

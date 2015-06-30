@@ -4,7 +4,7 @@
  *
  *  Copyright (C) 1990 Jarkko Oikarinen and University of Oulu, Co Center
  *  Copyright (C) 1996-2002 Hybrid Development Team
- *  Copyright (C) 2002-2005 ircd-ratbox development team
+ *  Copyright (C) 2002-2012 ircd-ratbox development team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,8 +27,10 @@
 # error "Do not use tools.h directly"
 #endif
 
-#ifndef __TOOLS_H__
-#define __TOOLS_H__
+#ifndef __RB_TOOLS_H__
+#define __RB_TOOLS_H__
+
+#define RB_DLINK_EMPTY { NULL, NULL, 0 }
 
 size_t rb_strlcpy(char *dst, const char *src, size_t siz);
 size_t rb_strlcat(char *dst, const char *src, size_t siz);
@@ -334,4 +336,34 @@ rb_dlinkMoveList(rb_dlink_list *from, rb_dlink_list *to)
     from->length = 0;
 }
 
-#endif /* __TOOLS_H__ */
+static inline void
+rb_dlinkMoveListTail(rb_dlink_list * from, rb_dlink_list * to)
+{
+	/* There are three cases */
+	/* case one, nothing in from list */
+	if(from->head == NULL)
+		return;
+
+	/* case two, nothing in to list */
+	if(to->head == NULL)
+	{
+		to->head = from->head;
+		to->tail = from->tail;
+		from->head = from->tail = NULL;
+		to->length = from->length;
+		from->length = 0;
+		return;
+	}
+
+	/* third case play with the links */
+	from->head->prev = to->tail;
+	to->tail->next = from->head;
+	to->tail = from->tail;
+	to->length += from->length;
+	from->head = from->tail = NULL;
+	from->length = 0;
+}
+
+
+
+#endif /* __RB_TOOLS_H__ */

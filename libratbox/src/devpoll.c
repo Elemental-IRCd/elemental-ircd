@@ -5,7 +5,7 @@
  *  Copyright (C) 1990 Jarkko Oikarinen and University of Oulu, Co Center
  *  Copyright (C) 1996-2002 Hybrid Development Team
  *  Copyright (C) 2001 Adrian Chadd <adrian@creative.net.au>
- *  Copyright (C) 2002-2005 ircd-ratbox development team
+ *  Copyright (C) 2002-2012 ircd-ratbox development team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -145,7 +145,11 @@ rb_init_netio_devpoll(void)
     }
     maxfd = getdtablesize() - 2;	/* This makes more sense than HARD_FDLIMIT */
     fdmask = rb_malloc(sizeof(fdmask) * maxfd + 1);
-    rb_open(dpfd, RB_FD_UNKNOWN, "/dev/poll file descriptor");
+	if(rb_open(dpfd, RB_FD_UNKNOWN, "/dev/poll file descriptor") == NULL)
+	{
+		rb_lib_log("rb_init_netio_devpoll: Unable to rb_open /dev/poll fd");
+		return -1;
+	}
     return 0;
 }
 

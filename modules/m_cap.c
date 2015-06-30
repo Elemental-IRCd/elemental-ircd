@@ -174,7 +174,7 @@ clicap_generate(struct Client *source_p, const char *subcmd, int flags, int clea
     int curlen, mlen;
     size_t i;
 
-    mlen = rb_sprintf(buf, ":%s CAP %s %s",
+    mlen = sprintf(buf, ":%s CAP %s %s",
                       me.name,
                       EmptyString(source_p->name) ? "*" : source_p->name,
                       subcmd);
@@ -238,7 +238,7 @@ clicap_generate(struct Client *source_p, const char *subcmd, int flags, int clea
             }
         }
 
-        curlen = rb_sprintf(p, "%s ", clicap_list[i].name);
+        curlen = sprintf(p, "%s ", clicap_list[i].name);
         p += curlen;
         buflen += curlen;
     }
@@ -346,7 +346,7 @@ cap_req(struct Client *source_p, const char *arg)
     if(EmptyString(arg))
         return;
 
-    buflen = rb_snprintf(buf, sizeof(buf), ":%s CAP %s ACK",
+    buflen = snprintf(buf, sizeof(buf), ":%s CAP %s ACK",
                          me.name, EmptyString(source_p->name) ? "*" : source_p->name);
 
     pbuf[0][0] = '\0';

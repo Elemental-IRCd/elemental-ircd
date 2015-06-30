@@ -226,7 +226,7 @@ main(int argc, char *argv[])
 
     /* checking for our files to import or export */
     for(i = 0; i < LAST_BANDB_TYPE; i++) {
-        rb_snprintf(conf, sizeof(conf), "%s/%s.conf%s",
+        snprintf(conf, sizeof(conf), "%s/%s.conf%s",
                     etc, bandb_table[i], bandb_suffix[i]);
 
         if(flag.import && flag.pretend == NO)
@@ -286,11 +286,11 @@ export_config(const char *conf, int id)
         return;
 
     if(strstr(conf, ".perm") != 0)
-        rb_snprintf(sql, sizeof(sql),
+        snprintf(sql, sizeof(sql),
                     "SELECT DISTINCT mask1,mask2,reason,oper,time FROM %s WHERE perm = 1 ORDER BY time",
                     bandb_table[id]);
     else
-        rb_snprintf(sql, sizeof(sql),
+        snprintf(sql, sizeof(sql),
                     "SELECT DISTINCT mask1,mask2,reason,oper,time FROM %s WHERE perm = 0 ORDER BY time",
                     bandb_table[id]);
 
@@ -315,7 +315,7 @@ export_config(const char *conf, int id)
         switch (id) {
         case BANDB_DLINE:
         case BANDB_DLINE_PERM:
-            rb_snprintf(buf, sizeof(buf),
+            snprintf(buf, sizeof(buf),
                         "\"%s\",\"%s\",\"\",\"%s\",\"%s\",%s\n",
                         table.row[j][mask1],
                         mangle_reason(table.row[j][reason]),
@@ -325,7 +325,7 @@ export_config(const char *conf, int id)
 
         case BANDB_XLINE:
         case BANDB_XLINE_PERM:
-            rb_snprintf(buf, sizeof(buf),
+            snprintf(buf, sizeof(buf),
                         "\"%s\",\"0\",\"%s\",\"%s\",%s\n",
                         escape_quotes(table.row[j][mask1]),
                         mangle_reason(table.row[j][reason]),
@@ -334,7 +334,7 @@ export_config(const char *conf, int id)
 
         case BANDB_RESV:
         case BANDB_RESV_PERM:
-            rb_snprintf(buf, sizeof(buf),
+            snprintf(buf, sizeof(buf),
                         "\"%s\",\"%s\",\"%s\",%s\n",
                         table.row[j][mask1],
                         mangle_reason(table.row[j][reason]),
@@ -343,7 +343,7 @@ export_config(const char *conf, int id)
 
 
         default:	/* Klines */
-            rb_snprintf(buf, sizeof(buf),
+            snprintf(buf, sizeof(buf),
                         "\"%s\",\"%s\",\"%s\",\"\",\"%s\",\"%s\",%s\n",
                         table.row[j][mask1], table.row[j][mask2],
                         mangle_reason(table.row[j][reason]),
@@ -476,9 +476,9 @@ import_config(const char *conf, int id)
 
         /* append operreason_field to reason_field */
         if(!EmptyString(f_oreason))
-            rb_snprintf(newreason, sizeof(newreason), "%s | %s", f_reason, f_oreason);
+            snprintf(newreason, sizeof(newreason), "%s | %s", f_reason, f_oreason);
         else
-            rb_snprintf(newreason, sizeof(newreason), "%s", f_reason);
+            snprintf(newreason, sizeof(newreason), "%s", f_reason);
 
         if(flag.pretend == NO) {
             if(flag.dupes_ok == NO)
@@ -811,7 +811,7 @@ bt_smalldate(const char *string)
     lt = gmtime(&t);
     if(lt == NULL)
         return NULL;
-    rb_snprintf(buf, sizeof(buf), "%d/%d/%d %02d.%02d",
+    snprintf(buf, sizeof(buf), "%d/%d/%d %02d.%02d",
                 lt->tm_year + 1900, lt->tm_mon + 1, lt->tm_mday, lt->tm_hour, lt->tm_min);
     return buf;
 }

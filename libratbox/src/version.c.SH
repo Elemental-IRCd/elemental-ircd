@@ -31,7 +31,7 @@ $spitshell >version.c <<!SUB!THIS!
  *   src/version.c
  *   
  *   Copyright (C) 1990 Chelsea Ashley Dyerman
- *   Copyright (C) 2008 ircd-ratbox development team
+ *   Copyright (C) 2008-2012 ircd-ratbox development team
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ const char *libratbox_infotext[] =
   "Based on the original code written by Jarkko Oikarinen",
   "Copyright 1988, 1989, 1990, 1991 University of Oulu, Computing Center",
   "Copyright (c) 1996-2001 Hybrid Development Team", 
-  "Copyright (c) 2002-2008 ircd-ratbox Development Team",
+  "Copyright (c) 2002-2012 ircd-ratbox Development Team",
   "",
   "This program is free software; you can redistribute it and/or",
   "modify it under the terms of the GNU General Public License as",

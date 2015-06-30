@@ -4,7 +4,7 @@
  *
  *  Copyright (C) 1990 Jarkko Oikarinen and University of Oulu, Co Center
  *  Copyright (C) 1996-2002 Hybrid Development Team
- *  Copyright (C) 2002-2007 ircd-ratbox development team
+ *  Copyright (C) 2002-2012 ircd-ratbox development team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ typedef struct timer_data {
 
 extern rb_dlink_list *rb_fd_table;
 
-static inline rb_fde_t *
+static inline __rb_must_check rb_fde_t *
 rb_find_fd(int fd)
 {
     rb_dlink_list *hlist;
@@ -185,17 +185,6 @@ void rb_setselect_devpoll(rb_fde_t *F, unsigned int type, PF * handler, void *cl
 int rb_init_netio_devpoll(void);
 int rb_select_devpoll(long);
 int rb_setup_fd_devpoll(rb_fde_t *F);
-
-/* sigio versions */
-void rb_setselect_sigio(rb_fde_t *F, unsigned int type, PF * handler, void *client_data);
-int rb_init_netio_sigio(void);
-int rb_select_sigio(long);
-int rb_setup_fd_sigio(rb_fde_t *F);
-
-void rb_sigio_init_event(void);
-int rb_sigio_sched_event(struct ev_entry *event, int when);
-void rb_sigio_unsched_event(struct ev_entry *event);
-int rb_sigio_supports_event(void);
 
 
 /* ports versions */

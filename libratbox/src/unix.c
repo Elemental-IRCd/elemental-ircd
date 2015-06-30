@@ -3,7 +3,7 @@
  *  unix.c: various unix type functions
  *
  *  Copyright (C) 1990 Jarkko Oikarinen and University of Oulu, Co Center
- *  Copyright (C) 2005 ircd-ratbox development team
+ *  Copyright (C) 2005-2012 ircd-ratbox development team
  *  Copyright (C) 2005 Aaron Sethman <androsyn@ratbox.org>
  *
  *  This program is free software; you can redistribute it and/or modify

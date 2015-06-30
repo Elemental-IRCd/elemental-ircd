@@ -825,15 +825,15 @@ void irc_dictionary_stats(struct Dictionary *dict, void (*cb)(const char *line, 
     s_assert(dict != NULL);
 
     if (dict->id != NULL)
-        rb_snprintf(str, sizeof str, "Dictionary stats for %s (%d)",
+        snprintf(str, sizeof str, "Dictionary stats for %s (%d)",
                     dict->id, dict->count);
     else
-        rb_snprintf(str, sizeof str, "Dictionary stats for <%p> (%d)",
+        snprintf(str, sizeof str, "Dictionary stats for <%p> (%d)",
                     (void *)dict, dict->count);
     cb(str, privdata);
     maxdepth = 0;
     sum = stats_recurse(dict->root, 0, &maxdepth);
-    rb_snprintf(str, sizeof str, "Depth sum %d Avg depth %d Max depth %d", sum, sum / dict->count, maxdepth);
+    snprintf(str, sizeof str, "Depth sum %d Avg depth %d Max depth %d", sum, sum / dict->count, maxdepth);
     cb(str, privdata);
     return;
 }

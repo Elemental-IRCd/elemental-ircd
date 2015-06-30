@@ -28,6 +28,7 @@ fi
 AC_PROG_INSTALL
 AC_PROG_EGREP
 AC_PROG_SED
+AC_PATH_PROG(CP, cp)
 
 F77=no
 CXX=no
@@ -53,8 +54,12 @@ AC_PATH_PROG(MV, mv)
 AC_PATH_PROG(LN, ln)
 AC_PATH_PROG(TOUCH, touch)
 AC_LANG(C)
-
+AC_LIBTOOL_DLOPEN
 AC_PROG_LIBTOOL
+
+GCC_STACK_PROTECT_CC
+GCC_STACK_PROTECT_LIB
+
 
 LIBTOOL="$LIBTOOL --silent"
 
@@ -265,7 +270,7 @@ if test "$cf_enable_openssl" != "no" ; then
 	if test ! -z "$cf_openssl_basedir"; then
 		if test -f "${cf_openssl_basedir}/include/openssl/opensslv.h" ; then
 			SSL_CFLAGS="-I${cf_openssl_basedir}/include"
-			SSL_LIBS="-L${cf_openssl_basedir}/lib"
+			SSL_LIBS="-L${cf_openssl_basedir}/lib $lt_cv_dlopen_libs"
 		else
 		dnl OpenSSL wasn't found in the directory specified.  Naughty
 		dnl administrator...
@@ -306,11 +311,12 @@ if test "$cf_enable_openssl" != no; then
 	dnl Check OpenSSL version (must be 0.9.7 or above!)
 	AC_MSG_CHECKING(for OpenSSL 0.9.7 or above)
 	AC_RUN_IFELSE(
-		AC_LANG_PROGRAM(
+		[AC_LANG_PROGRAM(
 	    	[#include <openssl/opensslv.h>
-		#include <stdlib.h>],
+		#include <stdlib.h>
+		],
 		[[if (OPENSSL_VERSION_NUMBER >= 0x00907000)
-		exit(0); else exit(1);]]),
+		exit(0); else exit(1);]])],
 	cf_enable_openssl=yes,
 	cf_enable_openssl=no,
 	cf_enable_openssl=no)
@@ -334,7 +340,7 @@ fi
 if test "$cf_enable_openssl" != no; then
 	CPPFLAGS="$CPPFLAGS $SSL_LIBS"
 	AC_CHECK_LIB(ssl, SSL_read, 
-		[SSL_LIBS="$SSL_LIBS -lssl -lcrypto"],
+		[SSL_LIBS="$SSL_LIBS -lssl -lcrypto $lt_cv_dlopen_libs"],
 		[cf_enable_openssl=no], [-lcrypto])
 fi
 

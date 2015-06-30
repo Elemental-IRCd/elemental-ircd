@@ -2,7 +2,7 @@
  *  libratbox: a library used by ircd-ratbox and other things
  *  openssl.c: openssl related code
  *
- *  Copyright (C) 2007-2008 ircd-ratbox development team
+ *  Copyright (C) 2007-2012 ircd-ratbox development team
  *  Copyright (C) 2007-2008 Aaron Sethman <androsyn@ratbox.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -622,7 +622,7 @@ rb_supports_ssl(void)
 void
 rb_get_ssl_info(char *buf, size_t len)
 {
-    rb_snprintf(buf, len, "Using SSL: %s compiled: 0x%lx, library 0x%lx",
+    snprintf(buf, len, "Using SSL: %s compiled: 0x%lx, library 0x%lx",
                 SSLeay_version(SSLEAY_VERSION),
                 (long)OPENSSL_VERSION_NUMBER, SSLeay());
 }

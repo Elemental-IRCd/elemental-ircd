@@ -2,7 +2,7 @@
  *  libratbox: a library used by ircd-ratbox and other things
  *  nossl.c: ssl stub code
  *
- *  Copyright (C) 2007-2008 ircd-ratbox development team
+ *  Copyright (C) 2007-2012 ircd-ratbox development team
  *  Copyright (C) 2007-2008 Aaron Sethman <androsyn@ratbox.org>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -170,7 +170,7 @@ rb_ssl_clear_handshake_count(rb_fde_t *F)
 void
 rb_get_ssl_info(char *buf, size_t len)
 {
-    rb_snprintf(buf, len, "Not compiled with SSL support");
+    snprintf(buf, len, "Not compiled with SSL support");
 }
 
 #endif /* !HAVE_OPENSSL */

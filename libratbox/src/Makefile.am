@@ -33,7 +33,6 @@ libratbox_la_SOURCES =			\
 	epoll.c				\
 	poll.c				\
 	ports.c				\
-	sigio.c				\
 	select.c			\
 	kqueue.c			\
 	rawbuf.c			\
