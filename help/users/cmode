@@ -19,7 +19,7 @@ NO PARAMETERS:
               join the channel.
      +r     - Registered users only.  Only users identified to services
               may join.
-     +c     - No color.  All color codes in messages are stripped.
+   ? +c     - No color.  All color codes in messages are stripped.
      +d     - No nickchanges. People on the channel will not be able to
               change nick.
      +g     - Free invite.  Everyone may invite users.  Significantly
@@ -34,14 +34,12 @@ NO PARAMETERS:
               ops are necessary).
      +Q     - Disable forward.  Users cannot be forwarded to the channel
               (however, new forwards can still be set subject to +F).
-     +C     - Disable CTCP. All CTCP messages to the channel, except ACTION,
+   ? +C     - Disable CTCP. All CTCP messages to the channel, except ACTION,
               are disallowed.
-     +D     - Disable CTCP ACTION. All CTCP ACTIONs to the channel will
-              be blocked.
-     +T     - Disable notice. All notices to the channel are disallowed.
+   ? +T     - Disable notice. All notices to the channel are disallowed.
      +E     - No kicks. Chanops will not be able to use /kick on this
               channel.
-     +G     - Block messages in all caps. Messages that are more than
+   ? +G     - Block messages in all caps. Messages that are more than
               50% capital letters will be blocked. Messages shorter than
               10 characters are ignored.
      +J     - Prevent automatic rejoin on kick. Users will not be able to
