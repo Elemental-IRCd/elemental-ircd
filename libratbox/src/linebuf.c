@@ -517,7 +517,7 @@ rb_linebuf_putmsg(buf_head_t * bufhead, const char *format, va_list * va_args,
     bufline->terminated = 1;
 
     /* Truncate the data if required */
-    if(rb_unlikely(len > 510)) {
+    if(rb_unlikely(len >= 510)) {
         len = 510;
         bufline->buf[len++] = '\r';
         bufline->buf[len++] = '\n';
@@ -563,7 +563,7 @@ rb_linebuf_putbuf(buf_head_t * bufhead, const char *buffer)
     bufline->terminated = 1;
 
     /* Truncate the data if required */
-    if(rb_unlikely(len > 510)) {
+    if(rb_unlikely(len >= 510)) {
         len = 510;
         bufline->buf[len++] = '\r';
         bufline->buf[len++] = '\n';
@@ -615,7 +615,7 @@ rb_linebuf_put(buf_head_t * bufhead, const char *format, ...)
     bufline->terminated = 1;
 
     /* Truncate the data if required */
-    if(rb_unlikely(len > 510)) {
+    if(rb_unlikely(len >= 510)) {
         len = 510;
         bufline->buf[len++] = '\r';
         bufline->buf[len++] = '\n';
