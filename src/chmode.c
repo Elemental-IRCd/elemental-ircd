@@ -141,14 +141,14 @@ construct_cflag_param_string(void)
 
     *cflagsparaminfo = '\0';
     snprintf(cflagsparaminfo, sizeof cflagsparaminfo, "%s%sb%s%s%s%sklov%s%s",
-                ConfigChannel.use_owner ? "y" : "",
-                ConfigChannel.use_admin ? "a" : "",
-                ConfigChannel.use_except ? "e" : "",
-                ConfigChannel.use_forward ? "f" : "",
-                ConfigChannel.use_halfop ? "h" : "",
-                strchr(ConfigChannel.disabledmodes, 'j') ? "" : "j",
-                strchr(ConfigChannel.disabledmodes, 'q') ? "" : "q",
-                ConfigChannel.use_invex ? "I" : "");
+             ConfigChannel.use_owner ? "y" : "",
+             ConfigChannel.use_admin ? "a" : "",
+             ConfigChannel.use_except ? "e" : "",
+             ConfigChannel.use_forward ? "f" : "",
+             ConfigChannel.use_halfop ? "h" : "",
+             strchr(ConfigChannel.disabledmodes, 'j') ? "" : "j",
+             strchr(ConfigChannel.disabledmodes, 'q') ? "" : "q",
+             ConfigChannel.use_invex ? "I" : "");
 }
 
 /*
@@ -1821,7 +1821,7 @@ struct ChannelMode chmode_table[256] = {
     {chm_nosuch,   0 },                   /* A */
     {chm_nosuch,   0 },                   /* B */
     {chm_nosuch,   0 },                   /* C */
-    {chm_simple,   MODE_NOACTION },       /* D */
+    {chm_nosuch,   0 },                   /* D */
     {chm_simple,   MODE_NOKICK },         /* E */
     {chm_simple,   MODE_FREETARGET },     /* F */
     {chm_nosuch,   0 },                   /* G */
@@ -2099,8 +2099,8 @@ set_channel_mode(struct Client *client_p, struct Client *source_p,
         sprintf(cmdbuf, ":%s MODE %s ", fakesource_p->name, chptr->chname);
     else
         sprintf(cmdbuf, ":%s!%s@%s MODE %s ",
-                   source_p->name, source_p->username,
-                   source_p->host, chptr->chname);
+                source_p->name, source_p->username,
+                source_p->host, chptr->chname);
 
     mlen = 0;
 

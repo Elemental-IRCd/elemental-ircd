@@ -490,17 +490,6 @@ msg_channel(enum message_type msgtype,
         }
         if(result == CAN_SEND_OPV ||
            !flood_attack_channel(msgtype, source_p, chptr, chptr->chname)) {
-            if (msgtype != MESSAGE_TYPE_NOTICE && chptr->mode.mode & MODE_NOACTION &&
-                !strncasecmp(text + 1, "ACTION", 6) &&
-                (!ConfigChannel.exempt_cmode_D || !is_any_op(msptr))) {
-                sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - ACTIONs are disallowed (+D set)", chptr->chname);
-                return;
-            }
-            if (msgtype != MESSAGE_TYPE_NOTICE && *text == '\001' &&
-                strncasecmp(text + 1, "ACTION ", 7)) {
-                if (rb_dlink_list_length(&chptr->locmembers) > (unsigned)(GlobalSetOptions.floodcount / 2))
-                    source_p->large_ctcp_sent = rb_current_time();
-            }
             sendto_channel_flags(client_p, ALL_MEMBERS, source_p, chptr,
                                  "%s %s :%s", cmdname[msgtype], chptr->chname, text);
         }
