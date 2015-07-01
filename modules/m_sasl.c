@@ -167,8 +167,6 @@ me_sasl(struct Client *client_p, struct Client *source_p,
 
 static int server_auth_sasl(struct Client *client_p)
 {
-    char *auth_user = NULL;
-
     if (client_p->localClient->auth_user != NULL) {
         memset(client_p->localClient->auth_user, 0,
                strlen(client_p->localClient->auth_user));
@@ -177,10 +175,7 @@ static int server_auth_sasl(struct Client *client_p)
     }
 
     if (client_p->user != NULL && client_p->user->suser != NULL)
-        auth_user = rb_strndup(client_p->user->suser, PASSWDLEN);
-
-    if (auth_user != NULL)
-        client_p->localClient->auth_user = rb_strndup(auth_user, PASSWDLEN);
+        client_p->localClient->auth_user = rb_strndup(client_p->user->suser, PASSWDLEN);
 
     return 0;
 }
