@@ -454,10 +454,6 @@ msg_channel(enum message_type msgtype,
             const char *text)
 {
     int result;
-    char text2[BUFSIZE];
-    size_t contor;
-    int caps = 0;
-    int len = 0;
     struct membership *msptr = find_channel_membership(chptr, source_p);
     hook_data_privmsg_channel hdata;
 
@@ -465,30 +461,6 @@ msg_channel(enum message_type msgtype,
         /* idle time shouldnt be reset by notices --fl */
         if(msgtype != MESSAGE_TYPE_NOTICE) {
             source_p->localClient->last = rb_current_time();
-        }
-    }
-
-    // Must be processed before chmode c --SnoFox
-    if (strlen(text) > 10 && chptr->mode.mode & MODE_NOCAPS && (!ConfigChannel.exempt_cmode_G || !is_any_op(msptr))) {
-        rb_strlcpy(text2, text, BUFSIZE);
-        strip_unprintable(text2);
-
-        // Don't count the "ACTION" part of action as part of the message --SnoFox
-        if (msgtype != MESSAGE_TYPE_NOTICE && *text == '\001' &&
-            !strncasecmp(text + 1, "ACTION ", 7)) {
-            contor = 7;
-        } else {
-            contor = 0;
-        }
-        for(; contor < strlen(text2); contor++) {
-            if(IsUpper(text2[contor]) && !isdigit(text2[contor]))
-                caps++;
-            len++;
-        }
-        /* Added divide by 0 check --alxbl */
-        if(len != 0 && ((caps*100)/(len)) >= 50) {
-            sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - Your message contains mostly capital letters (+G set)", chptr->chname);
-            return;
         }
     }
 

@@ -177,7 +177,6 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define MODE_NOACTION	0x20000 /* Block CTCP ACTION directed to this channel */
 #define MODE_NOKICK	0x40000 /* Disable /kick on this channel */
 #define MODE_NONICK	0x80000 /* Disable /nick for anyone on this channel */
-#define MODE_NOCAPS	0x100000 /* Block messages in all capital letters */
 #define MODE_NOREJOIN	0x200000 /* Block rejoin immediately after kick */
 #define MODE_NOOPERKICK	0x800000 /* disallow kicking opers */
 #define MODE_HIDEBANS	0x1000000 /* disallow non-chanops from seeing ban/quiet lists */
