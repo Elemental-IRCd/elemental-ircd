@@ -1837,7 +1837,7 @@ struct ChannelMode chmode_table[256] = {
     {chm_simple,   MODE_DISFORWARD },     /* Q */
     {chm_nosuch,   0 },                   /* R */
     {chm_nosuch,   0 },                   /* S */
-    {chm_simple,   MODE_NONOTICE },       /* T */
+    {chm_nosuch,   0 },                   /* T */
     {chm_nosuch,   0 },                   /* U */
     {chm_nosuch,   0 },                   /* V */
     {chm_nosuch,   0 },                   /* W */

@@ -490,10 +490,6 @@ msg_channel(enum message_type msgtype,
         }
         if(result == CAN_SEND_OPV ||
            !flood_attack_channel(msgtype, source_p, chptr, chptr->chname)) {
-            if (msgtype != MESSAGE_TYPE_NOTICE && chptr->mode.mode & MODE_NONOTICE && (!ConfigChannel.exempt_cmode_T || !is_any_op(msptr))) {
-                sendto_one_numeric(source_p, 404, "%s :Cannot send to channel - Notices are disallowed (+T set)", chptr->chname);
-                return;
-            }
             if (msgtype != MESSAGE_TYPE_NOTICE && chptr->mode.mode & MODE_NOACTION &&
                 !strncasecmp(text + 1, "ACTION", 6) &&
                 (!ConfigChannel.exempt_cmode_D || !is_any_op(msptr))) {
