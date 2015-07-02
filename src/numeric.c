@@ -45,9 +45,9 @@ form_str(int numeric)
 {
     const char *num_ptr;
 
-    s_assert(-1 < numeric);
-    s_assert(numeric < ERR_LAST_ERR_MSG);
-    s_assert(0 != replies[numeric]);
+    s_assert(numeric >= 0);
+    s_assert(numeric <= ERR_LAST_ERR_MSG);
+    s_assert(replies[numeric] != NULL);
 
     if(numeric > ERR_LAST_ERR_MSG)
         numeric = ERR_LAST_ERR_MSG;

@@ -29,7 +29,7 @@
 #define MODEBUFLEN      200
 
 /* Maximum mode changes allowed per client, per server is different */
-#define MAXMODEPARAMS   4
+#define MAXMODEPARAMS   5
 #define MAXMODEPARAMSSERV 10
 
 struct Client;

@@ -136,7 +136,7 @@ m_displaymsg(struct Client *source_p, const char *channel, int underline, int ac
     struct Channel *chptr;
     struct membership *msptr;
     char nick2[NICKLEN+1];
-    char *nick3 = rb_strdup(nick);
+    char nick3[NICKLEN+1];
     char text2[BUFSIZE];
 
     if((chptr = find_channel(channel)) == NULL) {
@@ -170,6 +170,8 @@ m_displaymsg(struct Client *source_p, const char *channel, int underline, int ac
                    me.name, source_p->name, chptr->chname);
         return 0;
     }
+
+    rb_strlcpy(nick3, nick, sizeof(nick3));
 
     if(underline)
         snprintf(nick2, sizeof(nick2), "\x1F%s\x1F", strip_unprintable(nick3));

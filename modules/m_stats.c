@@ -267,7 +267,7 @@ stats_hash(struct Client *source_p)
 static void
 stats_connect(struct Client *source_p)
 {
-    static char buf[5];
+    static char buf[6];
     struct server_conf *server_p;
     char *s;
     rb_dlink_node *ptr;

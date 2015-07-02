@@ -13,16 +13,10 @@
 #include <signal.h>
 #include <ctype.h>
 
+#include <rb_attributes.h>
+
 #ifdef HAVE_LINUX_TCP_H
 # include <linux/tcp.h>
-#endif
-
-#if __GNUC__ > 4 || (__GNUC__ >= 3 && __GNUC_MINOR__ >= 4)
-#undef __rb_must_check
-#define __rb_must_check            __attribute__((warn_unused_result))
-#else
-#undef __rb_must_check
-#define __rb_must_check
 #endif
 
 #ifdef __GNUC__
@@ -46,37 +40,6 @@ char *alloca();
 #  endif
 # endif
 #endif /* __GNUC__ */
-
-#ifdef __GNUC__
-
-#ifdef rb_likely
-#undef rb_likely
-#endif
-#ifdef rb_unlikely
-#undef rb_unlikely
-#endif
-
-#if __GNUC__ == 2 && __GNUC_MINOR__ < 96
-# define __builtin_expect(x, expected_value) (x)
-#endif
-
-#define rb_likely(x)       __builtin_expect(!!(x), 1)
-#define rb_unlikely(x)     __builtin_expect(!!(x), 0)
-
-#else /* !__GNUC__ */
-
-#define UNUSED(x) x
-
-#ifdef rb_likely
-#undef rb_likely
-#endif
-#ifdef rb_unlikely
-#undef rb_unlikely
-#endif
-#define rb_likely(x)	(x)
-#define rb_unlikely(x)	(x)
-#endif
-
 
 
 #ifdef _WIN32
