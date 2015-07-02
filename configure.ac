@@ -622,7 +622,6 @@ AC_HELP_STRING([--disable-small-net],[Disable small network support.]),
 [small_net=$enableval], [small_net=yes])
 
 if test "$small_net" = yes; then
-dnl	AC_DEFINE([HASHSIZE], 4096, [Max number of buckets in hash tables.])
 	AC_DEFINE([NICKNAMEHISTORYLENGTH], 1500, [Size of the WHOWAS array.])
 	AC_DEFINE([CHANNEL_HEAP_SIZE], 256, [Size of the channel heap.])
 	AC_DEFINE([BAN_HEAP_SIZE], 128, [Size of the ban heap.])
