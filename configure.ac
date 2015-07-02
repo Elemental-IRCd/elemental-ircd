@@ -10,7 +10,7 @@ AC_PREREQ(2.57)
 dnl Sneaky way to get an Id tag into the configure script
 AC_COPYRIGHT([2014 elemental-ircd Team])
 
-AC_INIT([elemental-ircd],[6.6.2])
+AC_INIT([elemental-ircd],[6.6.2],[https://github.com/Elemental-IRCd/elemental-ircd/issues])
 
 AC_CONFIG_HEADER(include/setup.h)
 
@@ -182,9 +182,10 @@ dnl See whether we can include both string.h and strings.h.
 AC_CACHE_CHECK([whether string.h and strings.h may both be included],
 gcc_cv_header_string,
 [
-	AC_COMPILE_IFELSE(
-	[#include <string.h>
-	#include <strings.h>], 
+	AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+		#include <string.h>
+		#include <strings.h>
+	])],
 	[gcc_cv_header_string=yes],
 	[gcc_cv_header_string=no])
 ])
@@ -367,17 +368,18 @@ CPPFLAGS="$CPPFLAGS $SSL_INCLUDES"
 save_LIBS="$LIBS"
 LIBS="$LIBS $SSL_LIBS"
 if test "$cf_enable_openssl" != no; then
-	dnl Check OpenSSL version (must be 0.9.6 or above!)
-	AC_MSG_CHECKING(for OpenSSL 0.9.6 or above)
+	dnl Check OpenSSL version (must be 0.9.7 or above!)
+	AC_MSG_CHECKING(for OpenSSL 0.9.7 or above)
 	AC_RUN_IFELSE(
-		AC_LANG_PROGRAM(
-	    	[#include <openssl/opensslv.h>
-		#include <stdlib.h>],
-		[[if ( OPENSSL_VERSION_NUMBER >= 0x00906000)
-		exit(0); else exit(1);]]),
-	cf_openssl_version_ok=yes,
-	cf_openssl_version_ok=no,
-	cf_openssl_version_ok=no)
+		[AC_LANG_PROGRAM(
+		[#include <openssl/opensslv.h>
+		#include <stdlib.h>
+		],
+		[[if (OPENSSL_VERSION_NUMBER >= 0x00907000)
+		exit(0); else exit(1);]])],
+	cf_enable_openssl=yes,
+	cf_enable_openssl=no,
+	cf_enable_openssl=no)
 
 	if test "$cf_openssl_version_ok" = yes; then
 		AC_MSG_RESULT(found)
@@ -847,7 +849,7 @@ if test "$shared_modules" = yes; then
 	hold_ldflags=$LDFLAGS
 	AC_MSG_CHECKING(for the ld -export-dynamic flag)
 	LDFLAGS="${LDFLAGS} -Wl,-export-dynamic -Werror"
-	AC_LINK_IFELSE(AC_LANG_PROGRAM([],[int i;]), found=yes, found=no)
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([],[int i;])], found=yes, found=no)
 	LDFLAGS=$hold_ldflags
 
 	if expr "`uname -s`" : ^IRIX >/dev/null 2>&1; then
@@ -920,7 +922,7 @@ fi
 hold_ldflags=$LDFLAGS
 AC_MSG_CHECKING(for the ld -rpath flag)
 LDFLAGS="${LDFLAGS} -Wl,-rpath=${libdir}"
-AC_LINK_IFELSE(AC_LANG_PROGRAM([],[int i;]), found=yes, found=no)
+AC_LINK_IFELSE([AC_LANG_PROGRAM([],[int i;])], found=yes, found=no)
 LDFLAGS=$hold_ldflags
 AC_MSG_RESULT($found)
 if test "$found" = yes; then
@@ -982,7 +984,7 @@ if test "$shared_modules" = yes; then
 		AC_DEFINE_UNQUOTED(SYMBOL_PREFIX, "", [String containing extra underscores prepended to symbols loaded from modules.])
 	else
 		AC_MSG_CHECKING(for extra underscores prepended to symbol names)
-		AC_CACHE_VAL(symbol_underscores,
+		AC_CACHE_VAL(_cv_symbol_underscores,
 		[
 cat << EOF > conftest.c
 #include <$nlist_h>

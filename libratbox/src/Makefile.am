@@ -2,7 +2,7 @@
 
 AUTOMAKE_OPTIONS = foreign
 
-INCLUDES = -I. -I../include @SSL_CFLAGS@ @GNUTLS_CFLAGS@
+AM_CPPFLAGS = -I. -I../include @SSL_CFLAGS@ @GNUTLS_CFLAGS@
 
 BUILT_SOURCES = version.c
 
@@ -11,7 +11,7 @@ version.c: version.c.SH ../CREDITS
 	$(CP) version.c version.c.last
 
 version.lo: version.c ../include/serno.h
-	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) $(AM_CPPFLAGS) -c $< -o $@
 
 libratbox_la_SOURCES =			\
 	unix.c				\

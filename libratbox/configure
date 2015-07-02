@@ -2884,10 +2884,18 @@ fi
 
 
 # Define the identity of the package.
+ PACKAGE='libratbox'
+ VERSION='devel'
 
- PACKAGE=libratbox
- VERSION=devel
 
+cat >>confdefs.h <<_ACEOF
+#define PACKAGE "$PACKAGE"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define VERSION "$VERSION"
+_ACEOF
 
 # Some tools Automake needs.
 
