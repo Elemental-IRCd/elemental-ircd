@@ -45,6 +45,12 @@
 /* Mark a function as depricated */
 #define __deprecated __attribute__((deprecated))
 
+/* Non-null return value */
+#define __returns_nonnull __attribute__((returns_nonnull))
+
+/* function returns new memory (and warn on unchecked return) */
+#define __malloc __attribute__((malloc)) __attribute__((warn_unused_result))
+
 #else  /* __GNUC__ */
 
 #define rb_likely(x)       (x)
@@ -56,6 +62,8 @@
 #define __format_printf
 #define __unused
 #define __deprecated
+#define __returns_nonnull
+#define __malloc
 
 #endif /* __GNUC__ */
 
