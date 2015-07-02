@@ -630,9 +630,6 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 SEDOBJ
 PICFLAGS
-SSL_LIBS
-SSL_INCLUDES
-SSL_SRCS_ENABLE
 MOD_TARGET
 MODULES_LIBS
 SELECT_TYPE
@@ -646,7 +643,6 @@ logdir
 LOG_DIR
 ETC_DIR
 ZLIB_LD
-ENCSPEED
 ALLOCA
 VICONF
 CRYPT_LIB
@@ -731,7 +727,6 @@ ac_user_opts='
 enable_option_checking
 enable_fhs_paths
 enable_ipv6
-enable_openssl
 with_zlib_path
 enable_zlib
 enable_ports
@@ -1375,8 +1370,6 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-fhs-paths      Use more FHS-like pathnames (for packagers).
   --enable-ipv6           Enable IPv6 support
-  --enable-openssl=DIR    Enable OpenSSL support (DIR optional).
-  --disable-openssl       Disable OpenSSL support.
   --disable-zlib          Disable ziplinks support
   --enable-ports          Force solaris I/O ports subsystem usage.
   --enable-poll           Force poll() usage.
@@ -6861,159 +6854,6 @@ $as_echo "#define HAVE_NANOSLEEP 1" >>confdefs.h
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for OpenSSL" >&5
-$as_echo_n "checking for OpenSSL... " >&6; }
-# Check whether --enable-openssl was given.
-if test "${enable_openssl+set}" = set; then :
-  enableval=$enable_openssl; cf_enable_openssl=$enableval
-else
-  cf_enable_openssl="auto"
-fi
-
-
-if test "$cf_enable_openssl" != "no" ; then
-	cf_openssl_basedir=""
-	if test "$cf_enable_openssl" != "auto" &&
-	test "$cf_enable_openssl" != "yes" ; then
-				cf_openssl_basedir="`echo ${cf_enable_openssl} | sed 's/\/$//'`"
-	else
-			for dirs in /usr/local/ssl /usr/pkg /usr/local \
-		/usr/local/openssl ; do
-			if test -f "${dirs}/include/openssl/opensslv.h" ; then
-				cf_openssl_basedir="${dirs}"
-			break
-			fi
-		done
-		unset dirs
-	fi
-		if test ! -z "$cf_openssl_basedir"; then
-		if test -f "${cf_openssl_basedir}/include/openssl/opensslv.h" ; then
-			SSL_INCLUDES="-I${cf_openssl_basedir}/include"
-			SSL_LIBS="-L${cf_openssl_basedir}/lib"
-		else
-						cf_openssl_basedir=""
-		fi
-	else
-								if test -f "/usr/include/openssl/opensslv.h" ; then
-			cf_openssl_basedir="/usr"
-		fi
-	fi
-
-			if test ! -z "$cf_openssl_basedir"; then
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $cf_openssl_basedir" >&5
-$as_echo "$cf_openssl_basedir" >&6; }
-		cf_enable_openssl="yes"
-	else
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: not found. Specify a correct path?" >&5
-$as_echo "not found. Specify a correct path?" >&6; }
-		cf_enable_openssl="no"
-	fi
-	unset cf_openssl_basedir
-else
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: disabled" >&5
-$as_echo "disabled" >&6; }
-fi
-
-save_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $SSL_INCLUDES"
-save_LIBS="$LIBS"
-LIBS="$LIBS $SSL_LIBS"
-if test "$cf_enable_openssl" != no; then
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for OpenSSL 0.9.7 or above" >&5
-$as_echo_n "checking for OpenSSL 0.9.7 or above... " >&6; }
-	if test "$cross_compiling" = yes; then :
-  cf_enable_openssl=no
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <openssl/opensslv.h>
-		#include <stdlib.h>
-
-int
-main ()
-{
-if (OPENSSL_VERSION_NUMBER >= 0x00907000)
-		exit(0); else exit(1);
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_run "$LINENO"; then :
-  cf_enable_openssl=yes
-else
-  cf_enable_openssl=no
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-
-
-	if test "$cf_openssl_version_ok" = yes; then
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
-$as_echo "found" >&6; }
-
-				ENCSPEED=encspeed
-
-
-				CPPFLAGS="$CPPFLAGS $SSL_LIBS"
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for RSA_free in -lcrypto" >&5
-$as_echo_n "checking for RSA_free in -lcrypto... " >&6; }
-if ${ac_cv_lib_crypto_RSA_free+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lcrypto  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char RSA_free ();
-int
-main ()
-{
-return RSA_free ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_crypto_RSA_free=yes
-else
-  ac_cv_lib_crypto_RSA_free=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_crypto_RSA_free" >&5
-$as_echo "$ac_cv_lib_crypto_RSA_free" >&6; }
-if test "x$ac_cv_lib_crypto_RSA_free" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBCRYPTO 1
-_ACEOF
-
-  LIBS="-lcrypto $LIBS"
-
-fi
-
-		SSL_LIBS="$SSL_LIBS -lcrypto"
-		SSL_SRCS_ENABLE='$(SSL_SRCS)'
-	else
-	        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no - OpenSSL support disabled" >&5
-$as_echo "no - OpenSSL support disabled" >&6; }
-	fi
-fi
-
-CPPFLAGS="$save_CPPFLAGS"
-LIBS="$save_LIBS"
-
-
-
 
 
 # Check whether --with-zlib-path was given.
@@ -9407,10 +9247,6 @@ fi
 
 
 
-
-
-
-
 if test "$prefix" = "NONE"; then
 
 cat >>confdefs.h <<_ACEOF
@@ -10883,12 +10719,6 @@ $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
 
-if test "$cf_openssl_version_ok" = yes; then
-	openssl="yes"
-else
-	openssl="no"
-fi
-
 if test "$shared_modules" = yes; then
 	modules=shared
 else
@@ -10900,7 +10730,6 @@ Configuration:
 	Install directory  : $prefix
 
 	Ziplinks           : $zlib
-	OpenSSL            : $openssl
 	Socket Engine      : $SELECT_TYPE
 	Small network      : $small_net
 	Block allocator    : $balloc

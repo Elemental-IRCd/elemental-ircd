@@ -34,11 +34,6 @@ MANPAGES        = ircd.8
 
 CONFS		= example.conf reference.conf
 
-SSL_LIBS	= @SSL_LIBS@
-SSL_INCLUDES	= @SSL_INCLUDES@
-
-IRCDLIBS	= @LIBS@ $(SSL_LIBS)
-
 INCLUDES	= -I../include $(SSL_INCLUDES)
 CPPFLAGS	= ${INCLUDES} @CPPFLAGS@
 

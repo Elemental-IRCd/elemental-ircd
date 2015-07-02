@@ -25,12 +25,7 @@ moduledir       = @moduledir@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 AUTOMODULEDIR	= $(moduledir)/extensions
 
-SSL_LIBS	= @SSL_LIBS@
-SSL_INCLUDES	= @SSL_INCLUDES@
-
-IRCDLIBS	= @LIBS@ $(SSL_LIBS)
-
-INCLUDES	= -I. -I../include -I../libratbox/include $(SSL_INCLUDES)
+INCLUDES	= -I. -I../include -I../libratbox/include
 CPPFLAGS	= ${INCLUDES} @CPPFLAGS@
 
 SRCS =                          \
