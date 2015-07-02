@@ -136,7 +136,7 @@ m_displaymsg(struct Client *source_p, const char *channel, int underline, int ac
     struct Channel *chptr;
     struct membership *msptr;
     char nick2[NICKLEN+1];
-    char *nick3;
+    char nick3[NICKLEN+1];
     char text2[BUFSIZE];
 
     if((chptr = find_channel(channel)) == NULL) {
@@ -171,7 +171,7 @@ m_displaymsg(struct Client *source_p, const char *channel, int underline, int ac
         return 0;
     }
 
-    nick3 = rb_strdup(nick);
+    rb_strlcpy(nick3, nick, sizeof(nick3));
 
     if(underline)
         snprintf(nick2, sizeof(nick2), "\x1F%s\x1F", strip_unprintable(nick3));
@@ -182,7 +182,7 @@ m_displaymsg(struct Client *source_p, const char *channel, int underline, int ac
      * this prevents nastiness like fake factions, etc. */
     if(EmptyString(nick3)) {
         sendto_one_numeric(source_p, 573, "%s :No visible non-stripped characters in nick.", chptr->chname);
-        goto done;
+        return 0;
     }
 
     if(action)
@@ -193,8 +193,6 @@ m_displaymsg(struct Client *source_p, const char *channel, int underline, int ac
     sendto_channel_local(ALL_MEMBERS, chptr, ":%s!%s@npc.fakeuser.invalid PRIVMSG %s :%s (%s)", nick2, source_p->name, channel, text2, source_p->name);
     sendto_match_servs(source_p, "*", CAP_ENCAP, NOCAPS, "ENCAP * ROLEPLAY %s %s :%s",
                        channel, nick2, text2);
-done:
-    rb_free(nick3);
     return 0;
 }
 
