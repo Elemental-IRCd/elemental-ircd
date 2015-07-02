@@ -10,6 +10,7 @@ AUTOMAKE_OPTIONS = 1.10
 dnl Sneaky way to get an Id tag into the configure script
 AC_COPYRIGHT([$Id: configure.ac 26260 2008-12-10 04:08:39Z androsyn $])
 AC_INIT([libratbox],[devel])
+AC_CONFIG_SRCDIR([include/ratbox_lib.h])
 AM_INIT_AUTOMAKE
 
 AM_CONFIG_HEADER(include/libratbox_config.h)

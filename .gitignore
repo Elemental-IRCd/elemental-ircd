@@ -15,10 +15,15 @@ aclocal.m4
 autom4te.cache
 bandb/bandb
 bandb/bantool
+compile
 config.log
 config.status
+config.guess
+config.sub
 configure
+depcomp
 include/setup.h
+install-sh
 libratbox/include/libratbox_config.h.in
 libratbox/include/libratbox_config.h
 libratbox/include/librb-config.h
@@ -26,6 +31,8 @@ libratbox/include/stamp-h1
 libratbox/libratbox.pc
 libratbox/libtool
 libratbox/src/version.c
+ltmain.sh
+missing
 scripts/*.tbz2
 scripts/*.tgz
 scripts/*.tar.bz2
@@ -46,4 +53,3 @@ include/serno.h
 libratbox/src/version.c.last
 *.pyc
 .git
-
