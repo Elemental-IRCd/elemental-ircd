@@ -45,6 +45,9 @@
 /* Mark argument as unused */
 #define __unused __attribute__((__unused__))
 
+/* Mark a function as depricated */
+#define __deprecated __attribute__((deprecated))
+
 #else  /* __GNUC__ */
 
 #define rb_likely(x)       (x)
@@ -55,6 +58,7 @@
 #define __noreturn
 #define __format_printf
 #define __unused
+#define __deprecated
 
 #endif /* __GNUC__ */
 
