@@ -43,7 +43,7 @@ AC_DEFUN([CHARYBDIS_C_GCC_TRY_FLAGS],[
 #include <stdio.h>
 int main(void);
 ],[
-    (void)strcmp("a","b"); fprintf(stdout,"test ok\n");
+    fprintf(stdout,"test ok\n");
 ], [$2=yes], [$2=no])
    CFLAGS="${oldcflags}"])
   if test "x$$2" = xyes; then
