@@ -8495,8 +8495,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=parenthesis" >&5
-$as_echo_n "checking GCC flag(s) -Werror=parenthesis... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wparenthesis" >&5
+$as_echo_n "checking GCC flag(s) -Wparenthesis... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_parenthesis+:} false; then :
@@ -8504,7 +8504,7 @@ $as_echo_n "checking GCC flag(s) -Werror=parenthesis... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=parenthesis -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Wparenthesis -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8532,7 +8532,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_parenthesis" = xyes; then
-   CWARNS="${CWARNS}-Werror=parenthesis "
+   CWARNS="${CWARNS}-Wparenthesis "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8546,8 +8546,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wno-unused" >&5
-$as_echo_n "checking GCC flag(s) -Wno-unused... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wunused" >&5
+$as_echo_n "checking GCC flag(s) -Wunused... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w+:} false; then :
@@ -8555,7 +8555,7 @@ $as_echo_n "checking GCC flag(s) -Wno-unused... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wno-unused -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Wunused -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8583,11 +8583,62 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w" = xyes; then
-   CWARNS="${CWARNS}-Wno-unused "
+   CWARNS="${CWARNS}-Wunused "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
    charybdis_cv_c_gcc_w=''
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  fi
+ else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+ fi
+
+
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=unused-result" >&5
+$as_echo_n "checking GCC flag(s) -Werror=unused-result... " >&6; }
+ if test "${GCC-no}" = yes
+ then
+  if ${charybdis_cv_c_gcc_w_unused_result+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+   oldcflags="${CFLAGS-}"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=unused-result -Werror"
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <string.h>
+#include <stdio.h>
+int main(void);
+
+int
+main ()
+{
+
+    (void)strcmp("a","b"); fprintf(stdout,"test ok\n");
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  charybdis_cv_c_gcc_w_unused_result=yes
+else
+  charybdis_cv_c_gcc_w_unused_result=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+   CFLAGS="${oldcflags}"
+fi
+
+  if test "x$charybdis_cv_c_gcc_w_unused_result" = xyes; then
+   CWARNS="${CWARNS}-Werror=unused-result "
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
+$as_echo "ok" >&6; }
+  else
+   charybdis_cv_c_gcc_w_unused_result=''
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
   fi
@@ -9005,8 +9056,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=format -Werror=format-y2k -Werror=no-format-security" >&5
-$as_echo_n "checking GCC flag(s) -Werror=format -Werror=format-y2k -Werror=no-format-security... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=format -Werror=format-y2k" >&5
+$as_echo_n "checking GCC flag(s) -Werror=format -Werror=format-y2k... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_format+:} false; then :
@@ -9014,7 +9065,7 @@ $as_echo_n "checking GCC flag(s) -Werror=format -Werror=format-y2k -Werror=no-fo
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=format -Werror=format-y2k -Werror=no-format-security -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=format -Werror=format-y2k -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -9042,11 +9093,63 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_format" = xyes; then
-   CWARNS="${CWARNS}-Werror=format -Werror=format-y2k -Werror=no-format-security "
+   CWARNS="${CWARNS}-Werror=format -Werror=format-y2k "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
    charybdis_cv_c_gcc_w_format=''
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  fi
+ else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+ fi
+
+# format-security is omited as non-const printf formats are used extensively
+
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wno-format-security" >&5
+$as_echo_n "checking GCC flag(s) -Wno-format-security... " >&6; }
+ if test "${GCC-no}" = yes
+ then
+  if ${charybdis_cv_c_gcc_w_no_format_security+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+   oldcflags="${CFLAGS-}"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Wno-format-security -Werror"
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <string.h>
+#include <stdio.h>
+int main(void);
+
+int
+main ()
+{
+
+    (void)strcmp("a","b"); fprintf(stdout,"test ok\n");
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  charybdis_cv_c_gcc_w_no_format_security=yes
+else
+  charybdis_cv_c_gcc_w_no_format_security=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+   CFLAGS="${oldcflags}"
+fi
+
+  if test "x$charybdis_cv_c_gcc_w_no_format_security" = xyes; then
+   CWARNS="${CWARNS}-Wno-format-security "
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
+$as_echo "ok" >&6; }
+  else
+   charybdis_cv_c_gcc_w_no_format_security=''
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
   fi

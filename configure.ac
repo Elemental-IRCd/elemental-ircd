@@ -835,8 +835,9 @@ CHARYBDIS_C_GCC_TRY_FLAGS([-Wcast-qual], charybdis_cv_c_gcc_w_cast_qual)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=write-strings], charybdis_cv_c_gcc_w_write_strings)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=error-implicit-function-declaration], charybdis_cv_c_gcc_w_error_implicit_function_declaration)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=strict-prototypes -Wmissing-prototypes -Wmissing-declarations], charybdis_cv_c_gcc_prototypes)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=parenthesis], charybdis_cv_c_gcc_parenthesis)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wno-unused], charybdis_cv_c_gcc_w)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wparenthesis], charybdis_cv_c_gcc_parenthesis)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused], charybdis_cv_c_gcc_w)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=unused-result], charybdis_cv_c_gcc_w_unused_result)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=shadow], charybdis_cv_c_gcc_w_shadow)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=missing-noreturn], charybdis_cv_c_gcc_w_missing_noreturn)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=undef], charybdis_cv_c_gcc_w_undef)
@@ -845,7 +846,9 @@ CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=nested-externs], charybdis_cv_c_gcc_w_nested_
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-function -Wunused-label -Wunused-value -Wunused-variable], charybdis_cv_c_gcc_w_unused)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wredundant-decls], charybdis_cv_c_gcc_w_redundant_decls)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=float-equal], charybdis_cv_c_gcc_w_float_equal)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format -Werror=format-y2k -Werror=no-format-security], charybdis_cv_c_gcc_w_format)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format -Werror=format-y2k], charybdis_cv_c_gcc_w_format)
+# format-security is omited as non-const printf formats are used extensively
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wno-format-security], charybdis_cv_c_gcc_w_no_format_security)
 
 CFLAGS="$CFLAGS $CWARNS"
 
