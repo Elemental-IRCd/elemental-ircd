@@ -8236,8 +8236,59 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wpointer-arith" >&5
-$as_echo_n "checking GCC flag(s) -Wpointer-arith... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wextra" >&5
+$as_echo_n "checking GCC flag(s) -Wextra... " >&6; }
+ if test "${GCC-no}" = yes
+ then
+  if ${charybdis_cv_c_gcc_w_extra+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+
+   oldcflags="${CFLAGS-}"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Wextra -Werror"
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <string.h>
+#include <stdio.h>
+int main(void);
+
+int
+main ()
+{
+
+    (void)strcmp("a","b"); fprintf(stdout,"test ok\n");
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  charybdis_cv_c_gcc_w_extra=yes
+else
+  charybdis_cv_c_gcc_w_extra=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+   CFLAGS="${oldcflags}"
+fi
+
+  if test "x$charybdis_cv_c_gcc_w_extra" = xyes; then
+   CWARNS="${CWARNS}-Wextra "
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
+$as_echo "ok" >&6; }
+  else
+   charybdis_cv_c_gcc_w_extra=''
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  fi
+ else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+ fi
+
+
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=pointer-arith" >&5
+$as_echo_n "checking GCC flag(s) -Werror=pointer-arith... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_pointer_arith+:} false; then :
@@ -8245,7 +8296,7 @@ $as_echo_n "checking GCC flag(s) -Wpointer-arith... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wpointer-arith -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=pointer-arith -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8273,7 +8324,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_pointer_arith" = xyes; then
-   CWARNS="${CWARNS}-Wpointer-arith "
+   CWARNS="${CWARNS}-Werror=pointer-arith "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8287,8 +8338,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wimplicit -Wnested-externs" >&5
-$as_echo_n "checking GCC flag(s) -Wimplicit -Wnested-externs... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=implicit -Werror=nested-externs" >&5
+$as_echo_n "checking GCC flag(s) -Werror=implicit -Werror=nested-externs... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_implicit+:} false; then :
@@ -8296,7 +8347,7 @@ $as_echo_n "checking GCC flag(s) -Wimplicit -Wnested-externs... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wimplicit -Wnested-externs -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=implicit -Werror=nested-externs -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8324,7 +8375,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_implicit" = xyes; then
-   CWARNS="${CWARNS}-Wimplicit -Wnested-externs "
+   CWARNS="${CWARNS}-Werror=implicit -Werror=nested-externs "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8338,8 +8389,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wcast-align" >&5
-$as_echo_n "checking GCC flag(s) -Wcast-align... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=cast-align" >&5
+$as_echo_n "checking GCC flag(s) -Werror=cast-align... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_cast_align+:} false; then :
@@ -8347,7 +8398,7 @@ $as_echo_n "checking GCC flag(s) -Wcast-align... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wcast-align -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=cast-align -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8375,7 +8426,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_cast_align" = xyes; then
-   CWARNS="${CWARNS}-Wcast-align "
+   CWARNS="${CWARNS}-Werror=cast-align "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8440,8 +8491,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wwrite-strings" >&5
-$as_echo_n "checking GCC flag(s) -Wwrite-strings... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=write-strings" >&5
+$as_echo_n "checking GCC flag(s) -Werror=write-strings... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_write_strings+:} false; then :
@@ -8449,7 +8500,7 @@ $as_echo_n "checking GCC flag(s) -Wwrite-strings... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wwrite-strings -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=write-strings -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8477,7 +8528,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_write_strings" = xyes; then
-   CWARNS="${CWARNS}-Wwrite-strings "
+   CWARNS="${CWARNS}-Werror=write-strings "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8491,8 +8542,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror-implicit-function-declaration" >&5
-$as_echo_n "checking GCC flag(s) -Werror-implicit-function-declaration... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=error-implicit-function-declaration" >&5
+$as_echo_n "checking GCC flag(s) -Werror=error-implicit-function-declaration... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_error_implicit_function_declaration+:} false; then :
@@ -8500,7 +8551,7 @@ $as_echo_n "checking GCC flag(s) -Werror-implicit-function-declaration... " >&6;
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Werror-implicit-function-declaration -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=error-implicit-function-declaration -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8528,7 +8579,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_error_implicit_function_declaration" = xyes; then
-   CWARNS="${CWARNS}-Werror-implicit-function-declaration "
+   CWARNS="${CWARNS}-Werror=error-implicit-function-declaration "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8542,8 +8593,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations" >&5
-$as_echo_n "checking GCC flag(s) -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=strict-prototypes -Wmissing-prototypes -Wmissing-declarations" >&5
+$as_echo_n "checking GCC flag(s) -Werror=strict-prototypes -Wmissing-prototypes -Wmissing-declarations... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_prototypes+:} false; then :
@@ -8551,7 +8602,7 @@ $as_echo_n "checking GCC flag(s) -Wstrict-prototypes -Wmissing-prototypes -Wmiss
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=strict-prototypes -Wmissing-prototypes -Wmissing-declarations -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8579,7 +8630,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_prototypes" = xyes; then
-   CWARNS="${CWARNS}-Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations "
+   CWARNS="${CWARNS}-Werror=strict-prototypes -Wmissing-prototypes -Wmissing-declarations "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8593,8 +8644,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wparenthesis" >&5
-$as_echo_n "checking GCC flag(s) -Wparenthesis... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=parenthesis" >&5
+$as_echo_n "checking GCC flag(s) -Werror=parenthesis... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_parenthesis+:} false; then :
@@ -8602,7 +8653,7 @@ $as_echo_n "checking GCC flag(s) -Wparenthesis... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wparenthesis -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=parenthesis -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8630,7 +8681,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_parenthesis" = xyes; then
-   CWARNS="${CWARNS}-Wparenthesis "
+   CWARNS="${CWARNS}-Werror=parenthesis "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8644,8 +8695,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -W -Wno-unused" >&5
-$as_echo_n "checking GCC flag(s) -W -Wno-unused... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wno-unused" >&5
+$as_echo_n "checking GCC flag(s) -Wno-unused... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w+:} false; then :
@@ -8653,7 +8704,7 @@ $as_echo_n "checking GCC flag(s) -W -Wno-unused... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -W -Wno-unused -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Wno-unused -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8681,7 +8732,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w" = xyes; then
-   CWARNS="${CWARNS}-W -Wno-unused "
+   CWARNS="${CWARNS}-Wno-unused "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8695,59 +8746,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wextra" >&5
-$as_echo_n "checking GCC flag(s) -Wextra... " >&6; }
- if test "${GCC-no}" = yes
- then
-  if ${charybdis_cv_c_gcc_w_extra+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-
-   oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wextra -Werror"
-   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include <string.h>
-#include <stdio.h>
-int main(void);
-
-int
-main ()
-{
-
-    (void)strcmp("a","b"); fprintf(stdout,"test ok\n");
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  charybdis_cv_c_gcc_w_extra=yes
-else
-  charybdis_cv_c_gcc_w_extra=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-   CFLAGS="${oldcflags}"
-fi
-
-  if test "x$charybdis_cv_c_gcc_w_extra" = xyes; then
-   CWARNS="${CWARNS}-Wextra "
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
-$as_echo "ok" >&6; }
-  else
-   charybdis_cv_c_gcc_w_extra=''
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-  fi
- else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
- fi
-
-
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wshadow" >&5
-$as_echo_n "checking GCC flag(s) -Wshadow... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=shadow" >&5
+$as_echo_n "checking GCC flag(s) -Werror=shadow... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_shadow+:} false; then :
@@ -8755,7 +8755,7 @@ $as_echo_n "checking GCC flag(s) -Wshadow... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wshadow -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=shadow -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8783,7 +8783,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_shadow" = xyes; then
-   CWARNS="${CWARNS}-Wshadow "
+   CWARNS="${CWARNS}-Werror=shadow "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8797,8 +8797,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wmissing-noreturn" >&5
-$as_echo_n "checking GCC flag(s) -Wmissing-noreturn... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=missing-noreturn" >&5
+$as_echo_n "checking GCC flag(s) -Werror=missing-noreturn... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_missing_noreturn+:} false; then :
@@ -8806,7 +8806,7 @@ $as_echo_n "checking GCC flag(s) -Wmissing-noreturn... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wmissing-noreturn -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=missing-noreturn -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8834,7 +8834,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_missing_noreturn" = xyes; then
-   CWARNS="${CWARNS}-Wmissing-noreturn "
+   CWARNS="${CWARNS}-Werror=missing-noreturn "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8848,8 +8848,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wundef" >&5
-$as_echo_n "checking GCC flag(s) -Wundef... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=undef" >&5
+$as_echo_n "checking GCC flag(s) -Werror=undef... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_undef+:} false; then :
@@ -8857,7 +8857,7 @@ $as_echo_n "checking GCC flag(s) -Wundef... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wundef -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=undef -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8885,7 +8885,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_undef" = xyes; then
-   CWARNS="${CWARNS}-Wundef "
+   CWARNS="${CWARNS}-Werror=undef "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8899,8 +8899,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wpacked" >&5
-$as_echo_n "checking GCC flag(s) -Wpacked... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=packed" >&5
+$as_echo_n "checking GCC flag(s) -Werror=packed... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_packed+:} false; then :
@@ -8908,7 +8908,7 @@ $as_echo_n "checking GCC flag(s) -Wpacked... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wpacked -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=packed -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8936,7 +8936,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_packed" = xyes; then
-   CWARNS="${CWARNS}-Wpacked "
+   CWARNS="${CWARNS}-Werror=packed "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8950,8 +8950,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wnested-externs" >&5
-$as_echo_n "checking GCC flag(s) -Wnested-externs... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=nested-externs" >&5
+$as_echo_n "checking GCC flag(s) -Werror=nested-externs... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_nested_externs+:} false; then :
@@ -8959,7 +8959,7 @@ $as_echo_n "checking GCC flag(s) -Wnested-externs... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wnested-externs -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=nested-externs -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8987,7 +8987,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_nested_externs" = xyes; then
-   CWARNS="${CWARNS}-Wnested-externs "
+   CWARNS="${CWARNS}-Werror=nested-externs "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -9103,8 +9103,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wfloat-equal" >&5
-$as_echo_n "checking GCC flag(s) -Wfloat-equal... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=float-equal" >&5
+$as_echo_n "checking GCC flag(s) -Werror=float-equal... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_float_equal+:} false; then :
@@ -9112,7 +9112,7 @@ $as_echo_n "checking GCC flag(s) -Wfloat-equal... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wfloat-equal -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=float-equal -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -9140,7 +9140,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_float_equal" = xyes; then
-   CWARNS="${CWARNS}-Wfloat-equal "
+   CWARNS="${CWARNS}-Werror=float-equal "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -9154,8 +9154,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wformat -Wformat-y2k -Wno-format-security" >&5
-$as_echo_n "checking GCC flag(s) -Wformat -Wformat-y2k -Wno-format-security... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=format -Werror=format-y2k -Werror=no-format-security" >&5
+$as_echo_n "checking GCC flag(s) -Werror=format -Werror=format-y2k -Werror=no-format-security... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_format+:} false; then :
@@ -9163,7 +9163,7 @@ $as_echo_n "checking GCC flag(s) -Wformat -Wformat-y2k -Wno-format-security... "
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Wformat -Wformat-y2k -Wno-format-security -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=format -Werror=format-y2k -Werror=no-format-security -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -9191,7 +9191,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_format" = xyes; then
-   CWARNS="${CWARNS}-Wformat -Wformat-y2k -Wno-format-security "
+   CWARNS="${CWARNS}-Werror=format -Werror=format-y2k -Werror=no-format-security "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
