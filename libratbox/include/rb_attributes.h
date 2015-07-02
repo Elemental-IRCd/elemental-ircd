@@ -31,26 +31,30 @@
 #define rb_unlikely(x)     __builtin_expect(!!(x), 0)
 
 /* Warn on unchecked returns */
-#define __rb_must_check    __attribute__((warn_unused_result))
+#define __must_check    __attribute__((warn_unused_result))
 
 /* Warn on null arguments */
-#define __rb_nonnull(...)    __attribute__((nonull(__VA_ARGS__)))
+#define __nonnull(...)    __attribute__((nonull(__VA_ARGS__)))
 
 /* Function never returns */
-#define __rb_noreturn       __attribute__((noreturn))
+#define __noreturn       __attribute__((noreturn))
 
 /* Validate and Type-check printf arguments */
-#define __rb_format_printf(fmt, args) __attribute__ ((format(printf, fmt, args)));
+#define __format_printf(fmt, args) __attribute__((format(printf, fmt, args)));
+
+/* Mark argument as unused */
+#define __unused __attribute__((__unused__))
 
 #else  /* __GNUC__ */
 
 #define rb_likely(x)       (x)
 #define rb_unlikely(x)     (x)
 
-#define __rb_must_check
-#define __rb_nonull
-#define __rb_noreturn
-#define __rb_format_printf
+#define __must_check
+#define __nonull
+#define __noreturn
+#define __format_printf
+#define __unused
 
 #endif /* __GNUC__ */
 
