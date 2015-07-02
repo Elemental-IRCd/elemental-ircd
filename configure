@@ -8242,8 +8242,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=cast-align" >&5
-$as_echo_n "checking GCC flag(s) -Werror=cast-align... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wcast-align" >&5
+$as_echo_n "checking GCC flag(s) -Wcast-align... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_cast_align+:} false; then :
@@ -8251,7 +8251,7 @@ $as_echo_n "checking GCC flag(s) -Werror=cast-align... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=cast-align -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Wcast-align -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8279,7 +8279,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_cast_align" = xyes; then
-   CWARNS="${CWARNS}-Werror=cast-align "
+   CWARNS="${CWARNS}-Wcast-align "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
@@ -8701,8 +8701,8 @@ $as_echo "no" >&6; }
  fi
 
 
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Werror=missing-noreturn" >&5
-$as_echo_n "checking GCC flag(s) -Werror=missing-noreturn... " >&6; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wmissing-noreturn" >&5
+$as_echo_n "checking GCC flag(s) -Wmissing-noreturn... " >&6; }
  if test "${GCC-no}" = yes
  then
   if ${charybdis_cv_c_gcc_w_missing_noreturn+:} false; then :
@@ -8710,7 +8710,7 @@ $as_echo_n "checking GCC flag(s) -Werror=missing-noreturn... " >&6; }
 else
 
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} -Werror=missing-noreturn -Werror"
+   CFLAGS="${CFLAGS-} ${CWARNS} -Wmissing-noreturn -Werror"
    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8738,7 +8738,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 
   if test "x$charybdis_cv_c_gcc_w_missing_noreturn" = xyes; then
-   CWARNS="${CWARNS}-Werror=missing-noreturn "
+   CWARNS="${CWARNS}-Wmissing-noreturn "
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok" >&5
 $as_echo "ok" >&6; }
   else
