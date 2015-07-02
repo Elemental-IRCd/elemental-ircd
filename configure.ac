@@ -1,13 +1,10 @@
-dnl $Id: configure.ac 3516 2007-06-10 16:14:03Z jilles $
-dnl Process this file with autoconf to produce a configure script.
-
-AC_PREREQ(2.57)
-
-dnl Sneaky way to get an Id tag into the configure script
+AC_PREREQ(2.69)
 AC_COPYRIGHT([2014 elemental-ircd Team])
 
 AC_INIT([elemental-ircd],[6.6.2],[https://github.com/Elemental-IRCd/elemental-ircd/issues])
 AC_CONFIG_SRCDIR([src/ircd.c])
+
+AM_INIT_AUTOMAKE
 
 AC_CONFIG_HEADER(include/setup.h)
 
@@ -17,7 +14,7 @@ AC_GNU_SOURCE
 
 dnl Checks for programs.
 AC_PROG_CC
-CFLAGS="-D_FORTIFY_SOURCE=1 $CFLAGS"
+CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 $CFLAGS"
 
 AC_LANG(C)
 
@@ -58,17 +55,17 @@ fi
 
 AC_ISC_POSIX
 AC_C_INLINE
+AC_PROG_INSTALL
 AC_PROG_GCC_TRADITIONAL
 AC_PROG_MAKE_SET
-AC_PROG_INSTALL
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(CP, cp)
 AC_PATH_PROG(MV, mv)
 AC_PATH_PROG(LN, ln)
-AC_PATH_PROG(SED, sed)
+AC_PROG_SED
 AC_PATH_PROG(AR, ar)
 AC_PATH_PROG(LD, ld)
-AC_PATH_PROG(RANLIB, ranlib)
+AC_PROG_RANLIB
 AC_PATH_PROG(TOUCH, touch)
 
 AC_PROG_YACC
