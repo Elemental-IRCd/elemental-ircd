@@ -40,8 +40,9 @@ struct _rb_helper {
 /* setup all the stuff a new child needs */
 rb_helper *
 rb_helper_child(rb_helper_cb * read_cb, rb_helper_cb * error_cb, log_cb * ilog,
-                restart_cb * irestart, die_cb * idie, int maxcon, size_t lb_heap_size,
-                size_t dh_size, size_t fd_heap_size)
+                __noreturn restart_cb * irestart, __noreturn die_cb * idie,
+                int maxcon, size_t lb_heap_size, size_t dh_size,
+                size_t fd_heap_size)
 {
     rb_helper *helper;
     int maxfd, x = 0;

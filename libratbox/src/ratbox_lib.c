@@ -28,8 +28,8 @@
 #include <commio-ssl.h>
 
 static log_cb *rb_log;
-static restart_cb *rb_restart;
-static die_cb *rb_die;
+static __noreturn restart_cb *rb_restart;
+static __noreturn die_cb *rb_die;
 
 static struct timeval rb_time;
 static char errbuf[512];
@@ -189,7 +189,7 @@ rb_lib_version(void)
 }
 
 void
-rb_lib_init(log_cb * ilog, restart_cb * irestart, die_cb * idie, int closeall, int maxcon,
+rb_lib_init(log_cb * ilog, __noreturn restart_cb * irestart, __noreturn die_cb * idie, int closeall, int maxcon,
             size_t dh_size, size_t fd_heap_size)
 {
     rb_set_time();

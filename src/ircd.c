@@ -446,7 +446,7 @@ ircd_log_cb(const char *str)
     ilog(L_MAIN, "libratbox reports: %s", str);
 }
 
-static void
+static void __noreturn
 ircd_restart_cb(const char *str)
 {
     inotice("libratbox has called the restart callback: %s", str);
@@ -460,7 +460,7 @@ ircd_restart_cb(const char *str)
  * exception, so it is logical to return a FAILURE exit code here.
  *    --nenolod
  */
-static void
+static void __noreturn
 ircd_die_cb(const char *str)
 {
     if(str != NULL) {
