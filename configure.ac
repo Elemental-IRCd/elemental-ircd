@@ -16,6 +16,8 @@ AC_GNU_SOURCE
 
 dnl Checks for programs.
 AC_PROG_CC
+CFLAGS="-D_FORTIFY_SOURCE=1 $CFLAGS"
+
 AC_LANG(C)
 
 AC_CONFIG_SUBDIRS(libratbox)
@@ -837,7 +839,7 @@ CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=error-implicit-function-declaration], charybd
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=strict-prototypes -Wmissing-prototypes -Wmissing-declarations], charybdis_cv_c_gcc_prototypes)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wparenthesis], charybdis_cv_c_gcc_parenthesis)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused], charybdis_cv_c_gcc_w)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=unused-result], charybdis_cv_c_gcc_w_unused_result)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-result], charybdis_cv_c_gcc_w_unused_result)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=shadow], charybdis_cv_c_gcc_w_shadow)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=missing-noreturn], charybdis_cv_c_gcc_w_missing_noreturn)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=undef], charybdis_cv_c_gcc_w_undef)
