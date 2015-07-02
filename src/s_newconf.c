@@ -255,14 +255,6 @@ free_oper_conf(struct oper_conf *oper_p)
         memset(oper_p->passwd, 0, strlen(oper_p->passwd));
         rb_free(oper_p->passwd);
     }
-
-#ifdef HAVE_LIBCRYPTO
-    rb_free(oper_p->rsa_pubkey_file);
-
-    if(oper_p->rsa_pubkey)
-        RSA_free(oper_p->rsa_pubkey);
-#endif
-
     rb_free(oper_p);
 }
 

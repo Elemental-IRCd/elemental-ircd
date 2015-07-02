@@ -3,11 +3,6 @@
 
 #include "stdinc.h"
 
-#ifdef HAVE_LIBCRYPTO
-#include <openssl/pem.h>
-#include <openssl/rsa.h>
-#endif
-
 #include "newconf.h"
 #include "ircd_defs.h"
 #include "common.h"
@@ -512,11 +507,7 @@ conf_end_oper(struct TopConf *tc)
         return 0;
     }
 
-#ifdef HAVE_LIBCRYPTO
-    if(EmptyString(yy_oper->passwd) && EmptyString(yy_oper->rsa_pubkey_file))
-#else
     if(EmptyString(yy_oper->passwd))
-#endif
     {
         conf_report_error("Ignoring operator block for %s -- missing password",
                           yy_oper->name);
@@ -566,35 +557,6 @@ conf_end_oper(struct TopConf *tc)
         }
 
         yy_tmpoper->privset = yy_oper->privset;
-
-#ifdef HAVE_LIBCRYPTO
-        if(yy_oper->rsa_pubkey_file) {
-            BIO *file;
-
-            if((file = BIO_new_file(yy_oper->rsa_pubkey_file, "r")) == NULL) {
-                conf_report_error("Ignoring operator block for %s -- "
-                                  "rsa_public_key_file cant be opened",
-                                  yy_tmpoper->name);
-                return 0;
-            }
-
-            yy_tmpoper->rsa_pubkey =
-                (RSA *) PEM_read_bio_RSA_PUBKEY(file, NULL, 0, NULL);
-
-            (void)BIO_set_close(file, BIO_CLOSE);
-            BIO_free(file);
-
-            if(yy_tmpoper->rsa_pubkey == NULL) {
-                conf_report_error("Ignoring operator block for %s -- "
-                                  "rsa_public_key_file key invalid; check syntax",
-                                  yy_tmpoper->name);
-                return 0;
-            }
-        }
-
-        if(!EmptyString(yy_oper->certfp))
-            yy_tmpoper->certfp = rb_strdup(yy_oper->certfp);
-#endif
 
         /* all is ok, put it on oper_conf_list */
         rb_dlinkMoveNode(ptr, &yy_oper_list, &oper_conf_list);
@@ -666,17 +628,6 @@ conf_set_oper_password(void *data)
     }
 
     yy_oper->passwd = rb_strdup((char *) data);
-}
-
-static void
-conf_set_oper_rsa_public_key_file(void *data)
-{
-#ifdef HAVE_LIBCRYPTO
-    rb_free(yy_oper->rsa_pubkey_file);
-    yy_oper->rsa_pubkey_file = rb_strdup((char *) data);
-#else
-    conf_report_error("Warning -- ignoring rsa_public_key_file (OpenSSL support not available");
-#endif
 }
 
 static void
@@ -2055,7 +2006,6 @@ static struct ConfEntry conf_log_table[] = {
 };
 
 static struct ConfEntry conf_operator_table[] = {
-    { "rsa_public_key_file",  CF_QSTRING, conf_set_oper_rsa_public_key_file, 0, NULL },
     { "flags",	CF_STRING | CF_FLIST, conf_set_oper_flags,	0, NULL },
     { "umodes",	CF_STRING | CF_FLIST, conf_set_oper_umodes,	0, NULL },
     { "privset",	CF_QSTRING, conf_set_oper_privset,	0, NULL },

@@ -37,10 +37,6 @@
 #include "setup.h"
 #include "privilege.h"
 
-#ifdef HAVE_LIBCRYPTO
-#include <openssl/rsa.h>
-#endif
-
 struct ConfItem;
 
 extern rb_dlink_list cluster_conf_list;
@@ -122,11 +118,6 @@ struct oper_conf {
     char *operstring;
 
     struct PrivilegeSet *privset;
-
-#ifdef HAVE_LIBCRYPTO
-    char *rsa_pubkey_file;
-    RSA *rsa_pubkey;
-#endif
 };
 
 extern struct remote_conf *make_remote_conf(void);
