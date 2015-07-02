@@ -351,9 +351,6 @@
 /* Define to 1 if you need to in order for `stat' and other things to work. */
 #undef _POSIX_SOURCE
 
-/* This is needed to use strtok_r on Solaris. */
-#undef __EXTENSIONS__
-
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 

@@ -33,9 +33,6 @@
 /* Warn on unchecked returns */
 #define __must_check    __attribute__((warn_unused_result))
 
-/* Warn on null arguments */
-#define __nonnull(...)    __attribute__((nonull(__VA_ARGS__)))
-
 /* Function never returns */
 #define __noreturn       __attribute__((noreturn))
 

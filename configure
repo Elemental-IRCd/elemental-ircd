@@ -625,7 +625,6 @@ enable_option_checking=no
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 SEDOBJ
-IRC_CFLAGS
 PICFLAGS
 SSL_LIBS
 SSL_INCLUDES
@@ -672,7 +671,6 @@ INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
 SET_MAKE
-STDOUT
 MAKEDEPEND
 MKDEP
 subdirs
@@ -750,7 +748,6 @@ enable_balloc
 enable_small_net
 with_nicklen
 with_topiclen
-enable_warnings
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1388,7 +1385,6 @@ Optional Features:
   --enable-profile        Enable profiling
   --disable-balloc        Disable the block allocator.
   --disable-small-net     Disable small network support.
-  --enable-warnings       Enable all sorts of warnings for debugging.
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -3696,7 +3692,6 @@ $as_echo "$ac_cv_safe_to_define___extensions__" >&6; }
 
 
 
-OLD_CFLAGS="$CFLAGS"
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4243,8 +4238,6 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-CFLAGS="$OLD_CFLAGS"
-
 ac_aux_dir=
 for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
   if test -f "$ac_dir/install-sh"; then
@@ -4278,139 +4271,6 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 subdirs="$subdirs libratbox"
 
-
-
-if test "$ac_cv_c_compiler_gnu" != yes; then
-
-SGS=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking $CC -version for TenDRA or MIPSpro" >&5
-$as_echo_n "checking $CC -version for TenDRA or MIPSpro... " >&6; }
-case `$CC -version 2>&1` in
-*TenDRA*)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes, TenDRA" >&5
-$as_echo "yes, TenDRA" >&6; }
-	IRC_CFLAGS=""
-	CPPFLAGS="$CPPFLAGS -Ylonglong -Yansi -I/usr/include"
-	SGS=yes
-	TenDRA=yes
-;;
-*MIPSpro*)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes, MIPSpro" >&5
-$as_echo "yes, MIPSpro" >&6; }
-	MIPSpro=yes
-	SGS=yes
-;;
-*)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	TenDRA=no
-	MIPSpro=no
-;;
-esac
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking $CC -V for Sun Workshop, Forte, HPUX or Tru64 cc" >&5
-$as_echo_n "checking $CC -V for Sun Workshop, Forte, HPUX or Tru64 cc... " >&6; }
-case `$CC -V 2>&1` in
-*Sun*WorkShop* | *Forte*Developer*)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: Sun Workshop/Forte" >&5
-$as_echo "Sun Workshop/Forte" >&6; }
-	IRC_CFLAGS="-fast -xinline=dlinkAdd,dlinkAddBefore,dlinkAddTail,dlinkDelete,dlink_list_length,dlink_node,dlinkMoveList,_MyMalloc,_MyRealloc,_MyFree,_DupString"
-	SunWorkShop=yes
-	SGS=yes
-;;
-*Tru64*)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: Tru64 cc" >&5
-$as_echo "Tru64 cc" >&6; }
-	IRC_CFLAGS="-O2"
-	CPPFLAGS="-I/usr/local/include"
-	Tru=yes
-;;
-*HP*ANSI*)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: HPUX cc" >&5
-$as_echo "HPUX cc" >&6; }
-	HPUX=yes
-	IRC_CFLAGS="+e"
-;;
-*)
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-;;
-esac
-
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking uname -s for Solaris, AIX or HPUX" >&5
-$as_echo_n "checking uname -s for Solaris, AIX or HPUX... " >&6; }
-OSNAME=`uname -s`
-case "$OSNAME" in
-        HP-UX*)
-
-		if test "$HPUX" != yes -a "$ac_cv_c_compiler_gnu" = no; then
-        	        { $as_echo "$as_me:${as_lineno-$LINENO}: result: assuming old HPUX with its own cc" >&5
-$as_echo "assuming old HPUX with its own cc" >&6; }
-			IRC_CFLAGS="$IRC_CFLAGS +e"
-			HPUX=yes
-		else
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: result: already using newer HPUX" >&5
-$as_echo "already using newer HPUX" >&6; }
-		fi
-	;;
-	SunOS*)
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: SunOS or Solaris" >&5
-$as_echo "SunOS or Solaris" >&6; }
-
-$as_echo "#define __EXTENSIONS__ 1" >>confdefs.h
-
-		SUN=yes
-	;;
-	AIX*)
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: AIX - Sorry you poor bastard..really we are" >&5
-$as_echo "AIX - Sorry you poor bastard..really we are" >&6; }
-		IRC_CFLAGS="$IRC_CFLAGS -Wl,-brtl -Wl,-G"
-	;;
-	*)
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	;;
-esac
-
-if test "$ac_cv_c_compiler_gnu" = yes; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if $CC is Apple GCC" >&5
-$as_echo_n "checking if $CC is Apple GCC... " >&6; }
-
-	case `$CC -v 2>&1 | tail -n 1` in
-	*Apple*)
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-		AppleGCC=yes
-	;;
-	*)
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-		AppleGCC=no
-	;;
-	esac
-
-	IRC_CFLAGS="$IRC_CFLAGS -O0 -Wall -std=gnu99"
-fi
-
-if test "$ac_cv_prog_cc_g" = yes; then
-		if test "$Tru" = yes; then
-		IRC_CFLAGS="$IRC_CFLAGS -g3"
-	else
-		IRC_CFLAGS="$IRC_CFLAGS -g"
-	fi
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if $CC supports the SVR4 SGS interfaces" >&5
-$as_echo_n "checking if $CC supports the SVR4 SGS interfaces... " >&6; }
-if test "$SGS" = "yes"; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
 
 # Extract the first word of "mkdep", so it can be a program name with args.
 set dummy mkdep; ac_word=$2
@@ -4505,17 +4365,6 @@ $as_echo "gcc -MM" >&6; }
 elif test ! -z "$MKDEP"; then
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: mkdep" >&5
 $as_echo "mkdep" >&6; }
-
-		if test -z "$Tru"; then
-		STDOUT=""
-	else
-		STDOUT=" 2> /dev/null"
-	fi
-elif test "$SunWorkShop" = yes; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $CC -xM" >&5
-$as_echo "$CC -xM" >&6; }
-	MKDEP="$CC -xM"
-	STDOUT="> .depend 2> /dev/null"
 elif test ! -z "$MAKEDEPEND"; then
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: makedepend" >&5
 $as_echo "makedepend" >&6; }
@@ -4525,7 +4374,6 @@ else
 $as_echo "nothing suitable.. forget it!" >&6; }
 	MKDEP=":"
 fi
-
 
 
 
@@ -4543,10 +4391,6 @@ $as_echo "#define PATH_DEVNULL \"devnull.log\"" >>confdefs.h
 
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no - using devnull.log" >&5
 $as_echo "no - using devnull.log" >&6; }
-fi
-
-if test ! -z "$CFLAGS"; then
-	IRC_CFLAGS="$IRC_CFLAGS $CFLAGS"
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing strerror" >&5
@@ -7827,7 +7671,7 @@ fi
 
 if test "$profile" = yes; then
 	if test "$ac_cv_c_compiler_gnu" = yes; then
-		IRC_CFLAGS="$IRC_CFLAGS -pg"
+		CFLAGS="$CFLAGS -pg"
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes, adding -pg" >&5
 $as_echo "yes, adding -pg" >&6; }
 
@@ -8340,12 +8184,6 @@ fi
 # for -Wl,-export-dynamic
 # -- jilles
 CWARNS=""
-# Check whether --enable-warnings was given.
-if test "${enable_warnings+set}" = set; then :
-  enableval=$enable_warnings;
-IRC_CFLAGS="$IRC_CFLAGS -O0"
-CFLAGS="$IRC_CFLAGS"
-
 
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking GCC flag(s) -Wall" >&5
 $as_echo_n "checking GCC flag(s) -Wall... " >&6; }
@@ -9367,10 +9205,7 @@ $as_echo "no" >&6; }
  fi
 
 
-IRC_CFLAGS="$CFLAGS"
-
-fi
-
+CFLAGS="$CFLAGS $CWARNS"
 
 if test "$shared_modules" = no; then
 	DYNLINK_C=""
@@ -9537,7 +9372,7 @@ int main(int argc, char *argv[]) {
 }
 void _modinit(void) { return; }
 EOF
-		$CC $CPPFLAGS $IRC_CFLAGS -o conftest conftest.c $nlist_lib >/dev/null 2>&1
+		$CC $CPPFLAGS $CFLAGS -o conftest conftest.c $nlist_lib >/dev/null 2>&1
 		symbol_underscores=`./conftest conftest`
 		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $symbol_underscores" >&5
 $as_echo "$symbol_underscores" >&6; }
@@ -9552,9 +9387,6 @@ _ACEOF
 
 	fi
 fi
-
-IRC_CFLAGS="$IRC_CFLAGS $CWARNS"
-
 
 
 

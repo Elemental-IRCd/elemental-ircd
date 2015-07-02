@@ -13011,10 +13011,6 @@ else
 fi
 
 
-
-# backwards support for IRC_CFLAGS
-CFLAGS="$IRC_CFLAGS $CFLAGS -Wall"
-
 if test "$libexecdir" = '${exec_prefix}/libexec' &&
    test "$localstatedir" = '${prefix}/var'; then
 	libexecdir='${bindir}'

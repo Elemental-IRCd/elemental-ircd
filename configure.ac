@@ -18,132 +18,11 @@ AC_PREFIX_DEFAULT($HOME/ircd)
 
 AC_GNU_SOURCE
 
-OLD_CFLAGS="$CFLAGS"
 dnl Checks for programs.
 AC_PROG_CC
 AC_LANG(C)
 
-dnl Make sure autoconf doesn't interfere with cflags -jmallett
-CFLAGS="$OLD_CFLAGS"
-
 AC_CONFIG_SUBDIRS(libratbox)
-
-dnl Check for various compilers. -jmallett
-dnl But if $CC turns out to be gcc, sure as hell it's, well, gcc. -joshk
-
-if test "$ac_cv_c_compiler_gnu" != yes; then
-
-SGS=no
-AC_MSG_CHECKING($CC -version for TenDRA or MIPSpro)
-case `$CC -version 2>&1` in
-*TenDRA*)
-	AC_MSG_RESULT([yes, TenDRA])
-	IRC_CFLAGS=""
-	CPPFLAGS="$CPPFLAGS -Ylonglong -Yansi -I/usr/include"
-	SGS=yes
-	TenDRA=yes
-;;
-*MIPSpro*)
-	AC_MSG_RESULT([yes, MIPSpro])
-	MIPSpro=yes
-	SGS=yes
-;;
-*)
-	AC_MSG_RESULT(no)
-	TenDRA=no
-	MIPSpro=no
-;;
-esac
-
-AC_MSG_CHECKING([$CC -V for Sun Workshop, Forte, HPUX or Tru64 cc])
-case `$CC -V 2>&1` in
-*Sun*WorkShop* | *Forte*Developer*)
-	AC_MSG_RESULT(Sun Workshop/Forte)
-	IRC_CFLAGS="-fast -xinline=dlinkAdd,dlinkAddBefore,dlinkAddTail,dlinkDelete,dlink_list_length,dlink_node,dlinkMoveList,_MyMalloc,_MyRealloc,_MyFree,_DupString"
-	SunWorkShop=yes
-	SGS=yes
-;;
-*Tru64*)
-	AC_MSG_RESULT(Tru64 cc)
-	IRC_CFLAGS="-O2"
-	CPPFLAGS="-I/usr/local/include"
-	Tru=yes
-;;
-*HP*ANSI*)
-	AC_MSG_RESULT(HPUX cc)
-	HPUX=yes
-	IRC_CFLAGS="+e"
-;;
-*)
-	AC_MSG_RESULT(no)
-;;
-esac
-
-fi
-
-AC_MSG_CHECKING([uname -s for Solaris, AIX or HPUX])
-OSNAME=`uname -s`
-case "$OSNAME" in
-        HP-UX*)
-	dnl only do this if we haven't already detected the newer one
-	dnl and we're not already using gcc
-	
-		if test "$HPUX" != yes -a "$ac_cv_c_compiler_gnu" = no; then
-        	        AC_MSG_RESULT(assuming old HPUX with its own cc)  
-			IRC_CFLAGS="$IRC_CFLAGS +e"
-			HPUX=yes
-		else
-			AC_MSG_RESULT(already using newer HPUX)
-		fi
-	;;
-	SunOS*)
-		AC_MSG_RESULT(SunOS or Solaris)
-		AC_DEFINE(__EXTENSIONS__, 1, [This is needed to use strtok_r on Solaris.])
-		SUN=yes
-	;;
-	AIX*)
-		AC_MSG_RESULT(AIX - Sorry you poor bastard..really we are)
-		IRC_CFLAGS="$IRC_CFLAGS -Wl,-brtl -Wl,-G"
-	;;
-	*)
-		AC_MSG_RESULT(no)
-	;;
-esac
-
-if test "$ac_cv_c_compiler_gnu" = yes; then
-	AC_MSG_CHECKING(if $CC is Apple GCC)
-
-	case `$CC -v 2>&1 | tail -n 1` in
-	*Apple*)
-		AC_MSG_RESULT(yes)
-		AppleGCC=yes
-	;;
-	*)
-		AC_MSG_RESULT(no)
-		AppleGCC=no
-	;;
-	esac
-
-	IRC_CFLAGS="$IRC_CFLAGS -O0 -Wall -std=gnu99"
-fi
-
-dnl If we support -g, use it!
-if test "$ac_cv_prog_cc_g" = yes; then
-	dnl Tru64 needs -g3 for -O2
-	if test "$Tru" = yes; then
-		IRC_CFLAGS="$IRC_CFLAGS -g3"
-	else
-		IRC_CFLAGS="$IRC_CFLAGS -g"
-	fi
-fi
-
-dnl SVR4 SGS based on what we know about the compiler -jmallett
-AC_MSG_CHECKING(if $CC supports the SVR4 SGS interfaces)
-if test "$SGS" = "yes"; then
-	AC_MSG_RESULT(yes)
-else
-	AC_MSG_RESULT(no)
-fi
 
 dnl We prefer gcc -MM because it's a lot less bloated
 AC_PATH_PROG(MKDEP, mkdep)
@@ -158,17 +37,6 @@ if test "$ac_cv_c_compiler_gnu" = yes; then
 	MKDEP="$CC -MM"
 elif test ! -z "$MKDEP"; then
 	AC_MSG_RESULT(mkdep)
-
-	dnl Tru64's mkdep is very loud
-	if test -z "$Tru"; then
-		STDOUT=""
-	else
-		STDOUT=" 2> /dev/null"
-	fi
-elif test "$SunWorkShop" = yes; then
-	AC_MSG_RESULT($CC -xM)
-	MKDEP="$CC -xM"
-	STDOUT="> .depend 2> /dev/null"
 elif test ! -z "$MAKEDEPEND"; then
 	AC_MSG_RESULT(makedepend)
 	MKDEP="$MAKEDEPEND -f-"
@@ -178,7 +46,6 @@ else
 fi
 
 AC_SUBST(MKDEP)
-AC_SUBST(STDOUT)
 
 dnl check for /dev/null so we can use it to hold evil fd's
 AC_MSG_CHECKING([for /dev/null])
@@ -188,13 +55,6 @@ if test -c /dev/null ; then
 else
 	AC_DEFINE(PATH_DEVNULL, "devnull.log", [Path to /dev/null])
 	AC_MSG_RESULT(no - using devnull.log)
-fi
-
-dnl jdc -- If CFLAGS is defined, best use it everywhere...
-dnl NOTE: jv says it must be added to the *END*, because things like
-dnl "gcc -O9 -O2" will result in -O2 getting preference.  How stupid.
-if test ! -z "$CFLAGS"; then
-	IRC_CFLAGS="$IRC_CFLAGS $CFLAGS"
 fi
 
 AC_ISC_POSIX
@@ -843,7 +703,7 @@ AC_HELP_STRING([--enable-profile],[Enable profiling]),
 
 if test "$profile" = yes; then
 	if test "$ac_cv_c_compiler_gnu" = yes; then
-		IRC_CFLAGS="$IRC_CFLAGS -pg"
+		CFLAGS="$CFLAGS -pg"
 		AC_MSG_RESULT([yes, adding -pg])
 		AC_DEFINE(CHARYBDIS_PROFILE, 1, [Define this if you are profiling.])
 	else
@@ -1071,12 +931,6 @@ fi
 # for -Wl,-export-dynamic
 # -- jilles
 CWARNS=""
-AC_ARG_ENABLE(warnings,
-AC_HELP_STRING([--enable-warnings],[Enable all sorts of warnings for debugging.]),
-[
-IRC_CFLAGS="$IRC_CFLAGS -O0"
-CFLAGS="$IRC_CFLAGS"
-
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wall], charybdis_cv_c_gcc_w_all)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wpointer-arith], charybdis_cv_c_gcc_w_pointer_arith)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wimplicit -Wnested-externs], charybdis_cv_c_gcc_w_implicit)
@@ -1098,8 +952,7 @@ CHARYBDIS_C_GCC_TRY_FLAGS([-Wredundant-decls], charybdis_cv_c_gcc_w_redundant_de
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wfloat-equal], charybdis_cv_c_gcc_w_float_equal)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wformat -Wformat-y2k -Wno-format-security], charybdis_cv_c_gcc_w_format)
 
-IRC_CFLAGS="$CFLAGS"
-],[])
+CFLAGS="$CFLAGS $CWARNS"
 
 if test "$shared_modules" = no; then
 	DYNLINK_C=""
@@ -1161,7 +1014,7 @@ int main(int argc, char *argv[[]]) {
 }
 void _modinit(void) { return; }
 EOF
-		$CC $CPPFLAGS $IRC_CFLAGS -o conftest conftest.c $nlist_lib >/dev/null 2>&1
+		$CC $CPPFLAGS $CFLAGS -o conftest conftest.c $nlist_lib >/dev/null 2>&1
 		symbol_underscores=`./conftest conftest`
 		AC_MSG_RESULT($symbol_underscores)
 		$RM -f conftest conftest.c
@@ -1169,8 +1022,6 @@ EOF
 		AC_DEFINE_UNQUOTED(SYMBOL_PREFIX, "${symbol_underscores}", [String containing extra underscores prepended to symbols loaded from modules.])
 	fi
 fi
-
-IRC_CFLAGS="$IRC_CFLAGS $CWARNS"
 
 AC_SUBST(MODULES_LIBS)
 AC_SUBST(MOD_TARGET)
@@ -1181,7 +1032,6 @@ AC_SUBST(SSL_LIBS)
 
 AC_SUBST(LDFLAGS)
 AC_SUBST(PICFLAGS)
-AC_SUBST(IRC_CFLAGS)
 AC_SUBST(SEDOBJ)
 
 
