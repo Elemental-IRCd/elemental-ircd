@@ -957,7 +957,7 @@ AC_CONFIG_FILES(			\
 	doc/Makefile			\
 	help/Makefile			\
 )
-AC_CONFIG_COMMANDS([tools/genssl.sh_chmod], [chmod 755 tools/genssl.sh])
+AC_CONFIG_COMMANDS([version],[src/version.c.SH])
 
 AC_OUTPUT
 

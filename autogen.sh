@@ -4,4 +4,4 @@ set -e
 
 autoreconf --version
 autoreconf --install -v --force
-./configure $@
+scripts/version.sh

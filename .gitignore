@@ -42,6 +42,7 @@ servlink/servlink
 setup.h.in
 src/ircd
 src/lex.yy.c
+src/version.c
 src/version.c.last
 src/y.tab.h
 src/y.tab.c

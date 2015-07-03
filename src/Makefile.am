@@ -45,4 +45,5 @@ ircd_SOURCES =                  \
   substitution.c                \
   supported.c                   \
   tgchange.c                    \
+  version.c                     \
   whowas.c
