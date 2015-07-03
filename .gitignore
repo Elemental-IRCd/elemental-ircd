@@ -38,11 +38,13 @@ scripts/*.tgz
 scripts/*.tar.bz2
 scripts/*.tar.gz
 servlink/servlink
+setup.h.in
 src/ircd
 src/lex.yy.c
 src/version.c.last
 src/y.tab.h
 src/y.tab.c
+stamp-h1
 ssld/ssld
 tools/convertilines
 tools/convertklines
