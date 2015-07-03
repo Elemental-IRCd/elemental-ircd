@@ -4,9 +4,9 @@ SUBDIRS = libratbox \
           ssld \
           bandb \
           tools \
+          extensions \
           doc
 
 # The following are yet to be converted to automake
-#          extensions
 #          modules
 #          help
