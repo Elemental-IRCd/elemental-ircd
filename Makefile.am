@@ -1,2 +1,5 @@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = libratbox ssld src
+SUBDIRS = libratbox \
+          src \
+          ssld \
+          bandb 
