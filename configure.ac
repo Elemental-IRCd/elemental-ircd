@@ -3,14 +3,11 @@ AC_COPYRIGHT([2014 elemental-ircd Team])
 
 AC_INIT([elemental-ircd],[6.6.2],[https://github.com/Elemental-IRCd/elemental-ircd/issues])
 AC_CONFIG_SRCDIR([src/ircd.c])
-
-AM_INIT_AUTOMAKE
-
 AC_CONFIG_HEADER(include/setup.h)
-
 AC_PREFIX_DEFAULT($HOME/ircd)
 
-AC_GNU_SOURCE
+AM_INIT_AUTOMAKE
+LT_INIT
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -65,7 +62,6 @@ AC_PATH_PROG(LN, ln)
 AC_PROG_SED
 AC_PATH_PROG(AR, ar)
 AC_PATH_PROG(LD, ld)
-AC_PROG_RANLIB
 AC_PATH_PROG(TOUCH, touch)
 
 AC_PROG_YACC

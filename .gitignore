@@ -31,6 +31,7 @@ libratbox/include/stamp-h1
 libratbox/libratbox.pc
 libratbox/libtool
 libratbox/src/version.c
+libtool
 ltmain.sh
 missing
 scripts/*.tbz2
