@@ -1,4 +1,4 @@
-AC_PREREQ(2.69)
+AC_PREREQ(2.68)
 AC_COPYRIGHT([2014 elemental-ircd Team])
 
 AC_INIT([elemental-ircd],[6.6.2],[https://github.com/Elemental-IRCd/elemental-ircd/issues])

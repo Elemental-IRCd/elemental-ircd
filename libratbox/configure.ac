@@ -1,16 +1,9 @@
-dnl $Id: configure.ac 26260 2008-12-10 04:08:39Z androsyn $
-dnl Process this file with autoconf to produce a configure script.
+AC_PREREQ(2.68)
+AC_COPYRIGHT([2014 elemental-ircd Team])
 
-dnl TODO: clean up all the OpenSSL and shared module checking stuff;
-dnl the most major changes have already been made and it looks like
-dnl said functions need to be just about as complex as they already are.
-
-AC_PREREQ(2.63)
-AUTOMAKE_OPTIONS = 1.10
-dnl Sneaky way to get an Id tag into the configure script
-AC_COPYRIGHT([$Id: configure.ac 26260 2008-12-10 04:08:39Z androsyn $])
 AC_INIT([libratbox],[devel])
 AC_CONFIG_SRCDIR([include/ratbox_lib.h])
+
 AM_INIT_AUTOMAKE
 
 AM_CONFIG_HEADER(include/libratbox_config.h)
