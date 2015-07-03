@@ -10,7 +10,6 @@ AM_INIT_AUTOMAKE
 LT_INIT
 
 dnl Checks for programs.
-AC_PROG_CC
 CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 $CFLAGS"
 
 AC_LANG(C)
@@ -52,26 +51,26 @@ fi
 
 AC_ISC_POSIX
 AC_C_INLINE
+AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_GCC_TRADITIONAL
 AC_PROG_MAKE_SET
+AC_PROG_SED
+AC_PROG_YACC
+AC_PROG_LEX
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(CP, cp)
 AC_PATH_PROG(MV, mv)
 AC_PATH_PROG(LN, ln)
-AC_PROG_SED
 AC_PATH_PROG(AR, ar)
 AC_PATH_PROG(LD, ld)
 AC_PATH_PROG(TOUCH, touch)
 
-AC_PROG_YACC
 
 dnl AC_PROG_YACC defaults to yacc unconditionally if nothing can be found
 if test "$YACC" = "yacc" -a -z "`which $YACC 2>/dev/null`"; then
 	AC_MSG_ERROR([could not locate a suitable parser generator; install bison, yacc, or byacc])
 fi
-
-AC_PROG_LEX
 
 if test "$LEX" = ":"; then
 	AC_MSG_ERROR([could not locate a suitable lexical generator, install flex or lex.])

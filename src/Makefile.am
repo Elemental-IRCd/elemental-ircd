@@ -1,4 +1,5 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libratbox/include
+AM_YFLAGS = -d
 LDADD = ../libratbox/src/libratbox.la
 
 bin_PROGRAMS = ircd
@@ -17,6 +18,8 @@ ircd_SOURCES =                  \
   hostmask.c                    \
   irc_dictionary.c              \
   ircd.c                        \
+  ircd_parser.y                 \
+  ircd_lexer.l                  \
   ircd_signal.c                 \
   listener.c                    \
   logger.c                      \

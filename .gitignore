@@ -41,11 +41,10 @@ scripts/*.tar.gz
 servlink/servlink
 setup.h.in
 src/ircd
-src/lex.yy.c
 src/version.c
-src/version.c.last
-src/y.tab.h
-src/y.tab.c
+src/ircd_lexer.c
+src/ircd_parser.c
+src/ircd_parser.h
 stamp-h1
 ssld/ssld
 tools/convertilines
@@ -53,6 +52,7 @@ tools/convertklines
 tools/genssl.sh
 tools/mkpasswd
 tools/viconf
+ylwrap
 include/serno.h
 libratbox/src/version.c.last
 *.pyc
