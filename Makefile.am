@@ -1,2 +1,2 @@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = ssld src
+SUBDIRS = libratbox ssld src

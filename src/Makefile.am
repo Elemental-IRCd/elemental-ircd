@@ -1,4 +1,5 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libratbox/include
+LDADD = ../libratbox/src/libratbox.la
 
 bin_PROGRAMS = ircd
 ircd_SOURCES =                  \

@@ -1,5 +1,5 @@
 AM_CPPFLAGS = -I../include -I../libratbox/include
-LDADD = -lratbox
+LDADD = ../libratbox/src/libratbox.la
 
 bin_PROGRAMS = ssld
 ssld_SOURCES = ssld.c
