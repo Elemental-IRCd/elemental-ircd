@@ -6,7 +6,6 @@ SUBDIRS = libratbox \
           tools \
           modules \
           extensions \
+          help \
           doc
 
-# The following are yet to be converted to automake
-#          help
