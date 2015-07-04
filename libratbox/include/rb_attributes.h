@@ -40,14 +40,17 @@
 #define __format_printf(fmt, args) __attribute__((format(printf, fmt, args)));
 
 /* Mark argument as unused */
-#define __unused __attribute__((__unused__))
+#define __unused __attribute__((unused))
 
 /* Mark a function as depricated */
 #define __deprecated __attribute__((deprecated))
 
 /* Non-null return value */
+#ifdef __COVERITY__
 #define __returns_nonnull __attribute__((returns_nonnull))
-
+#else
+#define __returns_nonnull
+#endif
 /* function returns new memory (and warn on unchecked return) */
 #define __malloc __attribute__((malloc)) __attribute__((warn_unused_result))
 
