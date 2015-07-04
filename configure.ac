@@ -8,6 +8,7 @@ AC_CONFIG_HEADER(include/setup.h)
 AC_PREFIX_DEFAULT($HOME/ircd)
 
 AM_INIT_AUTOMAKE
+AM_SILENT_RULES([yes])
 LT_INIT
 
 dnl Checks for programs.

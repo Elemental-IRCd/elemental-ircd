@@ -6,6 +6,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([include/ratbox_lib.h])
 
 AM_INIT_AUTOMAKE
+AM_SILENT_RULES([yes])
 
 AM_CONFIG_HEADER(include/libratbox_config.h)
 
