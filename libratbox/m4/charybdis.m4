@@ -37,7 +37,7 @@ AC_DEFUN([CHARYBDIS_C_GCC_TRY_FLAGS],[
  then
   AC_CACHE_VAL($2,[
    oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} ${CWARNS} $1 -Werror"
+   CFLAGS="${CFLAGS-} $1 -Werror"
    AC_TRY_COMPILE([
 #include <string.h>
 #include <stdio.h>
@@ -47,7 +47,7 @@ int main(void);
 ], [$2=yes], [$2=no])
    CFLAGS="${oldcflags}"])
   if test "x$$2" = xyes; then
-   CWARNS="${CWARNS}$1 "
+   CFLAGS="${CFLAGS} $1 "
    AC_MSG_RESULT(ok)  
   else
    $2=''

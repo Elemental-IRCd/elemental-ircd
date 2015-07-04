@@ -821,7 +821,6 @@ fi
 # This must be down here, or it will mess up checks like the ones
 # for -Wl,-export-dynamic
 # -- jilles
-CWARNS=""
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wall], charybdis_cv_c_gcc_w_all)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wextra], charybdis_cv_c_gcc_w_extra)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=pointer-arith], charybdis_cv_c_gcc_w_pointer_arith)
@@ -852,8 +851,6 @@ CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format], charybdis_cv_c_gcc_w_format)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format-y2k], charybdis_cv_c_gcc_w_format_y2k)
 # format-security is omited as non-literal printf formats are used extensively
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wno-format-security], charybdis_cv_c_gcc_w_no_format_security)
-
-CFLAGS="$CFLAGS $CWARNS"
 
 if test "$shared_modules" = no; then
 	DYNLINK_C=""
