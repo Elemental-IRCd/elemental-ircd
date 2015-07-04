@@ -9,3 +9,7 @@ SUBDIRS = libratbox \
           help \
           doc
 
+logdir = @prefix@/logs
+
+install-data-hook:
+	test -d ${logdir} || mkdir -p ${logdir}
