@@ -1,8 +1,7 @@
 AM_CPPFLAGS = -I../include -I../libratbox/include
-AM_LDFLAGS = -shared -export-dynamic
 
 .c.so:
-	${CC} ${PICFLAGS} ${AM_CPPFLAGS} ${CPPFLAGS} ${CFLAGS} ${AM_LDFLAGS} ${LDFLAGS} $< -o $@
+	${CC} ${PICFLAGS} ${AM_CPPFLAGS} ${CPPFLAGS} ${CFLAGS} -Wl,-shared,-export-dynamic ${LDFLAGS} $< -o $@
 
 extensiondir=@moduledir@/extensions
 
