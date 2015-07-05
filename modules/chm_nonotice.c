@@ -52,8 +52,9 @@ chm_nonotice_process(hook_data_privmsg_channel *data)
 
     struct membership *msptr = find_channel_membership(data->chptr, data->source_p);
 
+    // Also allow CTCP replies here.
     if(data->msgtype == MESSAGE_TYPE_NOTICE) {
-        if(data->chptr->mode.mode & mode_nonotice &&
+        if(data->chptr->mode.mode & mode_nonotice && *data->text != '\001' &&
            (!ConfigChannel.exempt_cmode_T || !is_any_op(msptr))) {
             sendto_one_numeric(data->source_p, 404,
                                "%s :Cannot send to channel - Notices are disallowed (+T set)",
