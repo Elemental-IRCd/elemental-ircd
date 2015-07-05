@@ -319,9 +319,15 @@ build_target_list(enum message_type msgtype, struct Client *client_p,
         /*  allow %+@ if someone wants to do that */
         for(;;) {
             if(*nick == '@')
-                type |= CHFL_CHANOP;
+                type |= CHFL_CHANOP | CHFL_ADMIN | CHFL_OWNER;
             else if(*nick == '+')
-                type |= CHFL_CHANOP | CHFL_VOICE;
+                type |= CHFL_CHANOP | CHFL_VOICE | CHFL_HALFOP | CHFL_ADMIN | CHFL_OWNER;
+            else if(*nick == '%')
+                type |= CHFL_CHANOP | CHFL_HALFOP | CHFL_ADMIN | CHFL_OWNER;
+            else if(*nick == '!')
+                type |= CHFL_ADMIN | CHFL_OWNER;
+            else if(*nick == '~')
+                type = CHFL_OWNER;
             else
                 break;
             nick++;

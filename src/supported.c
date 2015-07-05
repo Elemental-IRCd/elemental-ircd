@@ -220,12 +220,12 @@ isupport_chanmodes(const void *ptr)
     static char result[80];
 
     snprintf(result, sizeof result, "%s%sb%s,k,%sl%s,%s",
-                ConfigChannel.use_except ? "e" : "",
-                ConfigChannel.use_invex ? "I" : "",
-                strchr(ConfigChannel.disabledmodes, 'q') ? "" : "q",
-                ConfigChannel.use_forward ? "f" : "",
-                strchr(ConfigChannel.disabledmodes, 'j') ? "" : "j",
-                cflagsbuf);
+             ConfigChannel.use_except ? "e" : "",
+             ConfigChannel.use_invex ? "I" : "",
+             strchr(ConfigChannel.disabledmodes, 'q') ? "" : "q",
+             ConfigChannel.use_forward ? "f" : "",
+             strchr(ConfigChannel.disabledmodes, 'j') ? "" : "j",
+             cflagsbuf);
     return result;
 }
 
@@ -241,8 +241,8 @@ isupport_chanlimit(const void *ptr)
     static char result[30];
 
     snprintf(result, sizeof result, "%s:%i",
-                ConfigChannel.use_local_channels ? "&#" : "#",
-                ConfigChannel.max_chans_per_user);
+             ConfigChannel.use_local_channels ? "&#" : "#",
+             ConfigChannel.max_chans_per_user);
     return result;
 }
 
@@ -252,12 +252,12 @@ isupport_prefix(const void *ptr)
     static char result[13];
 
     snprintf(result, sizeof result, "(%s%so%sv)%s%s@%s+",
-                ConfigChannel.use_owner ? "y" : "",
-                ConfigChannel.use_admin ? "a" : "",
-                ConfigChannel.use_halfop ? "h" : "",
-                ConfigChannel.use_owner ? "~" : "",
-                ConfigChannel.use_admin ? "!" : "",
-                ConfigChannel.use_halfop ? "%" : "");
+             ConfigChannel.use_owner ? "y" : "",
+             ConfigChannel.use_admin ? "a" : "",
+             ConfigChannel.use_halfop ? "h" : "",
+             ConfigChannel.use_owner ? "~" : "",
+             ConfigChannel.use_admin ? "!" : "",
+             ConfigChannel.use_halfop ? "%" : "");
     return result;
 }
 
@@ -267,9 +267,9 @@ isupport_maxlist(const void *ptr)
     static char result[30];
 
     snprintf(result, sizeof result, "bq%s%s:%i",
-                ConfigChannel.use_except ? "e" : "",
-                ConfigChannel.use_invex ? "I" : "",
-                ConfigChannel.max_bans);
+             ConfigChannel.use_except ? "e" : "",
+             ConfigChannel.use_invex ? "I" : "",
+             ConfigChannel.max_bans);
     return result;
 }
 
@@ -279,8 +279,8 @@ isupport_targmax(const void *ptr)
     static char result[200];
 
     snprintf(result, sizeof result, "NAMES:1,LIST:1,KICK:1,WHOIS:1,PRIVMSG:%d,NOTICE:%d,ACCEPT:,MONITOR:",
-                ConfigFileEntry.max_targets,
-                ConfigFileEntry.max_targets);
+             ConfigFileEntry.max_targets,
+             ConfigFileEntry.max_targets);
     return result;
 }
 
@@ -329,7 +329,7 @@ init_isupport(void)
     add_isupport("MODES", isupport_intptr, &maxmodes);
     add_isupport("NETWORK", isupport_stringptr, &ServerInfo.network_name);
     add_isupport("KNOCK", isupport_boolean, &ConfigChannel.use_knock);
-    add_isupport("STATUSMSG", isupport_string, "@+");
+    add_isupport("STATUSMSG", isupport_string, "~!@%+");
     add_isupport("CALLERID", isupport_string, "g");
     add_isupport("CASEMAPPING", isupport_string, "rfc1459");
     add_isupport("NICKLEN", isupport_intptr, &nicklen);
