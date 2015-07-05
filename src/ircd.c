@@ -642,9 +642,7 @@ main(int argc, char *argv[])
     construct_cflags_strings();
 
     load_all_modules(1);
-#ifndef STATIC_MODULES
     load_core_modules(1);
-#endif
     init_auth();		/* Initialise the auth code */
     init_resolver();	/* Needs to be setup before the io loop */
     privilegeset_set_new("default", "", 0);
@@ -652,11 +650,9 @@ main(int argc, char *argv[])
     if (testing_conf)
         fprintf(stderr, "\nBeginning config test\n");
     read_conf_files(YES);	/* cold start init conf files */
-#ifndef STATIC_MODULES
 
     mod_add_path(MODULE_DIR);
     mod_add_path(MODULE_DIR "/autoload");
-#endif
 
     init_bandb();
     init_ssld();

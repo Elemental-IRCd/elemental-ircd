@@ -293,14 +293,12 @@ oneitem: qstring
 loadmodule:
 	  LOADMODULE QSTRING
             {
-#ifndef STATIC_MODULES
               char *m_bn;
 
               m_bn = rb_basename((char *) $2);
 
               if (findmodule_byname(m_bn) == -1)
 	          load_one_module($2, 0);
-#endif
 	    }
 	  ';'
           ;

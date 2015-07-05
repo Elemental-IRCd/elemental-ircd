@@ -43,8 +43,6 @@
 
 static int mo_olist(struct Client *, struct Client *, int parc, const char *parv[]);
 
-#ifndef STATIC_MODULES
-
 struct Message olist_msgtab = {
     "OLIST", 0, 0, 0, MFLG_SLOW,
     {mg_unreg, mg_not_oper, mg_ignore, mg_ignore, mg_ignore, {mo_olist, 1}}
@@ -53,8 +51,6 @@ struct Message olist_msgtab = {
 mapi_clist_av1 olist_clist[] = { &olist_msgtab, NULL };
 
 DECLARE_MODULE_AV1(okick, NULL, NULL, olist_clist, NULL, NULL, "$Revision: 6 $");
-
-#endif
 
 static void list_all_channels(struct Client *source_p);
 static void list_named_channel(struct Client *source_p, const char *name);

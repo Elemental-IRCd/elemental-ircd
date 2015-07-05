@@ -853,15 +853,6 @@ CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format-y2k], charybdis_cv_c_gcc_w_format_y2k)
 # format-security is omited as non-literal printf formats are used extensively
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wno-format-security], charybdis_cv_c_gcc_w_no_format_security)
 
-if test "$shared_modules" = no; then
-	DYNLINK_C=""
-	MOD_TARGET="libmodules.a"
-	MODULES_LIBS="../modules/libmodules.a"
-	SEDOBJ=""
-	AC_DEFINE(STATIC_MODULES, 1, [Define to 1 if dynamic modules can't be used.])
-	AC_MSG_WARN([shared module support has been disabled!])
-fi
-
 dnl Stage 5 - underscores in front of symbol names.
 if test "$shared_modules" = yes; then
 
@@ -957,12 +948,6 @@ AC_CONFIG_FILES(			\
 )
 
 AC_OUTPUT
-
-if test "$shared_modules" = yes; then
-	modules=shared
-else
-	modules=static
-fi
 
 echo "
 Configuration:
