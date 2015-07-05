@@ -19,7 +19,6 @@ AC_PROG_CC_C99
 if test x"$ac_cv_prog_cc_c99" = "xno"; then
 	AC_ERROR([ircd-ratbox requires a C99 capable compiler])
 fi
-        
 
 AC_PROG_INSTALL
 AC_PROG_EGREP
@@ -56,6 +55,7 @@ AC_PROG_LIBTOOL
 GCC_STACK_PROTECT_CC
 GCC_STACK_PROTECT_LIB
 
+PKG_PROG_PKG_CONFIG
 
 LIBTOOL="$LIBTOOL --silent"
 
@@ -201,150 +201,52 @@ else
 fi
 
 dnl OpenSSL support
-AC_MSG_CHECKING(for OpenSSL)
-AC_ARG_ENABLE(openssl,
-[AC_HELP_STRING([--enable-openssl[=DIR]],[Enable OpenSSL support (DIR optional).])
-AC_HELP_STRING([--disable-openssl],[Disable OpenSSL support.])],
-[cf_enable_openssl=$enableval],
-[cf_enable_openssl="auto"])
+AC_ARG_ENABLE(openssl, [
+	AC_HELP_STRING([--enable-openssl],[Enable OpenSSL support.])
+	AC_HELP_STRING([--disable-openssl],[Disable OpenSSL support.])
+],
+	[cf_enable_openssl=$enableval],
+	[cf_enable_openssl="auto"]
+)
 
-if test "$cf_enable_openssl" != "no" ; then
-	cf_openssl_basedir=""
-	if test "$cf_enable_openssl" != "auto" &&
-	test "$cf_enable_openssl" != "yes" ; then
-		dnl Support for --enable-openssl=/some/place
-		cf_openssl_basedir="`echo ${cf_enable_openssl} | sed 's/\/$//'`"
-	else
-	dnl Do the auto-probe here.  Check some common directory paths.
-		for dirs in /usr/local/ssl /usr/pkg /usr/local \
-		/usr/local/openssl ; do
-			if test -f "${dirs}/include/openssl/opensslv.h" ; then
-				cf_openssl_basedir="${dirs}"
-			break
-			fi
-		done
-		unset dirs
-	fi
-	dnl Now check cf_openssl_found to see if we found anything.
-	if test ! -z "$cf_openssl_basedir"; then
-		if test -f "${cf_openssl_basedir}/include/openssl/opensslv.h" ; then
-			SSL_CFLAGS="-I${cf_openssl_basedir}/include"
-			SSL_LIBS="-L${cf_openssl_basedir}/lib $lt_cv_dlopen_libs"
-		else
-		dnl OpenSSL wasn't found in the directory specified.  Naughty
-		dnl administrator...
-		cf_openssl_basedir=""
-		fi
-	else
-	dnl Check for stock FreeBSD 4.x and 5.x systems, since their files
-	dnl are in /usr/include and /usr/lib.  In this case, we don't want to
-	dnl change INCLUDES or LIBS, but still want to enable OpenSSL.
-	dnl We can't do this check above, because some people want two versions
-	dnl of OpenSSL installed (stock FreeBSD 4.x/5.x and /usr/local/ssl)
-	dnl and they want /usr/local/ssl to have preference.
-		if test -f "/usr/include/openssl/opensslv.h" ; then
-			cf_openssl_basedir="/usr"
-		fi
-	fi
-
-	dnl If we have a basedir defined, then everything is okay.  Otherwise,
-	dnl we have a problem.
-	if test ! -z "$cf_openssl_basedir"; then
-		AC_MSG_RESULT($cf_openssl_basedir)
-		cf_enable_openssl="yes"
-	else
-		AC_MSG_RESULT([not found. Specify a correct path?])
-		cf_enable_openssl="no"
-	fi
-	unset cf_openssl_basedir
-else
-	dnl If --disable-openssl was specified
-	AC_MSG_RESULT(disabled)
+if test x"$cf_enable_openssl" != x"no"; then
+	PKG_CHECK_MODULES([SSL], [openssl > 0.9.8], [cf_have_openssl=yes], [cf_have_openssl=no])
 fi
 
-save_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $SSL_CFLAGS"
-save_LIBS="$LIBS"
-LIBS="$LIBS $SSL_LIBS"
-if test "$cf_enable_openssl" != no; then
-	dnl Check OpenSSL version (must be 0.9.7 or above!)
-	AC_MSG_CHECKING(for OpenSSL 0.9.7 or above)
-	AC_RUN_IFELSE(
-		[AC_LANG_PROGRAM(
-	    	[#include <openssl/opensslv.h>
-		#include <stdlib.h>
-		],
-		[[if (OPENSSL_VERSION_NUMBER >= 0x00907000)
-		exit(0); else exit(1);]])],
-	cf_enable_openssl=yes,
-	cf_enable_openssl=no,
-	cf_enable_openssl=no)
-
-	if test "$cf_enable_openssl" != no; then
-		AC_MSG_RESULT(found)
-	else
-	        AC_MSG_RESULT(no - OpenSSL support disabled)
-	fi
-
+if test x"$cf_enable_openssl" == x"yes" && x"$cf_have_openssl" == x"no"; then
+	AC_MSG_ERROR([** openssl requested but not found])
 fi
-
-
-if test "$cf_enable_openssl" != no; then
-	CPPFLAGS="$CPPFLAGS $SSL_LIBS"
-	AC_CHECK_LIB(crypto, RAND_status, 
-		[cf_enable_openssl=yes],
-		[cf_enable_openssl=no])
-fi
-
-if test "$cf_enable_openssl" != no; then
-	CPPFLAGS="$CPPFLAGS $SSL_LIBS"
-	AC_CHECK_LIB(ssl, SSL_read, 
-		[SSL_LIBS="$SSL_LIBS -lssl -lcrypto $lt_cv_dlopen_libs"],
-		[cf_enable_openssl=no], [-lcrypto])
-fi
-
-
 
 dnl GnuTLS support
-AC_MSG_CHECKING(for GnuTLS)
-AC_ARG_ENABLE(gnutls,
-[AC_HELP_STRING([--enable-gnutls],[Enable GnuTLS support.])
-AC_HELP_STRING([--disable-gnutls],[Disable GnuTLS support.])],
-[cf_enable_gnutls=$enableval],
-[cf_enable_gnutls="auto"])
- 
-if test "$cf_enable_gnutls" != no; then
-       PKG_CHECK_MODULES(GNUTLS, [gnutls], [
-               cf_enable_gnutls="yes"   
-       ], [cf_enable_gnutls="no"])      
+AC_ARG_ENABLE(gnutls, [
+	AC_HELP_STRING([--enable-gnutls],[Enable GnuTLS support.])
+	AC_HELP_STRING([--disable-gnutls],[Disable GnuTLS support.])
+],
+	[cf_enable_gnutls=$enableval],
+	[cf_enable_gnutls="auto"]
+)
+
+if test x"$cf_enable_gnutls" != x"no"; then
+	PKG_CHECK_MODULES([GNUTLS], [gnutls], [cf_have_gnutls=yes], [cf_have_gnutls=no])
 fi
 
-if test "$cf_enable_gnutls" = "auto" -a "$cf_enable_openssl" = "yes"; then
-       cf_enable_gnutls="no"
+if test x"$cf_enable_gnutls" == x"yes" && x"$cf_have_gnutls" == x"no"; then
+	AC_MSG_ERROR([** gnutls requested but not found])
 fi
 
-if test x"$cf_enable_openssl" != xno; then
+if test x"$cf_have_openssl" == x"yes"; then
 	AC_DEFINE(HAVE_OPENSSL,1,[Has OpenSSL])
 	GNUTLS_CFLAGS=""
 	GNUTLS_LIBS=""
 	SSL_TYPE="openssl"
-elif test x"$cf_enable_gnutls" != xno; then
+elif test x"$cf_have_gnutls" == x"yes"; then
 	AC_DEFINE(HAVE_GNUTLS, 1, [Has GnuTLS])
 	SSL_LIBS=""
-	SSL_CFLAGS=""	
+	SSL_CFLAGS=""
 	SSL_TYPE="gnutls"
+else
+	AC_MSG_ERROR([** No ssl library found, please install openssl or gnutls])
 fi
-
-
-
-
-CPPFLAGS="$save_CPPFLAGS"
-LIBS="$save_LIBS"
-
-dnl End OpenSSL detection
-
-
-
 
 dnl Debug-related options
 dnl =====================

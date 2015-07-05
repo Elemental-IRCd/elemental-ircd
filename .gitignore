@@ -16,6 +16,7 @@ autom4te.cache
 bandb/bandb
 bandb/bantool
 compile
+confdefs.h
 config.log
 config.status
 config.guess
