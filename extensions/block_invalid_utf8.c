@@ -31,7 +31,7 @@
 #include "s_user.h"
 #include "s_serv.h"
 #include "numeric.h"
-#include "chmode.h"
+#include "supported.h"
 #include "inline/stringops.h"
 
 static void block_invalid_utf8_process(hook_data_privmsg_channel *);
@@ -75,7 +75,7 @@ block_invalid_utf8_process(hook_data_privmsg_channel *data)
     if(!is_utf8(data->text)) {
         sendto_one_numeric(data->source_p,
                            ERR_CANNOTSENDTOCHAN,
-                           form_str(ERR_CANNOTSENDTOCHAN),
+                           "%s :Cannot send to channel - Your message was badly formatted UTF-8 and this network enforces valid UTF-8",
                            data->chptr->chname);
         data->approved = ERR_CANNOTSENDTOCHAN;
         return;
@@ -85,12 +85,15 @@ block_invalid_utf8_process(hook_data_privmsg_channel *data)
 static int
 _modinit(void)
 {
+    add_isupport("CHARSET", isupport_string, "UTF-8");
+
     return 0;
 }
 
 static void
 _moddeinit(void)
 {
+    delete_isupport("CHARSET");
 }
 
 DECLARE_MODULE_AV1(block_invalid_utf8, _modinit, _moddeinit, NULL, NULL, block_invalid_utf8_hfnlist, "$Revision$");
