@@ -59,33 +59,6 @@ GCC_STACK_PROTECT_LIB
 
 LIBTOOL="$LIBTOOL --silent"
 
-case "$host_os" in
-*cygwin*)
-     AC_DEFINE_UNQUOTED(CYGWIN,1,[This is a Cygwin system])
-     AC_DEFINE_UNQUOTED(WINDOWS,1,[This is a Windows system])
-     ;;
-*mingw*)
-     AC_DEFINE_UNQUOTED(MINGW,1,[This is a MinGW system])
-     AC_DEFINE_UNQUOTED(WINDOWS,1,[This is a Windows system])
-     AC_CHECK_HEADER(windows.h, , [AC_MSG_ERROR([** MinGW and no windows.h.  I give up.])])
-     AC_CHECK_HEADER(winsock2.h, , [AC_MSG_ERROR([** MinGW and no winsock2.h.  I give up.])])
-     AC_DEFINE_UNQUOTED(HAVE_WINSOCK2_H, 1, [Have WINSOCK2_H])
-     AC_DEFINE_UNQUOTED(HAVE_WINSOCK_H, 1, [Have WINSOCK_H])
-     LIBS="$LIBS -lws2_32 -liphlpapi"
-     is_mingw="yes"
-     ;;
-*interix*)
-     CPPFLAGS="$CFLAGS -D_ALL_SOURCE -D_XOPEN_SOURCE=500"
-     ;;
-*solaris*)
-     CPPFLAGS="$CFLAGS -D_POSIX_PTHREAD_SEMANTICS -D_XPG4_2"
-     ;;
-*)
-     ;;
-esac
-
-AM_CONDITIONAL([MINGW], [test "$is_mingw" = "yes"])
-
 dnl use directory structure of cached as default (hack)
 if test "$libexecdir" = '${exec_prefix}/libexec' &&
    test "$localstatedir" = '${prefix}/var'; then
@@ -226,12 +199,6 @@ if test -c "/dev/poll"; then
 else
 	AC_MSG_RESULT(no)	
 fi
-
-
-if test "$is_mingw" = "yes"; then
-	AC_DEFINE(HAVE_WIN32, [1], [Define to 1 if you are on windows])
-fi
-
 
 dnl OpenSSL support
 AC_MSG_CHECKING(for OpenSSL)
@@ -392,7 +359,7 @@ elif test "$assert" = soft; then
 	AC_DEFINE(SOFT_ASSERT, 1, [Define this to enable soft asserts.])
 	AC_DEFINE(NDEBUG, 1, [Define this to disable debugging support.])
 elif test "$assert" = yes; then
-	assert = "hard";
+	assert="hard";
 fi
 
 AC_MSG_CHECKING(if you want to do a profile build)
@@ -457,21 +424,6 @@ AC_SUBST(SSL_CFLAGS)
 AC_SUBST(SSL_LIBS)
 AC_SUBST(GNUTLS_CFLAGS)
 AC_SUBST(GNUTLS_LIBS)
-
-if test "$prefix" = "NONE"; then 
-	AC_DEFINE_UNQUOTED(RB_PREFIX, "$ac_default_prefix", [Prefix where libratbox is installed.])
-
-else
-
-dnl Don't get bitten by Cygwin's stupidity if the user specified
-dnl a custom prefix with a trailing slash
-
-	prefix=`echo $prefix | sed 's/\/$//'`
-	AC_DEFINE_UNQUOTED(RB_PREFIX, "$prefix", [Prefix where libratbox is installed.])
-	
-fi
-
-AC_SUBST(RB_PREFIX)
 
 AC_CONFIG_COMMANDS([include/librb-config.h],
 [
