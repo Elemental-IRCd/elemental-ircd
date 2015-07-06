@@ -304,7 +304,7 @@ CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=missing-declarations], charybdis_cv_c_gcc_mis
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wparenthesis], charybdis_cv_c_gcc_parenthesis)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=shadow], charybdis_cv_c_gcc_w_shadow)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wmissing-noreturn], charybdis_cv_c_gcc_w_missing_noreturn)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=undef], charybdis_cv_c_gcc_w_undef)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wundef], charybdis_cv_c_gcc_w_undef)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=packed], charybdis_cv_c_gcc_w_packed)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-result], charybdis_cv_c_gcc_w_unused_result)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-function], charybdis_cv_c_gcc_w_unused_function)
