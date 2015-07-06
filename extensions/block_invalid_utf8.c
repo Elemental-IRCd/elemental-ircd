@@ -36,7 +36,8 @@
 
 static void block_invalid_utf8_process(hook_data_privmsg_channel *);
 
-int is_utf8(const char* data)
+static int
+is_utf8(const char* data)
 {
     int remaining_continuations = 0;
     int i = 0;
