@@ -167,21 +167,15 @@ typedef int (*ExtbanFunc)(const char *data, struct Client *client_p,
 #define MODE_INVITEONLY 0x0010
 #define MODE_NOPRIVMSGS 0x0020
 #define MODE_REGONLY	0x0040
-#define MODE_NOCOLOR	0x0080
 #define MODE_EXLIMIT	0x0100  /* exempt from list limits, +b/+e/+I/+q */
 #define MODE_PERMANENT  0x0200  /* permanant channel, +P */
 #define MODE_OPMODERATE 0x0400  /* send rejected messages to ops */
 #define MODE_FREEINVITE 0x0800  /* allow free use of /invite */
 #define MODE_FREETARGET 0x1000  /* can be forwarded to without authorization */
 #define MODE_DISFORWARD 0x2000  /* disable channel forwarding */
-#define MODE_NOCTCP     0x8000  /* Block CTCPs directed to this channel */
-#define MODE_NONOTICE	0x10000	/* Block notices directed to this channel */
-#define MODE_NOACTION	0x20000 /* Block CTCP ACTION directed to this channel */
 #define MODE_NOKICK	0x40000 /* Disable /kick on this channel */
 #define MODE_NONICK	0x80000 /* Disable /nick for anyone on this channel */
-#define MODE_NOCAPS	0x100000 /* Block messages in all capital letters */
 #define MODE_NOREJOIN	0x200000 /* Block rejoin immediately after kick */
-#define MODE_NOREPEAT	0x400000 /* Block repeat messages */
 #define MODE_NOOPERKICK	0x800000 /* disallow kicking opers */
 #define MODE_HIDEBANS	0x1000000 /* disallow non-chanops from seeing ban/quiet lists */
 
