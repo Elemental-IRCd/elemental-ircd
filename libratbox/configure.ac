@@ -338,7 +338,7 @@ AC_CONFIG_COMMANDS([include/librb-config.h],
 #ifndef __LIBRB_CONFIG_H
 #define __LIBRB_CONFIG_H
 
-_______EOF 
+_______EOF
 
 if test "x$rb_have_ipv6" = "xyes"; then
 	echo "#define RB_IPV6 1" >> $outfile
