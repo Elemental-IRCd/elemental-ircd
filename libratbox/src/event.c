@@ -281,7 +281,7 @@ rb_dump_events(void (*func) (char *, void *), void *ptr)
     RB_DLINK_FOREACH(dptr, event_list.head) {
         ev = dptr->data;
         snprintf(buf, len, "%-28s %-4ld seconds", ev->name,
-                    ev->when - (long)rb_current_time());
+                    (long) (ev->when - rb_current_time()));
         func(buf, ptr);
     }
 }
