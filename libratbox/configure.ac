@@ -227,7 +227,7 @@ AC_ARG_ENABLE(gnutls, [
 )
 
 if test x"$cf_enable_gnutls" != x"no"; then
-	PKG_CHECK_MODULES([GNUTLS], [gnutls], [cf_have_gnutls=yes], [cf_have_gnutls=no])
+	PKG_CHECK_MODULES([GNUTLS], [gnutls >= 2.11.0], [cf_have_gnutls=yes], [cf_have_gnutls=no])
 fi
 
 if test x"$cf_enable_gnutls" == x"yes" && x"$cf_have_gnutls" == x"no"; then
