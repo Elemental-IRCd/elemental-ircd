@@ -32,10 +32,10 @@
 #define SPRINTF_IRC
 
 int rb_sprintf_append(char *str, const char *format, ...)
-__rb_format_printf(2, 3);
+__format_printf(2, 3);
 
 int rb_snprintf_append(char *str, size_t len, const char *format, ...)
-__rb_format_printf(3, 4);
+__format_printf(3, 4);
 
 int rb_vsnprintf_append(char *str, const size_t size, const char *fmt, va_list args);
 int rb_vsprintf_append(char *str, const char *fmt, va_list args);

@@ -33,7 +33,7 @@
 #include <stdlib.h>
 
 
-void rb_outofmemory(void) __rb_noreturn;
+void rb_outofmemory(void) __noreturn;
 
 static inline void *
 rb_malloc(size_t size)

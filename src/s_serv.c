@@ -25,10 +25,6 @@
 
 #include "stdinc.h"
 
-#ifdef HAVE_LIBCRYPTO
-#include <openssl/rsa.h>
-#endif
-
 #include "s_serv.h"
 #include "class.h"
 #include "client.h"

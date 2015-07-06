@@ -61,6 +61,7 @@ static rb_helper *bandb_helper;
 static int in_transaction;
 
 static void check_schema(void);
+static void setup_signals(void);
 
 static void
 bandb_commit(void *unused)

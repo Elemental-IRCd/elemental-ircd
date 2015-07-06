@@ -62,7 +62,6 @@
 #include "s_newconf.h"
 #include "cache.h"
 #include "monitor.h"
-#include "patchlevel.h"
 #include "serno.h"
 #include "sslproc.h"
 #include "chmode.h"
@@ -446,7 +445,7 @@ ircd_log_cb(const char *str)
     ilog(L_MAIN, "libratbox reports: %s", str);
 }
 
-static void
+static void __noreturn
 ircd_restart_cb(const char *str)
 {
     inotice("libratbox has called the restart callback: %s", str);
@@ -460,7 +459,7 @@ ircd_restart_cb(const char *str)
  * exception, so it is logical to return a FAILURE exit code here.
  *    --nenolod
  */
-static void
+static void __noreturn
 ircd_die_cb(const char *str)
 {
     if(str != NULL) {
@@ -643,9 +642,7 @@ main(int argc, char *argv[])
     construct_cflags_strings();
 
     load_all_modules(1);
-#ifndef STATIC_MODULES
     load_core_modules(1);
-#endif
     init_auth();		/* Initialise the auth code */
     init_resolver();	/* Needs to be setup before the io loop */
     privilegeset_set_new("default", "", 0);
@@ -653,11 +650,9 @@ main(int argc, char *argv[])
     if (testing_conf)
         fprintf(stderr, "\nBeginning config test\n");
     read_conf_files(YES);	/* cold start init conf files */
-#ifndef STATIC_MODULES
 
     mod_add_path(MODULE_DIR);
     mod_add_path(MODULE_DIR "/autoload");
-#endif
 
     init_bandb();
     init_ssld();

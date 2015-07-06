@@ -1,149 +1,22 @@
-dnl $Id: configure.ac 3516 2007-06-10 16:14:03Z jilles $
-dnl Process this file with autoconf to produce a configure script.
-
-dnl TODO: clean up all the OpenSSL and shared module checking stuff;
-dnl the most major changes have already been made and it looks like
-dnl said functions need to be just about as complex as they already are.
-
-AC_PREREQ(2.57)
-
-dnl Sneaky way to get an Id tag into the configure script
+AC_PREREQ(2.68)
 AC_COPYRIGHT([2014 elemental-ircd Team])
 
-AC_INIT([elemental-ircd],[6.6.2])
-
+AC_INIT([elemental-ircd],[6.6.2],[https://github.com/Elemental-IRCd/elemental-ircd/issues])
+AC_CONFIG_MACRO_DIR([libratbox/m4])
+AC_CONFIG_SRCDIR([src/ircd.c])
 AC_CONFIG_HEADER(include/setup.h)
-
 AC_PREFIX_DEFAULT($HOME/ircd)
 
-AC_GNU_SOURCE
+AM_INIT_AUTOMAKE
+AM_SILENT_RULES([yes])
+LT_INIT
 
-OLD_CFLAGS="$CFLAGS"
 dnl Checks for programs.
-AC_PROG_CC
+CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 $CFLAGS"
+
 AC_LANG(C)
 
-dnl Make sure autoconf doesn't interfere with cflags -jmallett
-CFLAGS="$OLD_CFLAGS"
-
 AC_CONFIG_SUBDIRS(libratbox)
-
-dnl Check for various compilers. -jmallett
-dnl But if $CC turns out to be gcc, sure as hell it's, well, gcc. -joshk
-
-if test "$ac_cv_c_compiler_gnu" != yes; then
-
-SGS=no
-AC_MSG_CHECKING($CC -version for TenDRA or MIPSpro)
-case `$CC -version 2>&1` in
-*TenDRA*)
-	AC_MSG_RESULT([yes, TenDRA])
-	IRC_CFLAGS=""
-	CPPFLAGS="$CPPFLAGS -Ylonglong -Yansi -I/usr/include"
-	SGS=yes
-	TenDRA=yes
-;;
-*MIPSpro*)
-	AC_MSG_RESULT([yes, MIPSpro])
-	MIPSpro=yes
-	SGS=yes
-;;
-*)
-	AC_MSG_RESULT(no)
-	TenDRA=no
-	MIPSpro=no
-;;
-esac
-
-AC_MSG_CHECKING([$CC -V for Sun Workshop, Forte, HPUX or Tru64 cc])
-case `$CC -V 2>&1` in
-*Sun*WorkShop* | *Forte*Developer*)
-	AC_MSG_RESULT(Sun Workshop/Forte)
-	IRC_CFLAGS="-fast -xinline=dlinkAdd,dlinkAddBefore,dlinkAddTail,dlinkDelete,dlink_list_length,dlink_node,dlinkMoveList,_MyMalloc,_MyRealloc,_MyFree,_DupString"
-	SunWorkShop=yes
-	SGS=yes
-;;
-*Tru64*)
-	AC_MSG_RESULT(Tru64 cc)
-	IRC_CFLAGS="-O2"
-	CPPFLAGS="-I/usr/local/include"
-	Tru=yes
-;;
-*HP*ANSI*)
-	AC_MSG_RESULT(HPUX cc)
-	HPUX=yes
-	IRC_CFLAGS="+e"
-;;
-*)
-	AC_MSG_RESULT(no)
-;;
-esac
-
-fi
-
-AC_MSG_CHECKING([uname -s for Solaris, AIX or HPUX])
-OSNAME=`uname -s`
-case "$OSNAME" in
-        HP-UX*)
-	dnl only do this if we haven't already detected the newer one
-	dnl and we're not already using gcc
-	
-		if test "$HPUX" != yes -a "$ac_cv_c_compiler_gnu" = no; then
-        	        AC_MSG_RESULT(assuming old HPUX with its own cc)  
-			IRC_CFLAGS="$IRC_CFLAGS +e"
-			HPUX=yes
-		else
-			AC_MSG_RESULT(already using newer HPUX)
-		fi
-	;;
-	SunOS*)
-		AC_MSG_RESULT(SunOS or Solaris)
-		AC_DEFINE(__EXTENSIONS__, 1, [This is needed to use strtok_r on Solaris.])
-		SUN=yes
-	;;
-	AIX*)
-		AC_MSG_RESULT(AIX - Sorry you poor bastard..really we are)
-		IRC_CFLAGS="$IRC_CFLAGS -Wl,-brtl -Wl,-G"
-	;;
-	*)
-		AC_MSG_RESULT(no)
-	;;
-esac
-
-if test "$ac_cv_c_compiler_gnu" = yes; then
-	AC_MSG_CHECKING(if $CC is Apple GCC)
-
-	case `$CC -v 2>&1 | tail -n 1` in
-	*Apple*)
-		AC_MSG_RESULT(yes)
-		AppleGCC=yes
-	;;
-	*)
-		AC_MSG_RESULT(no)
-		AppleGCC=no
-	;;
-	esac
-
-	IRC_CFLAGS="$IRC_CFLAGS -O0 -Wall -std=gnu99"
-fi
-
-dnl If we support -g, use it!
-if test "$ac_cv_prog_cc_g" = yes; then
-	dnl Tru64 needs -g3 for -O2
-	if test "$Tru" = yes; then
-		IRC_CFLAGS="$IRC_CFLAGS -g3"
-	else
-		IRC_CFLAGS="$IRC_CFLAGS -g"
-	fi
-fi
-
-dnl SVR4 SGS based on what we know about the compiler -jmallett
-AC_MSG_CHECKING(if $CC supports the SVR4 SGS interfaces)
-if test "$SGS" = "yes"; then
-	AC_MSG_RESULT(yes)
-else
-	AC_MSG_RESULT(no)
-fi
 
 dnl We prefer gcc -MM because it's a lot less bloated
 AC_PATH_PROG(MKDEP, mkdep)
@@ -158,17 +31,6 @@ if test "$ac_cv_c_compiler_gnu" = yes; then
 	MKDEP="$CC -MM"
 elif test ! -z "$MKDEP"; then
 	AC_MSG_RESULT(mkdep)
-
-	dnl Tru64's mkdep is very loud
-	if test -z "$Tru"; then
-		STDOUT=""
-	else
-		STDOUT=" 2> /dev/null"
-	fi
-elif test "$SunWorkShop" = yes; then
-	AC_MSG_RESULT($CC -xM)
-	MKDEP="$CC -xM"
-	STDOUT="> .depend 2> /dev/null"
 elif test ! -z "$MAKEDEPEND"; then
 	AC_MSG_RESULT(makedepend)
 	MKDEP="$MAKEDEPEND -f-"
@@ -178,7 +40,6 @@ else
 fi
 
 AC_SUBST(MKDEP)
-AC_SUBST(STDOUT)
 
 dnl check for /dev/null so we can use it to hold evil fd's
 AC_MSG_CHECKING([for /dev/null])
@@ -190,36 +51,28 @@ else
 	AC_MSG_RESULT(no - using devnull.log)
 fi
 
-dnl jdc -- If CFLAGS is defined, best use it everywhere...
-dnl NOTE: jv says it must be added to the *END*, because things like
-dnl "gcc -O9 -O2" will result in -O2 getting preference.  How stupid.
-if test ! -z "$CFLAGS"; then
-	IRC_CFLAGS="$IRC_CFLAGS $CFLAGS"
-fi
-
 AC_ISC_POSIX
 AC_C_INLINE
+AC_PROG_CC
+AC_PROG_INSTALL
 AC_PROG_GCC_TRADITIONAL
 AC_PROG_MAKE_SET
-AC_PROG_INSTALL
+AC_PROG_SED
+AC_PROG_YACC
+AC_PROG_LEX
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(CP, cp)
 AC_PATH_PROG(MV, mv)
 AC_PATH_PROG(LN, ln)
-AC_PATH_PROG(SED, sed)
 AC_PATH_PROG(AR, ar)
 AC_PATH_PROG(LD, ld)
-AC_PATH_PROG(RANLIB, ranlib)
 AC_PATH_PROG(TOUCH, touch)
 
-AC_PROG_YACC
 
 dnl AC_PROG_YACC defaults to yacc unconditionally if nothing can be found
 if test "$YACC" = "yacc" -a -z "`which $YACC 2>/dev/null`"; then
 	AC_MSG_ERROR([could not locate a suitable parser generator; install bison, yacc, or byacc])
 fi
-
-AC_PROG_LEX
 
 if test "$LEX" = ":"; then
 	AC_MSG_ERROR([could not locate a suitable lexical generator, install flex or lex.])
@@ -322,9 +175,10 @@ dnl See whether we can include both string.h and strings.h.
 AC_CACHE_CHECK([whether string.h and strings.h may both be included],
 gcc_cv_header_string,
 [
-	AC_COMPILE_IFELSE(
-	[#include <string.h>
-	#include <strings.h>], 
+	AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+		#include <string.h>
+		#include <strings.h>
+	])],
 	[gcc_cv_header_string=yes],
 	[gcc_cv_header_string=no])
 ])
@@ -439,107 +293,6 @@ then
 else     
 	 AC_DEFINE([HAVE_NANOSLEEP], 1, [Define if nanosleep exists])
 fi
-
-dnl OpenSSL support
-AC_MSG_CHECKING(for OpenSSL)
-AC_ARG_ENABLE(openssl,
-[AC_HELP_STRING([--enable-openssl[=DIR]],[Enable OpenSSL support (DIR optional).])
-AC_HELP_STRING([--disable-openssl],[Disable OpenSSL support.])],
-[cf_enable_openssl=$enableval],
-[cf_enable_openssl="auto"])
-
-if test "$cf_enable_openssl" != "no" ; then
-	cf_openssl_basedir=""
-	if test "$cf_enable_openssl" != "auto" &&
-	test "$cf_enable_openssl" != "yes" ; then
-		dnl Support for --enable-openssl=/some/place
-		cf_openssl_basedir="`echo ${cf_enable_openssl} | sed 's/\/$//'`"
-	else
-	dnl Do the auto-probe here.  Check some common directory paths.
-		for dirs in /usr/local/ssl /usr/pkg /usr/local \
-		/usr/local/openssl ; do
-			if test -f "${dirs}/include/openssl/opensslv.h" ; then
-				cf_openssl_basedir="${dirs}"
-			break
-			fi
-		done
-		unset dirs
-	fi
-	dnl Now check cf_openssl_found to see if we found anything.
-	if test ! -z "$cf_openssl_basedir"; then
-		if test -f "${cf_openssl_basedir}/include/openssl/opensslv.h" ; then
-			SSL_INCLUDES="-I${cf_openssl_basedir}/include"
-			SSL_LIBS="-L${cf_openssl_basedir}/lib"
-		else
-		dnl OpenSSL wasn't found in the directory specified.  Naughty
-		dnl administrator...
-		cf_openssl_basedir=""
-		fi
-	else
-	dnl Check for stock FreeBSD 4.x and 5.x systems, since their files
-	dnl are in /usr/include and /usr/lib.  In this case, we don't want to
-	dnl change INCLUDES or LIBS, but still want to enable OpenSSL.
-	dnl We can't do this check above, because some people want two versions
-	dnl of OpenSSL installed (stock FreeBSD 4.x/5.x and /usr/local/ssl)
-	dnl and they want /usr/local/ssl to have preference.
-		if test -f "/usr/include/openssl/opensslv.h" ; then
-			cf_openssl_basedir="/usr"
-		fi
-	fi
-
-	dnl If we have a basedir defined, then everything is okay.  Otherwise,
-	dnl we have a problem.
-	if test ! -z "$cf_openssl_basedir"; then
-		AC_MSG_RESULT($cf_openssl_basedir)
-		cf_enable_openssl="yes"
-	else
-		AC_MSG_RESULT([not found. Specify a correct path?])
-		cf_enable_openssl="no"
-	fi
-	unset cf_openssl_basedir
-else
-	dnl If --disable-openssl was specified
-	AC_MSG_RESULT(disabled)
-fi
-
-save_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $SSL_INCLUDES"
-save_LIBS="$LIBS"
-LIBS="$LIBS $SSL_LIBS"
-if test "$cf_enable_openssl" != no; then
-	dnl Check OpenSSL version (must be 0.9.6 or above!)
-	AC_MSG_CHECKING(for OpenSSL 0.9.6 or above)
-	AC_RUN_IFELSE(
-		AC_LANG_PROGRAM(
-	    	[#include <openssl/opensslv.h>
-		#include <stdlib.h>],
-		[[if ( OPENSSL_VERSION_NUMBER >= 0x00906000)
-		exit(0); else exit(1);]]),
-	cf_openssl_version_ok=yes,
-	cf_openssl_version_ok=no,
-	cf_openssl_version_ok=no)
-
-	if test "$cf_openssl_version_ok" = yes; then
-		AC_MSG_RESULT(found)
-
-		dnl Work around pmake/gmake conditional incompatibilities
-		AC_SUBST(ENCSPEED, encspeed)
-		
-		dnl Do all the HAVE_LIBCRYPTO magic -- and check for ciphers
-		CPPFLAGS="$CPPFLAGS $SSL_LIBS"
-		AC_CHECK_LIB(crypto, RSA_free)
-		SSL_LIBS="$SSL_LIBS -lcrypto"
-		SSL_SRCS_ENABLE='$(SSL_SRCS)'
-	else
-	        AC_MSG_RESULT(no - OpenSSL support disabled)
-	fi
-fi
-
-CPPFLAGS="$save_CPPFLAGS"
-LIBS="$save_LIBS"
-
-dnl End OpenSSL detection
-
 
 dnl Specialized functions and libraries
 dnl ===================================
@@ -820,7 +573,7 @@ elif test "$assert" = soft; then
 	AC_DEFINE(SOFT_ASSERT, 1, [Define this to enable soft asserts.])
 	AC_DEFINE(NDEBUG, 1, [Define this to disable debugging support.])
 elif test "$assert" = yes; then
-	assert = "hard";
+	assert="hard";
 fi
 
 AC_MSG_CHECKING(if you want IO Debugging hooks)
@@ -843,7 +596,7 @@ AC_HELP_STRING([--enable-profile],[Enable profiling]),
 
 if test "$profile" = yes; then
 	if test "$ac_cv_c_compiler_gnu" = yes; then
-		IRC_CFLAGS="$IRC_CFLAGS -pg"
+		CFLAGS="$CFLAGS -pg"
 		AC_MSG_RESULT([yes, adding -pg])
 		AC_DEFINE(CHARYBDIS_PROFILE, 1, [Define this if you are profiling.])
 	else
@@ -866,7 +619,6 @@ AC_HELP_STRING([--disable-small-net],[Disable small network support.]),
 [small_net=$enableval], [small_net=yes])
 
 if test "$small_net" = yes; then
-dnl	AC_DEFINE([HASHSIZE], 4096, [Max number of buckets in hash tables.])
 	AC_DEFINE([NICKNAMEHISTORYLENGTH], 1500, [Size of the WHOWAS array.])
 	AC_DEFINE([CHANNEL_HEAP_SIZE], 256, [Size of the channel heap.])
 	AC_DEFINE([BAN_HEAP_SIZE], 128, [Size of the ban heap.])
@@ -987,7 +739,7 @@ if test "$shared_modules" = yes; then
 	hold_ldflags=$LDFLAGS
 	AC_MSG_CHECKING(for the ld -export-dynamic flag)
 	LDFLAGS="${LDFLAGS} -Wl,-export-dynamic -Werror"
-	AC_LINK_IFELSE(AC_LANG_PROGRAM([],[int i;]), found=yes, found=no)
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([],[int i;])], found=yes, found=no)
 	LDFLAGS=$hold_ldflags
 
 	if expr "`uname -s`" : ^IRIX >/dev/null 2>&1; then
@@ -1060,7 +812,7 @@ fi
 hold_ldflags=$LDFLAGS
 AC_MSG_CHECKING(for the ld -rpath flag)
 LDFLAGS="${LDFLAGS} -Wl,-rpath=${libdir}"
-AC_LINK_IFELSE(AC_LANG_PROGRAM([],[int i;]), found=yes, found=no)
+AC_LINK_IFELSE([AC_LANG_PROGRAM([],[int i;])], found=yes, found=no)
 LDFLAGS=$hold_ldflags
 AC_MSG_RESULT($found)
 if test "$found" = yes; then
@@ -1070,45 +822,36 @@ fi
 # This must be down here, or it will mess up checks like the ones
 # for -Wl,-export-dynamic
 # -- jilles
-CWARNS=""
-AC_ARG_ENABLE(warnings,
-AC_HELP_STRING([--enable-warnings],[Enable all sorts of warnings for debugging.]),
-[
-IRC_CFLAGS="$IRC_CFLAGS -O0"
-CFLAGS="$IRC_CFLAGS"
-
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wall], charybdis_cv_c_gcc_w_all)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wpointer-arith], charybdis_cv_c_gcc_w_pointer_arith)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wimplicit -Wnested-externs], charybdis_cv_c_gcc_w_implicit)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wextra], charybdis_cv_c_gcc_w_extra)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=pointer-arith], charybdis_cv_c_gcc_w_pointer_arith)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=implicit], charybdis_cv_c_gcc_w_implicit)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=nested-externs], charybdis_cv_c_gcc_w_nested_externs)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wcast-align], charybdis_cv_c_gcc_w_cast_align)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wcast-qual], charybdis_cv_c_gcc_w_cast_qual)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wwrite-strings], charybdis_cv_c_gcc_w_write_strings)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror-implicit-function-declaration], charybdis_cv_c_gcc_w_error_implicit_function_declaration)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations], charybdis_cv_c_gcc_prototypes)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=write-strings], charybdis_cv_c_gcc_w_write_strings)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=error-implicit-function-declaration], charybdis_cv_c_gcc_w_error_implicit_function_declaration)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=strict-prototypes], charybdis_cv_c_gcc_strict_prototypes)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=missing-prototypes], charybdis_cv_c_gcc_missing_prototypes)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=missing-declarations], charybdis_cv_c_gcc_missing_declarations)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wparenthesis], charybdis_cv_c_gcc_parenthesis)
-CHARYBDIS_C_GCC_TRY_FLAGS([-W -Wno-unused], charybdis_cv_c_gcc_w)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wextra], charybdis_cv_c_gcc_w_extra)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wshadow], charybdis_cv_c_gcc_w_shadow)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=shadow], charybdis_cv_c_gcc_w_shadow)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wmissing-noreturn], charybdis_cv_c_gcc_w_missing_noreturn)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wundef], charybdis_cv_c_gcc_w_undef)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wpacked], charybdis_cv_c_gcc_w_packed)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wnested-externs], charybdis_cv_c_gcc_w_nested_externs)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-function -Wunused-label -Wunused-value -Wunused-variable], charybdis_cv_c_gcc_w_unused)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=undef], charybdis_cv_c_gcc_w_undef)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=packed], charybdis_cv_c_gcc_w_packed)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-result], charybdis_cv_c_gcc_w_unused_result)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-function], charybdis_cv_c_gcc_w_unused_function)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-label], charybdis_cv_c_gcc_w_unused_label)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-value], charybdis_cv_c_gcc_w_unused_value)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-variable], charybdis_cv_c_gcc_w_unused_variable)
+# Unused parameters are common
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wno-unused-parameter], charybdis_cv_c_gcc_w_unused_variable)
 CHARYBDIS_C_GCC_TRY_FLAGS([-Wredundant-decls], charybdis_cv_c_gcc_w_redundant_decls)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wfloat-equal], charybdis_cv_c_gcc_w_float_equal)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wformat -Wformat-y2k -Wno-format-security], charybdis_cv_c_gcc_w_format)
-
-IRC_CFLAGS="$CFLAGS"
-],[])
-
-if test "$shared_modules" = no; then
-	DYNLINK_C=""
-	MOD_TARGET="libmodules.a"
-	MODULES_LIBS="../modules/libmodules.a"
-	SEDOBJ=""
-	AC_DEFINE(STATIC_MODULES, 1, [Define to 1 if dynamic modules can't be used.])
-	AC_MSG_WARN([shared module support has been disabled!])
-fi
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=float-equal], charybdis_cv_c_gcc_w_float_equal)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format], charybdis_cv_c_gcc_w_format)
+CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format-y2k], charybdis_cv_c_gcc_w_format_y2k)
+# format-security is omited as non-literal printf formats are used extensively
+CHARYBDIS_C_GCC_TRY_FLAGS([-Wno-format-security], charybdis_cv_c_gcc_w_no_format_security)
 
 dnl Stage 5 - underscores in front of symbol names.
 if test "$shared_modules" = yes; then
@@ -1129,7 +872,7 @@ if test "$shared_modules" = yes; then
 		AC_DEFINE_UNQUOTED(SYMBOL_PREFIX, "", [String containing extra underscores prepended to symbols loaded from modules.])
 	else
 		AC_MSG_CHECKING(for extra underscores prepended to symbol names)
-		AC_CACHE_VAL(symbol_underscores,
+		AC_CACHE_VAL(_cv_symbol_underscores,
 		[
 cat << EOF > conftest.c
 #include <$nlist_h>
@@ -1161,7 +904,7 @@ int main(int argc, char *argv[[]]) {
 }
 void _modinit(void) { return; }
 EOF
-		$CC $CPPFLAGS $IRC_CFLAGS -o conftest conftest.c $nlist_lib >/dev/null 2>&1
+		$CC $CPPFLAGS $CFLAGS -o conftest conftest.c $nlist_lib >/dev/null 2>&1
 		symbol_underscores=`./conftest conftest`
 		AC_MSG_RESULT($symbol_underscores)
 		$RM -f conftest conftest.c
@@ -1170,18 +913,11 @@ EOF
 	fi
 fi
 
-IRC_CFLAGS="$IRC_CFLAGS $CWARNS"
-
 AC_SUBST(MODULES_LIBS)
 AC_SUBST(MOD_TARGET)
 
-AC_SUBST(SSL_SRCS_ENABLE)
-AC_SUBST(SSL_INCLUDES)
-AC_SUBST(SSL_LIBS)
-
 AC_SUBST(LDFLAGS)
 AC_SUBST(PICFLAGS)
-AC_SUBST(IRC_CFLAGS)
 AC_SUBST(SEDOBJ)
 
 
@@ -1210,28 +946,14 @@ AC_CONFIG_FILES(			\
 	doc/Makefile			\
 	help/Makefile			\
 )
-AC_CONFIG_COMMANDS([tools/genssl.sh_chmod], [chmod 755 tools/genssl.sh])
 
 AC_OUTPUT
-
-if test "$cf_openssl_version_ok" = yes; then
-	openssl="yes"
-else
-	openssl="no"
-fi
-
-if test "$shared_modules" = yes; then
-	modules=shared
-else
-	modules=static
-fi
 
 echo "
 Configuration:
 	Install directory  : $prefix
 
 	Ziplinks           : $zlib
-	OpenSSL            : $openssl
 	Socket Engine      : $SELECT_TYPE
 	Small network      : $small_net
 	Block allocator    : $balloc

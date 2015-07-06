@@ -31,26 +31,42 @@
 #define rb_unlikely(x)     __builtin_expect(!!(x), 0)
 
 /* Warn on unchecked returns */
-#define __rb_must_check    __attribute__((warn_unused_result))
-
-/* Warn on null arguments */
-#define __rb_nonnull(...)    __attribute__((nonull(__VA_ARGS__)))
+#define __must_check    __attribute__((warn_unused_result))
 
 /* Function never returns */
-#define __rb_noreturn       __attribute__((noreturn))
+#define __noreturn       __attribute__((noreturn))
 
 /* Validate and Type-check printf arguments */
-#define __rb_format_printf(fmt, args) __attribute__ ((format(printf, fmt, args)));
+#define __format_printf(fmt, args) __attribute__((format(printf, fmt, args)));
+
+/* Mark argument as unused */
+#define __unused __attribute__((unused))
+
+/* Mark a function as depricated */
+#define __deprecated __attribute__((deprecated))
+
+/* Non-null return value */
+#ifdef __COVERITY__
+#define __returns_nonnull __attribute__((returns_nonnull))
+#else
+#define __returns_nonnull
+#endif
+/* function returns new memory (and warn on unchecked return) */
+#define __malloc __attribute__((malloc)) __attribute__((warn_unused_result))
 
 #else  /* __GNUC__ */
 
 #define rb_likely(x)       (x)
 #define rb_unlikely(x)     (x)
 
-#define __rb_must_check
-#define __rb_nonull
-#define __rb_noreturn
-#define __rb_format_printf
+#define __must_check
+#define __nonull
+#define __noreturn
+#define __format_printf
+#define __unused
+#define __deprecated
+#define __returns_nonnull
+#define __malloc
 
 #endif /* __GNUC__ */
 

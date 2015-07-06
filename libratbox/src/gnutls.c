@@ -4,6 +4,7 @@
  *
  *  Copyright (C) 2007-2012 ircd-ratbox development team
  *  Copyright (C) 2007-2008 Aaron Sethman <androsyn@ratbox.org>
+ *  Copyright (C) 2015 elemental-ircd development team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,8 +30,8 @@
 #ifdef HAVE_GNUTLS
 
 #include <gnutls/gnutls.h>
+#include <gnutls/crypto.h>
 #include <gnutls/x509.h>
-#include <gcrypt.h>
 
 static gnutls_certificate_credentials x509;
 static gnutls_dh_params dh_params;
@@ -227,12 +228,6 @@ rb_ssl_write(rb_fde_t *F, const void *buf, size_t count)
     return rb_ssl_read_or_write(1, F, NULL, buf, count);
 }
 
-static void
-rb_gcry_random_seed(void *unused)
-{
-    gcry_fast_random_poll();
-}
-
 int
 rb_init_ssl(void)
 {
@@ -242,7 +237,6 @@ rb_init_ssl(void)
         rb_lib_log("rb_init_ssl: Unable to allocate SSL/TLS certificate credentials");
         return 0;
     }
-    rb_event_addish("rb_gcry_random_seed", rb_gcry_random_seed, NULL, 300);
     return 1;
 }
 
@@ -334,7 +328,7 @@ rb_ssl_listen(rb_fde_t *F, int backlog, int defer_accept)
 {
     int result;
 
-    result = listen(F->fd, backlog, defer_accept);
+    result = rb_listen(F->fd, backlog, defer_accept);
     F->type = RB_FD_SOCKET | RB_FD_LISTEN | RB_FD_SSL;
 
     return result;
@@ -458,21 +452,21 @@ rb_ssl_start_connected(rb_fde_t *F, CNCB * callback, void *data, int timeout)
 int
 rb_init_prng(const char *path, prng_seed_t seed_type)
 {
-    gcry_fast_random_poll();
+    gnutls_rnd_refresh();
     return 1;
 }
 
 int
 rb_get_random(void *buf, size_t length)
 {
-    gcry_randomize(buf, length, GCRY_STRONG_RANDOM);
+    gnutls_rnd(GNUTLS_RND_RANDOM, buf, length);
     return 1;
 }
 
 int
 rb_get_pseudo_random(void *buf, size_t length)
 {
-    gcry_randomize(buf, length, GCRY_WEAK_RANDOM);
+    gnutls_rnd(GNUTLS_RND_NONCE, buf, length);
     return 1;
 }
 

@@ -27,10 +27,6 @@
 #define INCLUDED_s_conf_h
 #include "setup.h"
 
-#ifdef HAVE_LIBCRYPTO
-#include <openssl/rsa.h>
-#endif
-
 #include "ircd_defs.h"
 #include "class.h"
 #include "client.h"

@@ -119,28 +119,6 @@ extern int errno;
 #include <sys/uio.h>
 #endif
 
-#if defined(__INTEL_COMPILER) || defined(__GNUC__)
-# ifdef __unused
-#  undef __unused
-# endif
-# ifdef __printf
-#  undef __printf
-# endif
-# ifdef __noreturn
-#  undef __noreturn
-# endif
-
-# define __unused __attribute__((__unused__))
-# define __printf(x) __attribute__((__format__ (__printf__, x, x + 1)))
-# define __noreturn __attribute__((__noreturn__))
-#else
-# define __unused
-# define __printf
-# define __noreturn
-#endif
-
-
-
 #ifdef strdupa
 #define LOCAL_COPY(s) strdupa(s)
 #else

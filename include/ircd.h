@@ -64,7 +64,6 @@ struct Counter {
 extern struct SetOptions GlobalSetOptions;	/* defined in ircd.c */
 
 extern const char *creation;
-extern const char *generation;
 extern const char *platform;
 extern const char *infotext[];
 extern const char *serno;
@@ -110,6 +109,6 @@ extern int ssl_ok;
 extern int zlib_ok;
 extern int maxconnections;
 
-void ircd_shutdown(const char *reason);
+void ircd_shutdown(const char *reason) __noreturn;
 
 #endif

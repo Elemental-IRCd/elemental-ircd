@@ -222,7 +222,7 @@ get_channel_access(struct Client *source_p, struct membership *msptr)
  * outputs	- 1 on ban being allowed, 0 on ban being disallowed
  * side effects	- none
  */
-int
+static int
 check_bans_number(struct Client *source_p, struct Channel *chptr, rb_dlink_list *list)
 {
     if (rb_dlink_list_length(list) >= (chptr->mode.mode & MODE_EXLIMIT ?

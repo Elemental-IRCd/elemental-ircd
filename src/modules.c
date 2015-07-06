@@ -52,8 +52,6 @@
  * 27/02/2002
  */
 
-#ifndef STATIC_MODULES
-
 struct module **modlist = NULL;
 
 static const char *core_module_table[] = {
@@ -1000,19 +998,3 @@ increase_modlist(void)
     modlist = new_modlist;
     max_mods += MODS_INCREMENT;
 }
-
-#else /* STATIC_MODULES */
-
-/* load_all_modules()
- *
- * input        -
- * output       -
- * side effects - all the msgtabs are added for static modules
- */
-void
-load_all_modules(int warn)
-{
-    load_static_modules();
-}
-
-#endif /* STATIC_MODULES */

@@ -130,12 +130,6 @@ Info MyInformation[] = {
         "Anti SpamBot Parameter"
     },
 
-#ifdef HAVE_LIBCRYPTO
-    {"HAVE_LIBCRYPTO", "ON", 0, "Enable OpenSSL CHALLENGE Support"},
-#else
-    {"HAVE_LIBCRYPTO", "OFF", 0, "Enable OpenSSL CHALLENGE Support"},
-#endif /* HAVE_LIBCRYPTO */
-
 #ifdef HAVE_LIBZ
     {"HAVE_LIBZ", "YES", 0, "zlib (ziplinks) support"},
 #else
