@@ -129,6 +129,9 @@ AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(long long)
 
+dnl Needed for bandb
+PKG_CHECK_MODULES([SQLITE], [sqlite3 > 3.0.0])
+
 dnl Networking Functions
 dnl ====================
 
