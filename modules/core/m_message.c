@@ -460,7 +460,6 @@ msg_channel(enum message_type msgtype,
             const char *text)
 {
     int result;
-    struct membership *msptr = find_channel_membership(chptr, source_p);
     hook_data_privmsg_channel hdata;
 
     if(MyClient(source_p)) {
