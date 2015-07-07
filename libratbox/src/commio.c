@@ -789,10 +789,6 @@ rb_open(int fd, uint8_t type, const char *desc)
 
     F = add_fd(fd);
 
-#ifdef FD_CLOEXEC
-    fcntl(fd, F_SETFD, FD_CLOEXEC);
-#endif
-
     lrb_assert(!IsFDOpen(F));
     if(rb_unlikely(IsFDOpen(F))) {
         const char *fdesc;
