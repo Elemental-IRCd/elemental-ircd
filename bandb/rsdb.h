@@ -30,10 +30,5 @@ void rsdb_exec_fetch(struct rsdb_table *data, const char *format, ...);
 void rsdb_exec_fetch_end(struct rsdb_table *data);
 
 void rsdb_transaction(rsdb_transtype type);
-/* rsdb_snprintf.c */
-
-int rs_vsnprintf(char *dest, const size_t bytes, const char *format, va_list args);
-int rs_snprintf(char *dest, const size_t bytes, const char *format, ...);
-
 
 #endif
