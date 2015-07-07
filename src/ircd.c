@@ -68,6 +68,8 @@
 #include "privilege.h"
 #include "bandbi.h"
 
+#include <syslog.h>
+
 /* /quote set variables */
 struct SetOptions GlobalSetOptions;
 
@@ -525,6 +527,8 @@ seed_random(void *unused)
 int
 main(int argc, char *argv[])
 {
+    openlog("elemental-ircd", 0, LOG_DAEMON);
+
     int fd;
 
     /* Check to see if the user is running us as root, which is a nono */

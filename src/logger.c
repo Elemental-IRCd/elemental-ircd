@@ -41,6 +41,8 @@
 #include "client.h"
 #include "s_serv.h"
 
+#include <syslog.h>
+
 static FILE *log_main;
 static FILE *log_user;
 static FILE *log_fuser;
@@ -90,7 +92,7 @@ verify_logfile_access(const char *filename)
     if(access(filename, F_OK) == -1) {
         if(access(dirname, W_OK) == -1) {
             snprintf(buf, sizeof(buf), "WARNING: Unable to access logfile %s - access to parent directory %s failed: %s",
-                        filename, dirname, strerror(errno));
+                     filename, dirname, strerror(errno));
             if(testing_conf || server_state_foreground)
                 fprintf(stderr, "%s\n", buf);
             sendto_realops_snomask(SNO_GENERAL, L_ALL, "%s", buf);
@@ -169,7 +171,7 @@ ilog(ilogfile dest, const char *format, ...)
     va_end(args);
 
     snprintf(buf2, sizeof(buf2), "%s %s\n",
-                smalldate(rb_current_time()), buf);
+             smalldate(rb_current_time()), buf);
 
     if(fputs(buf2, logfile) < 0) {
         fclose(logfile);
@@ -200,6 +202,7 @@ inotice(const char *format, ...)
     va_end(args);
 
     _iprint("notice", buf);
+    syslog(LOG_NOTICE, "%s", buf);
 
     ilog(L_MAIN, "%s", buf);
 }
@@ -215,6 +218,7 @@ iwarn(const char *format, ...)
     va_end(args);
 
     _iprint("warning", buf);
+    syslog(LOG_WARNING, "%s", buf);
 
     ilog(L_MAIN, "%s", buf);
 }
@@ -230,6 +234,7 @@ ierror(const char *format, ...)
     va_end(args);
 
     _iprint("error", buf);
+    syslog(LOG_ERR, "%s", buf);
 
     ilog(L_MAIN, "%s", buf);
 }
@@ -262,8 +267,8 @@ smalldate(time_t ltime)
     lt = localtime(&ltime);
 
     snprintf(buf, sizeof(buf), "%d/%d/%d %02d.%02d",
-                lt->tm_year + 1900, lt->tm_mon + 1,
-                lt->tm_mday, lt->tm_hour, lt->tm_min);
+             lt->tm_year + 1900, lt->tm_mon + 1,
+             lt->tm_mday, lt->tm_hour, lt->tm_min);
 
     return buf;
 }
