@@ -1,0 +1,4 @@
+lex.yy.c
+version.c.last
+y.tab.c
+y.tab.h
