@@ -28,7 +28,6 @@
 #define CMODE_ADMINONLY		0x00400000	/* shadowircd +A */
 #define CMODE_OPERONLY		0x00800000	/* shadowircd +O */
 #define CMODE_SSLONLY		0x01000000	/* shadowircd +S */
-#define CMODE_NOACTIONS		0x02000000	/* shadowircd +D */
 #define CMODE_NONOTICE		0x04000000	/* shadowircd +T */
 #define CMODE_NOCAPS		0x08000000	/* shadowircd +G */
 #define CMODE_NOKICKS		0x10000000	/* shadowircd +E */
@@ -87,7 +86,6 @@ struct cmode_ elemental_mode_list[] = {
     { 'A', CMODE_ADMINONLY },
     { 'O', CMODE_OPERONLY },
     { 'S', CMODE_SSLONLY },
-    { 'D', CMODE_NOACTIONS },
     { 'T', CMODE_NONOTICE },
     { 'G', CMODE_NOCAPS },
     { 'E', CMODE_NOKICKS },

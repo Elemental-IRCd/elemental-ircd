@@ -18,7 +18,7 @@
 
 IRCDVar myIrcd[] = {
     {
-        "Elemental-IRCd 6.5",           /* ircd name */
+        "Elemental-IRCd",           /* ircd name */
         "+oiS",                     /* nickserv mode */
         "+oiS",                     /* chanserv mode */
         "+oiS",                     /* memoserv mode */
@@ -473,8 +473,8 @@ void charybdis_cmd_notice(char *source, char *dest, char *buf)
         ud = find_uid(source);
         u = finduser(dest);
         send_cmd((UseTS6 ? (ud ? ud->uid : source) : source),
-                     "NOTICE %s :%s", (UseTS6 ? (u ? u->uid : dest) : dest),
-                     buf);
+                 "NOTICE %s :%s", (UseTS6 ? (u ? u->uid : dest) : dest),
+                 buf);
     }
 }
 
@@ -486,7 +486,7 @@ void charybdis_cmd_notice2(char *source, char *dest, char *msg)
     ud = find_uid(source);
     u = finduser(dest);
     send_cmd((UseTS6 ? (ud ? ud->uid : source) : source), "NOTICE %s :%s",
-                 (UseTS6 ? (u ? u->uid : dest) : dest), msg);
+             (UseTS6 ? (u ? u->uid : dest) : dest), msg);
 }
 
 void charybdis_cmd_privmsg(char *source, char *dest, char *buf)
@@ -500,7 +500,7 @@ void charybdis_cmd_privmsg(char *source, char *dest, char *buf)
     ud2 = find_uid(dest);
 
     send_cmd((UseTS6 ? (ud ? ud->uid : source) : source), "PRIVMSG %s :%s",
-                 (UseTS6 ? (ud2 ? ud2->uid : dest) : dest), buf);
+             (UseTS6 ? (ud2 ? ud2->uid : dest) : dest), buf);
 }
 
 void charybdis_cmd_privmsg2(char *source, char *dest, char *msg)
@@ -511,7 +511,7 @@ void charybdis_cmd_privmsg2(char *source, char *dest, char *msg)
     ud2 = find_uid(dest);
 
     send_cmd((UseTS6 ? (ud ? ud->uid : source) : source), "PRIVMSG %s :%s",
-                 (UseTS6 ? (ud2 ? ud2->uid : dest) : dest), msg);
+             (UseTS6 ? (ud2 ? ud2->uid : dest) : dest), msg);
 }
 
 void charybdis_cmd_serv_notice(char *source, char *dest, char *msg)
@@ -869,7 +869,7 @@ void charybdis_cmd_sqline(char *mask, char *reason)
 
     ud = find_uid(s_OperServ);
     send_cmd((UseTS6 ? (ud ? ud->uid : s_OperServ) : s_OperServ),
-                 "RESV * %s :%s", mask, reason);
+             "RESV * %s :%s", mask, reason);
 }
 
 void charybdis_cmd_unsgline(char *mask)
@@ -878,7 +878,7 @@ void charybdis_cmd_unsgline(char *mask)
 
     ud = find_uid(s_OperServ);
     send_cmd((UseTS6 ? (ud ? ud->uid : s_OperServ) : s_OperServ),
-                 "UNXLINE * %s", mask);
+             "UNXLINE * %s", mask);
 }
 
 void charybdis_cmd_unszline(char *mask)
@@ -907,7 +907,7 @@ void charybdis_cmd_sgline(char *mask, char *reason)
 
     ud = find_uid(s_OperServ);
     send_cmd((UseTS6 ? (ud ? ud->uid : s_OperServ) : s_OperServ),
-                 "XLINE * %s 0 :%s", mask, reason);
+             "XLINE * %s 0 :%s", mask, reason);
 }
 
 void charybdis_cmd_remove_akill(char *user, char *host)
@@ -919,7 +919,7 @@ void charybdis_cmd_remove_akill(char *user, char *host)
 
     ud = find_uid(s_OperServ);
     send_cmd((UseTS6 ? (ud ? ud->uid : s_OperServ) : s_OperServ),
-                 "UNKLINE * %s %s", user, host);
+             "UNKLINE * %s %s", user, host);
 }
 
 void charybdis_cmd_topic(char *whosets, char *chan, char *whosetit,
@@ -929,7 +929,7 @@ void charybdis_cmd_topic(char *whosets, char *chan, char *whosetit,
 
     ud = find_uid(whosets);
     send_cmd((UseTS6 ? (ud ? ud->uid : whosets) : whosets), "TOPIC %s :%s",
-                 chan, topic);
+             chan, topic);
 }
 
 void charybdis_cmd_vhost_off(User * u)
@@ -950,7 +950,7 @@ void charybdis_cmd_unsqline(char *user)
 
     ud = find_uid(s_OperServ);
     send_cmd((UseTS6 ? (ud ? ud->uid : s_OperServ) : s_OperServ),
-                 "UNRESV * %s", user);
+             "UNRESV * %s", user);
 }
 
 void charybdis_cmd_join(char *user, char *channel, time_t chantime)
@@ -979,8 +979,8 @@ void charybdis_cmd_akill(char *user, char *host, char *who, time_t when,
     ud = find_uid(s_OperServ);
 
     send_cmd((UseTS6 ? (ud ? ud->uid : s_OperServ) : s_OperServ),
-                 "KLINE * %ld %s %s :%s",
-                 (long int) (expires - (long) time(NULL)), user, host, reason);
+             "KLINE * %ld %s %s :%s",
+             (long int) (expires - (long) time(NULL)), user, host, reason);
 }
 
 void charybdis_cmd_svskill(char *source, char *user, char *buf)
@@ -998,7 +998,7 @@ void charybdis_cmd_svskill(char *source, char *user, char *buf)
     ud = find_uid(source);
     ud2 = find_uid(user);
     send_cmd((UseTS6 ? (ud ? ud->uid : source) : source), "KILL %s :%s",
-                 (UseTS6 ? (ud2 ? ud2->uid : user) : user), buf);
+             (UseTS6 ? (ud2 ? ud2->uid : user) : user), buf);
 }
 
 void charybdis_cmd_svsmode(User * u, int ac, char **av)
@@ -1143,7 +1143,7 @@ int anope_event_away(char *source, int ac, char **av)
     }
 
     m_away((UseTS6 ? (u ? u->nick : source) : source),
-               (ac ? av[0] : NULL));
+           (ac ? av[0] : NULL));
     return MOD_CONT;
 }
 
@@ -1211,7 +1211,7 @@ int anope_event_privmsg(char *source, int ac, char **av)
     u = find_byuid(source);
     ud = find_nickuid(av[0]);
     m_privmsg((UseTS6 ? (u ? u->nick : source) : source),
-                  (UseTS6 ? (ud ? ud->nick : av[0]) : av[0]), av[1]);
+              (UseTS6 ? (ud ? ud->nick : av[0]) : av[0]), av[1]);
     return MOD_CONT;
 }
 
@@ -1449,7 +1449,7 @@ void charybdis_cmd_mode(char *source, char *dest, char *buf)
     if (source) {
         ud = find_uid(source);
         send_cmd((UseTS6 ? (ud ? ud->uid : source) : source), "MODE %s %s",
-                     dest, buf);
+                 dest, buf);
     } else {
         send_cmd(NULL, "MODE %s %s", dest, buf);
     }
@@ -1500,11 +1500,11 @@ void charybdis_cmd_kick(char *source, char *chan, char *user, char *buf)
 
     if (buf) {
         send_cmd((UseTS6 ? (ud ? ud->uid : source) : source),
-                     "KICK %s %s :%s", chan,
-                     (UseTS6 ? (u ? u->uid : user) : user), buf);
+                 "KICK %s %s :%s", chan,
+                 (UseTS6 ? (u ? u->uid : user) : user), buf);
     } else {
         send_cmd((UseTS6 ? (ud ? ud->uid : source) : source), "KICK %s %s",
-                     chan, (UseTS6 ? (u ? u->uid : user) : user));
+                 chan, (UseTS6 ? (u ? u->uid : user) : user));
     }
 }
 
@@ -1541,7 +1541,7 @@ void charybdis_cmd_quit(char *source, char *buf)
 
     if (buf) {
         send_cmd((UseTS6 ? (ud ? ud->uid : source) : source), "QUIT :%s",
-                     buf);
+                 buf);
     } else {
         send_cmd((UseTS6 ? (ud ? ud->uid : source) : source), "QUIT");
     }
@@ -1572,7 +1572,7 @@ void charybdis_cmd_invite(char *source, char *chan, char *nick)
     u = finduser(nick);
 
     send_cmd((UseTS6 ? (ud ? ud->uid : source) : source), "INVITE %s %s",
-                 (UseTS6 ? (u ? u->uid : nick) : nick), chan);
+             (UseTS6 ? (u ? u->uid : nick) : nick), chan);
 }
 
 /* SQUIT */
