@@ -3,6 +3,7 @@ AC_COPYRIGHT([2014 elemental-ircd Team])
 
 AC_INIT([elemental-ircd],[6.6.2],[https://github.com/Elemental-IRCd/elemental-ircd/issues])
 AC_CONFIG_MACRO_DIR([libratbox/m4])
+AC_CONFIG_AUX_DIR([libratbox/aux])
 AC_CONFIG_SRCDIR([src/ircd.c])
 AC_CONFIG_HEADER(include/setup.h)
 AC_PREFIX_DEFAULT($HOME/ircd)
