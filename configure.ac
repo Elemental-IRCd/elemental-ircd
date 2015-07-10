@@ -66,14 +66,6 @@ AC_PROG_MAKE_SET
 AC_PROG_SED
 AC_PROG_YACC
 AC_PROG_LEX
-AC_PATH_PROG(RM, rm)
-AC_PATH_PROG(CP, cp)
-AC_PATH_PROG(MV, mv)
-AC_PATH_PROG(LN, ln)
-AC_PATH_PROG(AR, ar)
-AC_PATH_PROG(LD, ld)
-AC_PATH_PROG(TOUCH, touch)
-
 
 dnl AC_PROG_YACC defaults to yacc unconditionally if nothing can be found
 if test "$YACC" = "yacc" -a -z "`which $YACC 2>/dev/null`"; then
