@@ -280,8 +280,6 @@ AC_CHECK_TYPES([uintptr_t])
 dnl check for various functions...
 AC_CHECK_FUNCS([socketpair vsnprintf mmap gettimeofday strdup strndup ])
 
-AC_FUNC_ALLOCA
-
 dnl Specialized functions checks
 dnl ============================
 
