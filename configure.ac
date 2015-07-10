@@ -7,8 +7,13 @@ AC_CONFIG_SRCDIR([src/ircd.c])
 AC_CONFIG_HEADER(include/setup.h)
 AC_PREFIX_DEFAULT($HOME/ircd)
 
-AM_INIT_AUTOMAKE
+AC_ENABLE_SHARED
+AC_DISABLE_STATIC
+AC_LIBTOOL_DLOPEN
+
+AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
+
 LT_INIT
 
 dnl Checks for programs.

@@ -1,62 +1,61 @@
 AM_CPPFLAGS = -I../include -I../libratbox/include
-
-.c.so:
-	${CC} ${PICFLAGS} ${AM_CPPFLAGS} ${CPPFLAGS} ${CFLAGS} -Wl,-shared,-export-dynamic ${LDFLAGS} $< -o $@
+AM_LDFLAGS = -module -export-dynamic -avoid-version
 
 extensiondir=@moduledir@/extensions
 
-extension_DATA = block_invalid_utf8.so    \
-                 chm_adminonly.so         \
-                 chm_nocaps.so            \
-                 chm_norepeat.so          \
-                 chm_operonly_compat.so   \
-                 chm_operonly.so          \
-                 chm_quietunreg_compat.so \
-                 chm_sslonly_compat.so    \
-                 chm_sslonly.so           \
-                 createauthonly.so        \
-                 createoperonly.so        \
-                 example_module.so        \
-                 extb_account.so          \
-                 extb_canjoin.so          \
-                 extb_channel.so          \
-                 extb_extgecos.so         \
-                 extb_oper.so             \
-                 extb_realname.so         \
-                 extb_server.so           \
-                 extb_ssl.so              \
-                 extb_usermode.so         \
-                 force_user_invis.so      \
-                 hurt.so                  \
-                 ip_cloaking.so           \
-                 m_42.so                  \
-                 m_adminwall.so           \
-                 m_cycle.so               \
-                 m_findforwards.so        \
-                 m_force.so               \
-                 m_identify.so            \
-                 m_mkpasswd.so            \
-                 m_oaccept.so             \
-                 m_ojoin.so               \
-                 m_okick.so               \
-                 m_olist.so               \
-                 m_omode.so               \
-                 m_opme.so                \
-                 m_oquit.so               \
-                 m_roleplay.so            \
-                 m_sendbans.so            \
-                 m_webirc.so              \
-                 no_locops.so             \
-                 no_oper_invis.so         \
-                 sno_farconnect.so        \
-                 sno_globalkline.so       \
-                 sno_globaloper.so        \
-                 sno_whois.so             \
-                 spy_admin_notice.so      \
-                 spy_info_notice.so       \
-                 spy_links_notice.so      \
-                 spy_motd_notice.so       \
-                 spy_stats_notice.so      \
-                 spy_stats_p_notice.so    \
-                 spy_trace_notice.so
+extension_LTLIBRARIES =         \
+    block_invalid_utf8.la       \
+    chm_adminonly.la            \
+    chm_nocaps.la               \
+    chm_norepeat.la             \
+    chm_operonly_compat.la      \
+    chm_operonly.la             \
+    chm_quietunreg_compat.la    \
+    chm_sslonly_compat.la       \
+    chm_sslonly.la              \
+    createauthonly.la           \
+    createoperonly.la           \
+    example_module.la           \
+    extb_account.la             \
+    extb_canjoin.la             \
+    extb_channel.la             \
+    extb_extgecos.la            \
+    extb_oper.la                \
+    extb_realname.la            \
+    extb_server.la              \
+    extb_ssl.la                 \
+    extb_usermode.la            \
+    force_user_invis.la         \
+    hurt.la                     \
+    ip_cloaking.la              \
+    m_42.la                     \
+    m_adminwall.la              \
+    m_cycle.la                  \
+    m_findforwards.la           \
+    m_force.la                  \
+    m_identify.la               \
+    m_mkpasswd.la               \
+    m_oaccept.la                \
+    m_ojoin.la                  \
+    m_okick.la                  \
+    m_olist.la                  \
+    m_omode.la                  \
+    m_opme.la                   \
+    m_oquit.la                  \
+    m_roleplay.la               \
+    m_sendbans.la               \
+    m_webirc.la                 \
+    no_locops.la                \
+    no_oper_invis.la            \
+    sno_farconnect.la           \
+    sno_globalkline.la          \
+    sno_globaloper.la           \
+    sno_whois.la                \
+    spy_admin_notice.la         \
+    spy_info_notice.la          \
+    spy_links_notice.la         \
+    spy_motd_notice.la          \
+    spy_stats_notice.la         \
+    spy_stats_p_notice.la       \
+    spy_trace_notice.la
 

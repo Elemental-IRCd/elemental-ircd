@@ -1,88 +1,88 @@
 AM_CPPFLAGS = -I../include -I../libratbox/include
-
-.c.so:
-	${CC} ${PICFLAGS} ${AM_CPPFLAGS} ${CPPFLAGS} ${CFLAGS} -Wl,-shared,-export-dynamic ${LDFLAGS} $< -o $@
+AM_LDFLAGS = -module -export-dynamic -avoid-version
 
 automoddir=@moduledir@/autoload
 
-module_DATA =  core/m_ban.so             \
-               core/m_die.so             \
-               core/m_error.so           \
-               core/m_join.so            \
-               core/m_kick.so            \
-               core/m_kill.so            \
-               core/m_message.so         \
-               core/m_metadata.so        \
-               core/m_mode.so            \
-               core/m_nick.so            \
-               core/m_part.so            \
-               core/m_quit.so            \
-               core/m_server.so          \
-               core/m_squit.so
+module_LTLIBRARIES =      \
+    core/m_ban.la         \
+    core/m_die.la         \
+    core/m_error.la       \
+    core/m_join.la        \
+    core/m_kick.la        \
+    core/m_kill.la        \
+    core/m_message.la     \
+    core/m_metadata.la    \
+    core/m_mode.la        \
+    core/m_nick.la        \
+    core/m_part.la        \
+    core/m_quit.la        \
+    core/m_server.la      \
+    core/m_squit.la
 
 
-automod_DATA = chm_nocolour.so           \
-               chm_noctcp.so             \
-               chm_nonotice.so           \
-               m_accept.so               \
-               m_admin.so                \
-               m_away.so                 \
-               m_capab.so                \
-               m_cap.so                  \
-               m_certfp.so               \
-               m_chghost.so              \
-               m_close.so                \
-               m_cmessage.so             \
-               m_connect.so              \
-               m_dline.so                \
-               m_encap.so                \
-               m_etrace.so               \
-               m_help.so                 \
-               m_info.so                 \
-               m_invite.so               \
-               m_ison.so                 \
-               m_kline.so                \
-               m_knock.so                \
-               m_links.so                \
-               m_list.so                 \
-               m_locops.so               \
-               m_lusers.so               \
-               m_map.so                  \
-               m_monitor.so              \
-               m_motd.so                 \
-               m_names.so                \
-               m_oper.so                 \
-               m_operspy.so              \
-               m_pass.so                 \
-               m_ping.so                 \
-               m_pong.so                 \
-               m_post.so                 \
-               m_privs.so                \
-               m_rehash.so               \
-               m_restart.so              \
-               m_resv.so                 \
-               m_sasl.so                 \
-               m_scan.so                 \
-               m_services.so             \
-               m_set.so                  \
-               m_signon.so               \
-               m_snote.so                \
-               m_stats.so                \
-               m_svinfo.so               \
-               m_tb.so                   \
-               m_testline.so             \
-               m_testmask.so             \
-               m_time.so                 \
-               m_topic.so                \
-               m_trace.so                \
-               m_unreject.so             \
-               m_userhost.so             \
-               m_user.so                 \
-               m_users.so                \
-               m_version.so              \
-               m_wallops.so              \
-               m_whois.so                \
-               m_who.so                  \
-               m_whowas.so               \
-               m_xline.so                \
-               sno_routing.so
+automod_LTLIBRARIES =     \
+    chm_nocolour.la       \
+    chm_noctcp.la         \
+    chm_nonotice.la       \
+    m_accept.la           \
+    m_admin.la            \
+    m_away.la             \
+    m_capab.la            \
+    m_cap.la              \
+    m_certfp.la           \
+    m_chghost.la          \
+    m_close.la            \
+    m_cmessage.la         \
+    m_connect.la          \
+    m_dline.la            \
+    m_encap.la            \
+    m_etrace.la           \
+    m_help.la             \
+    m_info.la             \
+    m_invite.la           \
+    m_ison.la             \
+    m_kline.la            \
+    m_knock.la            \
+    m_links.la            \
+    m_list.la             \
+    m_locops.la           \
+    m_lusers.la           \
+    m_map.la              \
+    m_monitor.la          \
+    m_motd.la             \
+    m_names.la            \
+    m_oper.la             \
+    m_operspy.la          \
+    m_pass.la             \
+    m_ping.la             \
+    m_pong.la             \
+    m_post.la             \
+    m_privs.la            \
+    m_rehash.la           \
+    m_restart.la          \
+    m_resv.la             \
+    m_sasl.la             \
+    m_scan.la             \
+    m_services.la         \
+    m_set.la              \
+    m_signon.la           \
+    m_snote.la            \
+    m_stats.la            \
+    m_svinfo.la           \
+    m_tb.la               \
+    m_testline.la         \
+    m_testmask.la         \
+    m_time.la             \
+    m_topic.la            \
+    m_trace.la            \
+    m_unreject.la         \
+    m_userhost.la         \
+    m_user.la             \
+    m_users.la            \
+    m_version.la          \
+    m_wallops.la          \
+    m_whois.la            \
+    m_who.la              \
+    m_whowas.la           \
+    m_xline.la            \
+    sno_routing.la
