@@ -35,6 +35,7 @@ libratbox/libtool
 libratbox/m4/libtool.m4
 libratbox/m4/lt*
 libratbox/src/version.c
+libratbox/tools/*
 libtool
 ltmain.sh
 missing
