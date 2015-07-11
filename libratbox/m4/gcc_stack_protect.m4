@@ -9,6 +9,8 @@ dnl     * Uses macros to ensure correct ouput in quiet/silent mode
 dnl 1.2 - April 2007 - Ted Percival <ted@midg3t.net>
 dnl     * Added GCC_STACK_PROTECTOR macro for simpler (one-line) invocation
 dnl     * GCC_STACK_PROTECT_LIB now adds -lssp to LIBS rather than LDFLAGS
+dnl 1.3 - July 2015 - Andrew Cook <ariscop@gmail.com>
+dnl     * Modernize the script a little
 dnl
 dnl About ssp:
 dnl GCC extension for protecting applications from stack-smashing attacks
@@ -17,8 +19,7 @@ dnl
 dnl Usage:
 dnl Most people will simply call GCC_STACK_PROTECTOR.
 dnl If you only use one of C or C++, you can save time by only calling the
-dnl macro appropriate for that language. In that case you should also call
-dnl GCC_STACK_PROTECT_LIB first.
+dnl macro appropriate for that language.
 dnl
 dnl GCC_STACK_PROTECTOR
 dnl Tries to turn on stack protection for C and C++ by calling the following
@@ -33,17 +34,14 @@ dnl checks -fstack-protector with the C++ compiler, if it exists then updates
 dnl CXXFLAGS and defines ENABLE_SSP_CXX
 dnl
 dnl GCC_STACK_PROTECT_LIB
-dnl adds -lssp to LIBS if it is available
-dnl ssp is usually provided as part of libc, but was previously a separate lib
-dnl It does not hurt to add -lssp even if libc provides SSP - in that case
-dnl libssp will simply be ignored.
+dnl adds -lssp to LIBS if it is available, this does not need to be called
 dnl
 
 AC_DEFUN([GCC_STACK_PROTECT_LIB],[
   AC_CACHE_CHECK([whether libssp exists], ssp_cv_lib,
     [ssp_old_libs="$LIBS"
      LIBS="$LIBS -lssp"
-     AC_TRY_LINK(,, ssp_cv_lib=yes, ssp_cv_lib=no)
+     AC_LINK_IFELSE([AC_LANG_PROGRAM], [ssp_cv_lib=yes], [ssp_cv_lib=no])
      LIBS="$ssp_old_libs"
     ])
   if test $ssp_cv_lib = yes; then
@@ -53,12 +51,13 @@ AC_DEFUN([GCC_STACK_PROTECT_LIB],[
 
 AC_DEFUN([GCC_STACK_PROTECT_CC],[
   AC_LANG_ASSERT(C)
+  GCC_STACK_PROTECT_LIB
   if test "X$CC" != "X"; then
     AC_CACHE_CHECK([whether ${CC} accepts -fstack-protector],
       ssp_cv_cc,
       [ssp_old_cflags="$CFLAGS"
        CFLAGS="$CFLAGS -fstack-protector"
-       AC_TRY_COMPILE(,, ssp_cv_cc=yes, ssp_cv_cc=no)
+       AC_LINK_IFELSE([AC_LANG_PROGRAM], [ssp_cv_cc=yes], [ssp_cv_cc=no])
        CFLAGS="$ssp_old_cflags"
       ])
     if test $ssp_cv_cc = yes; then
@@ -70,12 +69,13 @@ AC_DEFUN([GCC_STACK_PROTECT_CC],[
 
 AC_DEFUN([GCC_STACK_PROTECT_CXX],[
   AC_LANG_ASSERT(C++)
+  GCC_STACK_PROTECT_LIB
   if test "X$CXX" != "X"; then
     AC_CACHE_CHECK([whether ${CXX} accepts -fstack-protector],
       ssp_cv_cxx,
       [ssp_old_cxxflags="$CXXFLAGS"
        CXXFLAGS="$CXXFLAGS -fstack-protector"
-       AC_TRY_COMPILE(,, ssp_cv_cxx=yes, ssp_cv_cxx=no)
+       AC_LINK_IFELSE([AC_LANG_PROGRAM], [ssp_cv_cxx=yes], [ssp_cv_cxx=no])
        CXXFLAGS="$ssp_old_cxxflags"
       ])
     if test $ssp_cv_cxx = yes; then
@@ -86,8 +86,6 @@ AC_DEFUN([GCC_STACK_PROTECT_CXX],[
 ])
 
 AC_DEFUN([GCC_STACK_PROTECTOR],[
-  GCC_STACK_PROTECT_LIB
-
   AC_LANG_PUSH([C])
   GCC_STACK_PROTECT_CC
   AC_LANG_POP([C])

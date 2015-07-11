@@ -17,6 +17,8 @@ AM_PROG_AR
 
 LT_INIT([dlopen])
 
+GCC_STACK_PROTECT_CC
+
 dnl Checks for programs.
 CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 $CFLAGS"
 
