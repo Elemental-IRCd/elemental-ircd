@@ -30,7 +30,6 @@
 #ifdef HAVE_SYS_UIO_H
 #include <sys/uio.h>
 #endif
-#define HAVE_SSL 1
 
 #ifndef MSG_NOSIGNAL
 #define MSG_NOSIGNAL 0
@@ -361,11 +360,9 @@ rb_accept_tryaccept(rb_fde_t *F, void *data)
             if(!F->accept->precb(new_F, (struct sockaddr *)&st, addrlen, F->accept->data))	/* pre-callback decided to drop it */
                 continue;
         }
-#ifdef HAVE_SSL
         if(F->type & RB_FD_SSL) {
             rb_ssl_accept_setup(F, new_F, (struct sockaddr *)&st, addrlen);
         } else
-#endif /* HAVE_SSL */
         {
             F->accept->callback(new_F, RB_OK, (struct sockaddr *)&st, addrlen,
                                 F->accept->data);
@@ -833,11 +830,9 @@ rb_close(rb_fde_t *F)
     rb_free(F->accept);
     rb_free(F->connect);
     rb_free(F->desc);
-#ifdef HAVE_SSL
     if(type & RB_FD_SSL) {
         rb_ssl_shutdown(F);
     }
-#endif /* HAVE_SSL */
     if(IsFDOpen(F)) {
         remove_fd(F);
         ClearFDOpen(F);
@@ -947,11 +942,9 @@ rb_read(rb_fde_t *F, void *buf, int count)
     /* This needs to be *before* RB_FD_SOCKET otherwise you'll process
      * an SSL socket as a regular socket
      */
-#ifdef HAVE_SSL
     if(F->type & RB_FD_SSL) {
         return rb_ssl_read(F, buf, count);
     }
-#endif
     if(F->type & RB_FD_SOCKET) {
         ret = recv(F->fd, buf, count, 0);
         if(ret < 0) {
@@ -973,11 +966,9 @@ rb_write(rb_fde_t *F, const void *buf, int count)
     if(F == NULL)
         return 0;
 
-#ifdef HAVE_SSL
     if(F->type & RB_FD_SSL) {
         return rb_ssl_write(F, buf, count);
     }
-#endif
     if(F->type & RB_FD_SOCKET) {
         ret = send(F->fd, buf, count, MSG_NOSIGNAL);
         if(ret < 0) {
@@ -989,7 +980,6 @@ rb_write(rb_fde_t *F, const void *buf, int count)
     return write(F->fd, buf, count);
 }
 
-#if defined(HAVE_SSL) || defined(WIN32) || !defined(HAVE_WRITEV)
 static ssize_t
 rb_fake_writev(rb_fde_t *F, const struct rb_iovec *vp, size_t vpcount)
 {
@@ -1009,16 +999,7 @@ rb_fake_writev(rb_fde_t *F, const struct rb_iovec *vp, size_t vpcount)
     }
     return (count);
 }
-#endif
 
-#if defined(WIN32) || !defined(HAVE_WRITEV)
-ssize_t
-rb_writev(rb_fde_t *F, struct rb_iovec * vecount, int count)
-{
-    return rb_fake_writev(F, vecount, count);
-}
-
-#else
 ssize_t
 rb_writev(rb_fde_t *F, struct rb_iovec * vector, int count)
 {
@@ -1026,11 +1007,9 @@ rb_writev(rb_fde_t *F, struct rb_iovec * vector, int count)
         errno = EBADF;
         return -1;
     }
-#ifdef HAVE_SSL
     if(F->type & RB_FD_SSL) {
         return rb_fake_writev(F, vector, count);
     }
-#endif /* HAVE_SSL */
 #ifdef HAVE_SENDMSG
     if(F->type & RB_FD_SOCKET) {
         struct msghdr msg;
@@ -1040,10 +1019,13 @@ rb_writev(rb_fde_t *F, struct rb_iovec * vector, int count)
         return sendmsg(F->fd, &msg, MSG_NOSIGNAL);
     }
 #endif /* HAVE_SENDMSG */
-    return writev(F->fd, (struct iovec *)vector, count);
 
+#ifdef HAVE_WRITEV
+    return writev(F->fd, (struct iovec *)vector, count);
+#else
+    return rb_fake_writev(F, vecount, count);
+#endif /* HAVE_WRITEV */
 }
-#endif
 
 
 /*
