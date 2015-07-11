@@ -76,9 +76,10 @@ chm_nocaps_process(hook_data_privmsg_channel *data)
         }
         /* Added divide by 0 check --alxbl */
         if(len != 0 && ((caps*100)/(len)) >= 50) {
-            sendto_one_numeric(data->source_p, 404,
-                               "%s :Cannot send to channel - Your message contains mostly capital letters (+G set)",
-                               data->chptr->chname);
+            sendto_one_numeric(data->source_p, ERR_CANNOTSENDTOCHAN,
+                               form_str(ERR_CANNOTSENDTOCHAN),
+                               data->chptr->chname,
+                               "your message contains mostly capital letters (+G set)");
             return;
         }
     }

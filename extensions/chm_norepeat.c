@@ -62,8 +62,9 @@ chm_norepeat_process(hook_data_privmsg_channel *data)
             if(!(strcmp(md->value, text2))) {
                 if(data->msgtype != MESSAGE_TYPE_NOTICE) {
                     sendto_one_numeric(data->source_p, ERR_CANNOTSENDTOCHAN,
-                                       "%s :Cannot send to channel - Message blocked due to repeating (+K set)",
-                                       data->chptr->chname);
+                                       form_str(ERR_CANNOTSENDTOCHAN),
+                                       data->chptr->chname,
+                                       "message blocked due to repeating (+K set)");
                     data->approved = ERR_CANNOTSENDTOCHAN;
                 }
             }

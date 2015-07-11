@@ -76,8 +76,9 @@ block_invalid_utf8_process(hook_data_privmsg_channel *data)
     if(!is_utf8(data->text)) {
         sendto_one_numeric(data->source_p,
                            ERR_CANNOTSENDTOCHAN,
-                           "%s :Cannot send to channel - Your message was badly formatted UTF-8 and this network enforces valid UTF-8",
-                           data->chptr->chname);
+                           form_str(ERR_CANNOTSENDTOCHAN),
+                           data->chptr->chname,
+                           "your message was badly formatted UTF-8 and this network enforces valid UTF-8");
         data->approved = ERR_CANNOTSENDTOCHAN;
         return;
     }
