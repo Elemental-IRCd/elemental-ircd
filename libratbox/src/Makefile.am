@@ -1,17 +1,6 @@
-# $Id: Makefile.am 26046 2008-09-09 16:37:30Z androsyn $
-
 AUTOMAKE_OPTIONS = foreign
 
 AM_CPPFLAGS = -I. -I../include @SSL_CFLAGS@ @GNUTLS_CFLAGS@
-
-BUILT_SOURCES = version.c
-
-version.c: version.c.SH ../CREDITS
-	$(SHELL) ./version.c.SH
-	$(CP) version.c version.c.last
-
-version.lo: version.c ../include/serno.h
-	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) $(AM_CPPFLAGS) -c $< -o $@
 
 libratbox_la_SOURCES =			\
 	unix.c				\
@@ -37,9 +26,7 @@ libratbox_la_SOURCES =			\
 	kqueue.c			\
 	rawbuf.c			\
 	patricia.c			\
-	arc4random.c			\
-	version.c
-	
+	arc4random.c
 
 libratbox_la_LDFLAGS = @SSL_LIBS@ @GNUTLS_LIBS@  -avoid-version -no-undefined -export-symbols export-syms.txt
 libratbox_la_LIBADD = @SSL_LIBS@ @GNUTLS_LIBS@

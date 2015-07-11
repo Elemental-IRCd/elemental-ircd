@@ -176,18 +176,6 @@ rb_set_time(void)
     memcpy(&rb_time, &newtime, sizeof(struct timeval));
 }
 
-extern const char *libratbox_serno;
-
-const char *
-rb_lib_version(void)
-{
-    static char version_info[512];
-    char ssl_info[512];
-    rb_get_ssl_info(ssl_info, sizeof(ssl_info));
-    snprintf(version_info, sizeof(version_info), "libratbox version: %s - %s", libratbox_serno, ssl_info);
-    return version_info;
-}
-
 void
 rb_lib_init(log_cb * ilog, __noreturn restart_cb * irestart, __noreturn die_cb * idie, int closeall, int maxcon,
             size_t dh_size, size_t fd_heap_size)
