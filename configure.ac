@@ -677,7 +677,7 @@ AS_HELP_STRING([--with-topiclen=NUMBER],[Set the max topic length to NUMBER (def
 AC_DEFINE_UNQUOTED(TOPICLEN, ${TOPICLEN}, [Maximum topic length (<=390)])
 AC_DEFINE_UNQUOTED(NICKLEN, (${NICKLEN}+1), [Nickname length])
 
-AC_DEFINE_UNQUOTED(SHARED_SUFFIX, "$SUFFIX", [Suffix for shared libraries on this platform.])
+AC_DEFINE_UNQUOTED(SHARED_SUFFIX, ".so", [Suffix for shared libraries on this platform.])
 
 # rpath, for finding libratbox.so at run time
 hold_ldflags=$LDFLAGS
