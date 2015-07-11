@@ -29,31 +29,3 @@ AC_DEFUN([AC_SUBST_DIR], [
         )`
         AC_SUBST($1)
 ])
-
-dnl CHARYBDIS_C_GCC_TRY_FLAGS(<warnings>,<cachevar>)
-AC_DEFUN([CHARYBDIS_C_GCC_TRY_FLAGS],[
- AC_MSG_CHECKING([GCC flag(s) $1])
- if test "${GCC-no}" = yes
- then
-  AC_CACHE_VAL($2,[
-   oldcflags="${CFLAGS-}"
-   CFLAGS="${CFLAGS-} $1 -Werror"
-   AC_TRY_COMPILE([
-#include <string.h>
-#include <stdio.h>
-int main(void);
-],[
-    fprintf(stdout,"test ok\n");
-], [$2=yes], [$2=no])
-   CFLAGS="${oldcflags}"])
-  if test "x$$2" = xyes; then
-   CFLAGS="${CFLAGS} $1 "
-   AC_MSG_RESULT(ok)  
-  else
-   $2=''
-   AC_MSG_RESULT(no)
-  fi
- else
-  AC_MSG_RESULT(no, not using GCC)
- fi
-])

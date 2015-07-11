@@ -24,6 +24,36 @@ AC_LANG(C)
 
 AC_CONFIG_SUBDIRS(libratbox)
 
+AX_APPEND_COMPILE_FLAGS([-Wall])
+AX_APPEND_COMPILE_FLAGS([-Wcast-align])
+AX_APPEND_COMPILE_FLAGS([-Wcast-qual])
+AX_APPEND_COMPILE_FLAGS([-Werror=error-implicit-function-declaration])
+AX_APPEND_COMPILE_FLAGS([-Werror=float-equal])
+AX_APPEND_COMPILE_FLAGS([-Werror=format])
+AX_APPEND_COMPILE_FLAGS([-Werror=format-y2k])
+AX_APPEND_COMPILE_FLAGS([-Werror=implicit])
+AX_APPEND_COMPILE_FLAGS([-Werror=missing-declarations])
+AX_APPEND_COMPILE_FLAGS([-Werror=missing-prototypes])
+AX_APPEND_COMPILE_FLAGS([-Werror=nested-externs])
+AX_APPEND_COMPILE_FLAGS([-Werror=packed])
+AX_APPEND_COMPILE_FLAGS([-Werror=pointer-arith])
+AX_APPEND_COMPILE_FLAGS([-Werror=shadow])
+AX_APPEND_COMPILE_FLAGS([-Werror=strict-prototypes])
+AX_APPEND_COMPILE_FLAGS([-Werror=undef])
+AX_APPEND_COMPILE_FLAGS([-Werror=write-strings])
+AX_APPEND_COMPILE_FLAGS([-Wextra])
+AX_APPEND_COMPILE_FLAGS([-Wmissing-noreturn])
+# format-security is omited as non-literal printf formats are used extensively
+AX_APPEND_COMPILE_FLAGS([-Wno-format-security])
+# Unused parameters are common
+AX_APPEND_COMPILE_FLAGS([-Wno-unused-parameter])
+AX_APPEND_COMPILE_FLAGS([-Wredundant-decls])
+AX_APPEND_COMPILE_FLAGS([-Wunused-function])
+AX_APPEND_COMPILE_FLAGS([-Wunused-label])
+AX_APPEND_COMPILE_FLAGS([-Wunused-result])
+AX_APPEND_COMPILE_FLAGS([-Wunused-value])
+AX_APPEND_COMPILE_FLAGS([-Wunused-variable])
+
 dnl We prefer gcc -MM because it's a lot less bloated
 AC_PATH_PROG(MKDEP, mkdep)
 AC_PATH_PROG(MAKEDEPEND, makedepend)
@@ -818,39 +848,6 @@ if test "$found" = yes; then
 	LDFLAGS="${LDFLAGS} -Wl,-rpath=\${libdir}"
 fi
 
-# This must be down here, or it will mess up checks like the ones
-# for -Wl,-export-dynamic
-# -- jilles
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wall], charybdis_cv_c_gcc_w_all)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wextra], charybdis_cv_c_gcc_w_extra)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=pointer-arith], charybdis_cv_c_gcc_w_pointer_arith)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=implicit], charybdis_cv_c_gcc_w_implicit)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=nested-externs], charybdis_cv_c_gcc_w_nested_externs)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wcast-align], charybdis_cv_c_gcc_w_cast_align)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wcast-qual], charybdis_cv_c_gcc_w_cast_qual)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=write-strings], charybdis_cv_c_gcc_w_write_strings)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=error-implicit-function-declaration], charybdis_cv_c_gcc_w_error_implicit_function_declaration)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=strict-prototypes], charybdis_cv_c_gcc_strict_prototypes)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=missing-prototypes], charybdis_cv_c_gcc_missing_prototypes)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=missing-declarations], charybdis_cv_c_gcc_missing_declarations)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wparenthesis], charybdis_cv_c_gcc_parenthesis)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=shadow], charybdis_cv_c_gcc_w_shadow)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wmissing-noreturn], charybdis_cv_c_gcc_w_missing_noreturn)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=undef], charybdis_cv_c_gcc_w_undef)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=packed], charybdis_cv_c_gcc_w_packed)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-result], charybdis_cv_c_gcc_w_unused_result)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-function], charybdis_cv_c_gcc_w_unused_function)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-label], charybdis_cv_c_gcc_w_unused_label)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-value], charybdis_cv_c_gcc_w_unused_value)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-variable], charybdis_cv_c_gcc_w_unused_variable)
-# Unused parameters are common
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wno-unused-parameter], charybdis_cv_c_gcc_w_unused_variable)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wredundant-decls], charybdis_cv_c_gcc_w_redundant_decls)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=float-equal], charybdis_cv_c_gcc_w_float_equal)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format], charybdis_cv_c_gcc_w_format)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format-y2k], charybdis_cv_c_gcc_w_format_y2k)
-# format-security is omited as non-literal printf formats are used extensively
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wno-format-security], charybdis_cv_c_gcc_w_no_format_security)
 
 dnl Stage 5 - underscores in front of symbol names.
 if test "$shared_modules" = yes; then

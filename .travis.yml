@@ -20,6 +20,7 @@ addons:
   apt:
     packages:
       - build-essential
+      - autoconf-archive
       - libssl-dev
       - flex
       - bison
