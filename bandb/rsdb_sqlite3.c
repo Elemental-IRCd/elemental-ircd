@@ -70,7 +70,7 @@ rsdb_init(rsdb_error_cb * ecb)
 
     if(sqlite3_open(dbpath, &rb_bandb) != SQLITE_OK) {
         snprintf(errbuf, sizeof(errbuf), "Unable to open sqlite database: %s",
-                    sqlite3_errmsg(rb_bandb));
+                 sqlite3_errmsg(rb_bandb));
         mlog(errbuf);
         return -1;
     }
@@ -128,7 +128,7 @@ rsdb_exec(rsdb_callback cb, const char *format, ...)
     int j;
 
     va_start(args, format);
-    i = rs_vsnprintf(buf, sizeof(buf), format, args);
+    i = vsnprintf(buf, sizeof(buf), format, args);
     va_end(args);
 
     if(i >= sizeof(buf)) {
@@ -168,7 +168,7 @@ rsdb_exec_fetch(struct rsdb_table *table, const char *format, ...)
     int i, j;
 
     va_start(args, format);
-    retval = rs_vsnprintf(buf, sizeof(buf), format, args);
+    retval = vsnprintf(buf, sizeof(buf), format, args);
     va_end(args);
 
     if(retval >= sizeof(buf)) {
