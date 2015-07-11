@@ -10,7 +10,6 @@ libratbox_la_SOURCES =			\
 	commio.c			\
 	openssl.c			\
 	gnutls.c			\
-	nossl.c				\
 	event.c				\
 	ratbox_lib.c			\
 	rb_memory.c			\
