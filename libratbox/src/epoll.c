@@ -35,7 +35,7 @@
 #include <fcntl.h>
 #include <sys/epoll.h>
 
-#if defined(HAVE_SIGNALFD) && (HAVE_SYS_SIGNALFD_H) && (USE_TIMER_CREATE) && (HAVE_SYS_UIO_H)
+#if defined(HAVE_SIGNALFD) && (HAVE_SYS_SIGNALFD_H)&& (HAVE_SYS_UIO_H)
 #include <signal.h>
 #include <sys/signalfd.h>
 #include <sys/uio.h>
