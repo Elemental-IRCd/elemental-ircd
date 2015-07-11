@@ -1,59 +1,51 @@
-AC_PREREQ(2.68)
+AC_PREREQ([2.68])
 AC_COPYRIGHT([2014 elemental-ircd Team])
 
 AC_INIT([libratbox],[devel])
 AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_AUX_DIR([tools])
 AC_CONFIG_SRCDIR([include/ratbox_lib.h])
+AC_CONFIG_HEADERS([include/libratbox_config.h])
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 
-AM_CONFIG_HEADER(include/libratbox_config.h)
-
 AC_PREFIX_DEFAULT(/usr/local/libratbox)
-AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS
 
 dnl Checks for programs.
 AC_PROG_CC_C99
 
 if test x"$ac_cv_prog_cc_c99" = "xno"; then
-	AC_ERROR([ircd-ratbox requires a C99 capable compiler])
+	AC_MSG_ERROR(ircd-ratbox requires a C99 capable compiler)
 fi
 
 AC_PROG_INSTALL
 AC_PROG_EGREP
 AC_PROG_SED
-AC_PATH_PROG(CP, cp)
 
 F77=no
 CXX=no
 GCJ=no
 
-AM_DISABLE_STATIC
-AM_ENABLE_SHARED
+AC_DISABLE_STATIC([])
+AC_ENABLE_SHARED([])
 AM_MAINTAINER_MODE
 
-AC_ISC_POSIX
+AC_SEARCH_LIBS([strerror],[cposix])
 AC_C_INLINE
 AC_C_CONST
 AC_C_BIGENDIAN
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
-AC_PATH_PROG(AUTOMAKE, automake)
-AC_PATH_PROG(ACLOCAL, aclocal)
-AC_PATH_PROG(AUTOHEADER, autoheader)
-AC_PATH_PROG(AS, as)
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(CP, cp)
-AC_PATH_PROG(MV, mv)
-AC_PATH_PROG(LN, ln)
-AC_PATH_PROG(TOUCH, touch)
+
 AC_LANG(C)
-AC_LIBTOOL_DLOPEN
-AC_PROG_LIBTOOL
+
+LT_INIT([dlopen])
 
 GCC_STACK_PROTECT_CC
-GCC_STACK_PROTECT_LIB
 
 PKG_PROG_PKG_CONFIG
 
@@ -106,7 +98,7 @@ AC_CHECK_TYPE([socklen_t], rb_cv_socklen_t=socklen_t,[
 	rb_cv_socklen_t=
 	for arg2 in "struct sockaddr" void; do
 		for t in int size_t unsigned long "unsigned long"; do
-			AC_TRY_COMPILE([
+			AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -117,13 +109,13 @@ AC_CHECK_TYPE([socklen_t], rb_cv_socklen_t=socklen_t,[
 #include <winsock2.h>
 #endif
 int getpeername (int, $arg2 *, $t *);
-],[
+]], [[
 $t len;
 getpeername(0,0,&len);
-],[
+]])],[
 	rb_cv_socklen_t="$t"
 	break
-])
+],[])
 		done
 	done
 
@@ -142,7 +134,7 @@ rb_socklen_t=$rb_cv_socklen_t
 
 
 
-AC_ARG_ENABLE(ipv6,AC_HELP_STRING([--disable-ipv6],[Disable IPv6 support]),[ipv6=$enableval],[ipv6=yes])
+AC_ARG_ENABLE(ipv6,AS_HELP_STRING([--disable-ipv6],[Disable IPv6 support]),[ipv6=$enableval],[ipv6=yes])
 
 if test x$ipv6 != xyes; then
 	have_v6="no"
@@ -185,25 +177,16 @@ AC_CHECK_FUNCS([socketpair gettimeofday writev sendmsg gmtime_r strtok_r usleep 
 
 AC_SEARCH_LIBS(nanosleep, rt posix4, AC_DEFINE(HAVE_NANOSLEEP, 1, [Define if you have nanosleep]))
 AC_SEARCH_LIBS(timer_create, rt, AC_DEFINE(HAVE_TIMER_CREATE, 1, [Define if you have timer_create]))
-RB_CHECK_TIMER_CREATE
-RB_CHECK_TIMERFD_CREATE
+AC_SEARCH_LIBS(timerfd_create, rt, AC_DEFINE(HAVE_TIMERFD_CREATE, 1, [Define if you have timerfd_create]))
 
 AC_FUNC_ALLOCA
-AC_FUNC_VFORK
+AC_FUNC_FORK
 AC_FUNC_MMAP
-
-AC_MSG_CHECKING(for /dev/poll)
-if test -c "/dev/poll"; then
-        AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_DEVPOLL, [1], [Define to 1 if you have devpoll])
-else
-	AC_MSG_RESULT(no)	
-fi
 
 dnl OpenSSL support
 AC_ARG_ENABLE(openssl, [
-	AC_HELP_STRING([--enable-openssl],[Enable OpenSSL support.])
-	AC_HELP_STRING([--disable-openssl],[Disable OpenSSL support.])
+	AS_HELP_STRING([--enable-openssl],[Enable OpenSSL support.])
+	AS_HELP_STRING([--disable-openssl],[Disable OpenSSL support.])
 ],
 	[cf_enable_openssl=$enableval],
 	[cf_enable_openssl="auto"]
@@ -219,8 +202,8 @@ fi
 
 dnl GnuTLS support
 AC_ARG_ENABLE(gnutls, [
-	AC_HELP_STRING([--enable-gnutls],[Enable GnuTLS support.])
-	AC_HELP_STRING([--disable-gnutls],[Disable GnuTLS support.])
+	AS_HELP_STRING([--enable-gnutls],[Enable GnuTLS support.])
+	AS_HELP_STRING([--disable-gnutls],[Disable GnuTLS support.])
 ],
 	[cf_enable_gnutls=$enableval],
 	[cf_enable_gnutls="auto"]
@@ -252,7 +235,7 @@ dnl Debug-related options
 dnl =====================
 
 AC_ARG_ENABLE(assert,
-AC_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),
+AS_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),
 [assert=$enableval], [assert=no])
 
 if test "$assert" = no; then
@@ -266,7 +249,7 @@ fi
 
 AC_MSG_CHECKING(if you want to do a profile build)
 AC_ARG_ENABLE(profile,
-AC_HELP_STRING([--enable-profile],[Enable profiling]),
+AS_HELP_STRING([--enable-profile],[Enable profiling]),
 [profile=$enableval], [profile=no])
 
 if test "$profile" = yes; then
@@ -282,41 +265,40 @@ else
 fi
 
 AC_ARG_ENABLE(balloc,
-AC_HELP_STRING([--disable-balloc],[Disable the block allocator.]),
+AS_HELP_STRING([--disable-balloc],[Disable the block allocator.]),
 [balloc=$enableval], [balloc=yes])
 
 if test "$balloc" = no; then
 	AC_DEFINE([NOBALLOC], 1, [Define to 1 if you wish to disable the block allocator.])
 fi
 
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wall], charybdis_cv_c_gcc_w_all)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wextra], charybdis_cv_c_gcc_w_extra)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=pointer-arith], charybdis_cv_c_gcc_w_pointer_arith)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=implicit], charybdis_cv_c_gcc_w_implicit)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=nested-externs], charybdis_cv_c_gcc_w_nested_externs)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wcast-align], charybdis_cv_c_gcc_w_cast_align)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wcast-qual], charybdis_cv_c_gcc_w_cast_qual)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=write-strings], charybdis_cv_c_gcc_w_write_strings)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=error-implicit-function-declaration], charybdis_cv_c_gcc_w_error_implicit_function_declaration)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wstrict-prototypes], charybdis_cv_c_gcc_strict_prototypes)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=missing-prototypes], charybdis_cv_c_gcc_missing_prototypes)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=missing-declarations], charybdis_cv_c_gcc_missing_declarations)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wparenthesis], charybdis_cv_c_gcc_parenthesis)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=shadow], charybdis_cv_c_gcc_w_shadow)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wmissing-noreturn], charybdis_cv_c_gcc_w_missing_noreturn)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wundef], charybdis_cv_c_gcc_w_undef)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=packed], charybdis_cv_c_gcc_w_packed)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-result], charybdis_cv_c_gcc_w_unused_result)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-function], charybdis_cv_c_gcc_w_unused_function)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-label], charybdis_cv_c_gcc_w_unused_label)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-value], charybdis_cv_c_gcc_w_unused_value)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-variable], charybdis_cv_c_gcc_w_unused_variable)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-parameter], charybdis_cv_c_gcc_w_unused_variable)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wredundant-decls], charybdis_cv_c_gcc_w_redundant_decls)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=float-equal], charybdis_cv_c_gcc_w_float_equal)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format], charybdis_cv_c_gcc_w_format)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format-y2k], charybdis_cv_c_gcc_w_format_y2k)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wformat-security], charybdis_cv_c_gcc_w_no_format_security)
+AX_APPEND_COMPILE_FLAGS([-Wall])
+AX_APPEND_COMPILE_FLAGS([-Wcast-align])
+AX_APPEND_COMPILE_FLAGS([-Wcast-qual])
+AX_APPEND_COMPILE_FLAGS([-Werror=error-implicit-function-declaration])
+AX_APPEND_COMPILE_FLAGS([-Werror=float-equal])
+AX_APPEND_COMPILE_FLAGS([-Werror=format])
+AX_APPEND_COMPILE_FLAGS([-Werror=format-y2k])
+AX_APPEND_COMPILE_FLAGS([-Werror=implicit])
+AX_APPEND_COMPILE_FLAGS([-Werror=missing-declarations])
+AX_APPEND_COMPILE_FLAGS([-Werror=missing-prototypes])
+AX_APPEND_COMPILE_FLAGS([-Werror=nested-externs])
+AX_APPEND_COMPILE_FLAGS([-Werror=packed])
+AX_APPEND_COMPILE_FLAGS([-Werror=pointer-arith])
+AX_APPEND_COMPILE_FLAGS([-Werror=shadow])
+AX_APPEND_COMPILE_FLAGS([-Werror=write-strings])
+AX_APPEND_COMPILE_FLAGS([-Wextra])
+AX_APPEND_COMPILE_FLAGS([-Wformat-security])
+AX_APPEND_COMPILE_FLAGS([-Wmissing-noreturn])
+AX_APPEND_COMPILE_FLAGS([-Wredundant-decls])
+AX_APPEND_COMPILE_FLAGS([-Wstrict-prototypes])
+AX_APPEND_COMPILE_FLAGS([-Wundef])
+AX_APPEND_COMPILE_FLAGS([-Wunused-function])
+AX_APPEND_COMPILE_FLAGS([-Wunused-label])
+AX_APPEND_COMPILE_FLAGS([-Wunused-parameter])
+AX_APPEND_COMPILE_FLAGS([-Wunused-result])
+AX_APPEND_COMPILE_FLAGS([-Wunused-value])
+AX_APPEND_COMPILE_FLAGS([-Wunused-variable])
 
 AC_SUBST(LDFLAGS)
 AC_SUBST(PICFLAGS)

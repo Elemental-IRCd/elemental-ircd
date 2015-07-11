@@ -580,7 +580,6 @@ main(int argc, char *argv[])
 
     if(printVersion) {
         printf("ircd: version %s(%s)\n", ircd_version, serno);
-        printf("ircd: %s\n", rb_lib_version());
         exit(EXIT_SUCCESS);
     }
 
@@ -607,7 +606,6 @@ main(int argc, char *argv[])
         if(!server_state_foreground)
             make_daemon();
         inotice("starting %s ...", ircd_version);
-        inotice("%s", rb_lib_version());
     }
 
     /* Init the event subsystem */

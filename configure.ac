@@ -1,15 +1,23 @@
-AC_PREREQ(2.68)
+AC_PREREQ([2.68])
 AC_COPYRIGHT([2014 elemental-ircd Team])
 
 AC_INIT([elemental-ircd],[6.6.2],[https://github.com/Elemental-IRCd/elemental-ircd/issues])
 AC_CONFIG_MACRO_DIR([libratbox/m4])
+AC_CONFIG_AUX_DIR([libratbox/tools])
 AC_CONFIG_SRCDIR([src/ircd.c])
-AC_CONFIG_HEADER(include/setup.h)
+AC_CONFIG_HEADERS([include/setup.h])
 AC_PREFIX_DEFAULT($HOME/ircd)
 
-AM_INIT_AUTOMAKE
+AC_ENABLE_SHARED
+AC_DISABLE_STATIC
+
+AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
-LT_INIT
+AM_PROG_AR
+
+LT_INIT([dlopen])
+
+GCC_STACK_PROTECT_CC
 
 dnl Checks for programs.
 CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 $CFLAGS"
@@ -51,7 +59,7 @@ else
 	AC_MSG_RESULT(no - using devnull.log)
 fi
 
-AC_ISC_POSIX
+AC_SEARCH_LIBS([strerror],[cposix])
 AC_C_INLINE
 AC_PROG_CC
 AC_PROG_INSTALL
@@ -60,13 +68,6 @@ AC_PROG_MAKE_SET
 AC_PROG_SED
 AC_PROG_YACC
 AC_PROG_LEX
-AC_PATH_PROG(RM, rm)
-AC_PATH_PROG(CP, cp)
-AC_PATH_PROG(MV, mv)
-AC_PATH_PROG(LN, ln)
-AC_PATH_PROG(AR, ar)
-AC_PATH_PROG(LD, ld)
-AC_PATH_PROG(TOUCH, touch)
 
 
 dnl AC_PROG_YACC defaults to yacc unconditionally if nothing can be found
@@ -149,7 +150,7 @@ AC_CHECK_TYPE(socklen_t, ,
 #include <sys/socket.h>])
 
 AC_ARG_ENABLE(ipv6,
-AC_HELP_STRING([--enable-ipv6],[Enable IPv6 support]),[ipv6=$enableval],[ipv6=no])
+AS_HELP_STRING([--enable-ipv6],[Enable IPv6 support]),[ipv6=$enableval],[ipv6=no])
 
 AC_SEARCH_LIBS(crypt, [crypt descrypt],,)
 
@@ -280,8 +281,6 @@ AC_CHECK_TYPES([uintptr_t])
 dnl check for various functions...
 AC_CHECK_FUNCS([socketpair vsnprintf mmap gettimeofday strdup strndup ])
 
-AC_FUNC_ALLOCA
-
 dnl Specialized functions checks
 dnl ============================
 
@@ -301,11 +300,11 @@ dnl Specialized functions and libraries
 dnl ===================================
 
 AC_ARG_WITH(zlib-path,
-AC_HELP_STRING([--with-zlib-path=DIR],[Path to libz.so for ziplinks support.]),
+AS_HELP_STRING([--with-zlib-path=DIR],[Path to libz.so for ziplinks support.]),
 [LIBS="$LIBS -L$withval"],)
 
 AC_ARG_ENABLE(zlib,
-AC_HELP_STRING([--disable-zlib],[Disable ziplinks support]),
+AS_HELP_STRING([--disable-zlib],[Disable ziplinks support]),
 [zlib=$enableval],[zlib=yes])
 
 if test "$zlib" = yes; then
@@ -323,7 +322,7 @@ fi
 dnl IO Loop Selection
 dnl =================
 
-AC_ARG_ENABLE(ports, AC_HELP_STRING([--enable-ports],[Force solaris I/O ports subsystem usage.]),
+AC_ARG_ENABLE(ports, AS_HELP_STRING([--enable-ports],[Force solaris I/O ports subsystem usage.]),
 [ if test $enableval = yes; then 
 	SELECT_TYPE_EXPLICIT="ports"
   else
@@ -331,7 +330,7 @@ AC_ARG_ENABLE(ports, AC_HELP_STRING([--enable-ports],[Force solaris I/O ports su
   fi
 ],)
 
-AC_ARG_ENABLE(poll, AC_HELP_STRING([--enable-poll],[Force poll() usage.]),
+AC_ARG_ENABLE(poll, AS_HELP_STRING([--enable-poll],[Force poll() usage.]),
 [ if test $enableval = yes; then 
 	SELECT_TYPE_EXPLICIT="poll"
   else
@@ -339,7 +338,7 @@ AC_ARG_ENABLE(poll, AC_HELP_STRING([--enable-poll],[Force poll() usage.]),
   fi
 ],)
 
-AC_ARG_ENABLE(select, AC_HELP_STRING([--enable-select],[Force select() usage.]),
+AC_ARG_ENABLE(select, AS_HELP_STRING([--enable-select],[Force select() usage.]),
 [ if test $enableval = yes; then 
 	SELECT_TYPE_EXPLICIT="select" 
   else
@@ -347,7 +346,7 @@ AC_ARG_ENABLE(select, AC_HELP_STRING([--enable-select],[Force select() usage.]),
   fi
 ],)
 
-AC_ARG_ENABLE(kqueue, AC_HELP_STRING([--enable-kqueue],[Force kqueue() usage.]),
+AC_ARG_ENABLE(kqueue, AS_HELP_STRING([--enable-kqueue],[Force kqueue() usage.]),
 [ if test $enableval = yes; then 
 	SELECT_TYPE_EXPLICIT="kqueue"
   else
@@ -355,7 +354,7 @@ AC_ARG_ENABLE(kqueue, AC_HELP_STRING([--enable-kqueue],[Force kqueue() usage.]),
   fi
 ],)
 
-AC_ARG_ENABLE(epoll, AC_HELP_STRING([--enable-epoll],[Force sys_epoll usage (Linux only).]),
+AC_ARG_ENABLE(epoll, AS_HELP_STRING([--enable-epoll],[Force sys_epoll usage (Linux only).]),
 [ if test $enableval = yes; then 
 	SELECT_TYPE_EXPLICIT="epoll"
 	AC_CHECK_FUNCS(epoll_ctl, [haveepoll=yes], [haveepoll=no])
@@ -369,8 +368,7 @@ dnl Check for --with-confdir [deprecated, use --sysconfdir instead]
 dnl **********************************************************************
 
 AC_ARG_WITH([confdir],
-	[AC_HELP_STRING([--with-confdir=DIR],
-	       [Directory to install config files [deprecated, use --sysconfdir instead].])],
+	[AS_HELP_STRING([--with-confdir=DIR],[Directory to install config files [deprecated, use --sysconfdir instead].])],
 	[ sysconfdir=`echo $withval | sed 's/\/$//'` ],
 	[ confdir='${sysconfdir}' ])
 AC_DEFINE_DIR([ETC_DIR], [sysconfdir], [Prefix where config files are installed.])
@@ -381,8 +379,7 @@ dnl **********************************************************************
 
 AC_MSG_CHECKING([whether to modify logdir])
 AC_ARG_WITH(logdir, 
-AC_HELP_STRING([--with-logdir=DIR],
-	       [Directory where to write logfiles.]),
+AS_HELP_STRING([--with-logdir=DIR],[Directory where to write logfiles.]),
 	       [ logdir=`echo $withval | sed 's/\/$//'`
 		 AC_MSG_RESULT(yes)],
 	       [ AS_IF([test "x$enable_fhs_paths" = "xyes"],
@@ -398,8 +395,7 @@ dnl **********************************************************************
 
 AC_MSG_CHECKING([whether to modify helpdir])
 AC_ARG_WITH(helpdir, 
-AC_HELP_STRING([--with-helpdir=DIR],
-	       [Directory to install help files.]),
+AS_HELP_STRING([--with-helpdir=DIR],[Directory to install help files.]),
 	       [ helpdir=`echo $withval | sed 's/\/$//'`
 		 AC_MSG_RESULT(yes) ],
 	       [ AS_IF([test "x$enable_fhs_paths" = "xyes"],
@@ -415,8 +411,7 @@ dnl **********************************************************************
 
 AC_MSG_CHECKING([whether to modify moduledir])
 AC_ARG_WITH(moduledir, 
-	[AC_HELP_STRING([--with-moduledir=DIR],
-	       [Directory to install modules.])],
+	[AS_HELP_STRING([--with-moduledir=DIR],[Directory to install modules.])],
 	       [ moduledir=`echo $withval | sed 's/\/$//'`
 		 AC_MSG_RESULT(yes)],
 	       [ AS_IF([test "x$enable_fhs_paths" = "xyes"],
@@ -431,8 +426,7 @@ dnl Check for --with-rundir
 
 AC_MSG_CHECKING([whether or modify rundir])
 AC_ARG_WITH([rundir],
-	[AC_HELP_STRING([--with-rundir=DIR],
-		[Directory in which to store pidfile.])],
+	[AS_HELP_STRING([--with-rundir=DIR],[Directory in which to store pidfile.])],
 	[AC_MSG_RESULT([yes])
 	rundir=`echo $withval | sed 's/\/$//'`],
 	[AC_MSG_RESULT([no])
@@ -492,8 +486,7 @@ if test ! "x$use_epoll" = "xno"; then
 	if test "x$ac_cv_header_sys_epoll_h" = "xyes"; then
 		if test "x$haveepoll" = "xyes" ; then
                 	AC_MSG_CHECKING(for epoll support in kernel)
-	                AC_TRY_RUN(
-#include <stdint.h>
+	                AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdint.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/epoll.h>
@@ -507,11 +500,10 @@ main(int argc, char **argv)
 
         epfd = epoll_create(256);
         return (epfd == -1 ? 1 : 0);
-}, [AC_MSG_RESULT(yes)
+}]])],[AC_MSG_RESULT(yes)
 	    AC_DEFINE(HAVE_EPOLL, 1,
 	        [Define if your system supports the epoll system calls])
-	    SELECT_TYPE="epoll"], 
-	    AC_MSG_RESULT(no), AC_MSG_RESULT(no))
+	    SELECT_TYPE="epoll"],[AC_MSG_RESULT(no)],[AC_MSG_RESULT(no)])
 		fi
 	fi
 
@@ -520,8 +512,7 @@ haveepollsyscall=no
 if test "x$ac_cv_header_sys_epoll_h" = "xyes"; then
 	if test "x$haveepoll" = "xno" ; then
                 AC_MSG_CHECKING(for epoll system call)
-                AC_TRY_RUN(
-#include <stdint.h>
+                AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdint.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/epoll.h>
@@ -541,11 +532,10 @@ main(int argc, char **argv)
 
         epfd = epoll_create(256);
         exit (epfd == -1 ? 1 : 0);
-}, [AC_MSG_RESULT(yes)
+}]])],[AC_MSG_RESULT(yes)
     AC_DEFINE(HAVE_EPOLL, 1,
         [Define if your system supports the epoll system calls])
-    SELECT_TYPE="epoll"], 
-    AC_MSG_RESULT(no), AC_MSG_RESULT(no))
+    SELECT_TYPE="epoll"],[AC_MSG_RESULT(no)],[AC_MSG_RESULT(no)])
 	fi
 fi
 
@@ -567,7 +557,7 @@ dnl Debug-related options
 dnl =====================
 
 AC_ARG_ENABLE(assert,
-AC_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),
+AS_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),
 [assert=$enableval], [assert=no])
 
 if test "$assert" = no; then
@@ -581,7 +571,7 @@ fi
 
 AC_MSG_CHECKING(if you want IO Debugging hooks)
 AC_ARG_ENABLE(iodebug,
-AC_HELP_STRING([--enable-iodebug],[Enable IO Debugging hooks]),
+AS_HELP_STRING([--enable-iodebug],[Enable IO Debugging hooks]),
 [iodebug=$enableval], [iodebug=no])
 
 if test "$iodebug" = yes; then
@@ -594,7 +584,7 @@ fi
 
 AC_MSG_CHECKING(if you want to do a profile build)
 AC_ARG_ENABLE(profile,
-AC_HELP_STRING([--enable-profile],[Enable profiling]),
+AS_HELP_STRING([--enable-profile],[Enable profiling]),
 [profile=$enableval], [profile=no])
 
 if test "$profile" = yes; then
@@ -610,7 +600,7 @@ else
 fi
 
 AC_ARG_ENABLE(balloc,
-AC_HELP_STRING([--disable-balloc],[Disable the block allocator.]),
+AS_HELP_STRING([--disable-balloc],[Disable the block allocator.]),
 [balloc=$enableval], [balloc=yes])
 
 if test "$balloc" = no; then
@@ -618,7 +608,7 @@ if test "$balloc" = no; then
 fi
 
 AC_ARG_ENABLE(small-net,
-AC_HELP_STRING([--disable-small-net],[Disable small network support.]),
+AS_HELP_STRING([--disable-small-net],[Disable small network support.]),
 [small_net=$enableval], [small_net=yes])
 
 if test "$small_net" = yes; then
@@ -660,10 +650,10 @@ dnl so enable small net unless you really need this much support
 fi
 
 AC_ARG_WITH(nicklen,
-AC_HELP_STRING([--with-nicklen=LENGTH],[Set the nick length to LENGTH (default 31, max 50)]),
+AS_HELP_STRING([--with-nicklen=LENGTH],[Set the nick length to LENGTH (default 31, max 50)]),
 [
   if ! expr "$withval" + 0 >/dev/null 2>&1; then 
-	AC_ERROR([NICKLEN must be a numeric value])
+	AC_MSG_ERROR(NICKLEN must be a numeric value)
   fi 
   if test $withval -ge 50; then
 	NICKLEN=50
@@ -674,7 +664,7 @@ AC_HELP_STRING([--with-nicklen=LENGTH],[Set the nick length to LENGTH (default 3
 ], [NICKLEN=31])
 
 AC_ARG_WITH(topiclen,           
-AC_HELP_STRING([--with-topiclen=NUMBER],[Set the max topic length to NUMBER (default 390, max 390)]),
+AS_HELP_STRING([--with-topiclen=NUMBER],[Set the max topic length to NUMBER (default 390, max 390)]),
 [
  if test $withval -ge 390; then
 	TOPICLEN=390
@@ -687,129 +677,7 @@ AC_HELP_STRING([--with-topiclen=NUMBER],[Set the max topic length to NUMBER (def
 AC_DEFINE_UNQUOTED(TOPICLEN, ${TOPICLEN}, [Maximum topic length (<=390)])
 AC_DEFINE_UNQUOTED(NICKLEN, (${NICKLEN}+1), [Nickname length])
 
-shared_modules="yes"
-dnl Some first-stage sanity checks.
-if test "$shared_modules" = yes; then
-	dnl TenDRA's cc is called tcc too.
-	if test "$CC" = tcc -a "$TenDRA" = "no"; then
-		AC_MSG_WARN([disabling shared modules: Tiny C Compiler can't create PIC])
-		shared_modules="no"
-	fi
-fi
-
-dnl Second stage: check for functions and headers.
-if test "$shared_modules" = yes; then
-	DYNLINK_C=dynlink.c
-	AC_CHECK_HEADERS(dlfcn.h)
-	AC_SEARCH_LIBS(shl_load, dld, 
-	[
-	  AC_DEFINE(HAVE_SHL_LOAD, 1, [Define if the shl_load function is available.])
-	  SUFFIX=".sl"
-	  MOD_TARGET=hpux_shared
-	  SEDOBJ="s/\.o/.sl/g"  
-	],
-	dnl !shl_load:
-	[
-          dnl standard dlopen
-          AC_SEARCH_LIBS(dlopen, [dl c_r],
-	  [
-	    AC_DEFINE(HAVE_DLOPEN, 1, [Define if the dlopen function is available.])
-	    SUFFIX=".so"
-	    MOD_TARGET=shared_modules
-	    SEDOBJ="s/\.o/.so/g"
-	    if test "$AppleGCC" = yes; then
-              AC_CHECK_HEADERS([mach-o/dyld.h])
-            fi
-	    AC_CHECK_FUNC(dlsym, ,
-	    [
-	      AC_MSG_WARN([dlsym is not available, shared modules disabled])
-	      shared_modules=no
-	    ])
-	    AC_CHECK_FUNCS(dlfunc)
-	  ],
-	  [
-	    shared_modules=no
-	  ])
-	])
-fi
-
 AC_DEFINE_UNQUOTED(SHARED_SUFFIX, "$SUFFIX", [Suffix for shared libraries on this platform.])
-
-dnl Third stage - wrangling the linker.
-if test "$shared_modules" = yes; then
-	# The GNU linker requires the -export-dynamic option to make
-	# all symbols visible in the dynamic symbol table.
-	hold_ldflags=$LDFLAGS
-	AC_MSG_CHECKING(for the ld -export-dynamic flag)
-	LDFLAGS="${LDFLAGS} -Wl,-export-dynamic -Werror"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([],[int i;])], found=yes, found=no)
-	LDFLAGS=$hold_ldflags
-
-	if expr "`uname -s`" : ^IRIX >/dev/null 2>&1; then
-		found="no, IRIX ld uses -B,dynamic"
-		LDFLAGS="${LDFLAGS} -Wl,-B,dynamic"
-	fi
-	
-	if expr "`uname -s`" : ^AIX >/dev/null 2>&1; then
-		found="no, AIX ld uses -G -brtl"
-		LDFLAGS="${LDFLAGS} -Wl,-G,-brtl"
-	fi
-
-	AC_MSG_RESULT($found)
-
-	if test "$found" = yes; then
-		LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
-	fi
-
-	AC_MSG_CHECKING(for compiler option to produce PIC)
-	dnl The order should be here to check for groups of compilers,
-	dnl then for odd compilers, then if no PICFLAGS were set up,
-	dnl check for GCC and set defaults, or else error. -jmallett
-	if test "$SGS" = "yes"; then
-		AC_MSG_RESULT([SVR4 SGS interfaces: -KPIC -DPIC -G])
-		PICFLAGS="-KPIC -DPIC -G"
-	fi
-	
-	if test "$AppleGCC" = "yes"; then
-		AC_MSG_RESULT([Darwin Mach-O bundles: -fno-common -bundle -flat_namespace -undefined suppress])
-		PICFLAGS="-fno-common -bundle -flat_namespace -undefined suppress"
-	fi
-	dnl Please note, that on HPUX two different stages of module compilation occurs, since
-	dnl while compiling modules, the compiler does not allow you to give arguments
-	dnl to the linker. (I did not design this) 
-	dnl So we need -c in the first stage of module compilation.
-	dnl In the second stage, we link the modules via ld -b.
-	dnl Additionally, HPUX does not like -export-dynamic, it likes -E instead.
-	dnl -TimeMr14C
-	if test "$HPUX" = "yes" -a "$CC" != gcc; then
-		AC_MSG_RESULT(HP-UX cc: +z -r -q -n)
-		PICFLAGS="+z -r -q -n -c"
-		AC_MSG_CHECKING([if +ESfic is required on this platform])
-		
-		if expr "`$CC +ESfic 2>&1`" : ".*neither supported.*" >/dev/null; then 
-			AC_MSG_RESULT(no)
-		else
-			AC_MSG_RESULT(yes)
-			PICFLAGS="$PICFLAGS +ESfic"
-		fi
-
-		LDFLAGS="${LDFLAGS} -Wl,-E"
-	fi
-	if test "$Tru" = yes -a "$CC" != gcc; then
-		AC_MSG_RESULT([Tru64: -shared -expect_unresolved '*'])
-		PICFLAGS="-shared -expect_unresolved '*' "
-		LDFLAGS="-call_shared"
-	fi
-	if test -z "$PICFLAGS"; then
-		if test "$ac_cv_c_compiler_gnu" = "yes"; then
-			AC_MSG_RESULT(gcc: -fPIC -DPIC -shared)
-			PICFLAGS="-fPIC -DPIC -shared"
-		else
-			AC_MSG_RESULT(no)
-			shared_modules=no
-		fi
-	fi
-fi
 
 # rpath, for finding libratbox.so at run time
 hold_ldflags=$LDFLAGS
@@ -822,99 +690,35 @@ if test "$found" = yes; then
 	LDFLAGS="${LDFLAGS} -Wl,-rpath=\${libdir}"
 fi
 
-# This must be down here, or it will mess up checks like the ones
-# for -Wl,-export-dynamic
-# -- jilles
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wall], charybdis_cv_c_gcc_w_all)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wextra], charybdis_cv_c_gcc_w_extra)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=pointer-arith], charybdis_cv_c_gcc_w_pointer_arith)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=implicit], charybdis_cv_c_gcc_w_implicit)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=nested-externs], charybdis_cv_c_gcc_w_nested_externs)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wcast-align], charybdis_cv_c_gcc_w_cast_align)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wcast-qual], charybdis_cv_c_gcc_w_cast_qual)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=write-strings], charybdis_cv_c_gcc_w_write_strings)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=error-implicit-function-declaration], charybdis_cv_c_gcc_w_error_implicit_function_declaration)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=strict-prototypes], charybdis_cv_c_gcc_strict_prototypes)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=missing-prototypes], charybdis_cv_c_gcc_missing_prototypes)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=missing-declarations], charybdis_cv_c_gcc_missing_declarations)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wparenthesis], charybdis_cv_c_gcc_parenthesis)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=shadow], charybdis_cv_c_gcc_w_shadow)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wmissing-noreturn], charybdis_cv_c_gcc_w_missing_noreturn)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=undef], charybdis_cv_c_gcc_w_undef)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=packed], charybdis_cv_c_gcc_w_packed)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-result], charybdis_cv_c_gcc_w_unused_result)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-function], charybdis_cv_c_gcc_w_unused_function)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-label], charybdis_cv_c_gcc_w_unused_label)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-value], charybdis_cv_c_gcc_w_unused_value)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wunused-variable], charybdis_cv_c_gcc_w_unused_variable)
-# Unused parameters are common
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wno-unused-parameter], charybdis_cv_c_gcc_w_unused_variable)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wredundant-decls], charybdis_cv_c_gcc_w_redundant_decls)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=float-equal], charybdis_cv_c_gcc_w_float_equal)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format], charybdis_cv_c_gcc_w_format)
-CHARYBDIS_C_GCC_TRY_FLAGS([-Werror=format-y2k], charybdis_cv_c_gcc_w_format_y2k)
+AX_APPEND_COMPILE_FLAGS([-Wall])
+AX_APPEND_COMPILE_FLAGS([-Wcast-align])
+AX_APPEND_COMPILE_FLAGS([-Wcast-qual])
+AX_APPEND_COMPILE_FLAGS([-Werror=error-implicit-function-declaration])
+AX_APPEND_COMPILE_FLAGS([-Werror=float-equal])
+AX_APPEND_COMPILE_FLAGS([-Werror=format])
+AX_APPEND_COMPILE_FLAGS([-Werror=format-y2k])
+AX_APPEND_COMPILE_FLAGS([-Werror=implicit])
+AX_APPEND_COMPILE_FLAGS([-Werror=missing-declarations])
+AX_APPEND_COMPILE_FLAGS([-Werror=missing-prototypes])
+AX_APPEND_COMPILE_FLAGS([-Werror=nested-externs])
+AX_APPEND_COMPILE_FLAGS([-Werror=packed])
+AX_APPEND_COMPILE_FLAGS([-Werror=pointer-arith])
+AX_APPEND_COMPILE_FLAGS([-Werror=shadow])
+AX_APPEND_COMPILE_FLAGS([-Werror=strict-prototypes])
+AX_APPEND_COMPILE_FLAGS([-Werror=undef])
+AX_APPEND_COMPILE_FLAGS([-Werror=write-strings])
+AX_APPEND_COMPILE_FLAGS([-Wextra])
+AX_APPEND_COMPILE_FLAGS([-Wmissing-noreturn])
 # format-security is omited as non-literal printf formats are used extensively
-CHARYBDIS_C_GCC_TRY_FLAGS([-Wno-format-security], charybdis_cv_c_gcc_w_no_format_security)
-
-dnl Stage 5 - underscores in front of symbol names.
-if test "$shared_modules" = yes; then
-
-	AC_CHECK_FUNC(nlist,,
-		AC_CHECK_LIB(dl, nlist, nlist_lib="-ldl",
-			AC_CHECK_LIB(elf, nlist, nlist_lib="-lelf",)
-		)
-	)
-
-        dnl We need to find out whether underscores are appended to symbol
-        dnl names in executable files.  First, though, we need to see
-        dnl where nlist.h is hiding.
-	AC_CHECK_HEADER(libelf/nlist.h, [ nlist_h="libelf/nlist.h" ], )
-	AC_CHECK_HEADER(elf/nlist.h, [ nlist_h="elf/nlist.h" ], )
-	AC_CHECK_HEADER(nlist.h, [ nlist_h="nlist.h" ], )
-	if test x"$nlist_h" = "x"; then
-		AC_DEFINE_UNQUOTED(SYMBOL_PREFIX, "", [String containing extra underscores prepended to symbols loaded from modules.])
-	else
-		AC_MSG_CHECKING(for extra underscores prepended to symbol names)
-		AC_CACHE_VAL(_cv_symbol_underscores,
-		[
-cat << EOF > conftest.c
-#include <$nlist_h>
-#include <stdio.h>
-#include <stdlib.h>
-void _modinit(void);
-int main(int argc, char *argv[[]]) {
-	int i;
-	struct nlist nl[[5]];
-
-	/* fill the names in this way, so it'll work almost everywhere */
-	nl[[0]].n_name = "_modinit";
-	nl[[1]].n_name = "__modinit";
-	nl[[2]].n_name = "___modinit";
-	nl[[3]].n_name = "____modinit";
-	nl[[0]].n_value = nl[[1]].n_value = nl[[2]].n_value = nl[[3]].n_value = nl[[4]].n_name = NULL;
-
-	if(argc < 2 || (nlist(argv[[1]], nl)) == -1) exit(-1);
-	for(i = 0; i < 4; i++) {
-		if(nl[[i]].n_value != NULL)
-		{
-			int j;
-			for(j = 0; j < i; j++)
-				printf("_");
-			exit(i);
-		}
-	}
-	exit(-1);
-}
-void _modinit(void) { return; }
-EOF
-		$CC $CPPFLAGS $CFLAGS -o conftest conftest.c $nlist_lib >/dev/null 2>&1
-		symbol_underscores=`./conftest conftest`
-		AC_MSG_RESULT($symbol_underscores)
-		$RM -f conftest conftest.c
-		])
-		AC_DEFINE_UNQUOTED(SYMBOL_PREFIX, "${symbol_underscores}", [String containing extra underscores prepended to symbols loaded from modules.])
-	fi
-fi
+AX_APPEND_COMPILE_FLAGS([-Wno-format-security])
+# Unused parameters are common
+AX_APPEND_COMPILE_FLAGS([-Wno-unused-parameter])
+AX_APPEND_COMPILE_FLAGS([-Wredundant-decls])
+AX_APPEND_COMPILE_FLAGS([-Wunused-function])
+AX_APPEND_COMPILE_FLAGS([-Wunused-label])
+AX_APPEND_COMPILE_FLAGS([-Wunused-result])
+AX_APPEND_COMPILE_FLAGS([-Wunused-value])
+AX_APPEND_COMPILE_FLAGS([-Wunused-variable])
 
 AC_SUBST(MODULES_LIBS)
 AC_SUBST(MOD_TARGET)

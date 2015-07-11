@@ -114,7 +114,6 @@ rb_lib_init
 rb_lib_log
 rb_lib_loop
 rb_lib_restart
-rb_lib_version
 rb_set_time
 rb_strtok_r
 rb_free_rawbuffer
