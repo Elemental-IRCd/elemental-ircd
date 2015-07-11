@@ -183,14 +183,6 @@ AC_FUNC_ALLOCA
 AC_FUNC_FORK
 AC_FUNC_MMAP
 
-AC_MSG_CHECKING(for /dev/poll)
-if test -c "/dev/poll"; then
-        AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_DEVPOLL, [1], [Define to 1 if you have devpoll])
-else
-	AC_MSG_RESULT(no)	
-fi
-
 dnl OpenSSL support
 AC_ARG_ENABLE(openssl, [
 	AS_HELP_STRING([--enable-openssl],[Enable OpenSSL support.])

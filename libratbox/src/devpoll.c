@@ -28,7 +28,7 @@
 #include <commio-int.h>
 #include <fcntl.h>
 
-#if defined(HAVE_DEVPOLL) && (HAVE_SYS_DEVPOLL_H)
+#if (HAVE_SYS_DEVPOLL_H)
 #include <sys/devpoll.h>
 
 static int dpfd;
