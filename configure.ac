@@ -1,4 +1,4 @@
-AC_PREREQ(2.68)
+AC_PREREQ([2.68])
 AC_COPYRIGHT([2014 elemental-ircd Team])
 
 AC_INIT([elemental-ircd],[6.6.2],[https://github.com/Elemental-IRCd/elemental-ircd/issues])
@@ -10,12 +10,11 @@ AC_PREFIX_DEFAULT($HOME/ircd)
 
 AC_ENABLE_SHARED
 AC_DISABLE_STATIC
-AC_LIBTOOL_DLOPEN
 
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 
-LT_INIT
+LT_INIT([dlopen])
 
 dnl Checks for programs.
 CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 $CFLAGS"
@@ -87,7 +86,7 @@ else
 	AC_MSG_RESULT(no - using devnull.log)
 fi
 
-AC_ISC_POSIX
+AC_SEARCH_LIBS([strerror],[cposix])
 AC_C_INLINE
 AC_PROG_CC
 AC_PROG_INSTALL
@@ -177,7 +176,7 @@ AC_CHECK_TYPE(socklen_t, ,
 #include <sys/socket.h>])
 
 AC_ARG_ENABLE(ipv6,
-AC_HELP_STRING([--enable-ipv6],[Enable IPv6 support]),[ipv6=$enableval],[ipv6=no])
+AS_HELP_STRING([--enable-ipv6],[Enable IPv6 support]),[ipv6=$enableval],[ipv6=no])
 
 AC_SEARCH_LIBS(crypt, [crypt descrypt],,)
 
@@ -327,11 +326,11 @@ dnl Specialized functions and libraries
 dnl ===================================
 
 AC_ARG_WITH(zlib-path,
-AC_HELP_STRING([--with-zlib-path=DIR],[Path to libz.so for ziplinks support.]),
+AS_HELP_STRING([--with-zlib-path=DIR],[Path to libz.so for ziplinks support.]),
 [LIBS="$LIBS -L$withval"],)
 
 AC_ARG_ENABLE(zlib,
-AC_HELP_STRING([--disable-zlib],[Disable ziplinks support]),
+AS_HELP_STRING([--disable-zlib],[Disable ziplinks support]),
 [zlib=$enableval],[zlib=yes])
 
 if test "$zlib" = yes; then
@@ -349,7 +348,7 @@ fi
 dnl IO Loop Selection
 dnl =================
 
-AC_ARG_ENABLE(ports, AC_HELP_STRING([--enable-ports],[Force solaris I/O ports subsystem usage.]),
+AC_ARG_ENABLE(ports, AS_HELP_STRING([--enable-ports],[Force solaris I/O ports subsystem usage.]),
 [ if test $enableval = yes; then 
 	SELECT_TYPE_EXPLICIT="ports"
   else
@@ -357,7 +356,7 @@ AC_ARG_ENABLE(ports, AC_HELP_STRING([--enable-ports],[Force solaris I/O ports su
   fi
 ],)
 
-AC_ARG_ENABLE(poll, AC_HELP_STRING([--enable-poll],[Force poll() usage.]),
+AC_ARG_ENABLE(poll, AS_HELP_STRING([--enable-poll],[Force poll() usage.]),
 [ if test $enableval = yes; then 
 	SELECT_TYPE_EXPLICIT="poll"
   else
@@ -365,7 +364,7 @@ AC_ARG_ENABLE(poll, AC_HELP_STRING([--enable-poll],[Force poll() usage.]),
   fi
 ],)
 
-AC_ARG_ENABLE(select, AC_HELP_STRING([--enable-select],[Force select() usage.]),
+AC_ARG_ENABLE(select, AS_HELP_STRING([--enable-select],[Force select() usage.]),
 [ if test $enableval = yes; then 
 	SELECT_TYPE_EXPLICIT="select" 
   else
@@ -373,7 +372,7 @@ AC_ARG_ENABLE(select, AC_HELP_STRING([--enable-select],[Force select() usage.]),
   fi
 ],)
 
-AC_ARG_ENABLE(kqueue, AC_HELP_STRING([--enable-kqueue],[Force kqueue() usage.]),
+AC_ARG_ENABLE(kqueue, AS_HELP_STRING([--enable-kqueue],[Force kqueue() usage.]),
 [ if test $enableval = yes; then 
 	SELECT_TYPE_EXPLICIT="kqueue"
   else
@@ -381,7 +380,7 @@ AC_ARG_ENABLE(kqueue, AC_HELP_STRING([--enable-kqueue],[Force kqueue() usage.]),
   fi
 ],)
 
-AC_ARG_ENABLE(epoll, AC_HELP_STRING([--enable-epoll],[Force sys_epoll usage (Linux only).]),
+AC_ARG_ENABLE(epoll, AS_HELP_STRING([--enable-epoll],[Force sys_epoll usage (Linux only).]),
 [ if test $enableval = yes; then 
 	SELECT_TYPE_EXPLICIT="epoll"
 	AC_CHECK_FUNCS(epoll_ctl, [haveepoll=yes], [haveepoll=no])
@@ -395,8 +394,7 @@ dnl Check for --with-confdir [deprecated, use --sysconfdir instead]
 dnl **********************************************************************
 
 AC_ARG_WITH([confdir],
-	[AC_HELP_STRING([--with-confdir=DIR],
-	       [Directory to install config files [deprecated, use --sysconfdir instead].])],
+	[AS_HELP_STRING([--with-confdir=DIR],[Directory to install config files [deprecated, use --sysconfdir instead].])],
 	[ sysconfdir=`echo $withval | sed 's/\/$//'` ],
 	[ confdir='${sysconfdir}' ])
 AC_DEFINE_DIR([ETC_DIR], [sysconfdir], [Prefix where config files are installed.])
@@ -407,8 +405,7 @@ dnl **********************************************************************
 
 AC_MSG_CHECKING([whether to modify logdir])
 AC_ARG_WITH(logdir, 
-AC_HELP_STRING([--with-logdir=DIR],
-	       [Directory where to write logfiles.]),
+AS_HELP_STRING([--with-logdir=DIR],[Directory where to write logfiles.]),
 	       [ logdir=`echo $withval | sed 's/\/$//'`
 		 AC_MSG_RESULT(yes)],
 	       [ AS_IF([test "x$enable_fhs_paths" = "xyes"],
@@ -424,8 +421,7 @@ dnl **********************************************************************
 
 AC_MSG_CHECKING([whether to modify helpdir])
 AC_ARG_WITH(helpdir, 
-AC_HELP_STRING([--with-helpdir=DIR],
-	       [Directory to install help files.]),
+AS_HELP_STRING([--with-helpdir=DIR],[Directory to install help files.]),
 	       [ helpdir=`echo $withval | sed 's/\/$//'`
 		 AC_MSG_RESULT(yes) ],
 	       [ AS_IF([test "x$enable_fhs_paths" = "xyes"],
@@ -441,8 +437,7 @@ dnl **********************************************************************
 
 AC_MSG_CHECKING([whether to modify moduledir])
 AC_ARG_WITH(moduledir, 
-	[AC_HELP_STRING([--with-moduledir=DIR],
-	       [Directory to install modules.])],
+	[AS_HELP_STRING([--with-moduledir=DIR],[Directory to install modules.])],
 	       [ moduledir=`echo $withval | sed 's/\/$//'`
 		 AC_MSG_RESULT(yes)],
 	       [ AS_IF([test "x$enable_fhs_paths" = "xyes"],
@@ -457,8 +452,7 @@ dnl Check for --with-rundir
 
 AC_MSG_CHECKING([whether or modify rundir])
 AC_ARG_WITH([rundir],
-	[AC_HELP_STRING([--with-rundir=DIR],
-		[Directory in which to store pidfile.])],
+	[AS_HELP_STRING([--with-rundir=DIR],[Directory in which to store pidfile.])],
 	[AC_MSG_RESULT([yes])
 	rundir=`echo $withval | sed 's/\/$//'`],
 	[AC_MSG_RESULT([no])
@@ -518,8 +512,7 @@ if test ! "x$use_epoll" = "xno"; then
 	if test "x$ac_cv_header_sys_epoll_h" = "xyes"; then
 		if test "x$haveepoll" = "xyes" ; then
                 	AC_MSG_CHECKING(for epoll support in kernel)
-	                AC_TRY_RUN(
-#include <stdint.h>
+	                AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdint.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/epoll.h>
@@ -533,11 +526,10 @@ main(int argc, char **argv)
 
         epfd = epoll_create(256);
         return (epfd == -1 ? 1 : 0);
-}, [AC_MSG_RESULT(yes)
+}]])],[AC_MSG_RESULT(yes)
 	    AC_DEFINE(HAVE_EPOLL, 1,
 	        [Define if your system supports the epoll system calls])
-	    SELECT_TYPE="epoll"], 
-	    AC_MSG_RESULT(no), AC_MSG_RESULT(no))
+	    SELECT_TYPE="epoll"],[AC_MSG_RESULT(no)],[AC_MSG_RESULT(no)])
 		fi
 	fi
 
@@ -546,8 +538,7 @@ haveepollsyscall=no
 if test "x$ac_cv_header_sys_epoll_h" = "xyes"; then
 	if test "x$haveepoll" = "xno" ; then
                 AC_MSG_CHECKING(for epoll system call)
-                AC_TRY_RUN(
-#include <stdint.h>
+                AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdint.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/epoll.h>
@@ -567,11 +558,10 @@ main(int argc, char **argv)
 
         epfd = epoll_create(256);
         exit (epfd == -1 ? 1 : 0);
-}, [AC_MSG_RESULT(yes)
+}]])],[AC_MSG_RESULT(yes)
     AC_DEFINE(HAVE_EPOLL, 1,
         [Define if your system supports the epoll system calls])
-    SELECT_TYPE="epoll"], 
-    AC_MSG_RESULT(no), AC_MSG_RESULT(no))
+    SELECT_TYPE="epoll"],[AC_MSG_RESULT(no)],[AC_MSG_RESULT(no)])
 	fi
 fi
 
@@ -593,7 +583,7 @@ dnl Debug-related options
 dnl =====================
 
 AC_ARG_ENABLE(assert,
-AC_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),
+AS_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),
 [assert=$enableval], [assert=no])
 
 if test "$assert" = no; then
@@ -607,7 +597,7 @@ fi
 
 AC_MSG_CHECKING(if you want IO Debugging hooks)
 AC_ARG_ENABLE(iodebug,
-AC_HELP_STRING([--enable-iodebug],[Enable IO Debugging hooks]),
+AS_HELP_STRING([--enable-iodebug],[Enable IO Debugging hooks]),
 [iodebug=$enableval], [iodebug=no])
 
 if test "$iodebug" = yes; then
@@ -620,7 +610,7 @@ fi
 
 AC_MSG_CHECKING(if you want to do a profile build)
 AC_ARG_ENABLE(profile,
-AC_HELP_STRING([--enable-profile],[Enable profiling]),
+AS_HELP_STRING([--enable-profile],[Enable profiling]),
 [profile=$enableval], [profile=no])
 
 if test "$profile" = yes; then
@@ -636,7 +626,7 @@ else
 fi
 
 AC_ARG_ENABLE(balloc,
-AC_HELP_STRING([--disable-balloc],[Disable the block allocator.]),
+AS_HELP_STRING([--disable-balloc],[Disable the block allocator.]),
 [balloc=$enableval], [balloc=yes])
 
 if test "$balloc" = no; then
@@ -644,7 +634,7 @@ if test "$balloc" = no; then
 fi
 
 AC_ARG_ENABLE(small-net,
-AC_HELP_STRING([--disable-small-net],[Disable small network support.]),
+AS_HELP_STRING([--disable-small-net],[Disable small network support.]),
 [small_net=$enableval], [small_net=yes])
 
 if test "$small_net" = yes; then
@@ -686,10 +676,10 @@ dnl so enable small net unless you really need this much support
 fi
 
 AC_ARG_WITH(nicklen,
-AC_HELP_STRING([--with-nicklen=LENGTH],[Set the nick length to LENGTH (default 31, max 50)]),
+AS_HELP_STRING([--with-nicklen=LENGTH],[Set the nick length to LENGTH (default 31, max 50)]),
 [
   if ! expr "$withval" + 0 >/dev/null 2>&1; then 
-	AC_ERROR([NICKLEN must be a numeric value])
+	AC_MSG_ERROR(NICKLEN must be a numeric value)
   fi 
   if test $withval -ge 50; then
 	NICKLEN=50
@@ -700,7 +690,7 @@ AC_HELP_STRING([--with-nicklen=LENGTH],[Set the nick length to LENGTH (default 3
 ], [NICKLEN=31])
 
 AC_ARG_WITH(topiclen,           
-AC_HELP_STRING([--with-topiclen=NUMBER],[Set the max topic length to NUMBER (default 390, max 390)]),
+AS_HELP_STRING([--with-topiclen=NUMBER],[Set the max topic length to NUMBER (default 390, max 390)]),
 [
  if test $withval -ge 390; then
 	TOPICLEN=390

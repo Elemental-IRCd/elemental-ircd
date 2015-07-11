@@ -1,4 +1,4 @@
-AC_PREREQ(2.68)
+AC_PREREQ([2.68])
 AC_COPYRIGHT([2014 elemental-ircd Team])
 
 AC_INIT([libratbox],[devel])
@@ -12,13 +12,13 @@ AM_SILENT_RULES([yes])
 AM_CONFIG_HEADER(include/libratbox_config.h)
 
 AC_PREFIX_DEFAULT(/usr/local/libratbox)
-AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS
 
 dnl Checks for programs.
 AC_PROG_CC_C99
 
 if test x"$ac_cv_prog_cc_c99" = "xno"; then
-	AC_ERROR([ircd-ratbox requires a C99 capable compiler])
+	AC_MSG_ERROR(ircd-ratbox requires a C99 capable compiler)
 fi
 
 AC_PROG_INSTALL
@@ -29,11 +29,11 @@ F77=no
 CXX=no
 GCJ=no
 
-AM_DISABLE_STATIC
-AM_ENABLE_SHARED
+AC_DISABLE_STATIC([])
+AC_ENABLE_SHARED([])
 AM_MAINTAINER_MODE
 
-AC_ISC_POSIX
+AC_SEARCH_LIBS([strerror],[cposix])
 AC_C_INLINE
 AC_C_CONST
 AC_C_BIGENDIAN
@@ -43,8 +43,8 @@ AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(CP, cp)
 
 AC_LANG(C)
-AC_LIBTOOL_DLOPEN
-AC_PROG_LIBTOOL
+
+LT_INIT([dlopen])
 
 GCC_STACK_PROTECT_CC
 GCC_STACK_PROTECT_LIB
@@ -128,7 +128,7 @@ AC_CHECK_TYPE([socklen_t], rb_cv_socklen_t=socklen_t,[
 	rb_cv_socklen_t=
 	for arg2 in "struct sockaddr" void; do
 		for t in int size_t unsigned long "unsigned long"; do
-			AC_TRY_COMPILE([
+			AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -139,13 +139,13 @@ AC_CHECK_TYPE([socklen_t], rb_cv_socklen_t=socklen_t,[
 #include <winsock2.h>
 #endif
 int getpeername (int, $arg2 *, $t *);
-],[
+]], [[
 $t len;
 getpeername(0,0,&len);
-],[
+]])],[
 	rb_cv_socklen_t="$t"
 	break
-])
+],[])
 		done
 	done
 
@@ -164,7 +164,7 @@ rb_socklen_t=$rb_cv_socklen_t
 
 
 
-AC_ARG_ENABLE(ipv6,AC_HELP_STRING([--disable-ipv6],[Disable IPv6 support]),[ipv6=$enableval],[ipv6=yes])
+AC_ARG_ENABLE(ipv6,AS_HELP_STRING([--disable-ipv6],[Disable IPv6 support]),[ipv6=$enableval],[ipv6=yes])
 
 if test x$ipv6 != xyes; then
 	have_v6="no"
@@ -211,7 +211,7 @@ RB_CHECK_TIMER_CREATE
 RB_CHECK_TIMERFD_CREATE
 
 AC_FUNC_ALLOCA
-AC_FUNC_VFORK
+AC_FUNC_FORK
 AC_FUNC_MMAP
 
 AC_MSG_CHECKING(for /dev/poll)
@@ -224,8 +224,8 @@ fi
 
 dnl OpenSSL support
 AC_ARG_ENABLE(openssl, [
-	AC_HELP_STRING([--enable-openssl],[Enable OpenSSL support.])
-	AC_HELP_STRING([--disable-openssl],[Disable OpenSSL support.])
+	AS_HELP_STRING([--enable-openssl],[Enable OpenSSL support.])
+	AS_HELP_STRING([--disable-openssl],[Disable OpenSSL support.])
 ],
 	[cf_enable_openssl=$enableval],
 	[cf_enable_openssl="auto"]
@@ -241,8 +241,8 @@ fi
 
 dnl GnuTLS support
 AC_ARG_ENABLE(gnutls, [
-	AC_HELP_STRING([--enable-gnutls],[Enable GnuTLS support.])
-	AC_HELP_STRING([--disable-gnutls],[Disable GnuTLS support.])
+	AS_HELP_STRING([--enable-gnutls],[Enable GnuTLS support.])
+	AS_HELP_STRING([--disable-gnutls],[Disable GnuTLS support.])
 ],
 	[cf_enable_gnutls=$enableval],
 	[cf_enable_gnutls="auto"]
@@ -274,7 +274,7 @@ dnl Debug-related options
 dnl =====================
 
 AC_ARG_ENABLE(assert,
-AC_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),
+AS_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),
 [assert=$enableval], [assert=no])
 
 if test "$assert" = no; then
@@ -288,7 +288,7 @@ fi
 
 AC_MSG_CHECKING(if you want to do a profile build)
 AC_ARG_ENABLE(profile,
-AC_HELP_STRING([--enable-profile],[Enable profiling]),
+AS_HELP_STRING([--enable-profile],[Enable profiling]),
 [profile=$enableval], [profile=no])
 
 if test "$profile" = yes; then
@@ -304,7 +304,7 @@ else
 fi
 
 AC_ARG_ENABLE(balloc,
-AC_HELP_STRING([--disable-balloc],[Disable the block allocator.]),
+AS_HELP_STRING([--disable-balloc],[Disable the block allocator.]),
 [balloc=$enableval], [balloc=yes])
 
 if test "$balloc" = no; then

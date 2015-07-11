@@ -3,5 +3,5 @@
 set -e
 
 autoreconf --version
-autoreconf --install -v --force
+autoreconf --install --verbose --force --warnings=all
 scripts/version.sh
