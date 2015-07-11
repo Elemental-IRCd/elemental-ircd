@@ -86,6 +86,7 @@ add_fd(int fd)
     F = rb_bh_alloc(fd_heap);
     F->fd = fd;
     rb_dlinkAdd(F, &F->node, &rb_fd_table[rb_hash_fd(fd)]);
+    rb_set_inherit(F, FALSE);
     return (F);
 }
 

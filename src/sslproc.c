@@ -289,10 +289,9 @@ start_ssldaemon(int count, const char *ssl_cert, const char *ssl_private_key, co
         rb_setenv("CTL_PIPE", fdarg, 1);
         snprintf(s_pid, sizeof(s_pid), "%d", (int)getpid());
         rb_setenv("CTL_PPID", s_pid, 1);
-#ifdef _WIN32
-        SetHandleInformation((HANDLE) rb_get_fd(F2), HANDLE_FLAG_INHERIT, 1);
-        SetHandleInformation((HANDLE) rb_get_fd(P1), HANDLE_FLAG_INHERIT, 1);
-#endif
+
+        rb_set_inherit(F2, TRUE);
+        rb_set_inherit(P1, TRUE);
 
         pid = rb_spawn_process(ssld_path, (const char **) parv);
         if(pid == -1) {

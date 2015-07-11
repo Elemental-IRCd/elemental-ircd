@@ -177,7 +177,6 @@ rb_setup_fd_win32(rb_fde_t *F)
     if(F == NULL)
         return 0;
 
-    SetHandleInformation((HANDLE) F->fd, HANDLE_FLAG_INHERIT, 0);
     switch (F->type) {
     case RB_FD_SOCKET: {
         u_long nonb = 1;
