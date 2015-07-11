@@ -32,7 +32,8 @@ libratbox/include/librb-config.h
 libratbox/include/stamp-h1
 libratbox/libratbox.pc
 libratbox/libtool
-libratbox/m4/*
+libratbox/m4/libtool.m4
+libratbox/m4/lt*
 libratbox/src/version.c
 libtool
 ltmain.sh
