@@ -44,6 +44,7 @@ rb_send_fd_buf
 rb_set_buffers
 rb_set_nb
 rb_set_type
+rb_set_inherit
 rb_setselect
 rb_settimeout
 rb_setup_fd

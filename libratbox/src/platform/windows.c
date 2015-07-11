@@ -411,4 +411,11 @@ rb_strerror(int error)
     rb_strlcpy(buf, _rb_strerror(error), sizeof(buf));
     return buf;
 }
+
+int
+rb_set_inherit(rb_fde_t *F, int inherit)
+{
+    return SetHandleInformation((HANDLE) F->fd, HANDLE_FLAG_INHERIT, !!inherit);
+}
+
 #endif /* _WIN32 */

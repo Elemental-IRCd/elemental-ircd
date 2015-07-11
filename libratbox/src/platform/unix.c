@@ -24,7 +24,7 @@
  */
 #include <libratbox_config.h>
 #include <ratbox_lib.h>
-
+#include <commio-int.h>
 
 #ifndef _WIN32
 
@@ -147,5 +147,27 @@ rb_getpid(void)
     return getpid();
 }
 
+static int
+set_fd_flag(int fd, int flag)
+{
+    int flags = fcntl(fd, F_GETFD);
+    return fcntl(fd, F_SETFD, flags | flag);
+}
+
+static int
+unset_fd_flag(int fd, int flag)
+{
+    int flags = fcntl(fd, F_GETFD);
+    return fcntl(fd, F_SETFD, flags & ~flag);
+}
+
+int
+rb_set_inherit(rb_fde_t *F, int inherit)
+{
+    if(inherit)
+        return unset_fd_flag(F->fd, FD_CLOEXEC);
+    else
+        return set_fd_flag(F->fd, FD_CLOEXEC);
+}
 
 #endif /* !WIN32 */

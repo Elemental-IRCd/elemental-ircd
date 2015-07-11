@@ -101,6 +101,7 @@ void rb_note(rb_fde_t *, const char *);
 
 int rb_set_nb(rb_fde_t *);
 int rb_set_buffers(rb_fde_t *, int);
+int rb_set_inherit(rb_fde_t *, int);
 
 int rb_get_sockerr(rb_fde_t *);
 
