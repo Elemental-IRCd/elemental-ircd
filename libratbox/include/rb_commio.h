@@ -83,7 +83,7 @@ struct rb_iovec {
 };
 
 
-void rb_fdlist_init(int closeall, int maxfds, size_t heapsize);
+void rb_fdlist_init(int maxfds, size_t heapsize);
 
 rb_fde_t __must_check *rb_open(int, uint8_t, const char *);
 void rb_close(rb_fde_t *);

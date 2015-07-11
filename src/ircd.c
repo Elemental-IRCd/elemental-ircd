@@ -609,7 +609,7 @@ main(int argc, char *argv[])
     }
 
     /* Init the event subsystem */
-    rb_lib_init(ircd_log_cb, ircd_restart_cb, ircd_die_cb, !server_state_foreground, maxconnections, DNODE_HEAP_SIZE, FD_HEAP_SIZE);
+    rb_lib_init(ircd_log_cb, ircd_restart_cb, ircd_die_cb, maxconnections, DNODE_HEAP_SIZE, FD_HEAP_SIZE);
     rb_linebuf_init(LINEBUF_HEAP_SIZE);
 
     if(ConfigFileEntry.use_egd && (ConfigFileEntry.egdpool_path != NULL)) {

@@ -79,7 +79,7 @@ rb_helper_child(rb_helper_cb * read_cb, rb_helper_cb * error_cb, log_cb * ilog,
     x = 0;			/* shut gcc up */
 #endif
 
-    rb_lib_init(ilog, irestart, idie, 0, maxfd, dh_size, fd_heap_size);
+    rb_lib_init(ilog, irestart, idie, maxfd, dh_size, fd_heap_size);
     rb_linebuf_init(lb_heap_size);
     rb_linebuf_newbuf(&helper->sendq);
     rb_linebuf_newbuf(&helper->recvq);

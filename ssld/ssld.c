@@ -1120,7 +1120,7 @@ main(int argc, char **argv)
     }
 #endif
     setup_signals();
-    rb_lib_init(NULL, NULL, NULL, 0, maxfd, 1024, 4096);
+    rb_lib_init(NULL, NULL, NULL, maxfd, 1024, 4096);
     rb_init_rawbuffers(1024);
     ssl_ok = rb_supports_ssl();
     mod_ctl = rb_malloc(sizeof(mod_ctl_t));

@@ -133,22 +133,6 @@ rb_fd_hack(int *fd)
 #endif
 
 
-/* close_all_connections() can be used *before* the system come up! */
-
-static void
-rb_close_all(void)
-{
-#ifndef _WIN32
-    int i;
-
-    /* XXX someone tell me why we care about 4 fd's ? */
-    /* XXX btw, fd 3 is used for profiler ! */
-    for(i = 3; i < rb_maxconnections; ++i) {
-        close(i);
-    }
-#endif
-}
-
 /*
  * get_sockerr - get the error value from the socket or the current errno
  *
@@ -751,7 +735,7 @@ rb_listen(rb_fde_t *F, int backlog, int defer_accept)
 }
 
 void
-rb_fdlist_init(int closeall, int maxfds, size_t heapsize)
+rb_fdlist_init(int maxfds, size_t heapsize)
 {
     static int initialized = 0;
 #ifdef _WIN32
@@ -767,8 +751,6 @@ rb_fdlist_init(int closeall, int maxfds, size_t heapsize)
 #endif
     if(!initialized) {
         rb_maxconnections = maxfds;
-        if(closeall)
-            rb_close_all();
         /* Since we're doing this once .. */
         initialized = 1;
     }
