@@ -45,7 +45,7 @@ rb_helper_child(rb_helper_cb * read_cb, rb_helper_cb * error_cb, log_cb * ilog,
                 size_t fd_heap_size)
 {
     rb_helper *helper;
-    int maxfd, x = 0;
+    int maxfd;
     int ifd, ofd;
     char *tifd, *tofd, *tmaxfd;
 
@@ -60,24 +60,6 @@ rb_helper_child(rb_helper_cb * read_cb, rb_helper_cb * error_cb, log_cb * ilog,
     ifd = (int)strtol(tifd, NULL, 10);
     ofd = (int)strtol(tofd, NULL, 10);
     maxfd = (int)strtol(tmaxfd, NULL, 10);
-
-#ifndef _WIN32
-    for(x = 0; x < maxfd; x++) {
-        if(x != ifd && x != ofd)
-            close(x);
-    }
-    x = open("/dev/null", O_RDWR);
-    if(ifd != 0 && ofd != 0)
-        dup2(x, 0);
-    if(ifd != 1 && ofd != 1)
-        dup2(x, 1);
-    if(ifd != 2 && ofd != 2)
-        dup2(x, 2);
-    if(x > 2)		/* don't undo what we just did */
-        close(x);
-#else
-    x = 0;			/* shut gcc up */
-#endif
 
     rb_lib_init(ilog, irestart, idie, maxfd, dh_size, fd_heap_size);
     rb_linebuf_init(lb_heap_size);
