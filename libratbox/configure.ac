@@ -3,13 +3,12 @@ AC_COPYRIGHT([2014 elemental-ircd Team])
 
 AC_INIT([libratbox],[devel])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_AUX_DIR([aux])
+AC_CONFIG_AUX_DIR([tools])
 AC_CONFIG_SRCDIR([include/ratbox_lib.h])
+AC_CONFIG_HEADERS([include/libratbox_config.h])
 
 AM_INIT_AUTOMAKE
 AM_SILENT_RULES([yes])
-
-AM_CONFIG_HEADER(include/libratbox_config.h)
 
 AC_PREFIX_DEFAULT(/usr/local/libratbox)
 AC_USE_SYSTEM_EXTENSIONS

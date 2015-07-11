@@ -3,9 +3,9 @@ AC_COPYRIGHT([2014 elemental-ircd Team])
 
 AC_INIT([elemental-ircd],[6.6.2],[https://github.com/Elemental-IRCd/elemental-ircd/issues])
 AC_CONFIG_MACRO_DIR([libratbox/m4])
-AC_CONFIG_AUX_DIR([libratbox/aux])
+AC_CONFIG_AUX_DIR([libratbox/tools])
 AC_CONFIG_SRCDIR([src/ircd.c])
-AC_CONFIG_HEADER(include/setup.h)
+AC_CONFIG_HEADERS([include/setup.h])
 AC_PREFIX_DEFAULT($HOME/ircd)
 
 AC_ENABLE_SHARED
@@ -13,6 +13,7 @@ AC_DISABLE_STATIC
 
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
+AM_PROG_AR
 
 LT_INIT([dlopen])
 
@@ -95,6 +96,7 @@ AC_PROG_MAKE_SET
 AC_PROG_SED
 AC_PROG_YACC
 AC_PROG_LEX
+
 
 dnl AC_PROG_YACC defaults to yacc unconditionally if nothing can be found
 if test "$YACC" = "yacc" -a -z "`which $YACC 2>/dev/null`"; then
