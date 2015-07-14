@@ -168,8 +168,8 @@ ilog(ilogfile dest, const char *format, ...)
     vsnprintf(buf, sizeof(buf), format, args);
     va_end(args);
 
-    snprintf(buf2, sizeof(buf2), "%s %s\n",
-                smalldate(rb_current_time()), buf);
+    snprintf(buf2, sizeof(buf2), "%s [%d] %s\n",
+                smalldate(rb_current_time()), rb_getpid(), buf);
 
     if(fputs(buf2, logfile) < 0) {
         fclose(logfile);
