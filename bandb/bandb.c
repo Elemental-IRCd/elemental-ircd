@@ -310,6 +310,8 @@ check_schema(void)
     struct rsdb_table table;
     int i;
 
+    rsdb_exec(NULL, "PRAGMA auto_vacuum=FULL");
+
     for(i = 0; i < LAST_BANDB_TYPE; i++) {
         rsdb_exec_fetch(&table,
                         "SELECT name FROM sqlite_master WHERE type='table' AND name='%s'",
