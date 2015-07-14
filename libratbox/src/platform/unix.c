@@ -151,6 +151,8 @@ static int
 set_fd_flag(int fd, int flag)
 {
     int flags = fcntl(fd, F_GETFD);
+    if(flags & flag) /* Flag already set */
+        return;
     return fcntl(fd, F_SETFD, flags | flag);
 }
 
@@ -158,6 +160,8 @@ static int
 unset_fd_flag(int fd, int flag)
 {
     int flags = fcntl(fd, F_GETFD);
+    if(!(flags & flag)) /* Flag already unset */
+        return;
     return fcntl(fd, F_SETFD, flags & ~flag);
 }
 
