@@ -319,7 +319,7 @@ check_schema(void)
 
         if(!table.row_count)
             rsdb_exec(NULL,
-                      "CREATE TABLE %s (mask1 TEXT, mask2 TEXT, oper TEXT, time INTEGER, perm INTEGER, reason TEXT)",
+                      "CREATE TABLE IF NOT EXISTS %s (mask1 TEXT, mask2 TEXT, oper TEXT, time INTEGER, perm INTEGER, reason TEXT)",
                       bandb_table[i]);
     }
 }
