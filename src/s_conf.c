@@ -73,7 +73,7 @@ rb_dlink_list service_list;
 /* internally defined functions */
 static void set_default_conf(void);
 static void validate_conf(void);
-static void read_conf(FILE *);
+static void read_conf(void);
 static void clear_out_old_conf(void);
 
 static void expire_prop_bans(void *list);
@@ -811,12 +811,14 @@ set_default_conf(void)
  * side effects	- Read configuration file.
  */
 static void
-read_conf(FILE * file)
+read_conf(void)
 {
     lineno = 0;
 
     set_default_conf();	/* Set default values prior to conf parsing */
     yyparse();		/* Load the values from the conf */
+    fclose(conf_fbfile_in);
+
     validate_conf();	/* Check to make sure some values are still okay. */
     /* Some global values are also loaded here. */
     check_class();		/* Make sure classes are valid */
@@ -1449,8 +1451,7 @@ read_conf_files(int cold)
         clear_out_old_conf();
     }
 
-    read_conf(conf_fbfile_in);
-    fclose(conf_fbfile_in);
+    read_conf();
 }
 
 /*
