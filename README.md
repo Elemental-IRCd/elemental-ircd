@@ -11,6 +11,7 @@ following Debian packages:
 
  - `libssl-dev`
  - `autoconf`
+ - `autoconf-archive`
  - `automake`
  - `flex`
  - `bison`
