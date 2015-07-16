@@ -13,12 +13,7 @@ AM_SILENT_RULES([yes])
 AC_PREFIX_DEFAULT(/usr/local/libratbox)
 AC_USE_SYSTEM_EXTENSIONS
 
-dnl Checks for programs.
-AC_PROG_CC_C99
-
-if test x"$ac_cv_prog_cc_c99" = "xno"; then
-	AC_MSG_ERROR(ircd-ratbox requires a C99 capable compiler)
-fi
+AC_PROG_CC_C99([], [AC_MSG_ERROR(libratbox requires a C99 capable compiler)])
 
 AC_PROG_INSTALL
 AC_PROG_EGREP

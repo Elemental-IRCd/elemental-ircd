@@ -15,6 +15,8 @@ AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 AM_PROG_AR
 
+AC_PROG_CC_C99([], [AC_MSG_ERROR(elemental-ircd requires a C99 capable compiler)])
+
 LT_INIT([dlopen])
 
 GCC_STACK_PROTECT_CC
