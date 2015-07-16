@@ -695,7 +695,7 @@ fi
 AX_APPEND_COMPILE_FLAGS([-Wall])
 AX_APPEND_COMPILE_FLAGS([-Wcast-align])
 AX_APPEND_COMPILE_FLAGS([-Wcast-qual])
-AX_APPEND_COMPILE_FLAGS([-Werror=error-implicit-function-declaration])
+AX_APPEND_COMPILE_FLAGS([-Werror=implicit-function-declaration])
 AX_APPEND_COMPILE_FLAGS([-Werror=float-equal])
 AX_APPEND_COMPILE_FLAGS([-Werror=format])
 AX_APPEND_COMPILE_FLAGS([-Werror=format-y2k])
