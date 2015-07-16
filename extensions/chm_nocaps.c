@@ -1,6 +1,6 @@
 /*
  * Elemental-IRCd
- * chm_nocaps: blocks capsing messages (+K mode).
+ * chm_nocaps: blocks capsing messages (+G mode).
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
