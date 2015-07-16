@@ -27,7 +27,7 @@
 #include <ratbox_lib.h>
 #include <commio-int.h>
 
-#if defined(HAVE_POLL) && (HAVE_SYS_POLL_H)
+#ifdef WITH_POLL
 #include <sys/poll.h>
 
 
@@ -215,7 +215,7 @@ rb_select_poll(long delay)
     return 0;
 }
 
-#else /* poll not supported */
+#else /* WITH_POLL */
 int
 rb_init_netio_poll(void)
 {
@@ -244,4 +244,4 @@ rb_setup_fd_poll(rb_fde_t *F)
     return -1;
 }
 
-#endif
+#endif /* WITH_POLL */

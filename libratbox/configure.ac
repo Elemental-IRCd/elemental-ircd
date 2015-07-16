@@ -178,6 +178,89 @@ AC_FUNC_ALLOCA
 AC_FUNC_FORK
 AC_FUNC_MMAP
 
+
+dnl IO Loop Selection
+dnl =================
+
+AC_ARG_WITH(ports,  AS_HELP_STRING([--with-ports],  [solaris I/O ports subsystem usage.]))
+AC_ARG_WITH(poll,   AS_HELP_STRING([--with-poll],   [poll() usage.]))
+AC_ARG_WITH(select, AS_HELP_STRING([--with-select], [select() usage.]))
+AC_ARG_WITH(kqueue, AS_HELP_STRING([--with-kqueue], [kqueue() usage.]))
+AC_ARG_WITH(epoll,  AS_HELP_STRING([--with-epoll],  [Linux epoll usage.]))
+AC_ARG_WITH(devpoll,AS_HELP_STRING([--with-devpoll],[/dev/poll usage.]))
+AC_ARG_WITH(win32,  AS_HELP_STRING([--with-win32],  [Windows WSAAsyncSelect usage.]))
+
+select_types=""
+
+RB_IF_REQUESTED([ports], [
+	AC_CHECK_FUNC([port_getn], [
+		AC_DEFINE([WITH_SOLARIS_PORTS],, [Support Solaris ports])
+		AX_APPEND_FLAG([ports], [select_types])
+	], [
+		RB_IF_REQUIRED([ports], AC_MSG_ERROR([Solaris ports requested but not available]))
+	])
+])
+
+RB_IF_REQUESTED([select], [
+	AC_CHECK_FUNCS([select], [
+		AC_DEFINE([WITH_SELECT], [], [Support select()])
+		AX_APPEND_FLAG([select], [select_types])
+	], [
+		RB_IF_REQUIRED([select], AC_MSG_ERROR([select() support requested but not available]))
+	])
+])
+
+RB_IF_REQUESTED([poll], [
+	AC_CHECK_FUNCS([poll], [
+		AC_DEFINE([WITH_POLL], [], [Support poll()])
+		AX_APPEND_FLAG([poll], [select_types])
+	], [
+		RB_IF_REQUIRED([poll], AC_MSG_ERROR([poll() support requested but not available]))
+	])
+])
+
+RB_IF_REQUESTED([kqueue], [
+	AC_CHECK_FUNCS([kevent], [
+		AC_DEFINE([WITH_KQUEUE], [], [Support FreeBSD kqueue])
+		AX_APPEND_FLAG([kqueue], [select_types])
+	], [
+		RB_IF_REQUIRED([kqueue], AC_MSG_ERROR([kqueue support requested but not available]))
+	])
+])
+
+RB_IF_REQUESTED([epoll], [
+	AC_CHECK_FUNCS([epoll_ctl], [
+		AC_DEFINE([WITH_EPOLL], [], [Support epoll])
+		AX_APPEND_FLAG([epoll], [select_types])
+	], [
+		RB_IF_REQUIRED([epoll], AC_MSG_ERROR([epoll support requested but not available]))
+	])
+])
+
+RB_IF_REQUESTED([devpoll], [
+	AC_CHECK_HEADER([sys/devpoll.h], [
+		AC_DEFINE([WITH_DEVPOLL], [], [Support /dev/poll])
+		AX_APPEND_FLAG([devpoll], [select_types])
+	], [
+		RB_IF_REQUIRED([devpoll], AC_MSG_ERROR([/dev/poll support requested but not available]))
+	])
+])
+
+dnl This check wont actually work yet
+RB_IF_REQUESTED([win32], [
+	AC_CHECK_FUNCS([WSAAsyncSelect], [
+		AC_DEFINE([WITH_WIN32_SELECT], [], [Support WSAAsyncSelect])
+		AX_APPEND_FLAG([win32], [select_types])
+	], [
+		RB_IF_REQUIRED([win32], AC_MSG_ERROR([win32 support requested but not available]))
+	])
+])
+
+if test -z "$select_types"; then
+	AC_MSG_ERROR([Unable to find a usable IO interface],)
+fi
+
+
 dnl OpenSSL support
 AC_ARG_ENABLE(openssl, [
 	AS_HELP_STRING([--enable-openssl],[Enable OpenSSL support.])
@@ -506,6 +589,7 @@ echo "Installing into: $prefix"
 echo "IPv6 support ................... $have_v6"
 echo "Assert debugging ............... $assert"
 echo "Block allocator ................ $balloc"
-echo "SSL Type........................ $SSL_TYPE"
+echo "Select backends ................$select_types" #there's always a leading space in $select_types
+echo "SSL Type ....................... $SSL_TYPE"
 echo
 

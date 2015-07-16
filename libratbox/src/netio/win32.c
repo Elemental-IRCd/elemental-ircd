@@ -29,7 +29,7 @@
 #include <ratbox_lib.h>
 #include <commio-int.h>
 
-#ifdef _WIN32
+#ifdef WITH_WIN32_SELECT
 
 #define WM_SOCKET WM_USER
 
@@ -193,7 +193,7 @@ rb_setup_fd_win32(rb_fde_t *F)
     }
 }
 
-#else /* win32 not supported */
+#else /* WITH_WIN32_SELECT */
 int
 rb_init_netio_win32(void)
 {
@@ -221,4 +221,4 @@ rb_setup_fd_win32(rb_fde_t *F)
     errno = ENOSYS;
     return -1;
 }
-#endif /* _WIN32 */
+#endif /* WITH_WIN32_SELECT */

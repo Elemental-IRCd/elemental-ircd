@@ -28,7 +28,7 @@
 #include <commio-int.h>
 #include <fcntl.h>
 
-#ifdef HAVE_SYS_DEVPOLL_H
+#ifdef WITH_DEVPOLL
 #include <sys/devpoll.h>
 
 static int dpfd;
@@ -257,7 +257,7 @@ rb_select_devpoll(long delay)
     return 0;
 }
 
-#else /* HAVE_SYS_DEVPOLL_H */
+#else /* WITH_DEVPOLL */
 int
 rb_init_netio_devpoll(void)
 {
@@ -284,4 +284,4 @@ rb_setup_fd_devpoll(rb_fde_t *F)
     errno = ENOSYS;
     return -1;
 }
-#endif /* HAVE_SYS_DEVPOLL_H */
+#endif /* WITH_DEVPOLL */

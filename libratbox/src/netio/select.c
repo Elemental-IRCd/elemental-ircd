@@ -28,7 +28,7 @@
 #include <ratbox_lib.h>
 #include <commio-int.h>
 
-#if defined(HAVE_SELECT) || defined(_WIN32)
+#ifdef WITH_SELECT
 
 #ifdef _WIN32
 #define MY_FD_SET(x, y) FD_SET((SOCKET)x, y)
@@ -226,7 +226,7 @@ rb_select_select(long delay)
     return 0;
 }
 
-#else /* select not supported..what sort of garbage is this? */
+#else /* WITH_SELECT */
 int
 rb_init_netio_select(void)
 {
@@ -254,4 +254,4 @@ rb_setup_fd_select(rb_fde_t *F)
     return -1;
 }
 
-#endif
+#endif /* WITH_SELECT */

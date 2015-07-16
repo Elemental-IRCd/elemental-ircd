@@ -29,7 +29,8 @@
 #include <ratbox_lib.h>
 #include <commio-int.h>
 #include <event-int.h>
-#if defined(HAVE_PORT_H) && (HAVE_PORT_CREATE)
+
+#ifdef WITH_SOLARIS_PORTS
 
 #include <port.h>
 
@@ -214,7 +215,7 @@ rb_ports_unsched_event(struct ev_entry *event)
     rb_free(event->comm_ptr);
     event->comm_ptr = NULL;
 }
-#else /* ports not supported */
+#else /* WITH_SOLARIS_PORTS */
 
 int
 rb_ports_supports_event(void)
@@ -270,4 +271,4 @@ rb_setup_fd_ports(rb_fde_t *F)
 }
 
 
-#endif
+#endif /* WITH_SOLARIS_PORTS */

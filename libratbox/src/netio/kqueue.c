@@ -29,7 +29,7 @@
 #include <commio-int.h>
 #include <event-int.h>
 
-#if defined(HAVE_SYS_EVENT_H) && (HAVE_KEVENT)
+#ifdef WITH_KQUEUE
 
 #include <sys/event.h>
 
@@ -334,7 +334,7 @@ rb_kqueue_init_event(void)
 }
 #endif /* KQUEUE_SCHED_EVENT */
 
-#else /* kqueue not supported */
+#else /* WITH_KQUEUE */
 int
 rb_init_netio_kqueue(void)
 {
@@ -363,7 +363,7 @@ rb_setup_fd_kqueue(rb_fde_t *F)
     return -1;
 }
 
-#endif
+#endif /* WITH_KQUEUE */
 
 #if !defined(HAVE_KEVENT) || !defined(KQUEUE_SCHED_EVENT)
 void

@@ -1,3 +1,22 @@
+
+# RB_IF_REQUESTED(feature, if-required)
+# -------------------------------------
+dnl Check if a feature is not explicitly disabled
+AC_DEFUN([RB_IF_REQUESTED], [
+	if test x"[$]with_$1" != x"no" && test x"[$]enable_$1" != x"no"; then
+		$2
+	fi
+])
+
+dnl Check if a feature has been explicitly enabled
+# RB_IF_REQUIRED(feature, if-required)
+# ------------------------------------
+AC_DEFUN([RB_IF_REQUIRED], [
+	if test x"[$]with_$1" == x"yes" || test x"[$]enable_$1" == x"yes"; then
+		$2
+	fi
+])
+
 dnl IPv6 support macros..pretty much swiped from wget
 
 dnl RB_PROTO_INET6

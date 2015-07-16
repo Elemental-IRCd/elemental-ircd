@@ -30,7 +30,8 @@
 #include <ratbox_lib.h>
 #include <commio-int.h>
 #include <event-int.h>
-#if defined(HAVE_EPOLL_CTL) && (HAVE_SYS_EPOLL_H)
+
+#ifdef WITH_EPOLL
 #define USING_EPOLL
 #include <fcntl.h>
 #include <sys/epoll.h>
@@ -497,7 +498,7 @@ rb_epoll_unsched_event(struct ev_entry *event)
 }
 #endif /* EPOLL_SCHED_EVENT */
 
-#else /* epoll not supported here */
+#else /* WITH_EPOLL */
 int
 rb_init_netio_epoll(void)
 {
@@ -526,7 +527,7 @@ rb_setup_fd_epoll(rb_fde_t *F)
 }
 
 
-#endif
+#endif /* WITH_EPOLL */
 
 #if !defined(USING_EPOLL) || !defined(EPOLL_SCHED_EVENT)
 void
