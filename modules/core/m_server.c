@@ -105,21 +105,6 @@ mr_server(struct Client *client_p, struct Client *source_p, int parc, const char
         return 0;
     }
 
-    /* check to ensure any "required" caps are set. --nenolod */
-    for (cap = captab; cap->name; cap++) {
-        if (!cap->required)
-            continue;
-
-        if (!(client_p->localClient->caps & cap->cap)) {
-            char exitbuf[BUFSIZE];
-
-            snprintf(exitbuf, BUFSIZE, "Missing required CAPAB [%s]", cap->name);
-            exit_client(client_p, client_p, client_p, exitbuf);
-
-            return 0;
-        }
-    }
-
     /* Now we just have to call check_server and everything should be
      * check for us... -A1kmm. */
     switch (check_server(name, client_p)) {
