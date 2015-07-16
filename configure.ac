@@ -122,9 +122,7 @@ dnl Stuff that the memory manager (imalloc) depends on
 dnl ==================================================
 
 AC_C_CONST
-if test "$ac_cv_header_machine_endian_h" = "no" ; then
-    AC_C_BIGENDIAN
-fi
+AC_C_BIGENDIAN
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_CHECK_SIZEOF(short)
@@ -138,12 +136,6 @@ PKG_CHECK_MODULES([SQLITE], [sqlite3 > 3.0.0])
 dnl Networking Functions
 dnl ====================
 
-AC_SEARCH_LIBS(socket, socket, , [AC_MSG_ERROR([You have no socket()! Aborting.])])
-
-dnl SunOS/Solaris required libnsl for inet_ntoa()
-if test x"$SUN" = xyes; then
-	AC_SEARCH_LIBS(inet_ntoa, nsl,, [AC_MSG_ERROR([libnsl not found! Aborting.])])
-fi
 
 AC_CHECK_TYPE(socklen_t, ,
 [AC_DEFINE([socklen_t], [unsigned int],
@@ -583,22 +575,14 @@ else
 	AC_MSG_RESULT(no)
 fi
 
-
-AC_MSG_CHECKING(if you want to do a profile build)
 AC_ARG_ENABLE(profile,
 AS_HELP_STRING([--enable-profile],[Enable profiling]),
 [profile=$enableval], [profile=no])
 
 if test "$profile" = yes; then
-	if test "$ac_cv_c_compiler_gnu" = yes; then
-		CFLAGS="$CFLAGS -pg"
-		AC_MSG_RESULT([yes, adding -pg])
-		AC_DEFINE(CHARYBDIS_PROFILE, 1, [Define this if you are profiling.])
-	else
-		AC_MSG_RESULT([no, profile builds only work with gcc])
-	fi
-else
-	AC_MSG_RESULT(no)
+	AX_CHECK_COMPILE_FLAG([-pg], [AX_APPEND_FLAG([-pg])], [
+		AC_MSG_ERROR([Profiling not supported on this compiler])
+	])
 fi
 
 AC_ARG_ENABLE(balloc,

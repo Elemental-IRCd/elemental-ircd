@@ -616,13 +616,6 @@ do_modrestart(struct Client *source_p)
 #define RTLD_LOCAL 0
 #endif
 
-#ifdef CHARYBDIS_PROFILE
-# ifndef RTLD_PROFILE
-#  warning libdl may not support profiling, sucks. :(
-#  define RTLD_PROFILE 0
-# endif
-#endif
-
 static void increase_modlist(void);
 
 #define MODS_INCREMENT 10
@@ -867,11 +860,7 @@ load_a_module(const char *path, int warn, int core)
 
     mod_basename = rb_basename(path);
 
-#ifdef CHARYBDIS_PROFILE
-    tmpptr = dlopen(path, RTLD_NOW | RTLD_LOCAL | RTLD_PROFILE);
-#else
     tmpptr = dlopen(path, RTLD_NOW | RTLD_LOCAL);
-#endif
 
     if(tmpptr == NULL) {
         const char *err = dlerror();

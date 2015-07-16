@@ -242,21 +242,14 @@ elif test "$assert" = yes; then
 	assert="hard";
 fi
 
-AC_MSG_CHECKING(if you want to do a profile build)
 AC_ARG_ENABLE(profile,
 AS_HELP_STRING([--enable-profile],[Enable profiling]),
 [profile=$enableval], [profile=no])
 
 if test "$profile" = yes; then
-	if test "$ac_cv_c_compiler_gnu" = yes; then
-		CFLAGS="$CFLAGS -pg -static"
-		AC_MSG_RESULT([yes, adding -pg -static])
-		AC_DEFINE(RATBOX_PROFILE, 1, [Defined to mark profiling is enabled])
-	else
-		AC_MSG_RESULT([no, profile builds only work with gcc])
-	fi
-else
-	AC_MSG_RESULT(no)
+	AX_CHECK_COMPILE_FLAG([-pg], [AX_APPEND_FLAG([-pg])], [
+		AC_MSG_ERROR([Profiling not supported on this compiler])
+	])
 fi
 
 AC_ARG_ENABLE(balloc,
