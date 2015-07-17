@@ -314,17 +314,24 @@ fi
 dnl Debug-related options
 dnl =====================
 
-AC_ARG_ENABLE(assert,
-AS_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),
-[assert=$enableval], [assert=no])
+AC_ARG_ENABLE(assert, AS_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),[],[enable_assert=no])
+AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug],[Enable debug build, overrides --enable-assert]),[],[enable_debug=no])
 
-if test "$assert" = no; then
+if test x"$enable_debug" != x"no"; then
+	AX_APPEND_COMPILE_FLAGS([-g])
+	AX_APPEND_COMPILE_FLAGS([-Og])
+	AX_APPEND_COMPILE_FLAGS([-fsanitize=address])
+	AX_APPEND_COMPILE_FLAGS([-fsanitize=undefined])
+	enable_assert="hard";
+fi;
+
+if test x"$enable_assert" = x"no"; then
 	AC_DEFINE(NDEBUG, 1, [Define this to disable debugging support.])
-elif test "$assert" = soft; then
+elif test x"$enable_assert" = x"soft"; then
 	AC_DEFINE(SOFT_ASSERT, 1, [Define this to enable soft asserts.])
 	AC_DEFINE(NDEBUG, 1, [Define this to disable debugging support.])
-elif test "$assert" = yes; then
-	assert="hard";
+elif test x"$enable_assert" = x"yes"; then
+	enable_assert="hard";
 fi
 
 AC_ARG_ENABLE(profile,
@@ -589,9 +596,12 @@ echo
 echo "Installing into: $prefix"
 
 echo "IPv6 support ................... $have_v6"
-echo "Assert debugging ............... $assert"
+echo "Assert debugging ............... $enable_assert"
 echo "Block allocator ................ $balloc"
 echo "Select backends ................$select_types" #there's always a leading space in $select_types
 echo "SSL Type ....................... $SSL_TYPE"
+if test x"$enable_debug" != x"no"; then
+echo "Debug Build .................... yes"
+fi
 echo
 

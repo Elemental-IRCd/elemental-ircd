@@ -402,17 +402,27 @@ AC_DEFINE_UNQUOTED([PROGRAM_PREFIX], ["$with_program_prefix"], [String with whic
 dnl Debug-related options
 dnl =====================
 
-AC_ARG_ENABLE(assert,
-AS_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),
-[assert=$enableval], [assert=no])
+dnl Debug-related options
+dnl =====================
 
-if test "$assert" = no; then
+AC_ARG_ENABLE(assert, AS_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]))
+AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug],[Enable debug build, overrides --enable-assert]),[],[enable_debug=no])
+
+if test x"$enable_debug" != x"no"; then
+	AX_APPEND_COMPILE_FLAGS([-g])
+	AX_APPEND_COMPILE_FLAGS([-Og])
+	AX_APPEND_COMPILE_FLAGS([-fsanitize=address])
+	AX_APPEND_COMPILE_FLAGS([-fsanitize=undefined])
+	enable_assert="hard";
+fi;
+
+if test x"$enable_assert" = x"no"; then
 	AC_DEFINE(NDEBUG, 1, [Define this to disable debugging support.])
-elif test "$assert" = soft; then
+elif test x"$enable_assert" = x"soft"; then
 	AC_DEFINE(SOFT_ASSERT, 1, [Define this to enable soft asserts.])
 	AC_DEFINE(NDEBUG, 1, [Define this to disable debugging support.])
-elif test "$assert" = yes; then
-	assert="hard";
+elif test x"$enable_assert" = x"yes"; then
+	enable_assert="hard";
 fi
 
 AC_MSG_CHECKING(if you want IO Debugging hooks)
