@@ -50,7 +50,7 @@ typedef struct _pollfd_list pollfd_list_t;
 static pollfd_list_t pollfd_list;
 
 int
-rb_setup_fd_poll(rb_fde_t *F)
+rb_setup_fd_poll(__unused rb_fde_t *F)
 {
     return 0;
 }

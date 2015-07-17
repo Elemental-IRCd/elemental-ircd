@@ -293,7 +293,7 @@ rb_settimeout(rb_fde_t *F, time_t timeout, PF * callback, void *cbdata)
  * this will happen.
  */
 void
-rb_checktimeouts(void *notused)
+rb_checktimeouts(__unused void *notused)
 {
     rb_dlink_node *ptr, *next;
     struct timeout_data *td;
@@ -319,7 +319,7 @@ rb_checktimeouts(void *notused)
 }
 
 static void
-rb_accept_tryaccept(rb_fde_t *F, void *data)
+rb_accept_tryaccept(rb_fde_t *F, __unused void *notused)
 {
     struct rb_sockaddr_storage st;
     rb_fde_t *new_F;
@@ -467,7 +467,7 @@ rb_connect_callback(rb_fde_t *F, int status)
  * called ..
  */
 static void
-rb_connect_timeout(rb_fde_t *F, void *notused)
+rb_connect_timeout(rb_fde_t *F, __unused void *notused)
 {
     /* error! */
     rb_connect_callback(F, RB_ERR_TIMEOUT);
@@ -482,7 +482,7 @@ rb_connect_timeout(rb_fde_t *F, void *notused)
  *               to select for a write event on this FD.
  */
 static void
-rb_connect_tryconnect(rb_fde_t *F, void *notused)
+rb_connect_tryconnect(rb_fde_t *F, __unused void *notused)
 {
     int retval;
 
@@ -2032,7 +2032,7 @@ rb_recv_fd_buf(rb_fde_t *F, void *data, size_t datasize, rb_fde_t **xF, int nfds
 
 
 int
-rb_send_fd_buf(rb_fde_t *xF, rb_fde_t **F, int count, void *data, size_t datasize, pid_t pid)
+rb_send_fd_buf(rb_fde_t *xF, rb_fde_t **F, int count, void *data, size_t datasize, __unused pid_t pid)
 {
     int n;
     struct msghdr msg;

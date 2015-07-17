@@ -87,7 +87,7 @@ rb_init_netio_epoll(void)
 }
 
 int
-rb_setup_fd_epoll(rb_fde_t *F)
+rb_setup_fd_epoll(__unused rb_fde_t *F)
 {
     return 0;
 }
@@ -314,7 +314,7 @@ struct our_signalfd_siginfo {
 
 #define SIGFDIOV_COUNT 16
 static void
-signalfd_handler(rb_fde_t *F, void *data)
+signalfd_handler(rb_fde_t *F, __unused void *notused)
 {
     static struct our_signalfd_siginfo fdsig[SIGFDIOV_COUNT];
     static struct iovec iov[SIGFDIOV_COUNT];

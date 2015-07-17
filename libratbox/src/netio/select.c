@@ -107,7 +107,7 @@ select_update_selectfds(rb_fde_t *F, short event, PF * handler)
 /* Public functions */
 
 int
-rb_setup_fd_select(rb_fde_t *F)
+rb_setup_fd_select(__unused rb_fde_t *F)
 {
     return 0;
 }

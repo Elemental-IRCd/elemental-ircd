@@ -81,7 +81,7 @@ rb_ssl_clear_handshake_count(rb_fde_t *F)
 }
 
 static void
-rb_ssl_timeout(rb_fde_t *F, void *notused)
+rb_ssl_timeout(rb_fde_t *F, __unused void *notused)
 {
     lrb_assert(F->accept != NULL);
     F->accept->callback(F, RB_ERR_TIMEOUT, NULL, 0, F->accept->data);
@@ -107,7 +107,7 @@ rb_setup_ssl_cb(rb_fde_t *F)
 }
 
 static void
-rb_ssl_tryaccept(rb_fde_t *F, void *data)
+rb_ssl_tryaccept(rb_fde_t *F, __unused void *notused)
 {
     int ssl_err;
     lrb_assert(F->accept != NULL);

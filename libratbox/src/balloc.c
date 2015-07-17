@@ -93,7 +93,7 @@ struct rb_bh {
 
 #ifndef NOBALLOC
 static int newblock(rb_bh *bh);
-static void rb_bh_gc_event(void *unused);
+static void rb_bh_gc_event(__unused void *unused);
 #endif /* !NOBALLOC */
 static rb_dlink_list *heap_lists;
 
@@ -201,7 +201,7 @@ get_block(size_t size)
 
 
 static void
-rb_bh_gc_event(void *unused)
+rb_bh_gc_event(__unused void *unused)
 {
     rb_dlink_node *ptr;
     RB_DLINK_FOREACH(ptr, heap_lists->head) {
