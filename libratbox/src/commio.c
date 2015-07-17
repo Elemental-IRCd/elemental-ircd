@@ -1720,6 +1720,7 @@ rb_unsupported_event(void)
 static int
 try_kqueue(void)
 {
+#ifdef WITH_KQUEUE
     if(!rb_init_netio_kqueue()) {
         setselect_handler = rb_setselect_kqueue;
         select_handler = rb_select_kqueue;
@@ -1729,14 +1730,16 @@ try_kqueue(void)
         io_init_event = rb_kqueue_init_event;
         io_supports_event = rb_kqueue_supports_event;
         rb_strlcpy(iotype, "kqueue", sizeof(iotype));
-        return 0;
+        return 1;
     }
-    return -1;
+#endif /* WITH_KQUEUE */
+    return 0;
 }
 
 static int
 try_epoll(void)
 {
+#ifdef WITH_EPOLL
     if(!rb_init_netio_epoll()) {
         setselect_handler = rb_setselect_epoll;
         select_handler = rb_select_epoll;
@@ -1746,14 +1749,16 @@ try_epoll(void)
         io_supports_event = rb_epoll_supports_event;
         io_init_event = rb_epoll_init_event;
         rb_strlcpy(iotype, "epoll", sizeof(iotype));
-        return 0;
+        return 1;
     }
-    return -1;
+#endif /* WITH_EPOLL */
+    return 0;
 }
 
 static int
 try_ports(void)
 {
+#ifdef WITH_SOLARIS_PORTS
     if(!rb_init_netio_ports()) {
         setselect_handler = rb_setselect_ports;
         select_handler = rb_select_ports;
@@ -1763,14 +1768,16 @@ try_ports(void)
         io_init_event =  rb_ports_init_event;
         io_supports_event = rb_ports_supports_event;
         rb_strlcpy(iotype, "ports", sizeof(iotype));
-        return 0;
+        return 1;
     }
-    return -1;
+#endif /* WITH_SOLARIS_PORTS */
+    return 0;
 }
 
 static int
 try_devpoll(void)
 {
+#ifdef WITH_DEVPOLL
     if(!rb_init_netio_devpoll()) {
         setselect_handler = rb_setselect_devpoll;
         select_handler = rb_select_devpoll;
@@ -1780,14 +1787,16 @@ try_devpoll(void)
         io_init_event = NULL;
         io_supports_event = rb_unsupported_event;
         rb_strlcpy(iotype, "devpoll", sizeof(iotype));
-        return 0;
+        return 1;
     }
-    return -1;
+#endif /* WITH_DEVPOLL */
+    return 0;
 }
 
 static int
 try_poll(void)
 {
+#ifdef WITH_POLL
     if(!rb_init_netio_poll()) {
         setselect_handler = rb_setselect_poll;
         select_handler = rb_select_poll;
@@ -1797,14 +1806,16 @@ try_poll(void)
         io_init_event = NULL;
         io_supports_event = rb_unsupported_event;
         rb_strlcpy(iotype, "poll", sizeof(iotype));
-        return 0;
+        return 1;
     }
-    return -1;
+#endif /* WITH_POLL */
+    return 0;
 }
 
 static int
 try_win32(void)
 {
+#ifdef WITH_WIN32_SELECT
     if(!rb_init_netio_win32()) {
         setselect_handler = rb_setselect_win32;
         select_handler = rb_select_win32;
@@ -1814,14 +1825,16 @@ try_win32(void)
         io_init_event = NULL;
         io_supports_event = rb_unsupported_event;
         rb_strlcpy(iotype, "win32", sizeof(iotype));
-        return 0;
+        return 1;
     }
-    return -1;
+#endif /* WITH_WIN32_SELECT */
+    return 0;
 }
 
 static int
 try_select(void)
 {
+#ifdef WITH_SELECT
     if(!rb_init_netio_select()) {
         setselect_handler = rb_setselect_select;
         select_handler = rb_select_select;
@@ -1831,9 +1844,10 @@ try_select(void)
         io_init_event = NULL;
         io_supports_event = rb_unsupported_event;
         rb_strlcpy(iotype, "select", sizeof(iotype));
-        return 0;
+        return 1;
     }
-    return -1;
+#endif /* WITH_SELECT */
+    return 0;
 }
 
 
@@ -1878,45 +1892,29 @@ rb_init_netio(void)
     rb_init_ssl();
 
     if(ioenv != NULL) {
-        if(!strcmp("epoll", ioenv)) {
-            if(!try_epoll())
-                return;
-        } else if(!strcmp("kqueue", ioenv)) {
-            if(!try_kqueue())
-                return;
-        } else if(!strcmp("ports", ioenv)) {
-            if(!try_ports())
-                return;
-        } else if(!strcmp("poll", ioenv)) {
-            if(!try_poll())
-                return;
-        } else if(!strcmp("devpoll", ioenv)) {
-            if(!try_devpoll())
-                return;
-        } else if(!strcmp("select", ioenv)) {
-            if(!try_select())
-                return;
-        }
-        if(!strcmp("win32", ioenv)) {
-            if(!try_win32())
-                return;
-        }
-
+#define TRY_IOENV(type) (!strcmp(#type, ioenv) && try_##type())
+        if(TRY_IOENV(epoll)) return;
+        if(TRY_IOENV(kqueue)) return;
+        if(TRY_IOENV(ports)) return;
+        if(TRY_IOENV(poll)) return;
+        if(TRY_IOENV(devpoll)) return;
+        if(TRY_IOENV(select)) return;
+        if(TRY_IOENV(win32)) return;
     }
 
-    if(!try_kqueue())
+    if(try_kqueue())
         return;
-    if(!try_epoll())
+    if(try_epoll())
         return;
-    if(!try_ports())
+    if(try_ports())
         return;
-    if(!try_devpoll())
+    if(try_devpoll())
         return;
-    if(!try_poll())
+    if(try_poll())
         return;
-    if(!try_win32())
+    if(try_win32())
         return;
-    if(!try_select())
+    if(try_select())
         return;
 
     rb_lib_log("rb_init_netio: Could not find any io handlers...giving up");

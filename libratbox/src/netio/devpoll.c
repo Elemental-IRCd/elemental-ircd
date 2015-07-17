@@ -257,31 +257,4 @@ rb_select_devpoll(long delay)
     return 0;
 }
 
-#else /* WITH_DEVPOLL */
-int
-rb_init_netio_devpoll(void)
-{
-    return ENOSYS;
-}
-
-void
-rb_setselect_devpoll(rb_fde_t *F, unsigned int type, PF * handler, void *client_data)
-{
-    errno = ENOSYS;
-    return;
-}
-
-int
-rb_select_devpoll(long delay)
-{
-    errno = ENOSYS;
-    return -1;
-}
-
-int
-rb_setup_fd_devpoll(rb_fde_t *F)
-{
-    errno = ENOSYS;
-    return -1;
-}
 #endif /* WITH_DEVPOLL */

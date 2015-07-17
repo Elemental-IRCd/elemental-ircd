@@ -496,40 +496,9 @@ rb_epoll_unsched_event(struct ev_entry *event)
     rb_free(event->comm_ptr);
     event->comm_ptr = NULL;
 }
-#endif /* EPOLL_SCHED_EVENT */
 
-#else /* WITH_EPOLL */
-int
-rb_init_netio_epoll(void)
-{
-    return ENOSYS;
-}
+#else /* EPOLL_SCHED_EVENT */
 
-void
-rb_setselect_epoll(rb_fde_t *F, unsigned int type, PF * handler, void *client_data)
-{
-    errno = ENOSYS;
-    return;
-}
-
-int
-rb_select_epoll(long delay)
-{
-    errno = ENOSYS;
-    return -1;
-}
-
-int
-rb_setup_fd_epoll(rb_fde_t *F)
-{
-    errno = ENOSYS;
-    return -1;
-}
-
-
-#endif /* WITH_EPOLL */
-
-#if !defined(USING_EPOLL) || !defined(EPOLL_SCHED_EVENT)
 void
 rb_epoll_init_event(void)
 {
@@ -555,4 +524,6 @@ rb_epoll_supports_event(void)
     errno = ENOSYS;
     return 0;
 }
-#endif /* !USING_EPOLL || !EPOLL_SCHED_EVENT */
+#endif /* EPOLL_SCHED_EVENT */
+
+#endif /* WITH_EPOLL */
