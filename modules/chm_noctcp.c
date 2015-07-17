@@ -56,7 +56,7 @@ chm_noctcp_process(hook_data_privmsg_channel *data)
         && strncasecmp(data->text + 1, "ACTION ", 7)
         && data->chptr->mode.mode & mode_noctcp
         && (!ConfigChannel.exempt_cmode_C || !is_any_op(msptr))) {
-        sendto_one_numeric(data->source_p, ERR_CANNOTSENDTOCHAN, form_str(ERR_CANNOTSENDTOCHAN), data->chptr->chname);
+        sendto_one_numeric(data->source_p, ERR_CANNOTSENDTOCHAN, form_str(ERR_CANNOTSENDTOCHAN), data->chptr->chname, "your message is blocked by +C");
         data->approved = ERR_CANNOTSENDTOCHAN;
         return;
     } else if (rb_dlink_list_length(&data->chptr->locmembers) > (unsigned)(GlobalSetOptions.floodcount / 2))

@@ -107,7 +107,7 @@ m_knock(struct Client *client_p, struct Client *source_p, int parc, const char *
     /* cant knock to a +p channel */
     if(HiddenChannel(chptr)) {
         sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
-                           form_str(ERR_CANNOTSENDTOCHAN), name);
+                           form_str(ERR_CANNOTSENDTOCHAN), name, "channel does not accept knocks");
         return 0;
     }
 
@@ -117,7 +117,7 @@ m_knock(struct Client *client_p, struct Client *source_p, int parc, const char *
         if(is_banned(chptr, source_p, NULL, NULL, NULL) == CHFL_BAN ||
            is_quieted(chptr, source_p, NULL, NULL, NULL) == CHFL_BAN) {
             sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
-                               form_str(ERR_CANNOTSENDTOCHAN), name);
+                               form_str(ERR_CANNOTSENDTOCHAN), name, "you are banned from this channel");
             return 0;
         }
 

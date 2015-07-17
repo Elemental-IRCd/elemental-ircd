@@ -56,11 +56,12 @@ chm_nonotice_process(hook_data_privmsg_channel *data)
     if(data->msgtype == MESSAGE_TYPE_NOTICE) {
         if(data->chptr->mode.mode & mode_nonotice && *data->text != '\001' &&
            (!ConfigChannel.exempt_cmode_T || !is_any_op(msptr))) {
-            sendto_one_numeric(data->source_p, 404,
-                               "%s :Cannot send to channel - Notices are disallowed (+T set)",
-                               data->chptr->chname);
+            sendto_one_numeric(data->source_p, ERR_CANNOTSENDTOCHAN,
+                            form_str(ERR_CANNOTSENDTOCHAN),
+                            data->chptr->chname,
+                               "notices are disallowed (+T set)");
 
-            data->approved = 404;
+            data->approved = ERR_CANNOTSENDTOCHAN;
         }
     }
 }

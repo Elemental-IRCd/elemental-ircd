@@ -514,7 +514,7 @@ msg_channel(enum message_type msgtype,
     } else {
         if(msgtype != MESSAGE_TYPE_NOTICE)
             sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
-                               form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
+                               form_str(ERR_CANNOTSENDTOCHAN), chptr->chname, "permission denied");
     }
 }
 
@@ -562,7 +562,7 @@ msg_channel_opmod(enum message_type msgtype,
     } else {
         if(msgtype != MESSAGE_TYPE_NOTICE) {
             sendto_one_numeric(source_p, ERR_CANNOTSENDTOCHAN,
-                               form_str(ERR_CANNOTSENDTOCHAN), chptr->chname);
+                               form_str(ERR_CANNOTSENDTOCHAN), chptr->chname, "permission denied");
         }
     }
 }
