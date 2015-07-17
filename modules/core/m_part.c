@@ -99,7 +99,6 @@ part_one_client(struct Client *client_p, struct Client *source_p, char *name, ch
 {
     struct Channel *chptr;
     struct membership *msptr;
-    char reason2[BUFSIZE];
 
     if((chptr = find_channel(name)) == NULL) {
         sendto_one_numeric(source_p, ERR_NOSUCHCHANNEL, form_str(ERR_NOSUCHCHANNEL), name);
