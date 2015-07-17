@@ -899,8 +899,7 @@ unsigned int inputLen;
  */
 
 static void
-MD5Pad (context)
-MD5_CTX *context;
+MD5Pad (MD5_CTX *context)
 {
     unsigned char bits[8];
     unsigned int idx, padLen;
