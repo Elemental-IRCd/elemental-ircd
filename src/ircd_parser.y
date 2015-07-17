@@ -25,7 +25,6 @@
 
 #define YY_NO_UNPUT
 
-int yyparse(void);
 int yyerror(const char *);
 int yylex(void);
 

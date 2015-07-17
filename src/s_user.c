@@ -1253,7 +1253,6 @@ oper_up(struct Client *source_p, struct oper_conf *oper_p)
 {
     unsigned int old = source_p->umodes, oldsnomask = source_p->snomask;
     hook_data_umode_changed hdata;
-    struct ConfItem *aconf;
 
     SetOper(source_p);
 
@@ -1338,8 +1337,6 @@ oper_up(struct Client *source_p, struct oper_conf *oper_p)
     sendto_one_notice(source_p, ":*** Oper privilege set is %s", oper_p->privset->name);
     sendto_one_notice(source_p, ":*** Oper privs are %s", oper_p->privset->privs);
     send_oper_motd(source_p);
-
-    aconf = source_p->localClient->att_conf;
 
     /* If we're setting +p, expire it */
     if(ConfigFileEntry.expire_override_time && MyClient(source_p) && source_p->umodes & UMODE_OVERRIDE) {
