@@ -1888,8 +1888,8 @@ void user_join(struct Client * client_p, struct Client * source_p, const char * 
             /* autochanmodes stuff */
             if(ConfigChannel.autochanmodes) {
                 char * ch;
-                for(ch = ConfigChannel.autochanmodes; *ch; *ch++) {
-                    chptr->mode.mode |= chmode_table[*ch].mode_type;
+                for(ch = ConfigChannel.autochanmodes; *ch; ch++) {
+                    chptr->mode.mode |= chmode_table[*(unsigned char*)ch].mode_type;
                 }
             } else {
                 chptr->mode.mode |= MODE_TOPICLIMIT;
