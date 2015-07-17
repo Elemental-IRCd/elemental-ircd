@@ -38,7 +38,7 @@
 #include <crt_externs.h>
 #endif
 
-#ifndef __APPLE__
+#ifndef HAVE_DECL_ENVIRON
 extern char **environ;
 #endif
 pid_t
