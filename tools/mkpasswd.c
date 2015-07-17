@@ -54,8 +54,6 @@ static void brief_usage(void);
 static char saltChars[] = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
        /* 0 .. 63, ascii - 64 */
 
-extern char *optarg;
-
 
 #ifdef __MINGW32__
 #include <conio.h>
