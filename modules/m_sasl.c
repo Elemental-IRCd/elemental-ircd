@@ -157,7 +157,7 @@ me_sasl(struct Client *client_p, struct Client *source_p,
             sendto_one(target_p, form_str(RPL_SASLSUCCESS), me.name, EmptyString(target_p->name) ? "*" : target_p->name);
             target_p->preClient->sasl_complete = 1;
             ServerStats.is_ssuc++;
-            //server_auth_sasl(target_p);
+            server_auth_sasl(target_p);
         }
         *target_p->preClient->sasl_agent = '\0'; /* Blank the stored agent so someone else can answer */
     }
