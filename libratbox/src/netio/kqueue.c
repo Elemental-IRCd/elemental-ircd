@@ -29,7 +29,7 @@
 #include <commio-int.h>
 #include <event-int.h>
 
-#if defined(HAVE_SYS_EVENT_H) && (HAVE_KEVENT)
+#ifdef WITH_KQUEUE
 
 #include <sys/event.h>
 
@@ -332,40 +332,7 @@ rb_kqueue_init_event(void)
 {
     return;
 }
-#endif /* KQUEUE_SCHED_EVENT */
-
-#else /* kqueue not supported */
-int
-rb_init_netio_kqueue(void)
-{
-    errno = ENOSYS;
-    return -1;
-}
-
-void
-rb_setselect_kqueue(rb_fde_t *F, unsigned int type, PF * handler, void *client_data)
-{
-    errno = ENOSYS;
-    return;
-}
-
-int
-rb_select_kqueue(long delay)
-{
-    errno = ENOSYS;
-    return -1;
-}
-
-int
-rb_setup_fd_kqueue(rb_fde_t *F)
-{
-    errno = ENOSYS;
-    return -1;
-}
-
-#endif
-
-#if !defined(HAVE_KEVENT) || !defined(KQUEUE_SCHED_EVENT)
+#else /* KQUEUE_SCHED_EVENT */
 void
 rb_kqueue_init_event(void)
 {
@@ -391,4 +358,6 @@ rb_kqueue_supports_event(void)
     errno = ENOSYS;
     return 0;
 }
-#endif /* !HAVE_KEVENT || !KQUEUE_SCHED_EVENT */
+#endif /* KQUEUE_SCHED_EVENT */
+
+#endif /* WITH_KQUEUE */

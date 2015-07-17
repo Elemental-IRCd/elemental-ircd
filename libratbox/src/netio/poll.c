@@ -27,7 +27,7 @@
 #include <ratbox_lib.h>
 #include <commio-int.h>
 
-#if defined(HAVE_POLL) && (HAVE_SYS_POLL_H)
+#ifdef WITH_POLL
 #include <sys/poll.h>
 
 
@@ -50,7 +50,7 @@ typedef struct _pollfd_list pollfd_list_t;
 static pollfd_list_t pollfd_list;
 
 int
-rb_setup_fd_poll(rb_fde_t *F)
+rb_setup_fd_poll(__unused rb_fde_t *F)
 {
     return 0;
 }
@@ -215,33 +215,4 @@ rb_select_poll(long delay)
     return 0;
 }
 
-#else /* poll not supported */
-int
-rb_init_netio_poll(void)
-{
-    errno = ENOSYS;
-    return -1;
-}
-
-void
-rb_setselect_poll(rb_fde_t *F, unsigned int type, PF * handler, void *client_data)
-{
-    errno = ENOSYS;
-    return;
-}
-
-int
-rb_select_poll(long delay)
-{
-    errno = ENOSYS;
-    return -1;
-}
-
-int
-rb_setup_fd_poll(rb_fde_t *F)
-{
-    errno = ENOSYS;
-    return -1;
-}
-
-#endif
+#endif /* WITH_POLL */

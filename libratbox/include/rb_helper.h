@@ -40,7 +40,7 @@ rb_helper __must_check *rb_helper_start(const char *name, const char *fullpath, 
 
 rb_helper __must_check *rb_helper_child(rb_helper_cb * read_cb, rb_helper_cb * error_cb,
                            log_cb * ilog, __noreturn restart_cb * irestart, __noreturn  die_cb * idie,
-                           int maxcon, size_t lb_heap_size, size_t dh_size, size_t fd_heap_size);
+                           size_t lb_heap_size, size_t dh_size, size_t fd_heap_size);
 
 void rb_helper_restart(rb_helper *helper);
 void rb_helper_write(rb_helper *helper, const char *format, ...)
@@ -52,5 +52,5 @@ void rb_helper_write_flush(rb_helper *helper);
 void rb_helper_run(rb_helper *helper);
 void rb_helper_close(rb_helper *helper);
 int rb_helper_read(rb_helper *helper, void *buf, size_t bufsize);
-void rb_helper_loop(rb_helper *helper, long delay);
+void rb_helper_loop(rb_helper *helper, long delay) __noreturn;
 #endif

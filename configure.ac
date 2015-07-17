@@ -15,6 +15,8 @@ AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 AM_PROG_AR
 
+AC_PROG_CC_C99([], [AC_MSG_ERROR(elemental-ircd requires a C99 capable compiler)])
+
 LT_INIT([dlopen])
 
 GCC_STACK_PROTECT_CC
@@ -120,9 +122,7 @@ dnl Stuff that the memory manager (imalloc) depends on
 dnl ==================================================
 
 AC_C_CONST
-if test "$ac_cv_header_machine_endian_h" = "no" ; then
-    AC_C_BIGENDIAN
-fi
+AC_C_BIGENDIAN
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_CHECK_SIZEOF(short)
@@ -136,12 +136,6 @@ PKG_CHECK_MODULES([SQLITE], [sqlite3 > 3.0.0])
 dnl Networking Functions
 dnl ====================
 
-AC_SEARCH_LIBS(socket, socket, , [AC_MSG_ERROR([You have no socket()! Aborting.])])
-
-dnl SunOS/Solaris required libnsl for inet_ntoa()
-if test x"$SUN" = xyes; then
-	AC_SEARCH_LIBS(inet_ntoa, nsl,, [AC_MSG_ERROR([libnsl not found! Aborting.])])
-fi
 
 AC_CHECK_TYPE(socklen_t, ,
 [AC_DEFINE([socklen_t], [unsigned int],
@@ -319,50 +313,6 @@ AC_CHECK_HEADER(zlib.h, [
 
 fi
 
-dnl IO Loop Selection
-dnl =================
-
-AC_ARG_ENABLE(ports, AS_HELP_STRING([--enable-ports],[Force solaris I/O ports subsystem usage.]),
-[ if test $enableval = yes; then 
-	SELECT_TYPE_EXPLICIT="ports"
-  else
-  	use_ports=no
-  fi
-],)
-
-AC_ARG_ENABLE(poll, AS_HELP_STRING([--enable-poll],[Force poll() usage.]),
-[ if test $enableval = yes; then 
-	SELECT_TYPE_EXPLICIT="poll"
-  else
-  	use_poll=no
-  fi
-],)
-
-AC_ARG_ENABLE(select, AS_HELP_STRING([--enable-select],[Force select() usage.]),
-[ if test $enableval = yes; then 
-	SELECT_TYPE_EXPLICIT="select" 
-  else
-  	use_select=no
-  fi
-],)
-
-AC_ARG_ENABLE(kqueue, AS_HELP_STRING([--enable-kqueue],[Force kqueue() usage.]),
-[ if test $enableval = yes; then 
-	SELECT_TYPE_EXPLICIT="kqueue"
-  else
-  	use_kqueue=no
-  fi
-],)
-
-AC_ARG_ENABLE(epoll, AS_HELP_STRING([--enable-epoll],[Force sys_epoll usage (Linux only).]),
-[ if test $enableval = yes; then 
-	SELECT_TYPE_EXPLICIT="epoll"
-	AC_CHECK_FUNCS(epoll_ctl, [haveepoll=yes], [haveepoll=no])
-  else
-  	use_epoll=no
-  fi
-],)
-
 dnl **********************************************************************
 dnl Check for --with-confdir [deprecated, use --sysconfdir instead]
 dnl **********************************************************************
@@ -448,110 +398,6 @@ PROGRAM_PREFIX="$with_program_prefix"
 AC_SUBST([PROGRAM_PREFIX])
 AC_DEFINE_UNQUOTED([PROGRAM_PREFIX], ["$with_program_prefix"], [String with which all programs intended to be in PATH are prefixed.])
 
-if test ! -z "$SELECT_TYPE_EXPLICIT"; then
-	SELECT_TYPE="$SELECT_TYPE_EXPLICIT";
-	echo "Forcing $SELECT_TYPE to be enabled"
-else
-
-if test ! "x$use_ports" = "xno"; then
-	AC_CHECK_FUNCS(port_getn, [haveports=yes], [haveports=no])
-	if test "x$haveports" = "xyes" ; then
-		SELECT_TYPE="ports"
-	fi
-fi
-
-if test ! "x$use_select" = "xno"; then
-	AC_CHECK_FUNCS(select, [haveselect=yes], [haveselect=no])
-	if test "x$haveselect" = "xyes" ; then
-		SELECT_TYPE="select"
-	fi
-fi
-
-if test ! "x$use_poll" = "xno"; then
-	AC_CHECK_FUNCS(poll, [havepoll=yes], [havepoll=no])
-	if test "x$havepoll" = "xyes" ; then
-		SELECT_TYPE="poll"
-	fi
-fi
-
-if test ! "x$use_kqueue" = "xno"; then
-	AC_CHECK_FUNCS(kevent, [havekqueue=yes], [havekqueue=no])
-	if test "x$havekqueue" = "xyes" ; then
-		SELECT_TYPE="kqueue"
-	fi
-fi
-
-if test ! "x$use_epoll" = "xno"; then
-	AC_CHECK_FUNCS(epoll_ctl, [haveepoll=yes], [haveepoll=no])
-	if test "x$ac_cv_header_sys_epoll_h" = "xyes"; then
-		if test "x$haveepoll" = "xyes" ; then
-                	AC_MSG_CHECKING(for epoll support in kernel)
-	                AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdint.h>
-#include <sys/param.h>
-#include <sys/types.h>
-#include <sys/epoll.h>
-#include <sys/syscall.h>
-#include <unistd.h>     
-
-int
-main(int argc, char **argv)
-{
-        int epfd;
-
-        epfd = epoll_create(256);
-        return (epfd == -1 ? 1 : 0);
-}]])],[AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_EPOLL, 1,
-	        [Define if your system supports the epoll system calls])
-	    SELECT_TYPE="epoll"],[AC_MSG_RESULT(no)],[AC_MSG_RESULT(no)])
-		fi
-	fi
-
-haveepollsyscall=no
-
-if test "x$ac_cv_header_sys_epoll_h" = "xyes"; then
-	if test "x$haveepoll" = "xno" ; then
-                AC_MSG_CHECKING(for epoll system call)
-                AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdint.h>
-#include <sys/param.h>
-#include <sys/types.h>
-#include <sys/epoll.h>
-#include <sys/syscall.h>
-#include <unistd.h>     
-
-int
-epoll_create(int size)
-{
-        return (syscall(__NR_epoll_create, size));
-}
- 
-int
-main(int argc, char **argv)
-{
-        int epfd;
-
-        epfd = epoll_create(256);
-        exit (epfd == -1 ? 1 : 0);
-}]])],[AC_MSG_RESULT(yes)
-    AC_DEFINE(HAVE_EPOLL, 1,
-        [Define if your system supports the epoll system calls])
-    SELECT_TYPE="epoll"],[AC_MSG_RESULT(no)],[AC_MSG_RESULT(no)])
-	fi
-fi
-
-fi
-
-fi
-
-if test -z "$SELECT_TYPE"; then
-	AC_MSG_ERROR([Unable to find a usable IO interface],)
-fi
-
-echo "Using $SELECT_TYPE for select loop."
-
-AC_DEFINE_UNQUOTED(SELECT_TYPE, "$SELECT_TYPE", [This is the type of IO loop we are using])
-AC_SUBST(SELECT_TYPE)
-
 
 dnl Debug-related options
 dnl =====================
@@ -581,22 +427,14 @@ else
 	AC_MSG_RESULT(no)
 fi
 
-
-AC_MSG_CHECKING(if you want to do a profile build)
 AC_ARG_ENABLE(profile,
 AS_HELP_STRING([--enable-profile],[Enable profiling]),
 [profile=$enableval], [profile=no])
 
 if test "$profile" = yes; then
-	if test "$ac_cv_c_compiler_gnu" = yes; then
-		CFLAGS="$CFLAGS -pg"
-		AC_MSG_RESULT([yes, adding -pg])
-		AC_DEFINE(CHARYBDIS_PROFILE, 1, [Define this if you are profiling.])
-	else
-		AC_MSG_RESULT([no, profile builds only work with gcc])
-	fi
-else
-	AC_MSG_RESULT(no)
+	AX_CHECK_COMPILE_FLAG([-pg], [AX_APPEND_FLAG([-pg])], [
+		AC_MSG_ERROR([Profiling not supported on this compiler])
+	])
 fi
 
 AC_ARG_ENABLE(balloc,
@@ -693,7 +531,7 @@ fi
 AX_APPEND_COMPILE_FLAGS([-Wall])
 AX_APPEND_COMPILE_FLAGS([-Wcast-align])
 AX_APPEND_COMPILE_FLAGS([-Wcast-qual])
-AX_APPEND_COMPILE_FLAGS([-Werror=error-implicit-function-declaration])
+AX_APPEND_COMPILE_FLAGS([-Werror=implicit-function-declaration])
 AX_APPEND_COMPILE_FLAGS([-Werror=float-equal])
 AX_APPEND_COMPILE_FLAGS([-Werror=format])
 AX_APPEND_COMPILE_FLAGS([-Werror=format-y2k])
@@ -704,7 +542,7 @@ AX_APPEND_COMPILE_FLAGS([-Werror=nested-externs])
 AX_APPEND_COMPILE_FLAGS([-Werror=packed])
 AX_APPEND_COMPILE_FLAGS([-Werror=pointer-arith])
 AX_APPEND_COMPILE_FLAGS([-Werror=shadow])
-AX_APPEND_COMPILE_FLAGS([-Werror=strict-prototypes])
+AX_APPEND_COMPILE_FLAGS([-Wstrict-prototypes])
 AX_APPEND_COMPILE_FLAGS([-Werror=undef])
 AX_APPEND_COMPILE_FLAGS([-Werror=write-strings])
 AX_APPEND_COMPILE_FLAGS([-Wextra])
@@ -761,7 +599,6 @@ Configuration:
 	Install directory  : $prefix
 
 	Ziplinks           : $zlib
-	Socket Engine      : $SELECT_TYPE
 	Small network      : $small_net
 	Block allocator    : $balloc
 

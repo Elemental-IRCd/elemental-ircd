@@ -5,11 +5,11 @@ AM_CPPFLAGS = -I. -I../include @SSL_CFLAGS@ @GNUTLS_CFLAGS@
 libratbox_la_SOURCES =            \
         platform/unix.c           \
         platform/windows.c        \
+        ssl/openssl.c             \
+        ssl/gnutls.c              \
         crypt.c                   \
         balloc.c                  \
         commio.c                  \
-        openssl.c                 \
-        gnutls.c                  \
         event.c                   \
         ratbox_lib.c              \
         rb_memory.c               \

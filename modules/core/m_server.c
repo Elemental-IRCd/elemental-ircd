@@ -74,7 +74,6 @@ mr_server(struct Client *client_p, struct Client *source_p, int parc, const char
     const char *name;
     struct Client *target_p;
     int hop;
-    struct Capability *cap;
 
     name = parv[1];
     hop = atoi(parv[2]);
@@ -103,21 +102,6 @@ mr_server(struct Client *client_p, struct Client *source_p, int parc, const char
     if(bogus_host(name)) {
         exit_client(client_p, client_p, client_p, "Bogus server name");
         return 0;
-    }
-
-    /* check to ensure any "required" caps are set. --nenolod */
-    for (cap = captab; cap->name; cap++) {
-        if (!cap->required)
-            continue;
-
-        if (!(client_p->localClient->caps & cap->cap)) {
-            char exitbuf[BUFSIZE];
-
-            snprintf(exitbuf, BUFSIZE, "Missing required CAPAB [%s]", cap->name);
-            exit_client(client_p, client_p, client_p, exitbuf);
-
-            return 0;
-        }
     }
 
     /* Now we just have to call check_server and everything should be
@@ -471,12 +455,9 @@ ms_sid(struct Client *client_p, struct Client *source_p, int parc, const char *p
     struct remote_conf *hub_p;
     hook_data_client hdata;
     rb_dlink_node *ptr;
-    int hop;
     int hlined = 0;
     int llined = 0;
     char squitreason[160];
-
-    hop = atoi(parv[2]);
 
     /* collision on the name? */
     if((target_p = find_server(NULL, parv[1])) != NULL) {

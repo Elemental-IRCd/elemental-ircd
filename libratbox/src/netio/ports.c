@@ -29,7 +29,8 @@
 #include <ratbox_lib.h>
 #include <commio-int.h>
 #include <event-int.h>
-#if defined(HAVE_PORT_H) && (HAVE_PORT_CREATE)
+
+#ifdef WITH_SOLARIS_PORTS
 
 #include <port.h>
 
@@ -214,60 +215,5 @@ rb_ports_unsched_event(struct ev_entry *event)
     rb_free(event->comm_ptr);
     event->comm_ptr = NULL;
 }
-#else /* ports not supported */
 
-int
-rb_ports_supports_event(void)
-{
-    errno = ENOSYS;
-    return 0;
-}
-
-void
-rb_ports_init_event(void)
-{
-    return;
-}
-
-int
-rb_ports_sched_event(struct ev_entry *event, int when)
-{
-    errno = ENOSYS;
-    return -1;
-}
-
-void
-rb_ports_unsched_event(struct ev_entry *event)
-{
-    return;
-}
-
-int
-rb_init_netio_ports(void)
-{
-    return ENOSYS;
-}
-
-void
-rb_setselect_ports(rb_fde_t *F, unsigned int type, PF * handler, void *client_data)
-{
-    errno = ENOSYS;
-    return;
-}
-
-int
-rb_select_ports(long delay)
-{
-    errno = ENOSYS;
-    return -1;
-}
-
-int
-rb_setup_fd_ports(rb_fde_t *F)
-{
-    errno = ENOSYS;
-    return -1;
-}
-
-
-#endif
+#endif /* WITH_SOLARIS_PORTS */

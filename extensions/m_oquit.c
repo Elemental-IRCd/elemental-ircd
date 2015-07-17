@@ -55,7 +55,6 @@ static int
 m_oquit(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])
 {
     char *comment = LOCAL_COPY((parc > 1 && parv[1]) ? parv[1] : client_p->name);
-    char reason[REASONLEN + 1];
 
     source_p->flags |= FLAGS_NORMALEX;
 

@@ -161,6 +161,7 @@ int rb_io_supports_event(void);
 void rb_io_init_event(void);
 
 /* epoll versions */
+#ifdef WITH_EPOLL
 void rb_setselect_epoll(rb_fde_t *F, unsigned int type, PF * handler, void *client_data);
 int rb_init_netio_epoll(void);
 int rb_select_epoll(long);
@@ -170,22 +171,26 @@ void rb_epoll_init_event(void);
 int rb_epoll_sched_event(struct ev_entry *event, int when);
 void rb_epoll_unsched_event(struct ev_entry *event);
 int rb_epoll_supports_event(void);
-
+#endif /* WITH_EPOLL */
 
 /* poll versions */
+#ifdef WITH_POLL
 void rb_setselect_poll(rb_fde_t *F, unsigned int type, PF * handler, void *client_data);
 int rb_init_netio_poll(void);
 int rb_select_poll(long);
 int rb_setup_fd_poll(rb_fde_t *F);
+#endif /* WITH_POLL */
 
 /* devpoll versions */
+#ifdef WITH_DEVPOLL
 void rb_setselect_devpoll(rb_fde_t *F, unsigned int type, PF * handler, void *client_data);
 int rb_init_netio_devpoll(void);
 int rb_select_devpoll(long);
 int rb_setup_fd_devpoll(rb_fde_t *F);
-
+#endif /* WITH_DEVPOLL */
 
 /* ports versions */
+#ifdef WITH_SOLARIS_PORTS
 void rb_setselect_ports(rb_fde_t *F, unsigned int type, PF * handler, void *client_data);
 int rb_init_netio_ports(void);
 int rb_select_ports(long);
@@ -195,9 +200,10 @@ void rb_ports_init_event(void);
 int rb_ports_sched_event(struct ev_entry *event, int when);
 void rb_ports_unsched_event(struct ev_entry *event);
 int rb_ports_supports_event(void);
-
+#endif /* WITH_SOLARIS_PORTS */
 
 /* kqueue versions */
+#ifdef WITH_KQUEUE
 void rb_setselect_kqueue(rb_fde_t *F, unsigned int type, PF * handler, void *client_data);
 int rb_init_netio_kqueue(void);
 int rb_select_kqueue(long);
@@ -207,18 +213,23 @@ void rb_kqueue_init_event(void);
 int rb_kqueue_sched_event(struct ev_entry *event, int when);
 void rb_kqueue_unsched_event(struct ev_entry *event);
 int rb_kqueue_supports_event(void);
-
+#endif /* WITH_KQUEUE */
 
 /* select versions */
+#ifdef WITH_SELECT
 void rb_setselect_select(rb_fde_t *F, unsigned int type, PF * handler, void *client_data);
 int rb_init_netio_select(void);
 int rb_select_select(long);
 int rb_setup_fd_select(rb_fde_t *F);
+#endif /* WITH_SELECT */
 
 /* win32 versions */
+#ifdef WITH_WIN32_SELECT
 void rb_setselect_win32(rb_fde_t *F, unsigned int type, PF * handler, void *client_data);
 int rb_init_netio_win32(void);
 int rb_select_win32(long);
 int rb_setup_fd_win32(rb_fde_t *F);
-#endif
+#endif /* WITH_WIN32_SELECT */
+
+#endif /* _COMMIO_INT_H */
 

@@ -41,8 +41,7 @@ struct _rb_helper {
 rb_helper *
 rb_helper_child(rb_helper_cb * read_cb, rb_helper_cb * error_cb, log_cb * ilog,
                 __noreturn restart_cb * irestart, __noreturn die_cb * idie,
-                int maxcon, size_t lb_heap_size, size_t dh_size,
-                size_t fd_heap_size)
+                size_t lb_heap_size, size_t dh_size, size_t fd_heap_size)
 {
     rb_helper *helper;
     int maxfd;
@@ -212,13 +211,15 @@ rb_helper_write(rb_helper *helper, const char *format, ...)
 static void
 rb_helper_read_cb(rb_fde_t *F, void *data)
 {
+
     rb_helper *helper = (rb_helper *)data;
     static char buf[32768];
     int length;
-    if(helper == NULL)
-        return;
 
-    while((length = rb_read(helper->ifd, buf, sizeof(buf))) > 0) {
+    lrb_assert(helper != NULL);
+    lrb_assert(helper->ifd == F);
+
+    while((length = rb_read(F, buf, sizeof(buf))) > 0) {
         rb_linebuf_parse(&helper->recvq, buf, length, 0);
         helper->read_cb(helper);
     }
@@ -228,7 +229,7 @@ rb_helper_read_cb(rb_fde_t *F, void *data)
         return;
     }
 
-    rb_setselect(helper->ifd, RB_SELECT_READ, rb_helper_read_cb, helper);
+    rb_setselect(F, RB_SELECT_READ, rb_helper_read_cb, helper);
 }
 
 void
