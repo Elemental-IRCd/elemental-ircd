@@ -1081,7 +1081,7 @@ int
 main(int argc, char **argv)
 {
     const char *s_ctlfd, *s_pipe, *s_pid;
-    int ctlfd, pipefd, x, maxfd;
+    int ctlfd, pipefd, maxfd;
     maxfd = maxconn();
 
     s_ctlfd = getenv("CTL_FD");
@@ -1100,27 +1100,8 @@ main(int argc, char **argv)
     ctlfd = atoi(s_ctlfd);
     pipefd = atoi(s_pipe);
     ppid = atoi(s_pid);
-    x = 0;
-#ifndef _WIN32
-    for(x = 0; x < maxfd; x++) {
-        if(x != ctlfd && x != pipefd && x > 2)
-            close(x);
-    }
-    x = open("/dev/null", O_RDWR);
-
-    if(x >= 0) {
-        if(ctlfd != 0 && pipefd != 0)
-            dup2(x, 0);
-        if(ctlfd != 1 && pipefd != 1)
-            dup2(x, 1);
-        if(ctlfd != 2 && pipefd != 2)
-            dup2(x, 2);
-        if(x > 2)
-            close(x);
-    }
-#endif
     setup_signals();
-    rb_lib_init(NULL, NULL, NULL, 0, maxfd, 1024, 4096);
+    rb_lib_init(NULL, NULL, NULL, maxfd, 1024, 4096);
     rb_init_rawbuffers(1024);
     ssl_ok = rb_supports_ssl();
     mod_ctl = rb_malloc(sizeof(mod_ctl_t));

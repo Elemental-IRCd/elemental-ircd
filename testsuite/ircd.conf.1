@@ -20,7 +20,7 @@ serverinfo {
 
 admin {
 	name = "Here";
-	description = "Charybdis testsuite server";
+	description = "Elemental testsuite server";
 	email = "root@localhost";
 };
 
@@ -44,9 +44,8 @@ auth { user = "*@127.0.0.0/8"; class = "users"; };
 
 operator "oper" {
 	user = "*@127.0.0.0/8";
-	password = "oper"; 
-	flags = global_kill, remote, kline, unkline, nick_changes,
-		die, rehash, admin, xline, operwall, oper_spy, ~encrypted;
+	password = "testsuite";
+	flags = ~encrypted;
 };
 
 connect "testsuite2." {

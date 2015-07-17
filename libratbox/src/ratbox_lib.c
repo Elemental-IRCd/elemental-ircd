@@ -177,7 +177,7 @@ rb_set_time(void)
 }
 
 void
-rb_lib_init(log_cb * ilog, __noreturn restart_cb * irestart, __noreturn die_cb * idie, int closeall, int maxcon,
+rb_lib_init(log_cb * ilog, __noreturn restart_cb * irestart, __noreturn die_cb * idie, int maxcon,
             size_t dh_size, size_t fd_heap_size)
 {
     rb_set_time();
@@ -186,7 +186,7 @@ rb_lib_init(log_cb * ilog, __noreturn restart_cb * irestart, __noreturn die_cb *
     rb_die = idie;
     rb_event_init();
     rb_init_bh();
-    rb_fdlist_init(closeall, maxcon, fd_heap_size);
+    rb_fdlist_init(maxcon, fd_heap_size);
     rb_init_netio();
     rb_init_rb_dlink_nodes(dh_size);
     if(rb_io_supports_event()) {

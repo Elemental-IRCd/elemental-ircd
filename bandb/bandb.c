@@ -310,6 +310,8 @@ check_schema(void)
     struct rsdb_table table;
     int i;
 
+    rsdb_exec(NULL, "PRAGMA auto_vacuum=FULL");
+
     for(i = 0; i < LAST_BANDB_TYPE; i++) {
         rsdb_exec_fetch(&table,
                         "SELECT name FROM sqlite_master WHERE type='table' AND name='%s'",
@@ -319,7 +321,7 @@ check_schema(void)
 
         if(!table.row_count)
             rsdb_exec(NULL,
-                      "CREATE TABLE %s (mask1 TEXT, mask2 TEXT, oper TEXT, time INTEGER, perm INTEGER, reason TEXT)",
+                      "CREATE TABLE IF NOT EXISTS %s (mask1 TEXT, mask2 TEXT, oper TEXT, time INTEGER, perm INTEGER, reason TEXT)",
                       bandb_table[i]);
     }
 }
