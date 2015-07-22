@@ -62,7 +62,6 @@
 #include "s_newconf.h"
 #include "cache.h"
 #include "monitor.h"
-#include "serno.h"
 #include "sslproc.h"
 #include "chmode.h"
 #include "privilege.h"
