@@ -975,7 +975,7 @@ chm_owner(struct Client *source_p, struct Channel *chptr,
             override = 1;
         else {
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, ":%s 482 %s %s :You're not a channel owner", me.name, source_p->name, chptr->chname);
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED), me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
         }
@@ -1075,7 +1075,7 @@ chm_admin(struct Client *source_p, struct Channel *chptr,
         else {
 
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, ":%s 482 %s %s :You're not a channel administrator", me.name, source_p->name, chptr->chname);
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED), me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
         }
