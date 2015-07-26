@@ -6,6 +6,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([tools])
 AC_CONFIG_SRCDIR([include/ratbox_lib.h])
 AC_CONFIG_HEADERS([include/libratbox_config.h])
+AC_LANG(C)
 
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
@@ -14,29 +15,17 @@ AC_PREFIX_DEFAULT(/usr/local/libratbox)
 AC_USE_SYSTEM_EXTENSIONS
 
 AC_PROG_CC_C99([], [AC_MSG_ERROR(libratbox requires a C99 capable compiler)])
-
 AC_PROG_INSTALL
 AC_PROG_EGREP
 AC_PROG_SED
-
-F77=no
-CXX=no
-GCJ=no
-
-AC_DISABLE_STATIC([])
-AC_ENABLE_SHARED([])
-AM_MAINTAINER_MODE
-
-AC_SEARCH_LIBS([strerror],[cposix])
-AC_C_INLINE
-AC_C_CONST
-AC_C_BIGENDIAN
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(CP, cp)
 
-AC_LANG(C)
+AC_DISABLE_STATIC([])
+AC_ENABLE_SHARED([])
+AM_MAINTAINER_MODE
 
 LT_INIT([dlopen])
 
@@ -53,11 +42,13 @@ if test "$libexecdir" = '${exec_prefix}/libexec' &&
 	localstatedir='${prefix}'
 fi
 
+AC_C_BIGENDIAN
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
 AC_TYPE_UID_T
 
+AC_SEARCH_LIBS([strerror],[cposix])
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -353,33 +344,7 @@ if test "$balloc" = no; then
 	AC_DEFINE([NOBALLOC], 1, [Define to 1 if you wish to disable the block allocator.])
 fi
 
-AX_APPEND_COMPILE_FLAGS([-Wall])
-AX_APPEND_COMPILE_FLAGS([-Wcast-align])
-AX_APPEND_COMPILE_FLAGS([-Wcast-qual])
-AX_APPEND_COMPILE_FLAGS([-Werror=implicit-function-declaration])
-AX_APPEND_COMPILE_FLAGS([-Werror=float-equal])
-AX_APPEND_COMPILE_FLAGS([-Werror=format])
-AX_APPEND_COMPILE_FLAGS([-Werror=format-y2k])
-AX_APPEND_COMPILE_FLAGS([-Werror=implicit])
-AX_APPEND_COMPILE_FLAGS([-Werror=missing-declarations])
-AX_APPEND_COMPILE_FLAGS([-Werror=missing-prototypes])
-AX_APPEND_COMPILE_FLAGS([-Werror=nested-externs])
-AX_APPEND_COMPILE_FLAGS([-Werror=packed])
-AX_APPEND_COMPILE_FLAGS([-Werror=pointer-arith])
-AX_APPEND_COMPILE_FLAGS([-Werror=shadow])
-AX_APPEND_COMPILE_FLAGS([-Werror=write-strings])
-AX_APPEND_COMPILE_FLAGS([-Wextra])
-AX_APPEND_COMPILE_FLAGS([-Wformat-security])
-AX_APPEND_COMPILE_FLAGS([-Wmissing-noreturn])
-AX_APPEND_COMPILE_FLAGS([-Wredundant-decls])
-AX_APPEND_COMPILE_FLAGS([-Wstrict-prototypes])
-AX_APPEND_COMPILE_FLAGS([-Wundef])
-AX_APPEND_COMPILE_FLAGS([-Wunused-function])
-AX_APPEND_COMPILE_FLAGS([-Wunused-label])
-AX_APPEND_COMPILE_FLAGS([-Wunused-parameter])
-AX_APPEND_COMPILE_FLAGS([-Wunused-result])
-AX_APPEND_COMPILE_FLAGS([-Wunused-value])
-AX_APPEND_COMPILE_FLAGS([-Wunused-variable])
+RB_CFLAGS
 
 AC_SUBST(LDFLAGS)
 AC_SUBST(PICFLAGS)

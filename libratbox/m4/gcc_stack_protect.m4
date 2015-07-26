@@ -37,7 +37,7 @@ dnl GCC_STACK_PROTECT_LIB
 dnl adds -lssp to LIBS if it is available, this does not need to be called
 dnl
 
-AC_DEFUN([GCC_STACK_PROTECT_LIB],[
+AC_DEFUN_ONCE([GCC_STACK_PROTECT_LIB],[
   AC_CACHE_CHECK([whether libssp exists], ssp_cv_lib,
     [ssp_old_libs="$LIBS"
      LIBS="$LIBS -lssp"
