@@ -6,6 +6,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([tools])
 AC_CONFIG_SRCDIR([include/ratbox_lib.h])
 AC_CONFIG_HEADERS([include/libratbox_config.h])
+AC_LANG(C)
 
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
@@ -14,29 +15,17 @@ AC_PREFIX_DEFAULT(/usr/local/libratbox)
 AC_USE_SYSTEM_EXTENSIONS
 
 AC_PROG_CC_C99([], [AC_MSG_ERROR(libratbox requires a C99 capable compiler)])
-
 AC_PROG_INSTALL
 AC_PROG_EGREP
 AC_PROG_SED
-
-F77=no
-CXX=no
-GCJ=no
-
-AC_DISABLE_STATIC([])
-AC_ENABLE_SHARED([])
-AM_MAINTAINER_MODE
-
-AC_SEARCH_LIBS([strerror],[cposix])
-AC_C_INLINE
-AC_C_CONST
-AC_C_BIGENDIAN
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(CP, cp)
 
-AC_LANG(C)
+AC_DISABLE_STATIC([])
+AC_ENABLE_SHARED([])
+AM_MAINTAINER_MODE
 
 LT_INIT([dlopen])
 
@@ -53,11 +42,13 @@ if test "$libexecdir" = '${exec_prefix}/libexec' &&
 	localstatedir='${prefix}'
 fi
 
+AC_C_BIGENDIAN
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
 AC_TYPE_UID_T
 
+AC_SEARCH_LIBS([strerror],[cposix])
 
 dnl Checks for header files.
 AC_HEADER_STDC

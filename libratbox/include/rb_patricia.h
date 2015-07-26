@@ -11,6 +11,10 @@
  * some other things it could be used as a standalone API.
  */
 
+#ifndef RB_LIB_H
+# error "Do not use patricia.h directly"
+#endif
+
 #ifndef _RB_PATRICIA_H
 #define _RB_PATRICIA_H
 
