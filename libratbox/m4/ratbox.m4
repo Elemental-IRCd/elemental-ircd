@@ -1,4 +1,3 @@
-
 # RB_IF_REQUESTED(feature, if-required)
 # -------------------------------------
 dnl Check if a feature is not explicitly disabled
@@ -16,6 +15,41 @@ AC_DEFUN([RB_IF_REQUIRED], [
 		$2
 	fi
 ])
+
+
+dnl Shared CFLAGS settings
+AC_DEFUN([RB_CFLAGS], [
+  AX_APPEND_COMPILE_FLAGS([-Wall])
+  AX_APPEND_COMPILE_FLAGS([-Wcast-align])
+  AX_APPEND_COMPILE_FLAGS([-Wcast-qual])
+  AX_APPEND_COMPILE_FLAGS([-Werror=implicit-function-declaration])
+  AX_APPEND_COMPILE_FLAGS([-Werror=float-equal])
+  AX_APPEND_COMPILE_FLAGS([-Werror=format])
+  AX_APPEND_COMPILE_FLAGS([-Werror=format-y2k])
+  AX_APPEND_COMPILE_FLAGS([-Werror=implicit])
+  AX_APPEND_COMPILE_FLAGS([-Werror=missing-declarations])
+  AX_APPEND_COMPILE_FLAGS([-Werror=missing-prototypes])
+  AX_APPEND_COMPILE_FLAGS([-Werror=nested-externs])
+  AX_APPEND_COMPILE_FLAGS([-Werror=packed])
+  AX_APPEND_COMPILE_FLAGS([-Werror=pointer-arith])
+  AX_APPEND_COMPILE_FLAGS([-Werror=shadow])
+  AX_APPEND_COMPILE_FLAGS([-Wstrict-prototypes])
+  AX_APPEND_COMPILE_FLAGS([-Werror=undef])
+  AX_APPEND_COMPILE_FLAGS([-Werror=write-strings])
+  AX_APPEND_COMPILE_FLAGS([-Wextra])
+  AX_APPEND_COMPILE_FLAGS([-Wmissing-noreturn])
+  # format-security is omited as non-literal printf formats are used extensively
+  AX_APPEND_COMPILE_FLAGS([-Wno-format-security])
+  # Unused parameters are common
+  AX_APPEND_COMPILE_FLAGS([-Wno-unused-parameter])
+  AX_APPEND_COMPILE_FLAGS([-Wredundant-decls])
+  AX_APPEND_COMPILE_FLAGS([-Wunused-function])
+  AX_APPEND_COMPILE_FLAGS([-Wunused-label])
+  AX_APPEND_COMPILE_FLAGS([-Wunused-result])
+  AX_APPEND_COMPILE_FLAGS([-Wunused-value])
+  AX_APPEND_COMPILE_FLAGS([-Wunused-variable])
+])
+
 
 dnl IPv6 support macros..pretty much swiped from wget
 
