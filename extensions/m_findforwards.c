@@ -70,7 +70,7 @@ m_findforwards(struct Client *client_p, struct Client *source_p, int parc, const
         }
 
         if(!is_any_op(msptr)) {
-            sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+            sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                        me.name, source_p->name, parv[1]);
             return 0;
         }
