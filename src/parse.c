@@ -124,10 +124,18 @@ parse(struct Client *client_p, char *pbuffer, char *bufend)
     if(IsAnyDead(client_p))
         return;
 
-    for (ch = pbuffer; *ch == ' '; ch++)	/* skip spaces */
-        /* null statement */ ;
+    ch = pbuffer;
+    ch += strspn(ch, " "); /* skip spaces */
 
     para[0] = from->name;
+
+    if(*ch == '@') {
+        /* Skip message tags
+         * servers can ignore unknown tags, we don't understand any
+         * yet so ignore them all */
+        ch += strcspn(ch, " ");
+        ch += strspn(ch, " ");
+    }
 
     if(*ch == ':') {
         ch++;
