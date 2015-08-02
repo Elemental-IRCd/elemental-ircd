@@ -567,6 +567,7 @@ AC_CONFIG_FILES(			\
 	extensions/Makefile		\
 	src/Makefile			\
 	modules/Makefile		\
+	tests/Makefile			\
 	tools/Makefile			\
 	tools/genssl.sh			\
 	doc/Makefile			\

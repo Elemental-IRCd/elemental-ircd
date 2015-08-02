@@ -9,7 +9,8 @@ SUBDIRS = libratbox \
           modules \
           extensions \
           help \
-          doc
+          doc \
+          tests
 
 logdir = @prefix@/logs
 

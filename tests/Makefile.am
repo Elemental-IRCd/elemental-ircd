@@ -1,0 +1,1 @@
+TESTS = register.exp

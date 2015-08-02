@@ -16,7 +16,10 @@ script:
   - ./configure --enable-assert
   - make
   - make install
-  - testsuite/runtest.sh
+  - cd testsuite
+  - ./startall.sh
+  - cd ..
+  - make check
 
 addons:
   apt:
@@ -28,6 +31,7 @@ addons:
       - bison
       - astyle
       - libsqlite3-dev
+      - expect
   coverity_scan:
     project:
       name: "Elemental-IRCd/elemental-ircd"

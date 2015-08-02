@@ -1,0 +1,19 @@
+#!/usr/bin/expect -f
+
+#Test client registration
+
+source lib/lib.tcl
+
+spawn nc 127.0.0.1 7602
+
+register ;#waits for RPL_WELCOME internally
+
+# Check that ISUPPORT is sent
+expect_rpl RPL_ISUPPORT
+
+# Check the motd is sent
+expect_rpl RPL_MOTDSTART
+expect_rpl RPL_MOTD
+expect_rpl RPL_ENDOFMOTD
+
+quit
