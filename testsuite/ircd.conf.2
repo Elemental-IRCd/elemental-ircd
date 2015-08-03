@@ -1,21 +1,18 @@
-loadmodule "extensions/extb_account.so";
-loadmodule "extensions/extb_channel.so";
-loadmodule "extensions/extb_oper.so";
-loadmodule "extensions/extb_realname.so";
-loadmodule "extensions/extb_server.so";
-#loadmodule "extensions/ip_cloaking.so";
-loadmodule "extensions/sno_farconnect.so";
-loadmodule "extensions/sno_globalkline.so";
-#loadmodule "extensions/sno_globaloper.so";
 
 serverinfo {
-	name = "testsuite2.";
+	name = "testsuite2.local";
 	sid = "2TT";
 	description = "Testsuite";
 	network_name = "Testsuite";
 	network_desc = "Testing";
-	hub = yes;
-	vhost = "127.0.0.1";
+
+	hub = no;
+	vhost = "127.0.0.2";
+};
+
+channel {
+	no_create_on_split = no;
+	no_join_on_split = no;
 };
 
 admin {
@@ -38,9 +35,15 @@ class "server" {
 	sendq = 5 megabytes;
 };
 
-listen { host = "127.0.0.1"; port = 7602; };
+listen {
+	host = "127.0.0.2";
+	port = 6667;
+};
 
-auth { user = "*@127.0.0.0/8"; class = "users"; };
+auth {
+	user = "*@127.0.0.0/8";
+	class = "users";
+};
 
 operator "oper" {
 	user = "*@127.0.0.0/8";
@@ -48,44 +51,17 @@ operator "oper" {
 	flags = ~encrypted;
 };
 
-connect "testsuite1." {
-	host = "127.0.0.1";
-	port = 7601;
-	send_password = "testsuite";
-	accept_password = "testsuite";
-	hub_mask = "*";
-	class = "server";
-	flags = topicburst;
-};
-
-connect "testsuite3." {
-	host = "127.0.0.1";
-	port = 7603;
-	send_password = "testsuite";
-	accept_password = "testsuite";
-	hub_mask = "*";
-	class = "server";
-	flags = topicburst;
-};
-
 shared {
 	oper = "*@*", "*";
 	flags = all;
 };
 
-alias "NickServ" {
-	target = "NickServ";
-};
-alias "ChanServ" {
-	target = "ChanServ";
-};
-alias "OperServ" {
-	target = "OperServ";
-};
-alias "MemoServ" {
-	target = "MemoServ";
-};
-
-service {
-	name = "services.";
+connect "testsuite1.local" {
+	host = "127.0.0.1";
+	send_password = "dev";
+	accept_password = "dev";
+	port = 6667;
+	flags = topicburst, autoconn;
+	class = "server";
+	hub_mask = "*";
 };
