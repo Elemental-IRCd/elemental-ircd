@@ -1,0 +1,5 @@
+CHGHOST <target> <host>
+
+Will attempt to change <target> hostname to <host>
+
+- Requires Oper Priv: oper:chghost

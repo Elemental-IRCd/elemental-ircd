@@ -152,6 +152,12 @@
 	</para>
       </sect2>
       <sect2>
+	<title>oper:chghost</title>
+	<para>
+	  Allows using CHGHOST to set hostmasks.
+	</para>
+      </sect2>
+      <sect2>
 	<title>snomask:nick_changes, see nick changes</title>
 	<para>
 	  Allows using snomask +n to see local client nick changes.
