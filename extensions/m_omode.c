@@ -90,11 +90,6 @@ mo_omode(struct Client *client_p, struct Client *source_p, int parc, const char 
     msptr = find_channel_membership(chptr, source_p);
     wasonchannel = msptr != NULL;
 
-    if (is_any_op(msptr)) {
-        sendto_one_notice(source_p, ":Use a normal MODE you idiot");
-        return 0;
-    }
-
     params[0] = '\0';
     for (i = 2; i < parc; i++) {
         if (i != 2)
