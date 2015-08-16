@@ -4,7 +4,7 @@
 
 source lib/lib.tcl
 
-spawn nc 127.0.0.1 6667
+client new
 
 register ;#waits for RPL_WELCOME internally
 

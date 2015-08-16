@@ -1,10 +1,10 @@
-
-
-#global defaults
-set nickname nickname
-set username username
+package require TclOO
 
 source lib/numeric.tcl
+
+expect_before {
+    timeout {send_error "Timed out"; exit 1}
+}
 
 # Tokenize an irc message into a tcl list
 proc parse {line} {
@@ -30,9 +30,8 @@ proc parse {line} {
     }
 }
 
-# Assemble a command from arguments
-# handles line endings and trailing
-proc send_cmd {args} {
+# Assemble a command from arguments, correctly handles trailing
+proc format_args {args} {
     variable out {}
     variable length [llength $args]
     variable i 0
@@ -54,32 +53,79 @@ proc send_cmd {args} {
     }
 
     #TODO: \r\n, expect seems to turn every \r into a \n
-    send "[join $out]\r"
+    return [join $out]
 }
 
-expect_before {
-    timeout {send_error "Timed out"; exit 1}
+oo::class create client {
+    constructor {{ip 127.0.0.1} {port 6667}} {
+        variable my_spawn_id
+        variable nickname nick
+        variable username user
+
+        spawn nc $ip $port
+        set my_spawn_id $spawn_id
+        my make_current
+    }
+
+    method register {} {
+        variable nickname
+        variable username
+
+        my send_cmd NICK $nickname
+        my send_cmd USER $username * * {Real Name}
+        my expect_rpl RPL_WELCOME
+    }
+
+    method quit {} {
+        my send_cmd QUIT
+        my expect_cmd ERROR
+    }
+
+    method send_cmd {args} {
+        my send "[format_args {*}$args]\r"
+    }
+
+    method expect_rpl {numeric {text {}}} {
+        global $numeric
+        variable nickname
+
+        my expect -re [format {:[^ ]+ %s %s ?:?%s} [set $numeric] $nickname $text]
+    }
+
+    method expect_cmd {command} {
+        my expect -re [format {(:[^ ]+ +)?%s} $command]
+    }
+
+    method make_current {} {
+        global spawn_id
+        global current_client
+        variable my_spawn_id
+
+        set current_client [self]
+        set spawn_id $my_spawn_id
+    }
+
+    method send {args} {
+        variable my_spawn_id
+        ::send -i $my_spawn_id {*}$args
+    }
+
+    method expect {args} {
+        variable my_spawn_id
+        ::expect -i $my_spawn_id {*}$args
+    }
+
 }
 
-proc expect_rpl {numeric {text {}}} {
-    global nickname
-    global $numeric
-    expect -re [format {:[^ ]+ %s %s ?:?%s} [set $numeric] $nickname $text]
+proc proxy_method {method} {
+    proc $method {args} "
+        global current_client
+        \$current_client $method {*}\$args
+    "
 }
 
-proc expect_cmd {command} {
-    expect -re [format {(:[^ ]+ +)?%s} $command]
-}
+proxy_method register
+proxy_method quit
 
-proc register {} {
-    global nickname
-    global username
-    send_cmd NICK $nickname
-    send_cmd USER $username * * {Real Name}
-    expect_rpl RPL_WELCOME
-}
-
-proc quit {} {
-    send_cmd QUIT
-    expect_cmd ERROR
-}
+proxy_method expect_cmd
+proxy_method expect_rpl
