@@ -1,6 +1,6 @@
 
 serverinfo {
-	name = "testsuite1.local";
+	name = "hub.local";
 	sid = "1TT";
 	description = "Testsuite";
 	network_name = "Testsuite";
@@ -56,7 +56,7 @@ shared {
 	flags = all;
 };
 
-connect "testsuite2.local" {
+connect "leaf1.local" {
 	host = "127.0.0.2";
 	send_password = "dev";
 	accept_password = "dev";
@@ -64,7 +64,7 @@ connect "testsuite2.local" {
 	class = "server";
 };
 
-connect "testsuite3.local" {
+connect "leaf2.local" {
 	host = "127.0.0.3";
 	send_password = "dev";
 	accept_password = "dev";
