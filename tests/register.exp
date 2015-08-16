@@ -6,7 +6,7 @@ begin test register {Test client registration}
 
 client new
 
-register ;#waits for RPL_WELCOME internally
+# Client constructor checks for RPL_WELCOME
 
 # Check that ISUPPORT is sent
 expect_rpl RPL_ISUPPORT

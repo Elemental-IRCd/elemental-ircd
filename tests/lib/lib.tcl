@@ -92,6 +92,7 @@ oo::class create client {
         spawn nc $ip $port
         set my_spawn_id $spawn_id
         my make_current
+        my register
     }
 
     method register {} {
@@ -151,7 +152,6 @@ proc proxy_method {method} {
     "
 }
 
-proxy_method register
 proxy_method quit
 
 proxy_method expect_cmd
