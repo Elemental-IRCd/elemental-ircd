@@ -2,6 +2,33 @@ package require TclOO
 
 source lib/numeric.tcl
 
+proc begin {test name {text {Test suite client}}} {
+    global test_name
+    global test_desc
+    set test_name $name
+    set test_desc $text
+}
+
+set nick_counter 0
+
+proc get_nick {} {
+    global nick_counter
+    global test_name
+    set nick "$test_name-$nick_counter"
+    incr nick_counter
+    return $nick
+}
+
+proc get_user {} {
+    global test_name
+    return $test_name
+}
+
+proc get_realname {} {
+    global test_desc
+    return $test_desc
+}
+
 expect_before {
     timeout {send_error "Timed out"; exit 1}
 }
@@ -59,8 +86,8 @@ proc format_args {args} {
 oo::class create client {
     constructor {{ip 127.0.0.1} {port 6667}} {
         variable my_spawn_id
-        variable nickname nick
-        variable username user
+        variable nickname [get_nick]
+        variable username [get_user]
 
         spawn nc $ip $port
         set my_spawn_id $spawn_id
@@ -72,7 +99,7 @@ oo::class create client {
         variable username
 
         my send_cmd NICK $nickname
-        my send_cmd USER $username * * {Real Name}
+        my send_cmd USER $username * * [get_realname]
         my expect_rpl RPL_WELCOME
     }
 

@@ -1,8 +1,8 @@
 #!/usr/bin/expect -f
 
-#Test client registration
-
 source lib/lib.tcl
+
+begin test register {Test client registration}
 
 client new
 
