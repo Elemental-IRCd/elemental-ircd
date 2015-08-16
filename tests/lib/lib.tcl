@@ -109,6 +109,11 @@ oo::class create client {
         my expect_cmd ERROR
     }
 
+    method join_channel {channel} {
+        my send_cmd JOIN $channel
+        my expect_cmd JOIN
+    }
+
     method send_cmd {args} {
         my send "[format_args {*}$args]\r"
     }
@@ -152,6 +157,7 @@ proc proxy_method {method} {
     "
 }
 
+proxy_method join_channel
 proxy_method quit
 
 proxy_method expect_cmd
