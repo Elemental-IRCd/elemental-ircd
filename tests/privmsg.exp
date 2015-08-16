@@ -1,0 +1,42 @@
+#!/usr/bin/expect -f
+
+source lib/lib.tcl
+
+begin test privmsg {Check privmsg works and is routed}
+
+set hub1  [client new 127.0.0.1]
+set hub2  [client new 127.0.0.1]
+
+$hub1 join_channel #privmsg
+$hub2 join_channel #privmsg
+
+set message {This is sent by hub1, hub2 should see it}
+$hub1 send_cmd PRIVMSG #privmsg  $message
+$hub2 expect  "PRIVMSG #privmsg :$message"
+
+set message {This is sent by hub2, hub1 should see it}
+$hub2 send_cmd PRIVMSG #privmsg  $message
+$hub1 expect  "PRIVMSG #privmsg :$message"
+
+set leaf1 [client new 127.0.0.2]
+set leaf2 [client new 127.0.0.3]
+
+$leaf1 join_channel #privmsg
+$leaf2 join_channel #privmsg
+
+set message {This is sent by hub1, everyone else should see it}
+$hub1  send_cmd PRIVMSG #privmsg  $message
+$hub2  expect  "PRIVMSG #privmsg :$message"
+$leaf1 expect  "PRIVMSG #privmsg :$message"
+$leaf2 expect  "PRIVMSG #privmsg :$message"
+
+set message {This is sent by leaf1, everyone else should see it}
+$leaf1 send_cmd PRIVMSG #privmsg  $message
+$hub1  expect  "PRIVMSG #privmsg :$message"
+$hub2  expect  "PRIVMSG #privmsg :$message"
+$leaf2 expect  "PRIVMSG #privmsg :$message"
+
+$hub1 quit
+$hub2 quit
+$leaf1 quit
+$leaf2 quit

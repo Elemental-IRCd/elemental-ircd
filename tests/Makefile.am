@@ -1,1 +1,2 @@
-TESTS = register.exp
+TESTS = register.exp \
+        privmsg.exp
