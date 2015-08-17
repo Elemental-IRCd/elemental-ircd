@@ -1473,7 +1473,7 @@ change_nick_user_host(struct Client *target_p,	const char *nick, const char *use
             sendto_channel_local_with_capability_butone(ALL_MEMBERS,
                                                         CLICAP_EXTENDED_JOIN, NOCAPS,
                                                         chptr, ":%s!%s@%s JOIN %s %s :%s",
-                                                        target_p->name, target_p->username, target_p->host,
+                                                        target_p->name, target_p->username, host,
                                                         chptr->chname, EmptyString(target_p->user->suser) ? "*" : target_p->user->suser,
                                                         target_p->info);
 
