@@ -116,7 +116,7 @@ oo::class create client {
 
     method join_channel {channel} {
         my send_cmd JOIN $channel
-        my expect_cmd JOIN
+        my expect -re "JOIN :?$channel"
     }
 
     method send_cmd {args} {
