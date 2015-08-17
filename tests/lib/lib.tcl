@@ -29,8 +29,13 @@ proc get_realname {} {
     return $test_desc
 }
 
+# explicit timeout
+set timeout 10
+
+#HACK: this triggers a stack trace
+#is there a proper way? one that won't say "invalid command name"?
 expect_before {
-    timeout {send_error "Timed out"; exit 1}
+    timeout {{Timed out}}
 }
 
 # Tokenize an irc message into a tcl list
