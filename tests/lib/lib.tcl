@@ -100,6 +100,11 @@ oo::class create client {
         my register
     }
 
+    method nick {} {
+        variable nickname
+        return $nickname
+    }
+
     method register {} {
         variable nickname
         variable username
@@ -117,6 +122,11 @@ oo::class create client {
     method join_channel {channel} {
         my send_cmd JOIN $channel
         my expect -re "JOIN :?$channel"
+    }
+
+    method oper {} {
+        my send_cmd OPER oper testsuite
+        my expect "is now an operator"
     }
 
     method send_cmd {args} {
@@ -162,6 +172,7 @@ proc proxy_method {method} {
     "
 }
 
+proxy_method oper
 proxy_method join_channel
 proxy_method quit
 
