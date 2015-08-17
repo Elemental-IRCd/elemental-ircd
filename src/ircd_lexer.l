@@ -31,6 +31,7 @@
 #include <string.h>
 #include <errno.h>
 #include <limits.h>
+#include <libgen.h>
 
 #define WE_ARE_MEMORY_C
 
@@ -190,28 +191,44 @@ void cinclude(void)
   else
   {
     FILE *tmp_fbfile_in;
-    
-    tmp_fbfile_in = fopen(c, "r");
-    
-    if (tmp_fbfile_in == NULL)
-    {
-      /* if its not found in PREFIX, look in ETCPATH */
-      char fnamebuf[IRCD_BUFSIZE];
+    char file[PATH_MAX];
+    char path[PATH_MAX];
 
-      snprintf(fnamebuf, sizeof(fnamebuf), "%s/%s", ETCPATH, c);
-      tmp_fbfile_in = fopen(fnamebuf, "r");
-
-      /* wasnt found there either.. error. */
-      if(tmp_fbfile_in == NULL)
-      {
-        conf_report_error("Include %s: %s.", c, strerror(errno));
-        return;
+    if (c[0] == '/') {
+      /* We've been given an absolute path, use that */
+      tmp_fbfile_in = fopen(c, "r");
+      if((tmp_fbfile_in = fopen(c, "r"))) {
+        strcpy(file, c);
+        goto done;
+      } else {
+        /* Don't try concat an absolute path, error out */
+        goto error;
       }
     }
+
+    /* Treat the filename as relative to the current config file */
+    strcpy(path, current_file);
+    snprintf(file, sizeof(file), "%s/%s", dirname(path), c);
+
+    if((tmp_fbfile_in = fopen(file, "r")))
+      goto done;
+
+    /* Wasn't found, now try ETCPATH */
+    snprintf(file, sizeof(file), "%s/%s", ETCPATH, c);
+
+    if((tmp_fbfile_in = fopen(file, "r")))
+      goto done;
+
+error:
+    /* wasnt found there either.. error. */
+    conf_report_error("Include %s: %s.", c, strerror(errno));
+    return;
+
+done:
     lineno_stack[include_stack_ptr] = lineno;
     lineno = 1;
     inc_fbfile_in[include_stack_ptr] = conf_fbfile_in;
-    strcpy(conffile_stack[include_stack_ptr], c);
+    strcpy(conffile_stack[include_stack_ptr], file);
     current_file = conffile_stack[include_stack_ptr];
     include_stack[include_stack_ptr++] = YY_CURRENT_BUFFER;
     conf_fbfile_in = tmp_fbfile_in;
