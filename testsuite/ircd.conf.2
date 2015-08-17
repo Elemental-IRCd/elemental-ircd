@@ -10,50 +10,11 @@ serverinfo {
 	vhost = "127.0.0.2";
 };
 
-channel {
-	no_create_on_split = no;
-	no_join_on_split = no;
-};
-
-admin {
-	name = "Here";
-	description = "Elemental testsuite server";
-	email = "root@localhost";
-};
-
-class "users" {
-	ping_time = 5 minutes;
-	number_per_ip = 100;
-	max_number = 200;
-	sendq = 100kb;
-};
-
-class "server" {
-	ping_time = 5 minutes;
-	connectfreq = 5 minutes;
-	max_number = 3;
-	sendq = 5 megabytes;
-};
+.include <common.conf>
 
 listen {
 	host = "127.0.0.2";
 	port = 6667;
-};
-
-auth {
-	user = "*@127.0.0.0/8";
-	class = "users";
-};
-
-operator "oper" {
-	user = "*@127.0.0.0/8";
-	password = "testsuite";
-	flags = ~encrypted;
-};
-
-shared {
-	oper = "*@*", "*";
-	flags = all;
 };
 
 connect "hub.local" {
