@@ -24,6 +24,9 @@ set leaf2 [client new 127.0.0.3]
 $leaf1 join_channel #privmsg
 $leaf2 join_channel #privmsg
 
+# wait for joins to propagate
+sleep 3
+
 set message {This is sent by hub1, everyone else should see it}
 $hub1  send_cmd PRIVMSG #privmsg  $message
 $hub2  expect  "PRIVMSG #privmsg :$message"
