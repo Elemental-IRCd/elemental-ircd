@@ -127,7 +127,7 @@ m_topic(struct Client *client_p, struct Client *source_p, int parc, const char *
                               ":%s WALLOPS :%s is overriding TOPIC on [%s]",
                               me.name, get_oper_name(source_p), chptr->chname);
             } else {
-                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                            me.name, source_p->name, parv[1]);
                 return 0;
             }

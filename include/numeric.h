@@ -294,7 +294,7 @@ extern const char *form_str(int);
 #define ERR_THROTTLE         480
 
 #define ERR_NOPRIVILEGES     481
-#define ERR_CHANOPRIVSNEEDED 482
+#define ERR_CHANPRIVSNEEDED 482
 #define ERR_CANTKILLSERVER   483
 #define ERR_ISCHANSERVICE    484
 /* #define ERR_RESTRICTED       484 	- hyb derived, no longer here */

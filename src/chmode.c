@@ -531,7 +531,7 @@ chm_simple(struct Client *source_p, struct Channel *chptr,
             override = 1;
         else {
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                            me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
@@ -722,7 +722,7 @@ chm_staff(struct Client *source_p, struct Channel *chptr,
             override = 1;
         else {
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                            me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
@@ -854,7 +854,7 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
             } else {
 
                 if(!(*errors & SM_ERR_NOOPS))
-                    sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                    sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                                me.name, source_p->name, chptr->chname);
                 *errors |= SM_ERR_NOOPS;
                 return;
@@ -880,7 +880,7 @@ chm_ban(struct Client *source_p, struct Channel *chptr,
         else {
 
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                            me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
@@ -975,7 +975,7 @@ chm_owner(struct Client *source_p, struct Channel *chptr,
             override = 1;
         else {
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, ":%s 482 %s %s :You're not a channel owner", me.name, source_p->name, chptr->chname);
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED), me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
         }
@@ -1075,7 +1075,7 @@ chm_admin(struct Client *source_p, struct Channel *chptr,
         else {
 
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, ":%s 482 %s %s :You're not a channel administrator", me.name, source_p->name, chptr->chname);
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED), me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
         }
@@ -1168,7 +1168,7 @@ chm_op(struct Client *source_p, struct Channel *chptr,
         else {
 
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                            me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
@@ -1270,7 +1270,7 @@ chm_halfop(struct Client *source_p, struct Channel *chptr,
         else {
 
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                            me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
@@ -1364,7 +1364,7 @@ chm_voice(struct Client *source_p, struct Channel *chptr,
         else {
 
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                            me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
@@ -1442,7 +1442,7 @@ chm_limit(struct Client *source_p, struct Channel *chptr,
             override = 1;
         else {
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                            me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
@@ -1505,7 +1505,7 @@ chm_throttle(struct Client *source_p, struct Channel *chptr,
         else {
 
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                            me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
@@ -1589,7 +1589,7 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
             override = 1;
         else {
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                            me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;
@@ -1635,7 +1635,7 @@ chm_forward(struct Client *source_p, struct Channel *chptr,
                 if(IsOverride(source_p))
                     override = 1;
                 else {
-                    sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                    sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                                me.name, source_p->name, targptr->chname);
                     return;
                 }
@@ -1682,7 +1682,7 @@ chm_key(struct Client *source_p, struct Channel *chptr,
             override = 1;
         else {
             if(!(*errors & SM_ERR_NOOPS))
-                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                            me.name, source_p->name, chptr->chname);
             *errors |= SM_ERR_NOOPS;
             return;

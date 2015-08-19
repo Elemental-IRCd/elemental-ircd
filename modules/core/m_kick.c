@@ -115,7 +115,7 @@ m_kick(struct Client *client_p, struct Client *source_p, int parc, const char *p
 
             /* If its a TS 0 channel, do it the old way */
             else if(chptr->channelts == 0) {
-                sendto_one(source_p, form_str(ERR_CHANOPRIVSNEEDED),
+                sendto_one(source_p, form_str(ERR_CHANPRIVSNEEDED),
                            get_id(&me, source_p), get_id(source_p, source_p), name);
                 return 0;
             }
