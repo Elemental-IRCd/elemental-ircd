@@ -3,7 +3,9 @@ compiler:
 - gcc
 
 #See http://docs.travis-ci.com/user/migrating-from-legacy/
-sudo: false
+#Using legacy infrastructure for now as the test suite needs
+#a tcl extension
+sudo: true
 
 env:
   global:
@@ -11,12 +13,20 @@ env:
    #   via the "travis encrypt" command using the project repo's public key
    - secure: "Glbq3TqHAvxEiaxiTyV+pP+1aE+giEV7L5qJzQrUzs8k+XjvvgR6ixI7wezV4520lz8tHcvEakLJd2dD8YLJbjKnSEmamn4oSF0a0/Lvv/eoytHeKMKjN6LHZ/87DgA+gKGskJc4Ai6CYFliCwcqGlGVPmgcKDy9bZn28Csu6o0="
 
+before_script:
+  - sudo add-apt-repository ppa:ariscop/tcloo -y
+  - sudo apt-get update -q
+  - sudo apt-get install tcloo
+
 script:
   - ./autogen.sh
   - ./configure --enable-assert
   - make
   - make install
-  - testsuite/runtest.sh
+  - cd testsuite
+  - ./startall.sh
+  - cd ..
+  - make -j4 check
 
 addons:
   apt:
@@ -28,6 +38,8 @@ addons:
       - bison
       - astyle
       - libsqlite3-dev
+      - expect
+      - tcl
   coverity_scan:
     project:
       name: "Elemental-IRCd/elemental-ircd"

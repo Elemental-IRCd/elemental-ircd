@@ -1,91 +1,28 @@
-loadmodule "extensions/extb_account.so";
-loadmodule "extensions/extb_channel.so";
-loadmodule "extensions/extb_oper.so";
-loadmodule "extensions/extb_realname.so";
-loadmodule "extensions/extb_server.so";
-#loadmodule "extensions/ip_cloaking.so";
-loadmodule "extensions/sno_farconnect.so";
-loadmodule "extensions/sno_globalkline.so";
-#loadmodule "extensions/sno_globaloper.so";
 
 serverinfo {
-	name = "testsuite3.";
+	name = "leaf2.local";
 	sid = "3TT";
 	description = "Testsuite";
 	network_name = "Testsuite";
 	network_desc = "Testing";
-	hub = yes;
-	vhost = "127.0.0.1";
+
+	hub = no;
+	vhost = "127.0.0.3";
 };
 
-admin {
-	name = "Here";
-	description = "Elemental testsuite server";
-	email = "root@localhost";
+.include <common.conf>
+
+listen {
+	host = "127.0.0.3";
+	port = 6667;
 };
 
-class "users" {
-	ping_time = 5 minutes;
-	number_per_ip = 100;
-	max_number = 200;
-	sendq = 100kb;
-};
-
-class "server" {
-	ping_time = 5 minutes;
-	connectfreq = 5 minutes;
-	max_number = 3;
-	sendq = 5 megabytes;
-};
-
-listen { host = "127.0.0.1"; port = 7603; };
-
-auth { user = "*@127.0.0.0/8"; class = "users"; };
-
-operator "oper" {
-	user = "*@127.0.0.0/8";
-	password = "testsuite";
-	flags = ~encrypted;
-};
-
-connect "testsuite1." {
+connect "hub.local" {
 	host = "127.0.0.1";
-	port = 7601;
-	send_password = "testsuite";
-	accept_password = "testsuite";
-	hub_mask = "*";
+	send_password = "dev";
+	accept_password = "dev";
+	port = 6667;
+	flags = topicburst, autoconn;
 	class = "server";
-	flags = topicburst;
-};
-
-connect "testsuite2." {
-	host = "127.0.0.1";
-	port = 7602;
-	send_password = "testsuite";
-	accept_password = "testsuite";
 	hub_mask = "*";
-	class = "server";
-	flags = topicburst;
-};
-
-shared {
-	oper = "*@*", "*";
-	flags = all;
-};
-
-alias "NickServ" {
-	target = "NickServ";
-};
-alias "ChanServ" {
-	target = "ChanServ";
-};
-alias "OperServ" {
-	target = "OperServ";
-};
-alias "MemoServ" {
-	target = "MemoServ";
-};
-
-service {
-	name = "services.";
 };

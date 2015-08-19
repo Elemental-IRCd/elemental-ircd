@@ -65,7 +65,7 @@ struct Message {
 				 * seconds -SRB
 				 */
     /* handlers:
-     * UNREGISTERED, CLIENT, RCLIENT, SERVER, OPER, LAST
+     * UNREGISTERED, CLIENT, RCLIENT, SERVER, ENCAP, OPER
      */
     struct MessageEntry handlers[LAST_HANDLER_TYPE];
 };
