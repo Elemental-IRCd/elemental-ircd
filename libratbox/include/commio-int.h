@@ -119,15 +119,6 @@ struct _fde {
 
 typedef void (*comm_event_cb_t) (void *);
 
-#ifdef USE_TIMER_CREATE
-typedef struct timer_data {
-    timer_t td_timer_id;
-    comm_event_cb_t td_cb;
-    void *td_udata;
-    int td_repeat;
-} *comm_event_id;
-#endif
-
 extern rb_dlink_list *rb_fd_table;
 
 static inline rb_fde_t *
