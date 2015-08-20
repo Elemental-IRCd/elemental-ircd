@@ -160,6 +160,9 @@ rb_strlcpy(char *dest, const char *src, size_t size)
 {
     size_t ret = strlen(src);
 
+    if(dest == src)
+        return ret;
+
     if(size) {
         size_t len = (ret >= size) ? size - 1 : ret;
         memcpy(dest, src, len);
@@ -171,6 +174,9 @@ rb_strlcpy(char *dest, const char *src, size_t size)
 size_t
 rb_strlcpy(char *dest, const char *src, size_t size)
 {
+    if(dest == src)
+        return ret;
+
     return strlcpy(dest, src, size);
 }
 #endif
