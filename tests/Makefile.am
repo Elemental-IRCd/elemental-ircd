@@ -1,3 +1,3 @@
-TESTS = register.exp \
-        chghost.exp \
-        privmsg.exp
+TESTS = register.tcl \
+        chghost.tcl \
+        privmsg.tcl
