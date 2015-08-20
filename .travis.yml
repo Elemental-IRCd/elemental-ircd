@@ -1,6 +1,11 @@
 language: c
+
+os:
+  - linux
+  - osx
+
 compiler:
-- gcc
+  - gcc
 
 #See http://docs.travis-ci.com/user/migrating-from-legacy/
 #Using legacy infrastructure for now as the test suite needs
@@ -13,10 +18,30 @@ env:
    #   via the "travis encrypt" command using the project repo's public key
    - secure: "Glbq3TqHAvxEiaxiTyV+pP+1aE+giEV7L5qJzQrUzs8k+XjvvgR6ixI7wezV4520lz8tHcvEakLJd2dD8YLJbjKnSEmamn4oSF0a0/Lvv/eoytHeKMKjN6LHZ/87DgA+gKGskJc4Ai6CYFliCwcqGlGVPmgcKDy9bZn28Csu6o0="
 
+   # Needed for osx builds
+   - PKG_CONFIG_PATH: /usr/local/opt/sqlite/lib/pkgconfig
+
 before_script:
-  - sudo add-apt-repository ppa:ariscop/tcloo -y
-  - sudo apt-get update -q
-  - sudo apt-get install tcloo
+  - |
+    case $TRAVIS_OS_NAME in
+    linux)
+      sudo add-apt-repository ppa:ariscop/tcloo -y
+      sudo apt-get update -q
+      sudo apt-get install tcloo
+      ;;
+    osx)
+      EDITOR=/bin/true \
+      brew install autoconf-archive
+      brew install sqlite
+      wget http://downloads.sourceforge.net/project/tcl/TclOO%20Package/1.0.2/TclOO1.0.2.tar.gz
+      tar -xf TclOO1.0.2.tar.gz
+      pushd TclOO1.0.2
+      ./configure
+      make
+      sudo make install
+      popd
+      ;;
+    esac
 
 script:
   - ./autogen.sh
