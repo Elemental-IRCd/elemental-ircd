@@ -174,8 +174,9 @@ rb_strlcpy(char *dest, const char *src, size_t size)
 size_t
 rb_strlcpy(char *dest, const char *src, size_t size)
 {
-    if(dest == src)
-        return ret;
+    if(dest == src) {
+        return strlen(src);
+    }
 
     return strlcpy(dest, src, size);
 }
