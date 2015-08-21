@@ -196,6 +196,7 @@ init_sys(void)
 static int
 make_daemon(void)
 {
+#ifndef _WIN32
     int pid;
     int pip[2];
     char c;
@@ -226,7 +227,7 @@ make_daemon(void)
     /*	fclose(stdin);
     	fclose(stdout);
     	fclose(stderr); */
-
+#endif
     return 0;
 }
 
@@ -407,7 +408,7 @@ check_pidfile(const char *filename)
     if((fb = fopen(filename, "r"))) {
         if(fgets(buff, 20, fb) != NULL) {
             pidfromfile = atoi(buff);
-            if(!kill(pidfromfile, 0)) {
+            if(!rb_kill(pidfromfile, 0)) {
                 printf("ircd: daemon is already running\n");
                 exit(-1);
             }
@@ -526,11 +527,13 @@ main(int argc, char *argv[])
 {
     int fd;
 
+#ifndef _WIN32
     /* Check to see if the user is running us as root, which is a nono */
     if(geteuid() == 0) {
         fprintf(stderr, "Don't run ircd as root!!!\n");
         return -1;
     }
+#endif
 
     init_sys();
 

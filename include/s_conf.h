@@ -389,7 +389,6 @@ extern char conffilebuf[IRCD_BUFSIZE + 1];
 extern int lineno;
 
 #define NOT_AUTHORISED  (-1)
-#define SOCKET_ERROR    (-2)
 #define I_LINE_FULL     (-3)
 #define BANNED_CLIENT   (-4)
 #define TOO_MANY_LOCAL	(-6)

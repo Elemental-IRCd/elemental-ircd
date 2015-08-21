@@ -150,16 +150,14 @@ fi
 
 AC_SUBST(CRYPT_LIB)
 
-if test "$ac_cv_header_sys_wait_h" = yes -o "$ac_cv_header_wait_h" = yes; then
-	VICONF=viconf
+if test x"$ac_cv_header_sys_wait_h" = yes -o x"$ac_cv_header_wait_h" = yes; then
+	VICONF=yes
 	dnl We need one of the above to build viconf. Just a sanity check,
 	dnl we don't want to stop people from building the rest of ircd
 	dnl just because they can't build viconf.
-else
-	VICONF=""
 fi
 
-AC_SUBST(VICONF)
+AM_CONDITIONAL([BUILD_VICONF],[test x"$VICONF" = x"yes"])
 
 dnl See whether we can include both string.h and strings.h.
 AC_CACHE_CHECK([whether string.h and strings.h may both be included],
