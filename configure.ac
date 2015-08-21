@@ -182,51 +182,7 @@ AC_C_BIGENDIAN
 dnl Check for stdarg.h - if we can't find it, halt configure
 AC_CHECK_HEADER(stdarg.h, , [AC_MSG_ERROR([** stdarg.h could not be found - charybdis will not compile without it **])])
 
-dnl Checks for the existence of strlcat, strlcpy, basename...
-dnl This more reliable test only works with gcc though.
-
-if test "$ac_cv_c_compiler_gnu" = yes; then
-
-AC_MSG_CHECKING(for strlcpy)
-save_CFLAGS=$CFLAGS
-CFLAGS="$CFLAGS -Wimplicit -Werror"
-
-AC_LINK_IFELSE(
-	[AC_LANG_PROGRAM(
-		[[#include <string.h>
-		#include <stdlib.h>]],
-		[[char *a = malloc(6);
-		strlcpy(a, "hello", 6);]]
-	)],
-	[AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_STRLCPY, 1, [Define if strlcpy is available (most BSDs.)])],
-	[AC_MSG_RESULT(no)]
-)
-
-AC_MSG_CHECKING(for strlcat)
-AC_LINK_IFELSE(
-	[AC_LANG_PROGRAM(
-		[[#include <string.h>
-		#include <stdlib.h>]],
-		[[char *a = malloc(6);
-		a[0] = '\0';
-		strlcat(a, "hello", 6);]]
-	)],
-	[AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_STRLCAT, 1, [Define if strlcat is available (most BSDs.)])],
-	[AC_MSG_RESULT(no)]
-)
-
-CFLAGS=$save_CFLAGS
-
-else
-
-dnl Better than nothing. The more complicated test above probably fixes powerpc,
-dnl so who cares.
-
 AC_CHECK_FUNCS([strlcat strlcpy])
-
-fi
 
 AC_CHECK_TYPE([u_int32_t], [],
 [
@@ -251,16 +207,6 @@ AC_CHECK_TYPE([u_int16_t], [],
 		AC_DEFINE(u_int16_t, [unsigned short int], [If system does not define u_int16_t, define a usable substitute.])
 	])
 ])
-
-AC_CHECK_TYPE([in_port_t], [],
-[AC_DEFINE(in_port_t, [u_int16_t], [If system does not define in_port_t, define it to what it should be.])],
-[[#include <sys/types.h>
-#include <netinet/in.h>]])
-
-AC_CHECK_TYPE([sa_family_t], [],
-[AC_DEFINE(sa_family_t, [u_int16_t], [If system does not define sa_family_t, define it here.])],
-[[#include <sys/types.h>
-#include <sys/socket.h>]])
 
 AC_CHECK_TYPES([uintptr_t])
 
