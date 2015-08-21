@@ -713,7 +713,7 @@ static int res_read_single_reply(rb_fde_t *F, void *data)
     struct DNSReply *reply = NULL;
     int rc;
     int answer_count;
-    socklen_t len = sizeof(struct rb_sockaddr_storage);
+    rb_socklen_t len = sizeof(struct rb_sockaddr_storage);
     struct rb_sockaddr_storage lsin;
 
     rc = recvfrom(rb_get_fd(F), buf, sizeof(buf), 0, (struct sockaddr *)&lsin, &len);

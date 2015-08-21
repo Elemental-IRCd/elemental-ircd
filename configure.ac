@@ -135,13 +135,6 @@ PKG_CHECK_MODULES([SQLITE], [sqlite3 > 3.0.0])
 dnl Networking Functions
 dnl ====================
 
-
-AC_CHECK_TYPE(socklen_t, ,
-[AC_DEFINE([socklen_t], [unsigned int],
-[If we don't have a real socklen_t, unsigned int is good enough.])],
-[#include <sys/types.h>
-#include <sys/socket.h>])
-
 AC_ARG_ENABLE(ipv6,
 AS_HELP_STRING([--enable-ipv6],[Enable IPv6 support]),[ipv6=$enableval],[ipv6=no])
 
