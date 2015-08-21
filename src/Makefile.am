@@ -1,7 +1,7 @@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libratbox/include
-AM_YFLAGS = -d
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libratbox/include @LTDLINCL@
 AM_LDFLAGS = -export-dynamic
-LDADD = ../libratbox/src/libratbox.la -ldl
+AM_YFLAGS = -d
+LDADD = ../libratbox/src/libratbox.la @LIBLTDL@
 
 bin_PROGRAMS = ircd
 ircd_SOURCES =                  \

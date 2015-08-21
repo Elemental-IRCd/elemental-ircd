@@ -39,18 +39,21 @@
 #include "match.h"
 #include "s_serv.h"
 
+#include <ltdl.h>
 
+struct module {
+    char *name;
+    const char *version;
+    lt_dlhandle handle;
+    void *address;
+    int core;
+    int mapi_version;
+    void * mapi_header; /* actually struct mapi_mheader_av<mapi_version>	*/
+};
 
-/* -TimeMr14C:
- * I have moved the dl* function definitions and
- * the two functions (load_a_module / unload_a_module) to the
- * file dynlink.c
- * And also made the necessary changes to those functions
- * to comply with shl_load and friends.
- * In this file, to keep consistency with the makefile,
- * I added the ability to load *.sl files, too.
- * 27/02/2002
- */
+struct module_path {
+    char path[MAXPATHLEN];
+};
 
 struct module **modlist = NULL;
 
@@ -124,6 +127,8 @@ struct Message modrestart_msgtab = {
 void
 modules_init(void)
 {
+    lt_dlinit();
+
     mod_add_cmd(&modload_msgtab);
     mod_add_cmd(&modunload_msgtab);
     mod_add_cmd(&modreload_msgtab);
@@ -606,16 +611,6 @@ do_modrestart(struct Client *source_p)
     return 0;
 }
 
-
-
-#ifndef RTLD_NOW
-#define RTLD_NOW RTLD_LAZY	/* openbsd deficiency */
-#endif
-
-#ifndef RTLD_LOCAL
-#define RTLD_LOCAL 0
-#endif
-
 static void increase_modlist(void);
 
 #define MODS_INCREMENT 10
@@ -626,145 +621,6 @@ static char unknown_ver[] = "<unknown>";
  * -TimeMr14C
  */
 
-
-#ifdef HAVE_MACH_O_DYLD_H
-/*
-** jmallett's dl*(3) shims for NSModule(3) systems.
-*/
-#include <mach-o/dyld.h>
-
-#ifndef HAVE_DLOPEN
-#ifndef	RTLD_LAZY
-#define RTLD_LAZY 2185		/* built-in dl*(3) don't care */
-#endif
-
-void undefinedErrorHandler(const char *);
-NSModule multipleErrorHandler(NSSymbol, NSModule, NSModule);
-void linkEditErrorHandler(NSLinkEditErrors, int, const char *, const char *);
-char *dlerror(void);
-void *dlopen(char *, int);
-int dlclose(void *);
-void *dlsym(void *, char *);
-
-static int firstLoad = TRUE;
-static int myDlError;
-static char *myErrorTable[] = { "Loading file as object failed\n",
-                                "Loading file as object succeeded\n",
-                                "Not a valid shared object\n",
-                                "Architecture of object invalid on this architecture\n",
-                                "Invalid or corrupt image\n",
-                                "Could not access object\n",
-                                "NSCreateObjectFileImageFromFile failed\n",
-                                NULL
-                              };
-
-void
-undefinedErrorHandler(const char *symbolName)
-{
-    sendto_realops_snomask(SNO_GENERAL, L_NETWIDE, "Undefined symbol: %s", symbolName);
-    ilog(L_MAIN, "Undefined symbol: %s", symbolName);
-    return;
-}
-
-NSModule
-multipleErrorHandler(NSSymbol s, NSModule old, NSModule new)
-{
-    /* XXX
-     ** This results in substantial leaking of memory... Should free one
-     ** module, maybe?
-     */
-    sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-                           "Symbol `%s' found in `%s' and `%s'",
-                           NSNameOfSymbol(s), NSNameOfModule(old), NSNameOfModule(new));
-    ilog(L_MAIN, "Symbol `%s' found in `%s' and `%s'",
-         NSNameOfSymbol(s), NSNameOfModule(old), NSNameOfModule(new));
-    /* We return which module should be considered valid, I believe */
-    return new;
-}
-
-void
-linkEditErrorHandler(NSLinkEditErrors errorClass, int errnum,
-                     const char *fileName, const char *errorString)
-{
-    sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-                           "Link editor error: %s for %s", errorString, fileName);
-    ilog(L_MAIN, "Link editor error: %s for %s", errorString, fileName);
-    return;
-}
-
-char *
-dlerror(void)
-{
-    return myDlError == NSObjectFileImageSuccess ? NULL : myErrorTable[myDlError % 7];
-}
-
-void *
-dlopen(char *filename, int unused)
-{
-    NSObjectFileImage myImage;
-    NSModule myModule;
-
-    if(firstLoad) {
-        /*
-         ** If we are loading our first symbol (huzzah!) we should go ahead
-         ** and install link editor error handling!
-         */
-        NSLinkEditErrorHandlers linkEditorErrorHandlers;
-
-        linkEditorErrorHandlers.undefined = undefinedErrorHandler;
-        linkEditorErrorHandlers.multiple = multipleErrorHandler;
-        linkEditorErrorHandlers.linkEdit = linkEditErrorHandler;
-        NSInstallLinkEditErrorHandlers(&linkEditorErrorHandlers);
-        firstLoad = FALSE;
-    }
-    myDlError = NSCreateObjectFileImageFromFile(filename, &myImage);
-    if(myDlError != NSObjectFileImageSuccess) {
-        return NULL;
-    }
-    myModule = NSLinkModule(myImage, filename, NSLINKMODULE_OPTION_PRIVATE);
-    return (void *) myModule;
-}
-
-int
-dlclose(void *myModule)
-{
-    NSUnLinkModule(myModule, FALSE);
-    return 0;
-}
-
-void *
-dlsym(void *myModule, char *mySymbolName)
-{
-    NSSymbol mySymbol;
-
-    mySymbol = NSLookupSymbolInModule((NSModule) myModule, mySymbolName);
-    return NSAddressOfSymbol(mySymbol);
-}
-#endif
-#endif
-
-
-/*
- * HPUX dl compat functions
- */
-#if defined(HAVE_SHL_LOAD) && !defined(HAVE_DLOPEN)
-#define RTLD_LAZY BIND_DEFERRED
-#define RTLD_GLOBAL DYNAMIC_PATH
-#define dlopen(file,mode) (void *)shl_load((file), (mode), (long) 0)
-#define dlclose(handle) shl_unload((shl_t)(handle))
-#define dlsym(handle,name) hpux_dlsym(handle,name)
-#define dlerror() strerror(errno)
-
-static void *
-hpux_dlsym(void *handle, char *name)
-{
-    void *sym_addr;
-    if(!shl_findsym((shl_t *) & handle, name, TYPE_UNDEFINED, &sym_addr))
-        return sym_addr;
-    return NULL;
-}
-
-#endif
 
 /* unload_one_module()
  *
@@ -823,7 +679,7 @@ unload_one_module(const char *name, int warn)
         break;
     }
 
-    dlclose(modlist[modindex]->address);
+    lt_dlclose(modlist[modindex]->handle);
 
     rb_free(modlist[modindex]->name);
     memmove(&modlist[modindex], &modlist[modindex + 1],
@@ -851,7 +707,7 @@ unload_one_module(const char *name, int warn)
 int
 load_a_module(const char *path, int warn, int core)
 {
-    void *tmpptr = NULL;
+    lt_dlhandle handle;
 
     char *mod_basename;
     const char *ver;
@@ -860,10 +716,10 @@ load_a_module(const char *path, int warn, int core)
 
     mod_basename = rb_basename(path);
 
-    tmpptr = dlopen(path, RTLD_NOW | RTLD_LOCAL);
+    handle = lt_dlopen(path);
 
-    if(tmpptr == NULL) {
-        const char *err = dlerror();
+    if(handle == NULL) {
+        const char *err = lt_dlerror();
 
         sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
                                "Error loading module %s: %s", mod_basename, err);
@@ -879,15 +735,15 @@ load_a_module(const char *path, int warn, int core)
      * as a single int in order to determine the API version.
      *      -larne.
      */
-    mapi_version = (int *) (uintptr_t) dlsym(tmpptr, "_mheader");
+    mapi_version = (int *) (uintptr_t) lt_dlsym(handle, "_mheader");
     if((mapi_version == NULL
-        && (mapi_version = (int *) (uintptr_t) dlsym(tmpptr, "__mheader")) == NULL)
+        && (mapi_version = (int *) (uintptr_t) lt_dlsym(handle, "__mheader")) == NULL)
        || MAPI_MAGIC(*mapi_version) != MAPI_MAGIC_HDR) {
         sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
                                "Data format error: module %s has no MAPI header.",
                                mod_basename);
         ilog(L_MAIN, "Data format error: module %s has no MAPI header.", mod_basename);
-        (void) dlclose(tmpptr);
+        (void) lt_dlclose(handle);
         rb_free(mod_basename);
         return -1;
     }
@@ -901,7 +757,7 @@ load_a_module(const char *path, int warn, int core)
             sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
                                    "Module %s indicated failure during load.",
                                    mod_basename);
-            dlclose(tmpptr);
+            lt_dlclose(handle);
             rb_free(mod_basename);
             return -1;
         }
@@ -933,7 +789,7 @@ load_a_module(const char *path, int warn, int core)
         sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
                                "Module %s has unknown/unsupported MAPI version %d.",
                                mod_basename, *mapi_version);
-        dlclose(tmpptr);
+        lt_dlclose(handle);
         rb_free(mod_basename);
         return -1;
     }
@@ -944,7 +800,8 @@ load_a_module(const char *path, int warn, int core)
     increase_modlist();
 
     modlist[num_mods] = rb_malloc(sizeof(struct module));
-    modlist[num_mods]->address = tmpptr;
+    modlist[num_mods]->handle = handle;
+    modlist[num_mods]->address = mapi_version; /* ltdl can't return the load address, this is close enough */
     modlist[num_mods]->version = ver;
     modlist[num_mods]->core = core;
     modlist[num_mods]->name = rb_strdup(mod_basename);
@@ -956,9 +813,9 @@ load_a_module(const char *path, int warn, int core)
         sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
                                "Module %s [version: %s; MAPI version: %d] loaded at 0x%lx",
                                mod_basename, ver, MAPI_VERSION(*mapi_version),
-                               (unsigned long) tmpptr);
+                               (unsigned long) mapi_version);
         ilog(L_MAIN, "Module %s [version: %s; MAPI version: %d] loaded at 0x%lx",
-             mod_basename, ver, MAPI_VERSION(*mapi_version), (unsigned long) tmpptr);
+             mod_basename, ver, MAPI_VERSION(*mapi_version), (unsigned long) mapi_version);
     }
     rb_free(mod_basename);
     return 0;

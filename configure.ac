@@ -20,6 +20,12 @@ AC_PROG_CC_C99([], [AC_MSG_ERROR(elemental-ircd requires a C99 capable compiler)
 
 LT_INIT([dlopen])
 
+LT_CONFIG_LTDL_DIR([extra/libltdl])
+LTDL_INIT
+
+build_ltdl=$with_included_ltdl
+AM_CONDITIONAL([BUILD_LTDL], [test x"$build_ltdl" = x"yes"])
+
 GCC_STACK_PROTECT_CC
 
 dnl Checks for programs.

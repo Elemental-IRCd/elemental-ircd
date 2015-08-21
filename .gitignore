@@ -34,9 +34,11 @@ libratbox/libratbox.pc
 libratbox/libtool
 libratbox/m4/libtool.m4
 libratbox/m4/lt*
+libratbox/m4/argz.m4
 libratbox/src/version.c
 libratbox/tools/*
 libtool
+libltdl/
 ltmain.sh
 missing
 scripts/*.tbz2
