@@ -1,5 +1,6 @@
-AM_CPPFLAGS = -I../include -I../libratbox/include
-AM_LDFLAGS = -module -export-dynamic -avoid-version
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libratbox/include
+AM_LDFLAGS = -L$(top_srcdir)/libratbox/src -module -export-dynamic -avoid-version -no-undefined
+LDADD = -lratbox
 
 extensiondir=@moduledir@/extensions
 

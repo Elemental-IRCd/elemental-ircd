@@ -1,12 +1,8 @@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libratbox/include @LTDLINCL@
-AM_LDFLAGS = -export-dynamic
+AM_CPPFLAGS = @LTDLINCL@ -I$(top_srcdir)/include -I$(top_srcdir)/libratbox/include
+AM_LDFLAGS  = -L$(top_srcdir)/libratbox/src -export-dynamic -avoid-version -no-undefined
 AM_YFLAGS = -d
-LDADD = ../libratbox/src/libratbox.la @LIBLTDL@
+LDADD = @LIBLTDL@ -lratbox
 
-if WINDOWS
-AM_LDFLAGS += -Wl,--out-implib=ircd.exe.lib
-AM_LDFLAGS += -Wl,--output-def=ircd.exe.def
-endif
 
 bin_PROGRAMS = ircd
 ircd_SOURCES =                  \
