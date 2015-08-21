@@ -52,7 +52,7 @@ AC_SEARCH_LIBS([strerror],[cposix])
 dnl Checks for header files.
 AC_HEADER_STDC
 
-AC_CHECK_HEADERS([crypt.h unistd.h sys/socket.h sys/stat.h sys/time.h time.h netinet/in.h arpa/inet.h errno.h sys/uio.h spawn.h sys/poll.h sys/epoll.h sys/select.h sys/devpoll.h sys/event.h port.h signal.h sys/signalfd.h sys/timerfd.h linux/tcp.h windows.h])
+AC_CHECK_HEADERS([crypt.h unistd.h sys/socket.h sys/stat.h sys/time.h time.h netinet/in.h arpa/inet.h errno.h sys/uio.h spawn.h sys/poll.h sys/epoll.h sys/select.h sys/devpoll.h sys/event.h port.h signal.h sys/signalfd.h sys/timerfd.h netdb.h windows.h])
 AC_HEADER_TIME
 
 dnl Networking Functions
@@ -395,6 +395,10 @@ fi
 
 if test "x$rb_netinet_in_h" = "xyes"; then
 	echo '#include <netinet/in.h>' >> $outfile
+	echo '#include <netinet/tcp.h>' >> $outfile
+fi
+if test "x$rb_netdb_h" = "xyes"; then
+	echo '#include <netdb.h>' >> $outfile
 fi
 
 if test "x$rb_arpa_inet_h" = "xyes"; then
@@ -476,6 +480,13 @@ fi
 	fi
 	if test x$ac_cv_header_netinet_in_h = xyes; then
 		rb_netinet_in_h=yes
+	fi
+	if test x$ac_cv_header_netdb_h = xyes; then
+		rb_netdb_h=yes
+	fi
+
+	if test x$ac_cv_arpa_inet_h = xyes; then
+		rb_arpa_inet_h=yes
 	fi
 
 	if test x$ac_cv_header_crypt_h = xyes; then
