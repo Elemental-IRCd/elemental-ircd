@@ -975,7 +975,7 @@ rb_writev(rb_fde_t *F, struct rb_iovec * vector, int count)
 #ifdef HAVE_WRITEV
     return writev(F->fd, (struct iovec *)vector, count);
 #else
-    return rb_fake_writev(F, vecount, count);
+    return rb_fake_writev(F, vector, count);
 #endif /* HAVE_WRITEV */
 }
 
@@ -1544,10 +1544,6 @@ rb_inet_socketpair_udp(rb_fde_t **newF1, rb_fde_t **newF2)
     *newF1 = F[0];
     *newF2 = F[1];
     return 0;
-
-#ifdef _WIN32
-#define	ECONNABORTED WSAECONNABORTED
-#endif
 
 abort_failed:
     rb_get_errno();

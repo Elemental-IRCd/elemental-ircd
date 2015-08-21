@@ -54,17 +54,15 @@ char *alloca();
 #endif
 
 #define strerror(x) rb_strerror(x)
-char *rb_strerror(int error);
 
-
-#define ENOBUFS	    WSAENOBUFS
-#define EINPROGRESS WSAEINPROGRESS
-#define EWOULDBLOCK WSAEWOULDBLOCK
-#define EMSGSIZE    WSAEMSGSIZE
-#define EALREADY    WSAEALREADY
-#define EISCONN     WSAEISCONN
-#define EADDRINUSE  WSAEADDRINUSE
-#define EAFNOSUPPORT WSAEAFNOSUPPORT
+//define ENOBUFS	    WSAENOBUFS
+//define EINPROGRESS WSAEINPROGRESS
+//define EWOULDBLOCK WSAEWOULDBLOCK
+//define EMSGSIZE    WSAEMSGSIZE
+//define EALREADY    WSAEALREADY
+//define EISCONN     WSAEISCONN
+//define EADDRINUSE  WSAEADDRINUSE
+//define EAFNOSUPPORT WSAEAFNOSUPPORT
 
 #define pipe(x)  _pipe(x, 1024, O_BINARY)
 #define ioctl(x,y,z)  ioctlsocket(x,y, (u_long *)z)
