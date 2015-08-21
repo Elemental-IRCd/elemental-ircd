@@ -104,7 +104,7 @@ sigint_handler(int sig)
         }
     }
 }
-#endif
+#endif /* _WIN32 */
 
 /*
  * setup_signals - initialize signal handlers for server
@@ -160,5 +160,5 @@ setup_signals()
     act.sa_handler = sigchld_handler;
     sigaddset(&act.sa_mask, SIGCHLD);
     sigaction(SIGCHLD, &act, 0);
-#endif
+#endif /* _WIN32 */
 }

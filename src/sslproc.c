@@ -571,11 +571,11 @@ send_new_ssl_certs_one(ssl_ctl_t * ctl, const char *ssl_cert, const char *ssl_pr
     len = strlen(ssl_cert) + strlen(ssl_private_key) + strlen(ssl_dh_params) + 5;
     if(len > sizeof(tmpbuf)) {
         sendto_realops_snomask(SNO_GENERAL, L_ALL,
-                               "Parameters for send_new_ssl_certs_one too long (%zu > %zu) to pass to ssld, not sending...",
-                               len, sizeof(tmpbuf));
+                               "Parameters for send_new_ssl_certs_one too long (%d > %d) to pass to ssld, not sending...",
+                               (int)len, (int)sizeof(tmpbuf));
         ilog(L_MAIN,
-             "Parameters for send_new_ssl_certs_one too long (%zu > %zu) to pass to ssld, not sending...",
-             len, sizeof(tmpbuf));
+             "Parameters for send_new_ssl_certs_one too long (%d > %d) to pass to ssld, not sending...",
+             (int)len, (int)sizeof(tmpbuf));
         return;
     }
     len = snprintf(tmpbuf, sizeof(tmpbuf), "K%c%s%c%s%c%s%c", nul, ssl_cert, nul,
@@ -598,11 +598,11 @@ send_init_prng(ssl_ctl_t * ctl, prng_seed_t seedtype, const char *path)
     len = strlen(s) + 3;
     if(len > sizeof(tmpbuf)) {
         sendto_realops_snomask(SNO_GENERAL, L_ALL,
-                               "Parameters for send_init_prng too long (%zd > %zd) to pass to ssld, not sending...",
-                               len, sizeof(tmpbuf));
+                               "Parameters for send_init_prng too long (%d > %d) to pass to ssld, not sending...",
+                               (int)len, (int)sizeof(tmpbuf));
         ilog(L_MAIN,
-             "Parameters for send_init_prng too long (%zd > %zd) to pass to ssld, not sending...",
-             len, sizeof(tmpbuf));
+             "Parameters for send_init_prng too long (%d > %d) to pass to ssld, not sending...",
+             (int)len, (int)sizeof(tmpbuf));
         return;
 
     }
@@ -707,9 +707,9 @@ start_zlib_session(void *data)
 
     if(len > READBUF_SIZE) {
         sendto_realops_snomask(SNO_GENERAL, L_ALL,
-                               "ssld - attempted to pass message of %zd len, max len %d, giving up",
-                               len, READBUF_SIZE);
-        ilog(L_MAIN, "ssld - attempted to pass message of %zd len, max len %d, giving up", len, READBUF_SIZE);
+                               "ssld - attempted to pass message of %d len, max len %d, giving up",
+                               (int)len, READBUF_SIZE);
+        ilog(L_MAIN, "ssld - attempted to pass message of %d len, max len %d, giving up", (int)len, READBUF_SIZE);
         exit_client(server, server, server, "ssld readbuf exceeded");
         return;
     }

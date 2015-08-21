@@ -9,6 +9,8 @@ Makefile.in
 *.swp
 *.orig
 *.log
+*.exe
+*.dll
 .deps
 .dirstamp
 .libs
