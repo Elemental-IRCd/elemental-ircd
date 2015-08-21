@@ -40,7 +40,7 @@ struct hostent;
 /* yacc/lex love globals!!! */
 
 struct ip_value {
-    struct rb_sockaddr_storage ip;
+    struct sockaddr_storage ip;
     int ip_mask;
     int type;
 };

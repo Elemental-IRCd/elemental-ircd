@@ -56,14 +56,14 @@ static int accept_precallback(rb_fde_t *F, struct sockaddr *addr, rb_socklen_t a
 static void accept_callback(rb_fde_t *F, int status, struct sockaddr *addr, rb_socklen_t addrlen, void *data);
 
 static struct Listener *
-make_listener(struct rb_sockaddr_storage *addr)
+make_listener(struct sockaddr_storage *addr)
 {
     struct Listener *listener = (struct Listener *) rb_malloc(sizeof(struct Listener));
     s_assert(0 != listener);
     listener->name = me.name;
     listener->F = NULL;
 
-    memcpy(&listener->addr, addr, sizeof(struct rb_sockaddr_storage));
+    memcpy(&listener->addr, addr, sizeof(struct sockaddr_storage));
     listener->next = NULL;
     return listener;
 }
@@ -231,7 +231,7 @@ inetport(struct Listener *listener)
 }
 
 static struct Listener *
-find_listener(struct rb_sockaddr_storage *addr)
+find_listener(struct sockaddr_storage *addr)
 {
     struct Listener *listener = NULL;
     struct Listener *last_closed = NULL;
@@ -287,7 +287,7 @@ void
 add_listener(int port, const char *vhost_ip, int family, int ssl, int defer_accept)
 {
     struct Listener *listener;
-    struct rb_sockaddr_storage vaddr;
+    struct sockaddr_storage vaddr;
 
     /*
      * if no port in conf line, don't bother
@@ -415,8 +415,8 @@ add_connection(struct Listener *listener, rb_fde_t *F, struct sockaddr *sai, str
      */
     new_client = make_client(NULL);
 
-    memcpy(&new_client->localClient->ip, sai, sizeof(struct rb_sockaddr_storage));
-    memcpy(&new_client->preClient->lip, lai, sizeof(struct rb_sockaddr_storage));
+    memcpy(&new_client->localClient->ip, sai, sizeof(struct sockaddr_storage));
+    memcpy(&new_client->preClient->lip, lai, sizeof(struct sockaddr_storage));
 
     /*
      * copy address to 'sockhost' as a string, copy it to host too
@@ -528,8 +528,8 @@ static void
 accept_callback(rb_fde_t *F, int status, struct sockaddr *addr, rb_socklen_t addrlen, void *data)
 {
     struct Listener *listener = data;
-    struct rb_sockaddr_storage lip;
-    unsigned int locallen = sizeof(struct rb_sockaddr_storage);
+    struct sockaddr_storage lip;
+    unsigned int locallen = sizeof(struct sockaddr_storage);
 
     ServerStats.is_ac++;
 

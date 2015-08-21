@@ -109,13 +109,18 @@ RB_PROTO_INET6([], [
 
 fi			
 
-AC_CHECK_TYPES([struct sockaddr_storage],[
-	rb_have_sockaddr_storage=yes
-        ],[], [
-		#include <sys/types.h>
-		#include <sys/socket.h>
-	])
-                
+AC_CHECK_TYPES([struct sockaddr_storage],[],[AC_MSG_ERROR([** Could not find sockaddr_storage])], [
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+#ifdef HAVE_WINDOWS_H
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#endif
+])
 
 dnl Check for stdarg.h - if we cant find it, halt configure
 AC_CHECK_HEADER(stdarg.h, , [AC_MSG_ERROR([** stdarg.h could not be found - libratbox will not compile without it **])])
@@ -415,12 +420,6 @@ if test "x$rb_sockaddr_sa_len" = "xyes"; then
 	echo '#define RB_SOCKADDR_HAS_SA_LEN 1' >> $outfile
 fi
 
-if test "x$rb_sockaddr_storage" = "xyes"; then
-	echo '#define rb_sockaddr_storage sockaddr_storage' >> $outfile
-else
-	echo 'struct rb_sockaddr_storage { uint8_t _padding[[128]]; };' >> $outfile
-fi
-
 cat >> $outfile <<\_______EOF
 #endif /* __LIBRB_CONFIG_H */
 _______EOF
@@ -497,12 +496,6 @@ fi
 
 	rb_socklen_t=$rb_socklen_t
 
-	if test "x$rb_have_sockaddr_storage" = "xyes"; then
-		rb_sockaddr_storage="yes" 
-	else
-		rb_sockaddr_storage="no"
-	fi
-	
 	rb_have_ipv6="$have_v6"
 		
 	rb_mv="$MV"

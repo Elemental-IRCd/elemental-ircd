@@ -76,7 +76,7 @@ struct AddressRec {
     union {
         struct {
             /* Pointer into ConfItem... -A1kmm */
-            struct rb_sockaddr_storage addr;
+            struct sockaddr_storage addr;
             int bits;
         }
         ipa;

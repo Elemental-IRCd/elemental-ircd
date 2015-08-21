@@ -70,8 +70,8 @@
 #endif
 struct conndata {
     /* We don't need the host here ? */
-    struct rb_sockaddr_storage S;
-    struct rb_sockaddr_storage hostaddr;
+    struct sockaddr_storage S;
+    struct sockaddr_storage hostaddr;
     time_t t;
     CNCB *callback;
     void *data;
@@ -79,7 +79,7 @@ struct conndata {
 };
 
 struct acceptdata {
-    struct rb_sockaddr_storage S;
+    struct sockaddr_storage S;
     rb_socklen_t addrlen;
     ACCB *callback;
     ACPRE *precb;

@@ -283,7 +283,7 @@ rb_checktimeouts(__unused void *notused)
 static void
 rb_accept_tryaccept(rb_fde_t *F, __unused void *notused)
 {
-    struct rb_sockaddr_storage st;
+    struct sockaddr_storage st;
     rb_fde_t *new_F;
     rb_socklen_t addrlen = sizeof(st);
     int new_fd;
