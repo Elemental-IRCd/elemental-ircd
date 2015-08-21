@@ -25,7 +25,6 @@ AC_PATH_PROG(CP, cp)
 
 AC_DISABLE_STATIC([])
 AC_ENABLE_SHARED([])
-AM_MAINTAINER_MODE
 
 LT_INIT([dlopen])
 
@@ -53,7 +52,7 @@ AC_SEARCH_LIBS([strerror],[cposix])
 dnl Checks for header files.
 AC_HEADER_STDC
 
-AC_CHECK_HEADERS([crypt.h unistd.h sys/socket.h sys/stat.h sys/time.h time.h netinet/in.h arpa/inet.h errno.h sys/uio.h spawn.h sys/poll.h sys/epoll.h sys/select.h sys/devpoll.h sys/event.h port.h signal.h sys/signalfd.h sys/timerfd.h linux/tcp.h windows.h winsock2.h])
+AC_CHECK_HEADERS([crypt.h unistd.h sys/socket.h sys/stat.h sys/time.h time.h netinet/in.h arpa/inet.h errno.h sys/uio.h spawn.h sys/poll.h sys/epoll.h sys/select.h sys/devpoll.h sys/event.h port.h signal.h sys/signalfd.h sys/timerfd.h linux/tcp.h windows.h])
 AC_HEADER_TIME
 
 dnl Networking Functions
@@ -70,55 +69,24 @@ member.])],,[[
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
-#ifdef HAVE_WINSOCK2_H
+#ifdef HAVE_WINDOWS_H
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #endif
 ]])
 
-AC_CHECK_TYPE([socklen_t], rb_cv_socklen_t=socklen_t,[
-	AC_MSG_CHECKING([for socklen_t equivalent])
-	AC_CACHE_VAL([rb_cv_socklen_t],
-	[
-	# Systems have either "struct sockaddr *" or
-	# "void *" as the second argument to getpeername
-	rb_cv_socklen_t=
-	for arg2 in "struct sockaddr" void; do
-		for t in int size_t unsigned long "unsigned long"; do
-			AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+AC_CHECK_TYPE([socklen_t], [rb_socklen_t=socklen_t], [rb_socklen_t=int], [
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
-#ifdef HAVE_WINSOCK2_H
+#ifdef HAVE_WINDOWS_H
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #endif
-int getpeername (int, $arg2 *, $t *);
-]], [[
-$t len;
-getpeername(0,0,&len);
-]])],[
-	rb_cv_socklen_t="$t"
-	break
-],[])
-		done
-	done
-
-	if test "x$rb_cv_socklen_t" = x; then
-		AC_MSG_WARN([Cannot find a type to use in place of socklen_t using int])
-		rb_cv_socklen_t=int
-	fi
-	])
-	AC_MSG_RESULT($rb_cv_socklen_t)],
-	[#include <sys/types.h>
-#include <sys/socket.h>])
-
-rb_socklen_t=$rb_cv_socklen_t
-
-
-
-
+])
 
 AC_ARG_ENABLE(ipv6,AS_HELP_STRING([--disable-ipv6],[Disable IPv6 support]),[ipv6=$enableval],[ipv6=yes])
 
@@ -376,6 +344,7 @@ if test "x$rb_windows_h" = "xyes"; then
 	echo '#define WIN32_LEAN_AND_MEAN 1' >> $outfile
 	echo '#include <windows.h>' >> $outfile
 	echo '#include <winsock2.h>' >> $outfile
+	echo '#include <ws2tcpip.h>' >> $outfile
 	echo '#include <iphlpapi.h>' >> $outfile
 fi
 
