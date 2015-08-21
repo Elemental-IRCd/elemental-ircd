@@ -6,11 +6,13 @@ Makefile.in
 *.dSYM/
 *.lo
 *.la
+*.lib
 *.swp
 *.orig
 *.log
 *.exe
 *.dll
+*.def
 .deps
 .dirstamp
 .libs

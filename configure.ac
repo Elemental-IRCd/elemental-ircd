@@ -18,7 +18,7 @@ AM_PROG_AR
 
 AC_PROG_CC_C99([], [AC_MSG_ERROR(elemental-ircd requires a C99 capable compiler)])
 
-LT_INIT([dlopen])
+LT_INIT([disable-static])
 
 LT_CONFIG_LTDL_DIR([extra/libltdl])
 LTDL_INIT

@@ -1,5 +1,9 @@
 AM_CPPFLAGS = -I../include -I../libratbox/include
-AM_LDFLAGS = -module -export-dynamic -avoid-version
+AM_LDFLAGS = -module -export-dynamic -avoid-version -no-undefined
+
+if WINDOWS
+AM_LDFLAGS += ../src/ircd.exe.lib
+endif
 
 automoddir=@moduledir@/autoload
 
@@ -67,7 +71,6 @@ automod_LTLIBRARIES =     \
     m_set.la              \
     m_signon.la           \
     m_snote.la            \
-    m_stats.la            \
     m_svinfo.la           \
     m_tb.la               \
     m_testline.la         \

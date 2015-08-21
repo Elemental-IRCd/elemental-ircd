@@ -3,6 +3,11 @@ AM_LDFLAGS = -export-dynamic
 AM_YFLAGS = -d
 LDADD = ../libratbox/src/libratbox.la @LIBLTDL@
 
+if WINDOWS
+AM_LDFLAGS += -Wl,--out-implib=ircd.exe.lib
+AM_LDFLAGS += -Wl,--output-def=ircd.exe.def
+endif
+
 bin_PROGRAMS = ircd
 ircd_SOURCES =                  \
   bandbi.c                      \
