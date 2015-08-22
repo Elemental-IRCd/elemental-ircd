@@ -22,6 +22,9 @@
  *
  */
 
+#ifndef INCLUDED_stdinc_h
+#define INCLUDED_stdinc_h
+
 #include "ratbox_lib.h"
 #include "config.h"		/* Gotta pull in the autoconf stuff */
 #include "ircd_defs.h"  /* Needed for some reasons here -- dwr */
@@ -99,3 +102,5 @@ extern int errno;
 # define LOCAL_COPY(s) strcpy(alloca(strlen(s) + 1), s) /* XXX Is that allowed? */
 #endif /* defined(__INTEL_COMPILER) || defined(__GNUC__) */
 #endif /* strdupa */
+
+#endif /* INCLUDED_stdinc_h */

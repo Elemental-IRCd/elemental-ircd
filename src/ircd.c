@@ -523,7 +523,7 @@ seed_random(void *unused)
  * Side Effects - this is where the ircd gets going right now
  */
 int
-main(int argc, char *argv[])
+ircd_main(int argc, char *argv[])
 {
     int fd;
 

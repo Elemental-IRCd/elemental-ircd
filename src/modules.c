@@ -250,7 +250,7 @@ load_all_modules(int warn)
 
     while ((ldirent = readdir(system_module_dir)) != NULL) {
         len = strlen(ldirent->d_name);
-        if((len > 3) && !strcmp(ldirent->d_name+len-3, SHARED_SUFFIX)) {
+        if((len > 3) && !strcmp(ldirent->d_name+len-3, LT_MODULE_EXT)) {
             (void) snprintf(module_fq_name, sizeof(module_fq_name), "%s/%s", AUTOMODPATH, ldirent->d_name);
             (void) load_a_module(module_fq_name, warn, 0);
         }
@@ -274,12 +274,12 @@ load_core_modules(int warn)
 
     for (i = 0; core_module_table[i]; i++) {
         snprintf(module_name, sizeof(module_name), "%s/%s%s", MODPATH,
-                    core_module_table[i], SHARED_SUFFIX);
+                    core_module_table[i], LT_MODULE_EXT);
 
         if(load_a_module(module_name, warn, 1) == -1) {
             ilog(L_MAIN,
                  "Error loading core module %s%s: terminating ircd",
-                 core_module_table[i], SHARED_SUFFIX);
+                 core_module_table[i], LT_MODULE_EXT);
             exit(0);
         }
     }

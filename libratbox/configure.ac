@@ -23,10 +23,7 @@ AC_PROG_INSTALL
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(CP, cp)
 
-AC_DISABLE_STATIC([])
-AC_ENABLE_SHARED([])
-
-LT_INIT([dlopen])
+LT_INIT([dlopen disable-static])
 
 GCC_STACK_PROTECT_CC
 

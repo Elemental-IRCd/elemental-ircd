@@ -9,16 +9,13 @@ AC_CONFIG_HEADERS([include/setup.h])
 AC_PREFIX_DEFAULT($HOME/ircd)
 AC_LANG(C)
 
-AC_ENABLE_SHARED
-AC_DISABLE_STATIC
-
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 AM_PROG_AR
 
 AC_PROG_CC_C99([], [AC_MSG_ERROR(elemental-ircd requires a C99 capable compiler)])
 
-LT_INIT([disable-static])
+LT_INIT([dlopen disable-static])
 
 LT_CONFIG_LTDL_DIR([extra/libltdl])
 LTDL_INIT
@@ -183,7 +180,7 @@ fi
 
 AC_C_BIGENDIAN
 
-dnl Check for stdarg.h - if we can't find it, halt configure
+dnl Check for stdarg.h - if we cant find it, halt configure
 AC_CHECK_HEADER(stdarg.h, , [AC_MSG_ERROR([** stdarg.h could not be found - charybdis will not compile without it **])])
 
 AC_CHECK_FUNCS([strlcat strlcpy])
@@ -467,20 +464,9 @@ AS_HELP_STRING([--with-topiclen=NUMBER],[Set the max topic length to NUMBER (def
 AC_DEFINE_UNQUOTED(TOPICLEN, ${TOPICLEN}, [Maximum topic length (<=390)])
 AC_DEFINE_UNQUOTED(NICKLEN, (${NICKLEN}+1), [Nickname length])
 
-AC_DEFINE_UNQUOTED(SHARED_SUFFIX, ".so", [Suffix for shared libraries on this platform.])
-
-# rpath, for finding libratbox.so at run time
-hold_ldflags=$LDFLAGS
-AC_MSG_CHECKING(for the ld -rpath flag)
-LDFLAGS="${LDFLAGS} -Wl,-rpath=${libdir}"
-AC_LINK_IFELSE([AC_LANG_PROGRAM([],[int i;])], found=yes, found=no)
-LDFLAGS=$hold_ldflags
-AC_MSG_RESULT($found)
-if test "$found" = yes; then
-	LDFLAGS="${LDFLAGS} -Wl,-rpath=\${libdir}"
-fi
-
 RB_CFLAGS
+AX_APPEND_LINK_FLAGS([-Wl,-rpath=\${libdir}])
+AX_APPEND_LINK_FLAGS([-Wl,--export-all-symbols])
 
 AC_SUBST(MODULES_LIBS)
 AC_SUBST(MOD_TARGET)
@@ -488,7 +474,6 @@ AC_SUBST(MOD_TARGET)
 AC_SUBST(LDFLAGS)
 AC_SUBST(PICFLAGS)
 AC_SUBST(SEDOBJ)
-
 
 if test "$prefix" = "NONE"; then 
 	AC_DEFINE_UNQUOTED(IRCD_PREFIX, "$ac_default_prefix", [Prefix where the ircd is installed.])

@@ -1,11 +1,14 @@
 AM_CPPFLAGS = @LTDLINCL@ -I$(top_srcdir)/include -I$(top_srcdir)/libratbox/include
-AM_LDFLAGS  = -L$(top_srcdir)/libratbox/src -export-dynamic -avoid-version -no-undefined
 AM_YFLAGS = -d
-LDADD = @LIBLTDL@ -lratbox
-
 
 bin_PROGRAMS = ircd
-ircd_SOURCES =                  \
+ircd_SOURCES = main.c
+ircd_LDADD = libelemental.la
+
+lib_LTLIBRARIES = libelemental.la
+libelemental_la_LDFLAGS  = -export-dynamic -avoid-version -shared -no-undefined
+libelemental_la_LDFLAGS += @LIBLTDL@ $(top_srcdir)/libratbox/src/libratbox.la
+libelemental_la_SOURCES =       \
   bandbi.c                      \
   blacklist.c                   \
   cache.c                       \
@@ -19,10 +22,10 @@ ircd_SOURCES =                  \
   hook.c                        \
   hostmask.c                    \
   irc_dictionary.c              \
-  ircd.c                        \
   ircd_parser.y                 \
   ircd_lexer.l                  \
   ircd_signal.c                 \
+  ircd.c                        \
   listener.c                    \
   logger.c                      \
   match.c                       \
