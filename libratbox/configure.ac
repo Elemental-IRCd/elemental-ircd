@@ -282,8 +282,8 @@ AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug],[Enable debug build, overri
 if test x"$enable_debug" != x"no"; then
 	AX_APPEND_COMPILE_FLAGS([-g])
 	AX_APPEND_COMPILE_FLAGS([-Og])
-	AX_APPEND_COMPILE_FLAGS([-fsanitize=address])
-	AX_APPEND_COMPILE_FLAGS([-fsanitize=undefined])
+	AX_APPEND_LINK_FLAGS([-fsanitize=address])
+	AX_APPEND_LINK_FLAGS([-fsanitize=undefined])
 	enable_assert="hard";
 fi;
 
