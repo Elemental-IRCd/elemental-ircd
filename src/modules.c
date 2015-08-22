@@ -249,14 +249,10 @@ load_all_modules(int warn)
     }
 
     while ((ldirent = readdir(system_module_dir)) != NULL) {
-        len = strlen(ldirent->d_name);
-        if((len > 3) && !strcmp(ldirent->d_name+len-3, LT_MODULE_EXT)) {
-            (void) snprintf(module_fq_name, sizeof(module_fq_name), "%s/%s", AUTOMODPATH, ldirent->d_name);
-            (void) load_a_module(module_fq_name, warn, 0);
-        }
-
+        snprintf(module_fq_name, sizeof(module_fq_name), "%s/%s", AUTOMODPATH, ldirent->d_name);
+        load_a_module(module_fq_name, warn, 0);
     }
-    (void) closedir(system_module_dir);
+    closedir(system_module_dir);
 }
 
 /* load_core_modules()

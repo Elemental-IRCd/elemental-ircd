@@ -157,14 +157,15 @@ print_startup(int pid)
 
     /* let the parent process know the initialization was successful
      * -- jilles */
-    if (!server_state_foreground)
+    if (!server_state_foreground) {
         write(0, ".", 1);
-    fclose(stdin);
-    fclose(stdout);
-    fclose(stderr);
-    open("/dev/null", O_RDWR);
-    dup2(0, 1);
-    dup2(0, 2);
+        fclose(stdin);
+        fclose(stdout);
+        fclose(stderr);
+        open("/dev/null", O_RDWR);
+        dup2(0, 1);
+        dup2(0, 2);
+    }
 }
 
 /*
@@ -592,6 +593,7 @@ ircd_main(int argc, char *argv[])
     if (testing_conf)
         server_state_foreground = 1;
 
+#ifndef _WIN32
     /* Make sure fd 0, 1 and 2 are in use -- jilles */
     do {
         fd = open("/dev/null", O_RDWR);
@@ -600,6 +602,7 @@ ircd_main(int argc, char *argv[])
         close(fd);
     else if (fd == -1)
         exit(1);
+#endif
 
     /* Check if there is pidfile and daemon already running */
     if(!testing_conf) {
