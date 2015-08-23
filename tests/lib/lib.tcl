@@ -2,6 +2,15 @@ package require TclOO
 
 source lib/numeric.tcl
 
+
+# Test servers
+#   [name] {[ip/host] [port]}
+array set servers {
+    hub    {127.0.0.1 6667}
+    leaf1  {127.0.0.1 6668}
+    leaf2  {127.0.0.1 6669}
+}
+
 proc begin {test name {text {Test suite client}}} {
     global test_name
     global test_desc
@@ -89,12 +98,13 @@ proc format_args {args} {
 }
 
 oo::class create client {
-    constructor {{ip 127.0.0.1} {port 6667}} {
+    constructor {{server hub}} {
+        global servers
         variable my_spawn_id
         variable nickname [get_nick]
         variable username [get_user]
 
-        spawn nc $ip $port
+        spawn nc {*}$servers($server)
         set my_spawn_id $spawn_id
         my make_current
         my register

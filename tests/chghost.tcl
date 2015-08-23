@@ -4,11 +4,11 @@ source lib/lib.tcl
 
 begin test chghost {Check chghost}
 
-set op [client new 127.0.0.1]
+set op [client new hub]
 oper
 
-set hub  [client new 127.0.0.1]
-set leaf [client new 127.0.0.2]
+set hub  [client new hub]
+set leaf [client new leaf1]
 
 $op   join_channel #chghost
 $hub  join_channel #chghost

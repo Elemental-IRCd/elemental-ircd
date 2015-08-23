@@ -4,8 +4,8 @@ source lib/lib.tcl
 
 begin test privmsg {Check privmsg works and is routed}
 
-set hub1  [client new 127.0.0.1]
-set hub2  [client new 127.0.0.1]
+set hub1  [client new hub]
+set hub2  [client new hub]
 
 $hub1 join_channel #privmsg
 $hub2 join_channel #privmsg
@@ -18,8 +18,8 @@ set message {This is sent by hub2, hub1 should see it}
 $hub2 send_cmd PRIVMSG #privmsg  $message
 $hub1 expect  "PRIVMSG #privmsg :$message"
 
-set leaf1 [client new 127.0.0.2]
-set leaf2 [client new 127.0.0.3]
+set leaf1 [client new leaf1]
+set leaf2 [client new leaf2]
 
 $leaf1 join_channel #privmsg
 $leaf2 join_channel #privmsg

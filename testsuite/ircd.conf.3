@@ -7,7 +7,7 @@ serverinfo {
 	network_desc = "Testing";
 
 	hub = no;
-	vhost = "127.0.0.3";
+	vhost = "127.0.0.1";
 };
 
 log {
@@ -25,8 +25,8 @@ log {
 .include <common.conf>
 
 listen {
-	host = "127.0.0.3";
-	port = 6667;
+	host = "127.0.0.1";
+	port = 6669;
 };
 
 connect "hub.local" {

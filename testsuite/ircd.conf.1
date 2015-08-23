@@ -30,17 +30,17 @@ listen {
 };
 
 connect "leaf1.local" {
-	host = "127.0.0.2";
+	host = "127.0.0.1";
 	send_password = "dev";
 	accept_password = "dev";
-	port = 6667;
+	port = 6668;
 	class = "server";
 };
 
 connect "leaf2.local" {
-	host = "127.0.0.3";
+	host = "127.0.0.1";
 	send_password = "dev";
 	accept_password = "dev";
-	port = 6667;
+	port = 6669;
 	class = "server";
 };
