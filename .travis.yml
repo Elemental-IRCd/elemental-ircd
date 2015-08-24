@@ -1,5 +1,9 @@
 language: c
 
+matrix:
+  allow_failures:
+    - os: osx
+
 os:
   - linux
   - osx
