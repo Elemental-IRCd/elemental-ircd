@@ -290,6 +290,10 @@ throttle_add(struct sockaddr *addr)
     throttle_t *t;
     rb_patricia_node_t *pnode;
 
+    /* A count of zero disables throttling */
+    if(!ConfigFileEntry.throttle_count)
+        return 0;
+
     if((pnode = rb_match_ip(throttle_tree, addr)) != NULL) {
         t = pnode->data;
 
