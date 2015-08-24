@@ -179,6 +179,10 @@ pid_t rb_waitpid(pid_t pid, int *status, int options);
 pid_t rb_getpid(void);
 //unsigned int rb_geteuid(void);
 
+// HACK: remove me XXX
+#ifndef _STRING_ARCH_unaligned
+#define _STRING_ARCH_unaligned 0
+#endif
 
 #include <rb_tools.h>
 #include <rb_memory.h>
