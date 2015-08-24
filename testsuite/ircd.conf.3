@@ -10,6 +10,18 @@ serverinfo {
 	vhost = "127.0.0.3";
 };
 
+log {
+	fname_userlog    = "logs/userlog.3";
+	fname_fuserlog   = "logs/fuserlog.3";
+	fname_operlog    = "logs/operlog.3";
+	fname_foperlog   = "logs/foperlog.3";
+	fname_serverlog  = "logs/serverlog.3";
+	fname_klinelog   = "logs/klinelog.3";
+	fname_killlog    = "logs/killlog.3";
+	fname_operspylog = "logs/operspylog.3";
+	fname_ioerrorlog = "logs/ioerror.3";
+};
+
 .include <common.conf>
 
 listen {
