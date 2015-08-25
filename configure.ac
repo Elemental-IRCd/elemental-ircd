@@ -30,39 +30,6 @@ CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 $CFLAGS"
 
 AC_CONFIG_SUBDIRS(libratbox)
 
-dnl We prefer gcc -MM because it's a lot less bloated
-AC_PATH_PROG(MKDEP, mkdep)
-AC_PATH_PROG(MAKEDEPEND, makedepend)
-
-AC_MSG_CHECKING(how to generate dependency info)
-
-STDOUT="> .depend"
-
-if test "$ac_cv_c_compiler_gnu" = yes; then
-	AC_MSG_RESULT(gcc -MM)
-	MKDEP="$CC -MM"
-elif test ! -z "$MKDEP"; then
-	AC_MSG_RESULT(mkdep)
-elif test ! -z "$MAKEDEPEND"; then
-	AC_MSG_RESULT(makedepend)
-	MKDEP="$MAKEDEPEND -f-"
-else
-	AC_MSG_RESULT([nothing suitable.. forget it!])
-	MKDEP=":"
-fi
-
-AC_SUBST(MKDEP)
-
-dnl check for /dev/null so we can use it to hold evil fd's
-AC_MSG_CHECKING([for /dev/null])
-if test -c /dev/null ; then
-	AC_DEFINE(PATH_DEVNULL, "/dev/null", [Path to /dev/null])
-	AC_MSG_RESULT(yes)
-else
-	AC_DEFINE(PATH_DEVNULL, "devnull.log", [Path to /dev/null])
-	AC_MSG_RESULT(no - using devnull.log)
-fi
-
 AC_SEARCH_LIBS([strerror],[cposix])
 AC_C_INLINE
 AC_PROG_CC
@@ -253,13 +220,8 @@ AC_CHECK_HEADER(zlib.h, [
 fi
 
 dnl **********************************************************************
-dnl Check for --with-confdir [deprecated, use --sysconfdir instead]
+dnl --with-confdir Deprecated, use --sysconfdir
 dnl **********************************************************************
-
-AC_ARG_WITH([confdir],
-	[AS_HELP_STRING([--with-confdir=DIR],[Directory to install config files [deprecated, use --sysconfdir instead].])],
-	[ sysconfdir=`echo $withval | sed 's/\/$//'` ],
-	[ confdir='${sysconfdir}' ])
 AC_DEFINE_DIR([ETC_DIR], [sysconfdir], [Prefix where config files are installed.])
 
 dnl **********************************************************************
