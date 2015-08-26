@@ -26,10 +26,7 @@
 #include <ratbox_lib.h>
 #include <commio-int.h>
 
-#ifndef _WIN32
-
 #include <sys/wait.h>
-
 
 #if defined(HAVE_SPAWN_H) && defined(HAVE_POSIX_SPAWN)
 #include <spawn.h>
@@ -281,5 +278,3 @@ rb_set_inherit(rb_fde_t *F, int inherit)
     else
         return set_fd_flag(F->fd, FD_CLOEXEC);
 }
-
-#endif /* !WIN32 */

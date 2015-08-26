@@ -44,6 +44,13 @@ AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
 AC_TYPE_UID_T
 
+
+# Detection for src/platform
+
+RB_DETECT_PLATFORM
+AM_CONDITIONAL([PLATFORM_UNIX],    [test x"$rb_platform" = x"unix"])
+AM_CONDITIONAL([PLATFORM_WINDOWS], [test x"$rb_platform" = x"windows"])
+
 AC_SEARCH_LIBS([strerror],[cposix])
 
 dnl Checks for header files.

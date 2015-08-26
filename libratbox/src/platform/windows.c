@@ -30,7 +30,6 @@
 #include <ratbox_lib.h>
 #include <commio-int.h>
 
-#ifdef _WIN32
 /*
  * having gettimeofday is nice...
  */
@@ -417,5 +416,3 @@ rb_set_inherit(rb_fde_t *F, int inherit)
 {
     return SetHandleInformation((HANDLE) F->fd, HANDLE_FLAG_INHERIT, !!inherit);
 }
-
-#endif /* _WIN32 */
