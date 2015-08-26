@@ -95,21 +95,25 @@ rb_waitpid(pid_t pid, int *status, int flags)
     DWORD waitcode;
 
     hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, pid);
-    if(hProcess) {
-        waitcode = WaitForSingleObject(hProcess, timeout);
-        if(waitcode == WAIT_TIMEOUT) {
-            CloseHandle(hProcess);
-            return 0;
-        } else if(waitcode == WAIT_OBJECT_0) {
-            if(GetExitCodeProcess(hProcess, &waitcode)) {
-                *status = (int)((waitcode & 0xff) << 8);
-                CloseHandle(hProcess);
-                return pid;
-            }
-        }
-        CloseHandle(hProcess);
-    } else
+    if(!hProcess) {
         errno = ECHILD;
+        return -1;
+    }
+
+    waitcode = WaitForSingleObject(hProcess, timeout);
+    if(waitcode == WAIT_TIMEOUT) {
+        CloseHandle(hProcess);
+        return 0;
+    }
+
+    if(waitcode == WAIT_OBJECT_0) {
+        if(GetExitCodeProcess(hProcess, &waitcode)) {
+            *status = (int)((waitcode & 0xff) << 8);
+            CloseHandle(hProcess);
+            return pid;
+        }
+    }
+    CloseHandle(hProcess);
 
     return -1;
 }
