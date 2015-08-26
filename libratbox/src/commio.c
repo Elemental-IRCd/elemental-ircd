@@ -2013,6 +2013,8 @@ rb_send_fd_buf(rb_fde_t *xF, rb_fde_t **F, int count, void *data, size_t datasiz
         msg.msg_control = buf;
         msg.msg_controllen = len;
         cmsg = CMSG_FIRSTHDR(&msg);
+        if(!cmsg)
+            return 0;
         cmsg->cmsg_level = SOL_SOCKET;
         cmsg->cmsg_type = SCM_RIGHTS;
         cmsg->cmsg_len = CMSG_LEN(sizeof(int) * count);
