@@ -429,6 +429,8 @@ RB_CFLAGS
 AX_APPEND_LINK_FLAGS([-Wl,-rpath=\${libdir}])
 AX_APPEND_LINK_FLAGS([-Wl,--export-all-symbols])
 
+AC_DEFINE_UNQUOTED(EXEEXT, "${EXEEXT}", [Executable extension])
+
 AC_SUBST(MODULES_LIBS)
 AC_SUBST(MOD_TARGET)
 

@@ -222,11 +222,6 @@ start_ssldaemon(int count, const char *ssl_cert, const char *ssl_private_key, co
 {
     rb_fde_t *F1, *F2;
     rb_fde_t *P1, *P2;
-#ifdef _WIN32
-    const char *suffix = ".exe";
-#else
-    const char *suffix = "";
-#endif
 
     char fullpath[PATH_MAX + 1];
     char fdarg[6];
@@ -252,15 +247,15 @@ start_ssldaemon(int count, const char *ssl_cert, const char *ssl_private_key, co
     last_spin = rb_current_time();
 
     if(ssld_path == NULL) {
-        snprintf(fullpath, sizeof(fullpath), "%s/ssld%s", PKGLIBEXECDIR, suffix);
+        snprintf(fullpath, sizeof(fullpath), "%s/ssld%s", PKGLIBEXECDIR, EXEEXT);
 
         if(access(fullpath, X_OK) == -1) {
             snprintf(fullpath, sizeof(fullpath), "%s/bin/ssld%s",
-                        ConfigFileEntry.dpath, suffix);
+                        ConfigFileEntry.dpath, EXEEXT);
             if(access(fullpath, X_OK) == -1) {
                 ilog(L_MAIN,
                      "Unable to execute ssld%s in %s or %s/bin",
-                     suffix, PKGLIBEXECDIR, ConfigFileEntry.dpath);
+                     EXEEXT, PKGLIBEXECDIR, ConfigFileEntry.dpath);
                 return 0;
             }
         }
