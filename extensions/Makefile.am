@@ -50,7 +50,6 @@ extension_LTLIBRARIES =         \
     sno_farconnect.la           \
     sno_globalkline.la          \
     sno_globaloper.la           \
-    sno_whois.la                \
     spy_admin_notice.la         \
     spy_info_notice.la          \
     spy_links_notice.la         \
