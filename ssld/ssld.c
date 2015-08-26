@@ -1130,18 +1130,18 @@ main(int argc, char **argv)
 }
 
 
-#ifndef _WIN32
+#ifdef HAVE_SIGACTION
 static void
 dummy_handler(int sig)
 {
     return;
 }
-#endif
+#endif /* HAVE_SIGACTION */
 
 static void
 setup_signals()
 {
-#ifndef _WIN32
+#ifdef HAVE_SIGACTION
     struct sigaction act;
 
     act.sa_flags = 0;
@@ -1164,5 +1164,5 @@ setup_signals()
 
     act.sa_handler = dummy_handler;
     sigaction(SIGALRM, &act, 0);
-#endif
+#endif /* HAVE_SIGACTION */
 }

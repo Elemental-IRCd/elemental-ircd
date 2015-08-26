@@ -28,7 +28,7 @@
 #include "client.h"
 #include "send.h"
 
-#ifndef _WIN32
+#ifdef HAVE_SIGACTION
 
 /*
  * dummy_handler - don't know if this is really needed but if alarm is still
@@ -104,7 +104,7 @@ sigint_handler(int sig)
         }
     }
 }
-#endif /* _WIN32 */
+#endif /* HAVE_SIGACTION */
 
 /*
  * setup_signals - initialize signal handlers for server
@@ -112,7 +112,7 @@ sigint_handler(int sig)
 void
 setup_signals()
 {
-#ifndef _WIN32
+#ifdef HAVE_SIGACTION
     struct sigaction act;
 
     act.sa_flags = 0;
@@ -160,5 +160,5 @@ setup_signals()
     act.sa_handler = sigchld_handler;
     sigaddset(&act.sa_mask, SIGCHLD);
     sigaction(SIGCHLD, &act, 0);
-#endif /* _WIN32 */
+#endif /* HAVE_SIGACTION */
 }

@@ -150,8 +150,6 @@ AC_C_BIGENDIAN
 dnl Check for stdarg.h - if we cant find it, halt configure
 AC_CHECK_HEADER(stdarg.h, , [AC_MSG_ERROR([** stdarg.h could not be found - charybdis will not compile without it **])])
 
-AC_CHECK_FUNCS([strlcat strlcpy])
-
 AC_CHECK_TYPE([u_int32_t], [],
 [
 	AC_CHECK_TYPE([uint32_t],
@@ -179,7 +177,8 @@ AC_CHECK_TYPE([u_int16_t], [],
 AC_CHECK_TYPES([uintptr_t])
 
 dnl check for various functions...
-AC_CHECK_FUNCS([socketpair vsnprintf mmap gettimeofday strdup strndup ])
+AC_CHECK_FUNCS([strlcat strlcpy])
+AC_CHECK_FUNCS([socketpair vsnprintf mmap gettimeofday strdup strndup sigaction geteuid])
 
 dnl Specialized functions checks
 dnl ============================
