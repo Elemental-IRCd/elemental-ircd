@@ -84,6 +84,9 @@ rb_spawn_process(const char *path, const char **argv)
     if(CreateProcess(cmd, cmd, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi) == FALSE)
         return -1;
 
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+
     return (pi.dwProcessId);
 }
 
