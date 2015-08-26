@@ -25,8 +25,7 @@ libratbox_la_SOURCES =            \
         netio/ports.c             \
         netio/select.c            \
         netio/kqueue.c            \
-        netio/win32.c             \
-        arc4random.c
+        netio/win32.c
 
 libratbox_la_LDFLAGS = @SSL_LIBS@ @GNUTLS_LIBS@  -avoid-version -no-undefined -export-symbols export-syms.txt
 libratbox_la_LIBADD = @SSL_LIBS@ @GNUTLS_LIBS@
