@@ -225,53 +225,49 @@ if test -z "$select_types"; then
 fi
 
 
-dnl OpenSSL support
-AC_ARG_ENABLE(openssl, [
-	AS_HELP_STRING([--enable-openssl],[Enable OpenSSL support.])
-	AS_HELP_STRING([--disable-openssl],[Disable OpenSSL support.])
-],
-	[cf_enable_openssl=$enableval],
-	[cf_enable_openssl="auto"]
-)
+dnl SSL support
+AC_ARG_WITH([ssl], [AS_HELP_STRING([--with-ssl=BACKEND],[Which SSL backend to use, [default=auto]])], [], [with_ssl="auto"])
 
-if test x"$cf_enable_openssl" != x"no"; then
-	PKG_CHECK_MODULES([SSL], [openssl > 0.9.8], [cf_have_openssl=yes], [cf_have_openssl=no])
+PKG_CHECK_MODULES([OPENSSL], [openssl > 0.9.8],  [cf_have_openssl=yes], [cf_have_openssl=no])
+PKG_CHECK_MODULES([GNUTLS],  [gnutls >= 2.11.0], [cf_have_gnutls=yes],  [cf_have_gnutls=no])
+
+if test x"$with_ssl" = x"auto"; then
+	if test x"$cf_have_openssl" = x"yes"; then
+		with_ssl="openssl"
+	elif test x"$cf_have_openssl" = x"yes"; then
+		with_ssl="gnutls"
+	else
+		AC_MSG_ERROR([** No ssl library found, please install openssl or gnutls])
+	fi
 fi
 
-if test x"$cf_enable_openssl" == x"yes" && x"$cf_have_openssl" == x"no"; then
-	AC_MSG_ERROR([** openssl requested but not found])
-fi
-
-dnl GnuTLS support
-AC_ARG_ENABLE(gnutls, [
-	AS_HELP_STRING([--enable-gnutls],[Enable GnuTLS support.])
-	AS_HELP_STRING([--disable-gnutls],[Disable GnuTLS support.])
-],
-	[cf_enable_gnutls=$enableval],
-	[cf_enable_gnutls="auto"]
-)
-
-if test x"$cf_enable_gnutls" != x"no"; then
-	PKG_CHECK_MODULES([GNUTLS], [gnutls >= 2.11.0], [cf_have_gnutls=yes], [cf_have_gnutls=no])
-fi
-
-if test x"$cf_enable_gnutls" == x"yes" && x"$cf_have_gnutls" == x"no"; then
-	AC_MSG_ERROR([** gnutls requested but not found])
-fi
-
-if test x"$cf_have_openssl" == x"yes"; then
-	AC_DEFINE(HAVE_OPENSSL,1,[Has OpenSSL])
-	GNUTLS_CFLAGS=""
-	GNUTLS_LIBS=""
+case "$with_ssl" in
+openssl)
+	if test x"$cf_have_openssl" != x"yes"; then
+		AC_MSG_ERROR([** openssl requested but not available])
+	fi
+	SSL_CFLAGS="$OPENSSL_CFLAGS"
+	SSL_LIBS="$OPENSSL_LIBS"
 	SSL_TYPE="openssl"
-elif test x"$cf_have_gnutls" == x"yes"; then
-	AC_DEFINE(HAVE_GNUTLS, 1, [Has GnuTLS])
-	SSL_LIBS=""
-	SSL_CFLAGS=""
+	;;
+gnutls)
+	if test x"$cf_have_gnutls" != x"yes"; then
+		AC_MSG_ERROR([** gnutls requested but not available])
+	fi
+	SSL_CFLAGS="$GNUTLS_CFLAGS"
+	SSL_LIBS="$GNUTLS_LIBS"
 	SSL_TYPE="gnutls"
-else
-	AC_MSG_ERROR([** No ssl library found, please install openssl or gnutls])
-fi
+	;;
+*)
+	AC_MSG_ERROR([** Invalid ssl backend "$with_ssl"])
+esac
+
+AC_SUBST(SSL_CFLAGS)
+AC_SUBST(SSL_LIBS)
+AC_SUBST(SSL_TYPE)
+
+AM_CONDITIONAL([WITH_OPENSSL], [test x"$with_ssl" = x"openssl"])
+AM_CONDITIONAL([WITH_GNUTLS],  [test x"$with_ssl" = x"gnutls"])
 
 dnl Debug-related options
 dnl =====================
@@ -320,10 +316,6 @@ AC_SUBST(LDFLAGS)
 AC_SUBST(PICFLAGS)
 AC_SUBST(CFLAGS)
 AC_SUBST(SEDOBJ)
-AC_SUBST(SSL_CFLAGS)
-AC_SUBST(SSL_LIBS)
-AC_SUBST(GNUTLS_CFLAGS)
-AC_SUBST(GNUTLS_LIBS)
 
 AC_CONFIG_COMMANDS([include/librb-config.h],
 [
