@@ -44,7 +44,7 @@ struct timeout_data {
     void *timeout_data;
 };
 
-rb_dlink_list *rb_fd_table;
+rb_dlink_list rb_fd_table[RB_FD_HASH_SIZE];
 static rb_bh *fd_heap;
 
 static rb_dlink_list timeout_list;
@@ -1836,7 +1836,6 @@ void
 rb_init_netio(void)
 {
     char *ioenv = getenv("LIBRB_USE_IOTYPE");
-    rb_fd_table = rb_malloc(RB_FD_HASH_SIZE * sizeof(rb_dlink_list));
     rb_init_ssl();
 
     if(ioenv != NULL) {

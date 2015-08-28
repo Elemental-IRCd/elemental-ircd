@@ -119,7 +119,7 @@ struct _fde {
 
 typedef void (*comm_event_cb_t) (void *);
 
-extern rb_dlink_list *rb_fd_table;
+extern rb_dlink_list rb_fd_table[RB_FD_HASH_SIZE];
 
 static inline __must_check rb_fde_t *
 rb_find_fd(int fd)
