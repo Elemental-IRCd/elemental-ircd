@@ -310,9 +310,8 @@ start_ssldaemon(int count, const char *ssl_cert, const char *ssl_private_key, co
         if(ssl_ok && ssl_cert != NULL && ssl_private_key != NULL)
             send_new_ssl_certs_one(ctl, ssl_cert, ssl_private_key,
                                    ssl_dh_params != NULL ? ssl_dh_params : "");
-        ssl_read_ctl(ctl->F, ctl);
-        ssl_do_pipe(P2, ctl);
-
+        rb_setselect(ctl->F, RB_SELECT_READ, ssl_read_ctl, ctl);
+        rb_setselect(ctl->P, RB_SELECT_READ, ssl_do_pipe, ctl);
     }
     return started;
 }
