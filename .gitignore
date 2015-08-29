@@ -62,3 +62,14 @@ include/serno.h
 libratbox/src/version.c.last
 *.pyc
 .git
+
+tags
+
+### Vim ###
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
