@@ -418,6 +418,47 @@ rb_strerror(int error)
     return buf;
 }
 
+/* TODO: Translate winsock errnos'
+ *
+ * WSAENOBUFS      -> ENOBUFS
+ * WSAEINPROGRESS  -> EINPROGRESS
+ * WSAEWOULDBLOCK  -> EWOULDBLOCK
+ * WSAEMSGSIZE     -> EMSGSIZE
+ * WSAEALREADY     -> EALREADY
+ * WSAEISCONN      -> EISCONN
+ * WSAEADDRINUSE   -> EADDRINUSE
+ * WSAEAFNOSUPPORT -> EAFNOSUPPORT
+ */
+
+int
+rb_ignore_errno(int error)
+{
+    switch (error) {
+#ifdef WSAEINPROGRESS
+    case WSAEINPROGRESS:
+#endif
+#if defined WSAEWOULDBLOCK
+    case WSAEWOULDBLOCK:
+#endif
+#if defined(WSAEAGAIN) && (WSAEWOULDBLOCK != WSAEAGAIN)
+    case WSAEAGAIN:
+#endif
+#ifdef WSAEINTR
+    case WSAEINTR:
+#endif
+#ifdef WSAERESTART
+    case WSAERESTART:
+#endif
+#ifdef WSAENOBUFS
+    case WSAENOBUFS:
+#endif
+        return 1;
+    default:
+        break;
+    }
+    return 0;
+}
+
 int
 rb_set_inherit(rb_fde_t *F, int inherit)
 {

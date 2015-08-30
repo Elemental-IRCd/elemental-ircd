@@ -125,6 +125,35 @@ rb_strerror(int error)
 }
 
 int
+rb_ignore_errno(int error)
+{
+    switch (error) {
+#ifdef EINPROGRESS
+    case EINPROGRESS:
+#endif
+#if defined EWOULDBLOCK
+    case EWOULDBLOCK:
+#endif
+#if defined(EAGAIN) && (EWOULDBLOCK != EAGAIN)
+    case EAGAIN:
+#endif
+#ifdef EINTR
+    case EINTR:
+#endif
+#ifdef ERESTART
+    case ERESTART:
+#endif
+#ifdef ENOBUFS
+    case ENOBUFS:
+#endif
+        return 1;
+    default:
+        break;
+    }
+    return 0;
+}
+
+int
 rb_kill(pid_t pid, int sig)
 {
     return kill(pid, sig);
