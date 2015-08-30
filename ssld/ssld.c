@@ -1111,8 +1111,8 @@ main(int argc, char **argv)
     rb_set_nb(mod_ctl->F_pipe);
     rb_event_addish("clean_dead_conns", clean_dead_conns, NULL, 10);
     rb_event_add("check_handshake_flood", check_handshake_flood, NULL, 10);
-    read_pipe_ctl(mod_ctl->F_pipe, NULL);
-    mod_read_ctl(mod_ctl->F, mod_ctl);
+    rb_setselect(mod_ctl->F_pipe, RB_SELECT_READ, read_pipe_ctl, NULL);
+    rb_setselect(mod_ctl->F, RB_SELECT_READ, mod_read_ctl, mod_ctl);
     if(!zlib_ok && !ssl_ok) {
         /* this is really useless... */
         send_i_am_useless(mod_ctl);
