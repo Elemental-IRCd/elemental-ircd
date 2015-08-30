@@ -1889,6 +1889,18 @@ rb_setup_fd(rb_fde_t *F)
     return setup_fd_handler(F);
 }
 
+/* TODO: Translate winsock errnos'
+ *
+ * WSAENOBUFS      -> ENOBUFS
+ * WSAEINPROGRESS  -> EINPROGRESS
+ * WSAEWOULDBLOCK  -> EWOULDBLOCK
+ * WSAEMSGSIZE     -> EMSGSIZE
+ * WSAEALREADY     -> EALREADY
+ * WSAEISCONN      -> EISCONN
+ * WSAEADDRINUSE   -> EADDRINUSE
+ * WSAEAFNOSUPPORT -> EAFNOSUPPORT
+ */
+
 int
 rb_ignore_errno(int error)
 {
@@ -1910,6 +1922,15 @@ rb_ignore_errno(int error)
 #endif
 #ifdef ENOBUFS
     case ENOBUFS:
+#endif
+#ifdef WSAEINPROGRESS
+    case WSAEINPROGRESS:
+#endif
+#ifdef WSAEWOULDBLOCK
+    case WSAEWOULDBLOCK:
+#endif
+#ifdef WSAENOBUFS
+    case WSAENOBUFS:
 #endif
         return 1;
     default:
