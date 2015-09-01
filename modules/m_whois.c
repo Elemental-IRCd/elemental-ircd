@@ -323,6 +323,7 @@ single_whois(struct Client *source_p, struct Client *target_p, int operspy)
         sendto_one_numeric(source_p, RPL_WHOISBOT,
                            form_str(RPL_WHOISBOT),
                            target_p->name);
+
     if(IsOper(source_p) || source_p == target_p) {
         m = buf;
         *m++ = '+';
@@ -338,7 +339,7 @@ single_whois(struct Client *source_p, struct Client *target_p, int operspy)
     }
 
     if(MyClient(target_p)) {
-        if (IsDynSpoof(target_p) && (IsOper(source_p) || source_p == target_p)) {
+        if (IsOper(source_p) || source_p == target_p) {
             /* trick here: show a nonoper their own IP if
              * dynamic spoofed but not if auth{} spoofed
              * -- jilles */
@@ -358,7 +359,7 @@ single_whois(struct Client *source_p, struct Client *target_p, int operspy)
                            rb_current_time() - target_p->localClient->last,
                            target_p->localClient->firsttime);
     } else {
-        if (IsDynSpoof(target_p) && (IsOper(source_p) || source_p == target_p)) {
+        if (IsOper(source_p) || source_p == target_p) {
             ClearDynSpoof(target_p);
             sendto_one_numeric(source_p, RPL_WHOISHOST,
                                form_str(RPL_WHOISHOST),
