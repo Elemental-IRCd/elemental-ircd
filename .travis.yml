@@ -48,9 +48,7 @@ script:
   - ./configure --enable-assert
   - make
   - make install
-  - |
-    cd ~/ircd
-    yes "" | ./bin/genssl.sh
+  - scripts/travis_genssl.sh
   - testsuite/startall.sh
   - make -j4 check
 
