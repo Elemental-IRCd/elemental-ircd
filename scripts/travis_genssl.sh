@@ -1,4 +1,6 @@
 #!/bin/bash
 
-cd ~/ircd
-yes "" | ./bin/genssl.sh
+echo "Using the pregenned cert"
+
+cp testsuite/ssl* ~/ircd/etc
+cp testsuite/dh.pem ~/ircd/etc
