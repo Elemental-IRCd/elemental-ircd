@@ -23,11 +23,7 @@ AC_PROG_INSTALL
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(CP, cp)
 
-AC_DISABLE_STATIC([])
-AC_ENABLE_SHARED([])
-AM_MAINTAINER_MODE
-
-LT_INIT([dlopen])
+LT_INIT([dlopen disable-static])
 
 GCC_STACK_PROTECT_CC
 
@@ -48,12 +44,19 @@ AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
 AC_TYPE_UID_T
 
+
+# Detection for src/platform
+
+RB_DETECT_PLATFORM
+AM_CONDITIONAL([PLATFORM_UNIX],    [test x"$rb_platform" = x"unix"])
+AM_CONDITIONAL([PLATFORM_WINDOWS], [test x"$rb_platform" = x"windows"])
+
 AC_SEARCH_LIBS([strerror],[cposix])
 
 dnl Checks for header files.
 AC_HEADER_STDC
 
-AC_CHECK_HEADERS([crypt.h unistd.h sys/socket.h sys/stat.h sys/time.h time.h netinet/in.h arpa/inet.h errno.h sys/uio.h spawn.h sys/poll.h sys/epoll.h sys/select.h sys/devpoll.h sys/event.h port.h signal.h sys/signalfd.h sys/timerfd.h linux/tcp.h windows.h winsock2.h])
+AC_CHECK_HEADERS([crypt.h unistd.h sys/socket.h sys/stat.h sys/time.h time.h netinet/in.h arpa/inet.h errno.h sys/uio.h spawn.h sys/poll.h sys/epoll.h sys/select.h sys/devpoll.h sys/event.h port.h signal.h sys/signalfd.h sys/timerfd.h netdb.h windows.h])
 AC_HEADER_TIME
 
 dnl Networking Functions
@@ -70,55 +73,24 @@ member.])],,[[
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
-#ifdef HAVE_WINSOCK2_H
+#ifdef HAVE_WINDOWS_H
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #endif
 ]])
 
-AC_CHECK_TYPE([socklen_t], rb_cv_socklen_t=socklen_t,[
-	AC_MSG_CHECKING([for socklen_t equivalent])
-	AC_CACHE_VAL([rb_cv_socklen_t],
-	[
-	# Systems have either "struct sockaddr *" or
-	# "void *" as the second argument to getpeername
-	rb_cv_socklen_t=
-	for arg2 in "struct sockaddr" void; do
-		for t in int size_t unsigned long "unsigned long"; do
-			AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+AC_CHECK_TYPE([socklen_t], [rb_socklen_t=socklen_t], [rb_socklen_t=int], [
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
-#ifdef HAVE_WINSOCK2_H
+#ifdef HAVE_WINDOWS_H
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #endif
-int getpeername (int, $arg2 *, $t *);
-]], [[
-$t len;
-getpeername(0,0,&len);
-]])],[
-	rb_cv_socklen_t="$t"
-	break
-],[])
-		done
-	done
-
-	if test "x$rb_cv_socklen_t" = x; then
-		AC_MSG_WARN([Cannot find a type to use in place of socklen_t using int])
-		rb_cv_socklen_t=int
-	fi
-	])
-	AC_MSG_RESULT($rb_cv_socklen_t)],
-	[#include <sys/types.h>
-#include <sys/socket.h>])
-
-rb_socklen_t=$rb_cv_socklen_t
-
-
-
-
+])
 
 AC_ARG_ENABLE(ipv6,AS_HELP_STRING([--disable-ipv6],[Disable IPv6 support]),[ipv6=$enableval],[ipv6=yes])
 
@@ -141,13 +113,18 @@ RB_PROTO_INET6([], [
 
 fi			
 
-AC_CHECK_TYPES([struct sockaddr_storage],[
-	rb_have_sockaddr_storage=yes
-        ],[], [
-		#include <sys/types.h>
-		#include <sys/socket.h>
-	])
-                
+AC_CHECK_TYPES([struct sockaddr_storage],[],[AC_MSG_ERROR([** Could not find sockaddr_storage])], [
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+#ifdef HAVE_WINDOWS_H
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#endif
+])
 
 dnl Check for stdarg.h - if we cant find it, halt configure
 AC_CHECK_HEADER(stdarg.h, , [AC_MSG_ERROR([** stdarg.h could not be found - libratbox will not compile without it **])])
@@ -255,53 +232,49 @@ if test -z "$select_types"; then
 fi
 
 
-dnl OpenSSL support
-AC_ARG_ENABLE(openssl, [
-	AS_HELP_STRING([--enable-openssl],[Enable OpenSSL support.])
-	AS_HELP_STRING([--disable-openssl],[Disable OpenSSL support.])
-],
-	[cf_enable_openssl=$enableval],
-	[cf_enable_openssl="auto"]
-)
+dnl SSL support
+AC_ARG_WITH([ssl], [AS_HELP_STRING([--with-ssl=BACKEND],[Which SSL backend to use, [default=auto]])], [], [with_ssl="auto"])
 
-if test x"$cf_enable_openssl" != x"no"; then
-	PKG_CHECK_MODULES([SSL], [openssl > 0.9.8], [cf_have_openssl=yes], [cf_have_openssl=no])
+PKG_CHECK_MODULES([OPENSSL], [openssl > 0.9.8],  [cf_have_openssl=yes], [cf_have_openssl=no])
+PKG_CHECK_MODULES([GNUTLS],  [gnutls >= 2.11.0], [cf_have_gnutls=yes],  [cf_have_gnutls=no])
+
+if test x"$with_ssl" = x"auto"; then
+	if test x"$cf_have_openssl" = x"yes"; then
+		with_ssl="openssl"
+	elif test x"$cf_have_openssl" = x"yes"; then
+		with_ssl="gnutls"
+	else
+		AC_MSG_ERROR([** No ssl library found, please install openssl or gnutls])
+	fi
 fi
 
-if test x"$cf_enable_openssl" == x"yes" && x"$cf_have_openssl" == x"no"; then
-	AC_MSG_ERROR([** openssl requested but not found])
-fi
-
-dnl GnuTLS support
-AC_ARG_ENABLE(gnutls, [
-	AS_HELP_STRING([--enable-gnutls],[Enable GnuTLS support.])
-	AS_HELP_STRING([--disable-gnutls],[Disable GnuTLS support.])
-],
-	[cf_enable_gnutls=$enableval],
-	[cf_enable_gnutls="auto"]
-)
-
-if test x"$cf_enable_gnutls" != x"no"; then
-	PKG_CHECK_MODULES([GNUTLS], [gnutls >= 2.11.0], [cf_have_gnutls=yes], [cf_have_gnutls=no])
-fi
-
-if test x"$cf_enable_gnutls" == x"yes" && x"$cf_have_gnutls" == x"no"; then
-	AC_MSG_ERROR([** gnutls requested but not found])
-fi
-
-if test x"$cf_have_openssl" == x"yes"; then
-	AC_DEFINE(HAVE_OPENSSL,1,[Has OpenSSL])
-	GNUTLS_CFLAGS=""
-	GNUTLS_LIBS=""
+case "$with_ssl" in
+openssl)
+	if test x"$cf_have_openssl" != x"yes"; then
+		AC_MSG_ERROR([** openssl requested but not available])
+	fi
+	SSL_CFLAGS="$OPENSSL_CFLAGS"
+	SSL_LIBS="$OPENSSL_LIBS"
 	SSL_TYPE="openssl"
-elif test x"$cf_have_gnutls" == x"yes"; then
-	AC_DEFINE(HAVE_GNUTLS, 1, [Has GnuTLS])
-	SSL_LIBS=""
-	SSL_CFLAGS=""
+	;;
+gnutls)
+	if test x"$cf_have_gnutls" != x"yes"; then
+		AC_MSG_ERROR([** gnutls requested but not available])
+	fi
+	SSL_CFLAGS="$GNUTLS_CFLAGS"
+	SSL_LIBS="$GNUTLS_LIBS"
 	SSL_TYPE="gnutls"
-else
-	AC_MSG_ERROR([** No ssl library found, please install openssl or gnutls])
-fi
+	;;
+*)
+	AC_MSG_ERROR([** Invalid ssl backend "$with_ssl"])
+esac
+
+AC_SUBST(SSL_CFLAGS)
+AC_SUBST(SSL_LIBS)
+AC_SUBST(SSL_TYPE)
+
+AM_CONDITIONAL([WITH_OPENSSL], [test x"$with_ssl" = x"openssl"])
+AM_CONDITIONAL([WITH_GNUTLS],  [test x"$with_ssl" = x"gnutls"])
 
 dnl Debug-related options
 dnl =====================
@@ -312,8 +285,8 @@ AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug],[Enable debug build, overri
 if test x"$enable_debug" != x"no"; then
 	AX_APPEND_COMPILE_FLAGS([-g])
 	AX_APPEND_COMPILE_FLAGS([-Og])
-	AX_APPEND_COMPILE_FLAGS([-fsanitize=address])
-	AX_APPEND_COMPILE_FLAGS([-fsanitize=undefined])
+	AX_APPEND_LINK_FLAGS([-fsanitize=address])
+	AX_APPEND_LINK_FLAGS([-fsanitize=undefined])
 	enable_assert="hard";
 fi;
 
@@ -350,10 +323,6 @@ AC_SUBST(LDFLAGS)
 AC_SUBST(PICFLAGS)
 AC_SUBST(CFLAGS)
 AC_SUBST(SEDOBJ)
-AC_SUBST(SSL_CFLAGS)
-AC_SUBST(SSL_LIBS)
-AC_SUBST(GNUTLS_CFLAGS)
-AC_SUBST(GNUTLS_LIBS)
 
 AC_CONFIG_COMMANDS([include/librb-config.h],
 [
@@ -376,6 +345,7 @@ if test "x$rb_windows_h" = "xyes"; then
 	echo '#define WIN32_LEAN_AND_MEAN 1' >> $outfile
 	echo '#include <windows.h>' >> $outfile
 	echo '#include <winsock2.h>' >> $outfile
+	echo '#include <ws2tcpip.h>' >> $outfile
 	echo '#include <iphlpapi.h>' >> $outfile
 fi
 
@@ -421,6 +391,10 @@ fi
 
 if test "x$rb_netinet_in_h" = "xyes"; then
 	echo '#include <netinet/in.h>' >> $outfile
+	echo '#include <netinet/tcp.h>' >> $outfile
+fi
+if test "x$rb_netdb_h" = "xyes"; then
+	echo '#include <netdb.h>' >> $outfile
 fi
 
 if test "x$rb_arpa_inet_h" = "xyes"; then
@@ -444,12 +418,6 @@ echo "typedef $rb_socklen_t rb_socklen_t;" >> $outfile
 
 if test "x$rb_sockaddr_sa_len" = "xyes"; then
 	echo '#define RB_SOCKADDR_HAS_SA_LEN 1' >> $outfile
-fi
-
-if test "x$rb_sockaddr_storage" = "xyes"; then
-	echo '#define rb_sockaddr_storage sockaddr_storage' >> $outfile
-else
-	echo 'struct rb_sockaddr_storage { uint8_t _padding[[128]]; };' >> $outfile
 fi
 
 cat >> $outfile <<\_______EOF
@@ -509,6 +477,13 @@ fi
 	if test x$ac_cv_header_netinet_in_h = xyes; then
 		rb_netinet_in_h=yes
 	fi
+	if test x$ac_cv_header_netdb_h = xyes; then
+		rb_netdb_h=yes
+	fi
+
+	if test x$ac_cv_arpa_inet_h = xyes; then
+		rb_arpa_inet_h=yes
+	fi
 
 	if test x$ac_cv_header_crypt_h = xyes; then
 		rb_crypt_h=yes
@@ -528,12 +503,6 @@ fi
 
 	rb_socklen_t=$rb_socklen_t
 
-	if test "x$rb_have_sockaddr_storage" = "xyes"; then
-		rb_sockaddr_storage="yes" 
-	else
-		rb_sockaddr_storage="no"
-	fi
-	
 	rb_have_ipv6="$have_v6"
 		
 	rb_mv="$MV"

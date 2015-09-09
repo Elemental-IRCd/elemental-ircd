@@ -1,16 +1,21 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I libratbox/m4
 
-SUBDIRS = libratbox \
-          src \
-          ssld \
-          bandb \
-          tools \
-          modules \
-          extensions \
-          help \
-          doc \
-          tests
+SUBDIRS = libratbox
+
+if BUILD_LTDL
+SUBDIRS += extra/libltdl
+endif
+
+SUBDIRS += src \
+           ssld \
+           bandb \
+           tools \
+           modules \
+           extensions \
+           help \
+           doc \
+           tests
 
 logdir = @prefix@/logs
 

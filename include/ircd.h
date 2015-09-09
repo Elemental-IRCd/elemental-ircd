@@ -26,7 +26,7 @@
 #ifndef INCLUDED_ircd_h
 #define INCLUDED_ircd_h
 
-#include "config.h"
+#include "stdinc.h"
 
 struct Client;
 struct rb_dlink_list;
@@ -109,6 +109,7 @@ extern int ssl_ok;
 extern int zlib_ok;
 extern int maxconnections;
 
+int ircd_main(int argc, char *argv[]);
 void ircd_shutdown(const char *reason) __noreturn;
 
 #endif

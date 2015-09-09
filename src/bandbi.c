@@ -75,24 +75,19 @@ static int
 start_bandb(void)
 {
     char fullpath[PATH_MAX + 1];
-#ifdef _WIN32
-    const char *suffix = ".exe";
-#else
-    const char *suffix = "";
-#endif
 
     rb_setenv("BANDB_DBPATH", PKGLOCALSTATEDIR "/ban.db", 1);
     if(bandb_path == NULL) {
-        snprintf(fullpath, sizeof(fullpath), "%s/bandb%s", PKGLIBEXECDIR, suffix);
+        snprintf(fullpath, sizeof(fullpath), "%s/bandb%s", PKGLIBEXECDIR, EXEEXT);
 
         if(access(fullpath, X_OK) == -1) {
             snprintf(fullpath, sizeof(fullpath), "%s/bin/bandb%s",
-                        ConfigFileEntry.dpath, suffix);
+                        ConfigFileEntry.dpath, EXEEXT);
 
             if(access(fullpath, X_OK) == -1) {
                 ilog(L_MAIN,
                      "Unable to execute bandb%s in %s or %s/bin",
-                     suffix, PKGLIBEXECDIR, ConfigFileEntry.dpath);
+                     EXEEXT, PKGLIBEXECDIR, ConfigFileEntry.dpath);
                 return 0;
             }
         }
@@ -209,7 +204,7 @@ bandb_handle_ban(char *parv[], int parc)
 static int
 bandb_check_kline(struct ConfItem *aconf)
 {
-    struct rb_sockaddr_storage daddr;
+    struct sockaddr_storage daddr;
     struct ConfItem *kconf = NULL;
     int aftype;
     const char *p;
@@ -248,7 +243,7 @@ bandb_check_kline(struct ConfItem *aconf)
 static int
 bandb_check_dline(struct ConfItem *aconf)
 {
-    struct rb_sockaddr_storage daddr;
+    struct sockaddr_storage daddr;
     /* 	struct ConfItem *dconf; */
     int bits;
 

@@ -1,0 +1,13 @@
+# GDB functions used during debugging
+
+define rb_dump_fd_table
+    set $i = 0
+    while $i < 4096
+        set $node = rb_fd_table[$i]->head
+        while $node && $node->data
+            p *((rb_fde_t*)($node->data))
+            set $node = $node->next
+        end
+        set $i = $i + 1
+    end
+end

@@ -1,5 +1,7 @@
-AM_CPPFLAGS = -I../include -I../libratbox/include
-AM_LDFLAGS = -module -export-dynamic -avoid-version
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libratbox/include
+AM_LDFLAGS  = -module -export-dynamic -avoid-version -no-undefined -shared
+LIBS += $(top_srcdir)/libratbox/src/libratbox.la
+LIBS += $(top_srcdir)/src/libelemental.la
 
 extensiondir=@moduledir@/extensions
 
