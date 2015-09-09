@@ -9,16 +9,19 @@ AC_CONFIG_HEADERS([include/setup.h])
 AC_PREFIX_DEFAULT($HOME/ircd)
 AC_LANG(C)
 
-AC_ENABLE_SHARED
-AC_DISABLE_STATIC
-
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 AM_PROG_AR
 
 AC_PROG_CC_C99([], [AC_MSG_ERROR(elemental-ircd requires a C99 capable compiler)])
 
-LT_INIT([dlopen])
+LT_INIT([dlopen disable-static])
+
+LT_CONFIG_LTDL_DIR([extra/libltdl])
+LTDL_INIT
+
+build_ltdl=$with_included_ltdl
+AM_CONDITIONAL([BUILD_LTDL], [test x"$build_ltdl" = x"yes"])
 
 GCC_STACK_PROTECT_CC
 
@@ -26,39 +29,6 @@ dnl Checks for programs.
 CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 $CFLAGS"
 
 AC_CONFIG_SUBDIRS(libratbox)
-
-dnl We prefer gcc -MM because it's a lot less bloated
-AC_PATH_PROG(MKDEP, mkdep)
-AC_PATH_PROG(MAKEDEPEND, makedepend)
-
-AC_MSG_CHECKING(how to generate dependency info)
-
-STDOUT="> .depend"
-
-if test "$ac_cv_c_compiler_gnu" = yes; then
-	AC_MSG_RESULT(gcc -MM)
-	MKDEP="$CC -MM"
-elif test ! -z "$MKDEP"; then
-	AC_MSG_RESULT(mkdep)
-elif test ! -z "$MAKEDEPEND"; then
-	AC_MSG_RESULT(makedepend)
-	MKDEP="$MAKEDEPEND -f-"
-else
-	AC_MSG_RESULT([nothing suitable.. forget it!])
-	MKDEP=":"
-fi
-
-AC_SUBST(MKDEP)
-
-dnl check for /dev/null so we can use it to hold evil fd's
-AC_MSG_CHECKING([for /dev/null])
-if test -c /dev/null ; then
-	AC_DEFINE(PATH_DEVNULL, "/dev/null", [Path to /dev/null])
-	AC_MSG_RESULT(yes)
-else
-	AC_DEFINE(PATH_DEVNULL, "devnull.log", [Path to /dev/null])
-	AC_MSG_RESULT(no - using devnull.log)
-fi
 
 AC_SEARCH_LIBS([strerror],[cposix])
 AC_C_INLINE
@@ -135,13 +105,6 @@ PKG_CHECK_MODULES([SQLITE], [sqlite3 > 3.0.0])
 dnl Networking Functions
 dnl ====================
 
-
-AC_CHECK_TYPE(socklen_t, ,
-[AC_DEFINE([socklen_t], [unsigned int],
-[If we don't have a real socklen_t, unsigned int is good enough.])],
-[#include <sys/types.h>
-#include <sys/socket.h>])
-
 AC_ARG_ENABLE(ipv6,
 AS_HELP_STRING([--enable-ipv6],[Enable IPv6 support]),[ipv6=$enableval],[ipv6=no])
 
@@ -157,16 +120,14 @@ fi
 
 AC_SUBST(CRYPT_LIB)
 
-if test "$ac_cv_header_sys_wait_h" = yes -o "$ac_cv_header_wait_h" = yes; then
-	VICONF=viconf
+if test x"$ac_cv_header_sys_wait_h" = yes -o x"$ac_cv_header_wait_h" = yes; then
+	VICONF=yes
 	dnl We need one of the above to build viconf. Just a sanity check,
 	dnl we don't want to stop people from building the rest of ircd
 	dnl just because they can't build viconf.
-else
-	VICONF=""
 fi
 
-AC_SUBST(VICONF)
+AM_CONDITIONAL([BUILD_VICONF],[test x"$VICONF" = x"yes"])
 
 dnl See whether we can include both string.h and strings.h.
 AC_CACHE_CHECK([whether string.h and strings.h may both be included],
@@ -186,54 +147,8 @@ fi
 
 AC_C_BIGENDIAN
 
-dnl Check for stdarg.h - if we can't find it, halt configure
+dnl Check for stdarg.h - if we cant find it, halt configure
 AC_CHECK_HEADER(stdarg.h, , [AC_MSG_ERROR([** stdarg.h could not be found - charybdis will not compile without it **])])
-
-dnl Checks for the existence of strlcat, strlcpy, basename...
-dnl This more reliable test only works with gcc though.
-
-if test "$ac_cv_c_compiler_gnu" = yes; then
-
-AC_MSG_CHECKING(for strlcpy)
-save_CFLAGS=$CFLAGS
-CFLAGS="$CFLAGS -Wimplicit -Werror"
-
-AC_LINK_IFELSE(
-	[AC_LANG_PROGRAM(
-		[[#include <string.h>
-		#include <stdlib.h>]],
-		[[char *a = malloc(6);
-		strlcpy(a, "hello", 6);]]
-	)],
-	[AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_STRLCPY, 1, [Define if strlcpy is available (most BSDs.)])],
-	[AC_MSG_RESULT(no)]
-)
-
-AC_MSG_CHECKING(for strlcat)
-AC_LINK_IFELSE(
-	[AC_LANG_PROGRAM(
-		[[#include <string.h>
-		#include <stdlib.h>]],
-		[[char *a = malloc(6);
-		a[0] = '\0';
-		strlcat(a, "hello", 6);]]
-	)],
-	[AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_STRLCAT, 1, [Define if strlcat is available (most BSDs.)])],
-	[AC_MSG_RESULT(no)]
-)
-
-CFLAGS=$save_CFLAGS
-
-else
-
-dnl Better than nothing. The more complicated test above probably fixes powerpc,
-dnl so who cares.
-
-AC_CHECK_FUNCS([strlcat strlcpy])
-
-fi
 
 AC_CHECK_TYPE([u_int32_t], [],
 [
@@ -259,20 +174,11 @@ AC_CHECK_TYPE([u_int16_t], [],
 	])
 ])
 
-AC_CHECK_TYPE([in_port_t], [],
-[AC_DEFINE(in_port_t, [u_int16_t], [If system does not define in_port_t, define it to what it should be.])],
-[[#include <sys/types.h>
-#include <netinet/in.h>]])
-
-AC_CHECK_TYPE([sa_family_t], [],
-[AC_DEFINE(sa_family_t, [u_int16_t], [If system does not define sa_family_t, define it here.])],
-[[#include <sys/types.h>
-#include <sys/socket.h>]])
-
 AC_CHECK_TYPES([uintptr_t])
 
 dnl check for various functions...
-AC_CHECK_FUNCS([socketpair vsnprintf mmap gettimeofday strdup strndup ])
+AC_CHECK_FUNCS([strlcat strlcpy])
+AC_CHECK_FUNCS([socketpair vsnprintf mmap gettimeofday strdup strndup sigaction geteuid])
 
 dnl Specialized functions checks
 dnl ============================
@@ -313,13 +219,8 @@ AC_CHECK_HEADER(zlib.h, [
 fi
 
 dnl **********************************************************************
-dnl Check for --with-confdir [deprecated, use --sysconfdir instead]
+dnl --with-confdir Deprecated, use --sysconfdir
 dnl **********************************************************************
-
-AC_ARG_WITH([confdir],
-	[AS_HELP_STRING([--with-confdir=DIR],[Directory to install config files [deprecated, use --sysconfdir instead].])],
-	[ sysconfdir=`echo $withval | sed 's/\/$//'` ],
-	[ confdir='${sysconfdir}' ])
 AC_DEFINE_DIR([ETC_DIR], [sysconfdir], [Prefix where config files are installed.])
 
 dnl **********************************************************************
@@ -410,8 +311,8 @@ AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug],[Enable debug build, overri
 if test x"$enable_debug" != x"no"; then
 	AX_APPEND_COMPILE_FLAGS([-g])
 	AX_APPEND_COMPILE_FLAGS([-Og])
-	AX_APPEND_COMPILE_FLAGS([-fsanitize=address])
-	AX_APPEND_COMPILE_FLAGS([-fsanitize=undefined])
+	AX_APPEND_LINK_FLAGS([-fsanitize=address])
+	AX_APPEND_LINK_FLAGS([-fsanitize=undefined])
 	enable_assert="hard";
 fi;
 
@@ -524,20 +425,11 @@ AS_HELP_STRING([--with-topiclen=NUMBER],[Set the max topic length to NUMBER (def
 AC_DEFINE_UNQUOTED(TOPICLEN, ${TOPICLEN}, [Maximum topic length (<=390)])
 AC_DEFINE_UNQUOTED(NICKLEN, (${NICKLEN}+1), [Nickname length])
 
-AC_DEFINE_UNQUOTED(SHARED_SUFFIX, ".so", [Suffix for shared libraries on this platform.])
-
-# rpath, for finding libratbox.so at run time
-hold_ldflags=$LDFLAGS
-AC_MSG_CHECKING(for the ld -rpath flag)
-LDFLAGS="${LDFLAGS} -Wl,-rpath=${libdir}"
-AC_LINK_IFELSE([AC_LANG_PROGRAM([],[int i;])], found=yes, found=no)
-LDFLAGS=$hold_ldflags
-AC_MSG_RESULT($found)
-if test "$found" = yes; then
-	LDFLAGS="${LDFLAGS} -Wl,-rpath=\${libdir}"
-fi
-
 RB_CFLAGS
+AX_APPEND_LINK_FLAGS([-Wl,-rpath=\${libdir}])
+AX_APPEND_LINK_FLAGS([-Wl,--export-all-symbols])
+
+AC_DEFINE_UNQUOTED(EXEEXT, "${EXEEXT}", [Executable extension])
 
 AC_SUBST(MODULES_LIBS)
 AC_SUBST(MOD_TARGET)
@@ -545,7 +437,6 @@ AC_SUBST(MOD_TARGET)
 AC_SUBST(LDFLAGS)
 AC_SUBST(PICFLAGS)
 AC_SUBST(SEDOBJ)
-
 
 if test "$prefix" = "NONE"; then 
 	AC_DEFINE_UNQUOTED(IRCD_PREFIX, "$ac_default_prefix", [Prefix where the ircd is installed.])

@@ -157,14 +157,15 @@ print_startup(int pid)
 
     /* let the parent process know the initialization was successful
      * -- jilles */
-    if (!server_state_foreground)
+    if (!server_state_foreground) {
         write(0, ".", 1);
-    fclose(stdin);
-    fclose(stdout);
-    fclose(stderr);
-    open("/dev/null", O_RDWR);
-    dup2(0, 1);
-    dup2(0, 2);
+        fclose(stdin);
+        fclose(stdout);
+        fclose(stderr);
+        open("/dev/null", O_RDWR);
+        dup2(0, 1);
+        dup2(0, 2);
+    }
 }
 
 /*
@@ -196,6 +197,7 @@ init_sys(void)
 static int
 make_daemon(void)
 {
+#ifndef _WIN32
     int pid;
     int pip[2];
     char c;
@@ -226,7 +228,7 @@ make_daemon(void)
     /*	fclose(stdin);
     	fclose(stdout);
     	fclose(stderr); */
-
+#endif
     return 0;
 }
 
@@ -407,7 +409,7 @@ check_pidfile(const char *filename)
     if((fb = fopen(filename, "r"))) {
         if(fgets(buff, 20, fb) != NULL) {
             pidfromfile = atoi(buff);
-            if(!kill(pidfromfile, 0)) {
+            if(!rb_kill(pidfromfile, 0)) {
                 printf("ircd: daemon is already running\n");
                 exit(-1);
             }
@@ -522,15 +524,17 @@ seed_random(void *unused)
  * Side Effects - this is where the ircd gets going right now
  */
 int
-main(int argc, char *argv[])
+ircd_main(int argc, char *argv[])
 {
     int fd;
 
+#ifdef HAVE_GETEUID
     /* Check to see if the user is running us as root, which is a nono */
     if(geteuid() == 0) {
         fprintf(stderr, "Don't run ircd as root!!!\n");
         return -1;
     }
+#endif
 
     init_sys();
 
@@ -589,6 +593,7 @@ main(int argc, char *argv[])
     if (testing_conf)
         server_state_foreground = 1;
 
+#ifndef _WIN32
     /* Make sure fd 0, 1 and 2 are in use -- jilles */
     do {
         fd = open("/dev/null", O_RDWR);
@@ -597,6 +602,7 @@ main(int argc, char *argv[])
         close(fd);
     else if (fd == -1)
         exit(1);
+#endif
 
     /* Check if there is pidfile and daemon already running */
     if(!testing_conf) {

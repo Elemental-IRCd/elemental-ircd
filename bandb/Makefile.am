@@ -1,7 +1,8 @@
+
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libratbox/include
 AM_CFLAGS = @SQLITE_CFLAGS@
-AM_LDFLAGS = @SQLITE_LIBS@
-AM_CPPFLAGS = -I../include -I../libratbox/include
-LDADD = ../libratbox/src/libratbox.la
+AM_LDFLAGS = @SQLITE_LIBS@ -L$(top_srcdir)/libratbox/src
+LDADD = -lratbox
 
 bin_PROGRAMS = bandb
 

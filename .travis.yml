@@ -50,7 +50,7 @@ script:
   - make install
   - scripts/travis_genssl.sh
   - testsuite/startall.sh
-  - make -j4 check
+  - AM_COLOR_TESTS=always make -j4 check
 
 after_script:
   - |

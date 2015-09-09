@@ -25,8 +25,6 @@
 #include <libratbox_config.h>
 #include <ratbox_lib.h>
 
-#ifdef HAVE_OPENSSL
-
 #include <commio-int.h>
 #include <commio-ssl.h>
 #include <openssl/ssl.h>
@@ -626,6 +624,3 @@ rb_get_ssl_info(char *buf, size_t len)
                 SSLeay_version(SSLEAY_VERSION),
                 (long)OPENSSL_VERSION_NUMBER, SSLeay());
 }
-
-
-#endif /* HAVE_OPESSL */

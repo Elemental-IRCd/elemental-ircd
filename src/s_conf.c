@@ -169,7 +169,6 @@ free_conf(struct ConfItem *aconf)
  * inputs	- pointer to client
  * output	- 0 = Success
  * 		  NOT_AUTHORISED (-1) = Access denied (no I line match)
- * 		  SOCKET_ERROR   (-2) = Bad socket.
  * 		  I_LINE_FULL    (-3) = I-line is full
  *		  TOO_MANY       (-4) = Too many connections from hostname
  * 		  BANNED_CLIENT  (-5) = K-lined
@@ -188,10 +187,6 @@ check_client(struct Client *client_p, struct Client *source_p, const char *usern
     }
 
     switch (i) {
-    case SOCKET_ERROR:
-        exit_client(client_p, source_p, &me, "Socket Error");
-        break;
-
     case TOO_MANY_LOCAL:
         /* Note that these notices are sent to opers on other
          * servers also, so even if local opers are allowed to

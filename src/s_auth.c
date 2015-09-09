@@ -282,7 +282,7 @@ auth_error(struct AuthRequest *auth)
 static int
 start_auth_query(struct AuthRequest *auth)
 {
-    struct rb_sockaddr_storage localaddr, destaddr;
+    struct sockaddr_storage localaddr, destaddr;
     rb_fde_t *F;
     int family;
 

@@ -26,16 +26,17 @@
 #include <ratbox_lib.h>
 #include <commio-int.h>
 
-#ifndef _WIN32
-
 #include <sys/wait.h>
-
 
 #if defined(HAVE_SPAWN_H) && defined(HAVE_POSIX_SPAWN)
 #include <spawn.h>
 
 #ifdef __APPLE__
 #include <crt_externs.h>
+#endif
+
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
 #endif
 
 #ifndef HAVE_DECL_ENVIRON
@@ -124,6 +125,35 @@ rb_strerror(int error)
 }
 
 int
+rb_ignore_errno(int error)
+{
+    switch (error) {
+#ifdef EINPROGRESS
+    case EINPROGRESS:
+#endif
+#if defined EWOULDBLOCK
+    case EWOULDBLOCK:
+#endif
+#if defined(EAGAIN) && (EWOULDBLOCK != EAGAIN)
+    case EAGAIN:
+#endif
+#ifdef EINTR
+    case EINTR:
+#endif
+#ifdef ERESTART
+    case ERESTART:
+#endif
+#ifdef ENOBUFS
+    case ENOBUFS:
+#endif
+        return 1;
+    default:
+        break;
+    }
+    return 0;
+}
+
+int
 rb_kill(pid_t pid, int sig)
 {
     return kill(pid, sig);
@@ -145,6 +175,110 @@ pid_t
 rb_getpid(void)
 {
     return getpid();
+}
+
+int
+rb_recv_fd_buf(rb_fde_t *F, void *data, size_t datasize, rb_fde_t **xF, int nfds)
+{
+    struct msghdr msg;
+    struct cmsghdr *cmsg;
+    struct iovec iov[1];
+    struct stat st;
+    uint8_t stype = RB_FD_UNKNOWN;
+    const char *desc;
+    int fd, len, x, rfds;
+
+    int control_len = CMSG_SPACE(sizeof(int) * nfds);
+
+    iov[0].iov_base = data;
+    iov[0].iov_len = datasize;
+
+    msg.msg_name = NULL;
+    msg.msg_namelen = 0;
+    msg.msg_iov = iov;
+    msg.msg_iovlen = 1;
+    msg.msg_flags = 0;
+    cmsg = alloca(control_len);
+    msg.msg_control = cmsg;
+    msg.msg_controllen = control_len;
+
+    if((len = recvmsg(rb_get_fd(F), &msg, 0)) <= 0)
+        return len;
+
+    if(msg.msg_controllen > 0 && msg.msg_control != NULL
+       && (cmsg = CMSG_FIRSTHDR(&msg)) != NULL) {
+        rfds = ((unsigned char *)cmsg + cmsg->cmsg_len - CMSG_DATA(cmsg)) / sizeof(int);
+
+        for(x = 0; x < nfds && x < rfds; x++) {
+            fd = ((int *)CMSG_DATA(cmsg))[x];
+            stype = RB_FD_UNKNOWN;
+            desc = "remote unknown";
+            if(!fstat(fd, &st)) {
+                if(S_ISSOCK(st.st_mode)) {
+                    stype = RB_FD_SOCKET;
+                    desc = "remote socket";
+                } else if(S_ISFIFO(st.st_mode)) {
+                    stype = RB_FD_PIPE;
+                    desc = "remote pipe";
+                } else if(S_ISREG(st.st_mode)) {
+                    stype = RB_FD_FILE;
+                    desc = "remote file";
+                }
+            }
+            xF[x] = rb_open(fd, stype, desc);
+        }
+    } else
+        *xF = NULL;
+    return len;
+}
+
+int
+rb_send_fd_buf(rb_fde_t *xF, rb_fde_t **F, int count, void *data, size_t datasize, __unused pid_t pid)
+{
+    int n;
+    struct msghdr msg;
+    struct cmsghdr *cmsg;
+    struct iovec iov[1];
+    char empty = '0';
+    char *buf;
+
+    memset(&msg, 0, sizeof(msg));
+    if(datasize == 0) {
+        iov[0].iov_base = &empty;
+        iov[0].iov_len = 1;
+    } else {
+        iov[0].iov_base = data;
+        iov[0].iov_len = datasize;
+    }
+    msg.msg_iov = iov;
+    msg.msg_iovlen = 1;
+    msg.msg_name = NULL;
+    msg.msg_namelen = 0;
+    msg.msg_flags = 0;
+    msg.msg_control = NULL;
+    msg.msg_controllen = 0;
+
+    if(count > 0) {
+        int i;
+        int len = CMSG_SPACE(sizeof(int) * count);
+        buf = alloca(len);
+
+        msg.msg_control = buf;
+        msg.msg_controllen = len;
+        cmsg = CMSG_FIRSTHDR(&msg);
+        if(!cmsg)
+            return 0;
+        cmsg->cmsg_level = SOL_SOCKET;
+        cmsg->cmsg_type = SCM_RIGHTS;
+        cmsg->cmsg_len = CMSG_LEN(sizeof(int) * count);
+
+        for(i = 0; i < count; i++) {
+            ((int *)CMSG_DATA(cmsg))[i] = rb_get_fd(F[i]);
+        }
+        msg.msg_controllen = cmsg->cmsg_len;
+    }
+    n = sendmsg(rb_get_fd(xF), &msg, MSG_NOSIGNAL);
+    return n;
 }
 
 static int
@@ -173,5 +307,3 @@ rb_set_inherit(rb_fde_t *F, int inherit)
     else
         return set_fd_flag(F->fd, FD_CLOEXEC);
 }
-
-#endif /* !WIN32 */

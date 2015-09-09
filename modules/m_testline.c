@@ -60,7 +60,7 @@ mo_testline(struct Client *client_p, struct Client *source_p, int parc, const ch
 {
     struct ConfItem *aconf;
     struct ConfItem *resv_p;
-    struct rb_sockaddr_storage ip;
+    struct sockaddr_storage ip;
     char user_trunc[USERLEN + 1], notildeuser_trunc[USERLEN + 1];
     const char *name = NULL;
     const char *username = NULL;

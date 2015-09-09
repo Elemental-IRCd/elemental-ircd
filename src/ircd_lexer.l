@@ -23,17 +23,12 @@
 %option nounput
 
 %{
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#include <netinet/in.h>
+#define WE_ARE_MEMORY_C
 
 #include <string.h>
 #include <errno.h>
 #include <limits.h>
 #include <libgen.h>
-
-#define WE_ARE_MEMORY_C
 
 #include "stdinc.h"
 #include "ircd_defs.h"

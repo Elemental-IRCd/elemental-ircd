@@ -27,7 +27,6 @@
 #include <ratbox_lib.h>
 #include <commio-int.h>
 #include <commio-ssl.h>
-#ifdef HAVE_GNUTLS
 
 #include <gnutls/gnutls.h>
 #include <gnutls/crypto.h>
@@ -526,6 +525,3 @@ rb_get_ssl_info(char *buf, size_t len)
     snprintf(buf, len, "GNUTLS: compiled (%s), library(%s)",
                 LIBGNUTLS_VERSION, gnutls_check_version(NULL));
 }
-
-
-#endif /* HAVE_GNUTLS */
