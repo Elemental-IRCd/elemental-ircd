@@ -30,7 +30,6 @@
 #include <ratbox_lib.h>
 #include <commio-int.h>
 
-#ifdef _WIN32
 /*
  * having gettimeofday is nice...
  */
@@ -85,32 +84,39 @@ rb_spawn_process(const char *path, const char **argv)
     if(CreateProcess(cmd, cmd, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi) == FALSE)
         return -1;
 
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+
     return (pi.dwProcessId);
 }
 
 pid_t
-rb_waitpid(int pid, int *status, int flags)
+rb_waitpid(pid_t pid, int *status, int flags)
 {
     DWORD timeout = (flags & WNOHANG) ? 0 : INFINITE;
     HANDLE hProcess;
     DWORD waitcode;
 
     hProcess = OpenProcess(PROCESS_ALL_ACCESS, TRUE, pid);
-    if(hProcess) {
-        waitcode = WaitForSingleObject(hProcess, timeout);
-        if(waitcode == WAIT_TIMEOUT) {
-            CloseHandle(hProcess);
-            return 0;
-        } else if(waitcode == WAIT_OBJECT_0) {
-            if(GetExitCodeProcess(hProcess, &waitcode)) {
-                *status = (int)((waitcode & 0xff) << 8);
-                CloseHandle(hProcess);
-                return pid;
-            }
-        }
-        CloseHandle(hProcess);
-    } else
+    if(!hProcess) {
         errno = ECHILD;
+        return -1;
+    }
+
+    waitcode = WaitForSingleObject(hProcess, timeout);
+    if(waitcode == WAIT_TIMEOUT) {
+        CloseHandle(hProcess);
+        return 0;
+    }
+
+    if(waitcode == WAIT_OBJECT_0) {
+        if(GetExitCodeProcess(hProcess, &waitcode)) {
+            *status = (int)((waitcode & 0xff) << 8);
+            CloseHandle(hProcess);
+            return pid;
+        }
+    }
+    CloseHandle(hProcess);
 
     return -1;
 }
@@ -138,7 +144,7 @@ rb_setenv(const char *name, const char *value, int overwrite)
 }
 
 int
-rb_kill(int pid, int sig)
+rb_kill(pid_t pid, int sig)
 {
     HANDLE hProcess;
     int ret = -1;
@@ -412,10 +418,49 @@ rb_strerror(int error)
     return buf;
 }
 
+/* TODO: Translate winsock errnos'
+ *
+ * WSAENOBUFS      -> ENOBUFS
+ * WSAEINPROGRESS  -> EINPROGRESS
+ * WSAEWOULDBLOCK  -> EWOULDBLOCK
+ * WSAEMSGSIZE     -> EMSGSIZE
+ * WSAEALREADY     -> EALREADY
+ * WSAEISCONN      -> EISCONN
+ * WSAEADDRINUSE   -> EADDRINUSE
+ * WSAEAFNOSUPPORT -> EAFNOSUPPORT
+ */
+
+int
+rb_ignore_errno(int error)
+{
+    switch (error) {
+#ifdef WSAEINPROGRESS
+    case WSAEINPROGRESS:
+#endif
+#if defined WSAEWOULDBLOCK
+    case WSAEWOULDBLOCK:
+#endif
+#if defined(WSAEAGAIN) && (WSAEWOULDBLOCK != WSAEAGAIN)
+    case WSAEAGAIN:
+#endif
+#ifdef WSAEINTR
+    case WSAEINTR:
+#endif
+#ifdef WSAERESTART
+    case WSAERESTART:
+#endif
+#ifdef WSAENOBUFS
+    case WSAENOBUFS:
+#endif
+        return 1;
+    default:
+        break;
+    }
+    return 0;
+}
+
 int
 rb_set_inherit(rb_fde_t *F, int inherit)
 {
     return SetHandleInformation((HANDLE) F->fd, HANDLE_FLAG_INHERIT, !!inherit);
 }
-
-#endif /* _WIN32 */

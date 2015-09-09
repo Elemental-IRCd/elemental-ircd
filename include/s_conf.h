@@ -40,7 +40,7 @@ struct hostent;
 /* yacc/lex love globals!!! */
 
 struct ip_value {
-    struct rb_sockaddr_storage ip;
+    struct sockaddr_storage ip;
     int ip_mask;
     int type;
 };
@@ -389,7 +389,6 @@ extern char conffilebuf[IRCD_BUFSIZE + 1];
 extern int lineno;
 
 #define NOT_AUTHORISED  (-1)
-#define SOCKET_ERROR    (-2)
 #define I_LINE_FULL     (-3)
 #define BANNED_CLIENT   (-4)
 #define TOO_MANY_LOCAL	(-6)

@@ -207,7 +207,7 @@ apply_dline(struct Client *source_p, const char *dlhost, int tdline_time, char *
 {
     struct ConfItem *aconf;
     char *oper_reason;
-    struct rb_sockaddr_storage daddr;
+    struct sockaddr_storage daddr;
     int t = AF_INET, ty, b;
     const char *creason;
 

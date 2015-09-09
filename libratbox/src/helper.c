@@ -237,7 +237,7 @@ rb_helper_run(rb_helper *helper)
 {
     if(helper == NULL)
         return;
-    rb_helper_read_cb(helper->ifd, helper);
+    rb_setselect(helper->ifd, RB_SELECT_READ, rb_helper_read_cb, helper);
 }
 
 

@@ -93,7 +93,7 @@
 #define DNS_MAXLINE 128
 
 
-struct rb_sockaddr_storage irc_nsaddr_list[IRCD_MAXNS];
+struct sockaddr_storage irc_nsaddr_list[IRCD_MAXNS];
 int irc_nscount = 0;
 char irc_domain[IRCD_RES_HOSTLEN + 1];
 

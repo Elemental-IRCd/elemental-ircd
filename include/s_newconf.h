@@ -182,7 +182,7 @@ struct server_conf {
     time_t hold;
 
     int aftype;
-    struct rb_sockaddr_storage my_ipnum;
+    struct sockaddr_storage my_ipnum;
 
     char *class_name;
     struct Class *class;

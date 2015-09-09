@@ -938,7 +938,7 @@ server_estab(struct Client *client_p)
 static int
 serv_connect_resolved(struct Client *client_p)
 {
-    struct rb_sockaddr_storage myipnum;
+    struct sockaddr_storage myipnum;
     char vhoststr[HOSTIPLEN];
     struct server_conf *server_p;
     uint16_t port;
@@ -1076,7 +1076,7 @@ int
 serv_connect(struct server_conf *server_p, struct Client *by)
 {
     struct Client *client_p;
-    struct rb_sockaddr_storage theiripnum;
+    struct sockaddr_storage theiripnum;
     rb_fde_t *F;
     char note[HOSTLEN + 10];
 

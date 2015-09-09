@@ -209,7 +209,7 @@ struct LocalUser {
     struct ConfItem *att_conf;	/* attached conf */
     struct server_conf *att_sconf;
 
-    struct rb_sockaddr_storage ip;
+    struct sockaddr_storage ip;
     time_t last_nick_change;
     int number_of_nick_changes;
 
@@ -293,7 +293,7 @@ struct PreClient {
     rb_dlink_list dnsbl_queries; /* list of struct BlacklistClient * */
     struct Blacklist *dnsbl_listed; /* first dnsbl where it's listed */
 
-    struct rb_sockaddr_storage lip; /* address of our side of the connection */
+    struct sockaddr_storage lip; /* address of our side of the connection */
 };
 
 struct ListClient {

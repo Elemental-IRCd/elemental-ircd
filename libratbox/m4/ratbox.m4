@@ -17,6 +17,18 @@ AC_DEFUN([RB_IF_REQUIRED], [
 ])
 
 
+# Detect if we're targeting windows
+AC_DEFUN([RB_DETECT_PLATFORM], [
+AC_REQUIRE([AC_CANONICAL_HOST])
+case "$host_os" in
+mingw* )
+	rb_platform="windows";;
+*)
+	rb_platform="unix";;
+esac
+])
+
+
 dnl Shared CFLAGS settings
 AC_DEFUN([RB_CFLAGS], [
   AX_APPEND_COMPILE_FLAGS([-Wall])

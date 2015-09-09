@@ -31,28 +31,8 @@
 
 #define MAPI_RATBOX 1
 
-#if defined(HAVE_SHL_LOAD)
-#include <dl.h>
-#endif
-#if defined(HAVE_DLFCN_H)
-#include <dlfcn.h>
-#endif
-
 #include "msg.h"
 #include "hook.h"
-
-struct module {
-    char *name;
-    const char *version;
-    void *address;
-    int core;
-    int mapi_version;
-    void * mapi_header; /* actually struct mapi_mheader_av<mapi_version>	*/
-};
-
-struct module_path {
-    char path[MAXPATHLEN];
-};
 
 #define MAPI_MAGIC_HDR	0x4D410000
 
