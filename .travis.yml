@@ -101,7 +101,6 @@ addons:
   coverity_scan:
     project:
       name: "Elemental-IRCd/elemental-ircd"
-      description: "Continuation of ShadowIRCD to meet people's needs"
     notification_email: xena@yolo-swag.com
     build_command_prepend: ./autogen.sh && ./configure --enable-assert
     build_command: make
