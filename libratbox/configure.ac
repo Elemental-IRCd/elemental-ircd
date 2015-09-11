@@ -282,6 +282,17 @@ dnl =====================
 AC_ARG_ENABLE(assert, AS_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),[],[enable_assert=no])
 AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug],[Enable debug build, enables asserts]),[],[enable_debug=no])
 AC_ARG_ENABLE(sanitize, AS_HELP_STRING([--enable-sanitize],[Enables address and undefined behaviour sanitizers if available, enables debug]),[],[enable_sanitize=no])
+AC_ARG_ENABLE(profile, AS_HELP_STRING([--enable-profile],[Enable profiling]), [profile=$enableval], [profile=no])
+
+if test x"$profile" = x"yes"; then
+	AX_CHECK_COMPILE_FLAG([-pg], [AX_APPEND_FLAG([-pg])], [
+		AC_MSG_ERROR([Profiling not supported on this compiler])
+	])
+	AX_APPEND_LINK_FLAGS([-lgcov])
+	AX_APPEND_COMPILE_FLAGS([-fprofile-arcs])
+	AX_APPEND_COMPILE_FLAGS([-ftest-coverage])
+	enable_debug=yes
+fi
 
 if test x"$enable_sanitize" != x"no"; then
 	AX_APPEND_LINK_FLAGS([-fsanitize=address])
@@ -302,16 +313,6 @@ elif test x"$enable_assert" = x"soft"; then
 	AC_DEFINE(NDEBUG, 1, [Define this to disable debugging support.])
 elif test x"$enable_assert" = x"yes"; then
 	enable_assert="hard";
-fi
-
-AC_ARG_ENABLE(profile,
-AS_HELP_STRING([--enable-profile],[Enable profiling]),
-[profile=$enableval], [profile=no])
-
-if test x"$profile" = x"yes"; then
-	AX_CHECK_COMPILE_FLAG([-pg], [AX_APPEND_FLAG([-pg])], [
-		AC_MSG_ERROR([Profiling not supported on this compiler])
-	])
 fi
 
 AC_ARG_ENABLE(balloc,
