@@ -1,5 +1,3 @@
-#!/usr/bin/expect -f
-
 source lib/lib.tcl
 
 begin test privmsg {Check privmsg works and is routed}
