@@ -8,9 +8,7 @@ compiler:
   - gcc
 
 #See http://docs.travis-ci.com/user/migrating-from-legacy/
-#Using legacy infrastructure for now as the test suite needs
-#a tcl extension
-sudo: true
+sudo: false
 
 env:
   global:
@@ -21,25 +19,12 @@ env:
    # Needed for osx builds
    - PKG_CONFIG_PATH: /usr/local/opt/sqlite/lib/pkgconfig
 
-before_script:
+install:
   - |
     case $TRAVIS_OS_NAME in
-    linux)
-      sudo add-apt-repository ppa:ariscop/tcloo -y
-      sudo apt-get update -q
-      sudo apt-get install tcloo
-      ;;
     osx)
-      EDITOR=/bin/true \
       brew install autoconf-archive
       brew install sqlite
-      wget http://downloads.sourceforge.net/project/tcl/TclOO%20Package/1.0.2/TclOO1.0.2.tar.gz
-      tar -xf TclOO1.0.2.tar.gz
-      pushd TclOO1.0.2
-      ./configure
-      make
-      sudo make install
-      popd
       ;;
     esac
 
@@ -112,6 +97,7 @@ addons:
       - libsqlite3-dev
       - expect
       - tcl
+      - tcllib
   coverity_scan:
     project:
       name: "Elemental-IRCd/elemental-ircd"
