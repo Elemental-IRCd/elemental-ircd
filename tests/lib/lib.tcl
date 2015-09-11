@@ -164,11 +164,13 @@ snit::type client {
     }
 
     method send {args} {
-        ::send -i $my_spawn_id {*}$args
+        $self make_current
+        ::send {*}$args
     }
 
     method expect {args} {
-        ::expect -i $my_spawn_id {*}$args
+        $self make_current
+        ::expect {*}$args
     }
 
 }
