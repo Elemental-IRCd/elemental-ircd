@@ -1,4 +1,4 @@
-package require TclOO
+package require snit
 
 source lib/numeric.tcl
 
@@ -97,80 +97,80 @@ proc format_args {args} {
     return [join $out]
 }
 
-oo::class create client {
+snit::type client {
+    variable my_spawn_id
+    variable nickname
+    variable username
+    variable realname
+
     constructor {{server hub}} {
         global servers
-        variable my_spawn_id
-        variable nickname [get_nick]
-        variable username [get_user]
 
         spawn nc {*}$servers($server)
         set my_spawn_id $spawn_id
-        my make_current
-        my register
+        set nickname [get_nick]
+        set username [get_user]
+        set realname [get_realname]
+
+        $self make_current
+        $self register
     }
 
     method nick {} {
-        variable nickname
         return $nickname
     }
 
     method register {} {
-        variable nickname
-        variable username
-
-        my send_cmd NICK $nickname
-        my send_cmd USER $username * * [get_realname]
-        my expect_rpl RPL_WELCOME
+        $self send_cmd NICK $nickname
+        $self send_cmd USER $username * * $realname
+        $self expect_rpl RPL_WELCOME
     }
 
     method quit {} {
-        my send_cmd QUIT
-        my expect_cmd ERROR
+        $self send_cmd QUIT
+        $self expect_cmd ERROR
     }
 
     method join_channel {channel} {
-        my send_cmd JOIN $channel
-        my expect -re "JOIN :?$channel"
+        $self send_cmd JOIN $channel
+        $self expect -re "JOIN :?$channel"
     }
 
     method oper {} {
-        my send_cmd OPER oper testsuite
-        my expect "is now an operator"
+        $self send_cmd OPER oper testsuite
+        $self expect "is now an operator"
     }
 
     method send_cmd {args} {
-        my send "[format_args {*}$args]\r"
+        $self send "[format_args {*}$args]\r"
     }
 
     method expect_rpl {numeric {text {}}} {
         global $numeric
-        variable nickname
 
-        my expect -re [format {:[^ ]+ %s %s ?:?%s} [set $numeric] $nickname $text]
+        $self expect -re [format {:[^ ]+ %s %s ?:?%s} [set $numeric] $nickname $text]
     }
 
     method expect_cmd {command} {
-        my expect -re [format {(:[^ ]+ +)?%s} $command]
+        $self expect -re [format {(:[^ ]+ +)?%s} $command]
     }
 
     method make_current {} {
         global spawn_id
         global current_client
-        variable my_spawn_id
 
-        set current_client [self]
+        set current_client $self
         set spawn_id $my_spawn_id
     }
 
     method send {args} {
-        variable my_spawn_id
-        ::send -i $my_spawn_id {*}$args
+        $self make_current
+        ::send {*}$args
     }
 
     method expect {args} {
-        variable my_spawn_id
-        ::expect -i $my_spawn_id {*}$args
+        $self make_current
+        ::expect {*}$args
     }
 
 }
