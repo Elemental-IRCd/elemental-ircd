@@ -34,7 +34,7 @@ script:
   - make
   - make install
   - testsuite/startall.sh
-  - AM_COLOR_TESTS=always make -j4 check
+  - make -j4 check
 
 after_script:
   - |
