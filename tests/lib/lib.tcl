@@ -188,3 +188,5 @@ proxy_method quit
 
 proxy_method expect_cmd
 proxy_method expect_rpl
+
+source [lindex $argv 0]

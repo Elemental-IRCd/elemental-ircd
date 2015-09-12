@@ -1,5 +1,3 @@
-source lib/lib.tcl
-
 begin test umodeg {Check umode +g functionality and presence of help msg}
 
 client umodegtarget hub

@@ -1,5 +1,3 @@
-source lib/lib.tcl
-
 begin test privmsg {Check privmsg works and is routed}
 
 client hub1 hub

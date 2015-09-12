@@ -1,5 +1,3 @@
-source lib/lib.tcl
-
 begin test register {Test client registration}
 
 client new

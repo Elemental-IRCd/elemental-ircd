@@ -1,5 +1,3 @@
-source lib/lib.tcl
-
 begin test chghost {Check chghost}
 
 client op   hub
