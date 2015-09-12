@@ -14,7 +14,7 @@ umodegtarget send_cmd MODE [umodegtarget nick] +g
 set message {This message will be filtered by +g}
 umodegsender send_cmd PRIVMSG [umodegtarget nick] $message
 umodegtarget expect "is messaging you"
-umodegtarget expect "/ACCEPT"
+umodegtarget expect "/ACCEPT [umodegsender nick]"
 umodegsender expect "has been informed that you messaged them."
 
 umodegsender quit
