@@ -9,7 +9,7 @@ AC_CONFIG_HEADERS([include/setup.h])
 AC_PREFIX_DEFAULT($HOME/ircd)
 AC_LANG(C)
 
-AM_INIT_AUTOMAKE([subdir-objects])
+AM_INIT_AUTOMAKE([])
 AM_SILENT_RULES([yes])
 AM_PROG_AR
 

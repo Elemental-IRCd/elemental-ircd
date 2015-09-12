@@ -8,7 +8,7 @@ AC_CONFIG_SRCDIR([include/ratbox_lib.h])
 AC_CONFIG_HEADERS([include/libratbox_config.h])
 AC_LANG(C)
 
-AM_INIT_AUTOMAKE([subdir-objects])
+AM_INIT_AUTOMAKE([])
 AM_SILENT_RULES([yes])
 
 AC_PREFIX_DEFAULT(/usr/local/libratbox)
