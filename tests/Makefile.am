@@ -5,4 +5,5 @@ TCL_LOG_COMPILER = $(EXPECT) -f
 
 TESTS = register.tcl \
         chghost.tcl \
-        privmsg.tcl
+        privmsg.tcl \
+        umodeg.tcl
