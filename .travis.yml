@@ -25,6 +25,7 @@ install:
     osx)
       brew install autoconf-archive
       brew install sqlite
+      brew install lcov
       ;;
     esac
     gem install coveralls-lcov
