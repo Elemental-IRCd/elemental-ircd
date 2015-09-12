@@ -36,6 +36,7 @@ script:
   - make install
   - testsuite/startall.sh
   - make -j4 check
+  - testsuite/killall.sh
 
 after_success:
   - lcov --compat-libtool --directory . --capture --output-file coverage.info
