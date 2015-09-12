@@ -811,7 +811,7 @@ msg_client(int p_or_n, const char *command,
                     add_reply_target(target_p, source_p);
                     sendto_one(target_p, form_str(RPL_UMODEGMSG),
                                me.name, target_p->name, source_p->name,
-                               source_p->username, source_p->host);
+                               source_p->username, source_p->host, source_p->name);
 
                     target_p->localClient->last_caller_id_time = rb_current_time();
                 }
