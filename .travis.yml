@@ -25,16 +25,24 @@ install:
     osx)
       brew install autoconf-archive
       brew install sqlite
+      brew install lcov
       ;;
     esac
+    gem install coveralls-lcov
 
 script:
   - ./autogen.sh
-  - ./configure --enable-assert
+  - ./configure --enable-debug --enable-profile
   - make
   - make install
   - testsuite/startall.sh
   - make -j4 check
+  - testsuite/killall.sh
+
+after_success:
+  - lcov --compat-libtool --directory . --capture --output-file coverage.info
+  - lcov --remove coverage.info "/usr/*" --output-file coveralls.info
+  - coveralls-lcov coveralls.info
 
 after_script:
   - |
@@ -98,10 +106,10 @@ addons:
       - expect
       - tcl
       - tcllib
+      - lcov
   coverity_scan:
     project:
       name: "Elemental-IRCd/elemental-ircd"
-      description: "Continuation of ShadowIRCD to meet people's needs"
     notification_email: xena@yolo-swag.com
     build_command_prepend: ./autogen.sh && ./configure --enable-assert
     build_command: make
