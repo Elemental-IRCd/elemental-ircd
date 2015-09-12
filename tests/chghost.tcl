@@ -23,7 +23,3 @@ op   expect "@chghost.test JOIN #chghost"
 leaf expect "@chghost.test JOIN #chghost"
 
 hub  expect "chghost.test :is now your hidden host"
-
-op   quit
-hub  quit
-leaf quit

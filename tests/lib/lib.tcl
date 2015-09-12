@@ -98,6 +98,8 @@ proc format_args {args} {
     return [join $out]
 }
 
+set all_clients [list]
+
 snit::type client {
     variable my_spawn_id
     variable nickname
@@ -106,6 +108,7 @@ snit::type client {
 
     constructor {{server hub}} {
         global servers
+        global all_clients
 
         spawn nc {*}$servers($server)
         set my_spawn_id $spawn_id
@@ -115,6 +118,15 @@ snit::type client {
 
         $self make_current
         $self register
+
+        lappend all_clients $self
+    }
+
+    destructor {
+        global all_clients
+
+        ::close -i $my_spawn_id
+        set all_clients [lsearch -not -inline $all_clients $self]
     }
 
     method nick {} {
@@ -130,6 +142,7 @@ snit::type client {
     method quit {} {
         $self send_cmd QUIT
         $self expect_cmd ERROR
+        $self destroy
     }
 
     method join_channel {channel} {
@@ -191,3 +204,8 @@ proxy_method expect_cmd
 proxy_method expect_rpl
 
 source [lindex $argv 0]
+
+# Cleanup open clients
+foreach x $all_clients {
+    $x destroy
+}

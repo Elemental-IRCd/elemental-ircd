@@ -11,5 +11,3 @@ expect_rpl RPL_ISUPPORT
 expect_rpl RPL_MOTDSTART
 expect_rpl RPL_MOTD
 expect_rpl RPL_ENDOFMOTD
-
-quit

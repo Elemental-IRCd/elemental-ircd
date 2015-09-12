@@ -34,8 +34,3 @@ leaf1 send_cmd PRIVMSG #privmsg  $message
 hub1  expect  "PRIVMSG #privmsg :$message"
 hub2  expect  "PRIVMSG #privmsg :$message"
 leaf2 expect  "PRIVMSG #privmsg :$message"
-
-hub1  quit
-hub2  quit
-leaf1 quit
-leaf2 quit
