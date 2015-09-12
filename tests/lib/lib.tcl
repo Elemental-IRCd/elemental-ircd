@@ -1,4 +1,5 @@
 package require snit
+package require Expect
 
 source lib/numeric.tcl
 

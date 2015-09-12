@@ -39,7 +39,7 @@ AC_PROG_MAKE_SET
 AC_PROG_SED
 AC_PROG_YACC
 AC_PROG_LEX
-AC_PATH_PROG(EXPECT, expect)
+AC_PATH_PROG(TCLSH, tclsh)
 
 
 dnl AC_PROG_YACC defaults to yacc unconditionally if nothing can be found
