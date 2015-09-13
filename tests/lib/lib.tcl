@@ -13,8 +13,10 @@ array set servers {
 proc begin {test name {text {Test suite client}}} {
     global test_name
     global test_desc
+    global test_channel
     set test_name $name
     set test_desc $text
+    set test_channel ""
 }
 
 set nick_counter 0
@@ -120,9 +122,14 @@ snit::type client {
 
     method register {} {
         global RPL_WELCOME
+        global test_channel
+
         $self >> NICK $nickname
         $self >> USER $username * * $realname
         $self << $RPL_WELCOME
+        if {$test_channel != ""} {
+            $self JOIN $test_channel
+        }
     }
 
     method nick {} {
