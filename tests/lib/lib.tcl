@@ -46,6 +46,15 @@ proc get_realname {} {
     return $test_desc
 }
 
+# Pick a random server
+proc get_server {} {
+    global servers
+
+    set keys [array names servers]
+    set idx [expr {int(rand()*[llength $keys])}]
+
+    return $servers([lindex $keys $idx])
+}
 
 # Tokenize an irc message into a tcl list
 proc irc_tokenize {line} {
@@ -121,7 +130,7 @@ snit::type client {
         set username [get_user]
         set realname [get_realname]
 
-        set sock [socket 127.0.0.1 6667]
+        set sock [socket {*}[get_server]]
         chan configure $sock {*}{
             -blocking true
             -buffering line
