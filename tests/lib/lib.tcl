@@ -236,6 +236,12 @@ snit::type client {
         set line [format_args {*}$args]
         chan puts $sock $line
         puts stdout "$self >> $args"
+
+        set method_name "post_[lindex $args 0]"
+
+        if {[$self info methods $method_name] != ""} {
+            $self $method_name {*}$args
+        }
     }
 
     # << Expects waits for an irc command {args}
