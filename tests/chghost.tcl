@@ -1,25 +1,18 @@
 begin test chghost {Check chghost}
 
-client op   hub
+set test_channel #chghost
 
-oper
+client oper
+>> OPER oper testsuite
 
-client hub  hub
-client leaf leaf1
+client target
+client observer
 
-op   join_channel #chghost
-hub  join_channel #chghost
-leaf join_channel #chghost
+oper     >> CHGHOST [target nick] chghost.test
+         << QUIT {Changing host}
+         >> "[target nick]!*@chghost.test" JOIN $test_channel
 
-# wait for joins to propagate
-sleep 3
+observer << QUIT {Changing host}
+         >> "[target nick]!*@chghost.test" JOIN $test_channel
 
-op send_cmd CHGHOST [hub nick] chghost.test
-
-op   expect "QUIT :Changing host"
-leaf expect "QUIT :Changing host"
-
-op   expect "@chghost.test JOIN #chghost"
-leaf expect "@chghost.test JOIN #chghost"
-
-hub  expect "chghost.test :is now your hidden host"
+target   << $RPL_HOSTHIDDEN [target nick] chghost.test "*is now your hidden host*"
