@@ -32,7 +32,7 @@ install:
 
 script:
   - ./autogen.sh
-  - ./configure --enable-debug --enable-profile
+  - ./configure --enable-debug --enable-coverage
   - make
   - make install
   - testsuite/startall.sh
