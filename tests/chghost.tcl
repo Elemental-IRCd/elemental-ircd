@@ -1,4 +1,4 @@
-begin test chghost {Check chghost}
+begin {Check chghost}
 
 set test_channel #chghost
 

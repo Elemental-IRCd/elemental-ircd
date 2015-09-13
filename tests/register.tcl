@@ -1,4 +1,4 @@
-begin test register {Test client registration}
+begin {Test client registration}
 
 client new
 

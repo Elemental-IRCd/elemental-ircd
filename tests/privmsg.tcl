@@ -1,4 +1,4 @@
-begin test privmsg {Check privmsg works and is routed}
+begin {Check privmsg works and is routed}
 
 set test_channel #privmsg
 

@@ -10,10 +10,17 @@ array set servers {
     leaf2  {127.0.0.1 6669}
 }
 
-proc begin {test name {text {Test suite client}}} {
+proc begin {{text {Test suite client}}} {
+    global argv
     global test_name
     global test_desc
     global test_channel
+
+    # Pull test name from filename
+    set name [lindex $argv 0]
+    set name [file tail $name]
+    set name [file rootname $name]
+
     set test_name $name
     set test_desc $text
     set test_channel ""

@@ -1,4 +1,4 @@
-begin test umodeg {Check umode +g functionality and presence of help msg}
+begin {Check umode +g functionality and presence of help msg}
 
 client target
 client sender
