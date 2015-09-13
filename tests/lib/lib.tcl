@@ -144,7 +144,7 @@ snit::type client {
         $self >> USER $username * * $realname
         $self << $RPL_WELCOME
         if {$test_channel != ""} {
-            $self JOIN $test_channel
+            $self >> JOIN $test_channel
         }
     }
 
@@ -152,14 +152,14 @@ snit::type client {
         return $nickname
     }
 
-    method QUIT {} {
-        $self >> QUIT
-        $self << ERROR
-        $self destroy
+    method chans {} {
+        return $channels
     }
 
     destructor {
         global all_clients
+
+        $self >> QUIT
 
         set all_clients [lsearch -not -inline $all_clients $self]
         chan close $sock
@@ -197,6 +197,12 @@ snit::type client {
         }
     }
 
+    # Consume one line
+    # Intended for waiting on state like channel membership
+    method consume_line {} {
+        $self handle_line [irc_tokenize [chan gets $sock]]
+    }
+
     method handle_JOIN {prefix args} {
         regexp {:(.*)!(.*)@(.*)} $prefix -> nick user host
         set channel [lindex $args 0]
@@ -219,11 +225,6 @@ snit::type client {
         }
     }
 
-    method JOIN {channel} {
-        $self >> JOIN $channel
-        $self << JOIN $channel
-    }
-
     method make_current {} {
         global current_client
         set current_client $self
@@ -242,6 +243,28 @@ snit::type client {
         if {[$self info methods $method_name] != ""} {
             $self $method_name {*}$args
         }
+    }
+
+    method post_JOIN {args} {
+        global all_clients
+
+        set channel [lindex $args 1]
+
+        $self << JOIN $channel
+
+        # For every other client in the channel we've just joined, wait
+        # until we get a join for them
+        # This is to handle propagation of joins between servers
+        foreach x $all_clients { if {[lsearch [$x chans] $channel] != -1} {
+            while {[lsearch $channel_nicks($channel) [$x nick]] == -1} {
+                $self consume_line
+            }
+        }}
+    }
+
+    method post_QUIT {args} {
+        # Wait until the server acknowledges our quit
+        $self << ERROR
     }
 
     # << Expects waits for an irc command {args}
@@ -288,8 +311,6 @@ proc proxy_method {method} {
     "
 }
 
-proxy_method JOIN
-proxy_method QUIT
 proxy_method <<
 proxy_method >>
 
