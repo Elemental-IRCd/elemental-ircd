@@ -5,9 +5,9 @@ client new
 # Client constructor checks for RPL_WELCOME
 
 # Check that ISUPPORT is sent
-expect_rpl RPL_ISUPPORT
+<< $RPL_ISUPPORT
 
 # Check the motd is sent
-expect_rpl RPL_MOTDSTART
-expect_rpl RPL_MOTD
-expect_rpl RPL_ENDOFMOTD
+<< $RPL_MOTDSTART
+<< $RPL_MOTD
+<< $RPL_ENDOFMOTD
