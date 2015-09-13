@@ -107,6 +107,12 @@ snit::type client {
     variable username
     variable realname
 
+    # List of channels we're in
+    variable channels
+
+    # Array, list of nicks in each channel
+    variable channel_nicks
+
     constructor {{server hub}} {
         global servers
         global all_clients
@@ -121,6 +127,9 @@ snit::type client {
             -buffering line
             -translation crlf
         }
+
+        set channels ""
+        array set channel_nicks {}
 
         $self register
         $self make_current
@@ -185,6 +194,28 @@ snit::type client {
 
         if {[$self info methods $method_name] != ""} {
             $self $method_name $prefix {*}$args
+        }
+    }
+
+    method handle_JOIN {prefix args} {
+        regexp {:(.*)!(.*)@(.*)} $prefix -> nick user host
+        set channel [lindex $args 0]
+
+        lappend channel_nicks($channel) $nick
+
+        if {[string match $nickname $nick] == 1} {
+            lappend channels $channel
+        }
+    }
+
+    method handle_RPL_NAMREPLY {prefix args} {
+        set nicks [lindex $args 3]
+        set channel [lindex $args 2]
+
+        foreach nick $nicks {
+            # Strip prefixes
+            regexp {[@]*(.*)} $nick -> nick
+            lappend channel_nicks($channel) $nick
         }
     }
 
