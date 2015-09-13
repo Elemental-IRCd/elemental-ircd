@@ -1,8 +1,6 @@
 package require snit
-package require Expect
 
 source lib/numeric.tcl
-
 
 # Test servers
 #   [name] {[ip/host] [port]}
@@ -39,37 +37,31 @@ proc get_realname {} {
     return $test_desc
 }
 
-# explicit timeout
-set timeout 10
-
-#HACK: this triggers a stack trace
-#is there a proper way? one that won't say "invalid command name"?
-expect_before {
-    timeout {{Timed out}}
-}
 
 # Tokenize an irc message into a tcl list
-proc parse {line} {
+proc irc_tokenize {line} {
     variable pos 0
     variable next 0
     variable args {}
     variable length [string length $line]
 
-    if {[string index $line 0] == ":"} then {
-        incr pos
-    }
-
     while true {
         set next [string first " " $line $pos]
-        if {$next == -1 || [string index $line $pos] == ":" } then {
+        if {$next == -1} {
             set next $length
+        }
+        if {$pos != 0 && [string index $line $pos] == ":"} {
+            set next $length
+            incr pos
         }
 
         lappend args [string range $line $pos [expr $next - 1]]
         set pos [expr $next + 1]
 
-        if {$next >= $length} then {return $args}
+        if {$next >= $length} then {break}
     }
+
+    return $args
 }
 
 # Assemble a command from arguments, correctly handles trailing
@@ -94,14 +86,14 @@ proc format_args {args} {
         incr i
     }
 
-    #TODO: \r\n, expect seems to turn every \r into a \n
     return [join $out]
 }
 
-set all_clients [list]
+set all_clients list
 
 snit::type client {
-    variable my_spawn_id
+    variable sock
+
     variable nickname
     variable username
     variable realname
@@ -110,83 +102,108 @@ snit::type client {
         global servers
         global all_clients
 
-        spawn nc {*}$servers($server)
-        set my_spawn_id $spawn_id
         set nickname [get_nick]
         set username [get_user]
         set realname [get_realname]
 
-        $self make_current
-        $self register
+        set sock [socket 127.0.0.1 6667]
+        chan configure $sock {*}{
+            -blocking true
+            -buffering line
+            -translation crlf
+        }
 
+        $self register
+        $self make_current
         lappend all_clients $self
     }
 
-    destructor {
-        global all_clients
-
-        ::close -i $my_spawn_id
-        set all_clients [lsearch -not -inline $all_clients $self]
+    method register {} {
+        global RPL_WELCOME
+        $self >> NICK $nickname
+        $self >> USER $username * * $realname
+        $self << $RPL_WELCOME
     }
 
     method nick {} {
         return $nickname
     }
 
-    method register {} {
-        $self send_cmd NICK $nickname
-        $self send_cmd USER $username * * $realname
-        $self expect_rpl RPL_WELCOME
-    }
-
-    method quit {} {
-        $self send_cmd QUIT
-        $self expect_cmd ERROR
+    method QUIT {} {
+        $self >> QUIT
+        $self << ERROR
         $self destroy
     }
 
-    method join_channel {channel} {
-        $self send_cmd JOIN $channel
-        $self expect -re "JOIN :?$channel"
+    destructor {
+        global all_clients
+
+        set all_clients [lsearch -not -inline $all_clients $self]
+        chan close $sock
     }
 
-    method oper {} {
-        $self send_cmd OPER oper testsuite
-        $self expect "is now an operator"
+    # This method receives all lines, uses them to update client state
+    method handle_line {line} {
+        # TODO: Implement
+        # Needed to wait until a number of clients join a channel
+        # across multiple servers
+        puts stdout "$self << $line"
     }
 
-    method send_cmd {args} {
-        $self send "[format_args {*}$args]\r"
-    }
-
-    method expect_rpl {numeric {text {}}} {
-        global $numeric
-
-        $self expect -re [format {:[^ ]+ %s %s ?:?%s} [set $numeric] $nickname $text]
-    }
-
-    method expect_cmd {command} {
-        $self expect -re [format {(:[^ ]+ +)?%s} $command]
+    method JOIN {channel} {
+        $self >> JOIN $channel
+        $self << JOIN $channel
     }
 
     method make_current {} {
-        global spawn_id
         global current_client
-
         set current_client $self
-        set spawn_id $my_spawn_id
     }
 
-    method send {args} {
+    # >> Sends its arguemnts as an irc command
+    # Concatenates and adds a trailing as needed
+    method >> {args} {
         $self make_current
-        ::send {*}$args
+        set line [format_args {*}$args]
+        chan puts $sock $line
+        puts stdout "$self >> $args"
     }
 
-    method expect {args} {
+    # << Expects waits for an irc command {args}
+    method << {args} {
         $self make_current
-        ::expect {*}$args
+        set match false
+
+        while {$match != true} {
+            set line [irc_tokenize [chan gets $sock]]
+            $self handle_line $line
+
+            set pos 0
+
+            if {[string index $line 0] == ":" &&
+                [string index $args 0] != ":"
+            } then {
+                incr pos
+            }
+
+            set match true
+            foreach arg $args {
+                if {[string match $arg [lindex $line $pos]] == 0} {
+                    set match false
+                    break
+                }
+                incr pos
+            }
+        }
     }
 
+    # Alternate syntax for make_current
+    # eg: client listener
+    # listener :
+    # << several lines in a row
+    method : {} {
+        $self make_current
+    }
 }
 
 proc proxy_method {method} {
@@ -196,14 +213,16 @@ proc proxy_method {method} {
     "
 }
 
-proxy_method oper
-proxy_method join_channel
-proxy_method quit
+proxy_method JOIN
+proxy_method QUIT
+proxy_method <<
+proxy_method >>
 
-proxy_method expect_cmd
-proxy_method expect_rpl
+puts {Beginning test}
 
 source [lindex $argv 0]
+
+puts {Test finished}
 
 # Cleanup open clients
 foreach x $all_clients {
