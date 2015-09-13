@@ -158,10 +158,34 @@ snit::type client {
 
     # This method receives all lines, uses them to update client state
     method handle_line {line} {
-        # TODO: Implement
-        # Needed to wait until a number of clients join a channel
-        # across multiple servers
+        global numerics
+
         puts stdout "$self << $line"
+
+        set pos 0
+        set prefix ""
+        set command ""
+        set args ""
+
+        if {[string match :* [lindex $line $pos]] != 0} {
+            set prefix [lindex $line $pos]
+            incr pos
+        }
+
+        set command [string toupper [lindex $line $pos]]
+
+        if {[string is integer $command]} {
+            set command $numerics($command)
+        }
+
+        incr pos
+        set args [lrange $line $pos end]
+
+        set method_name "handle_$command"
+
+        if {[$self info methods $method_name] != ""} {
+            $self $method_name $prefix {*}$args
+        }
     }
 
     method JOIN {channel} {
