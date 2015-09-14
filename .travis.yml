@@ -35,6 +35,7 @@ script:
   - ./configure --enable-debug --enable-coverage
   - make
   - make install
+  - scripts/travis_genssl.sh
   - testsuite/startall.sh
   - make check
   - testsuite/killall.sh

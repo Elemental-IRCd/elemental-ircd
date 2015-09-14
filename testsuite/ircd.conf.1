@@ -8,6 +8,10 @@ serverinfo {
 
 	hub = yes;
 	vhost = "127.0.0.1";
+
+	ssl_private_key = "etc/ssl.key";
+	ssl_cert = "etc/ssl.cert";
+	ssl_dh_params = "etc/dh.pem";
 };
 
 log {
@@ -27,6 +31,7 @@ log {
 listen {
 	host = "127.0.0.1";
 	port = 6667;
+	sslport = 6697;
 };
 
 connect "leaf1.local" {
