@@ -116,6 +116,9 @@ snit::type client {
     variable username
     variable realname
 
+    # Queued lines
+    variable lines
+
     # List of channels we're in
     variable channels
 
@@ -132,10 +135,14 @@ snit::type client {
 
         set sock [socket {*}[get_server]]
         chan configure $sock {*}{
-            -blocking true
+            -blocking false
             -buffering line
             -translation crlf
         }
+
+        set lines [list]
+
+        chan event $sock readable [list $self read_handler]
 
         set channels ""
         array set channel_nicks {}
@@ -174,7 +181,28 @@ snit::type client {
         chan close $sock
     }
 
+    # Wait for one line, then dequeue
+    method get_line {} {
+        while {[llength $lines] == 0} {
+            vwait [myvar lines]
+        }
+
+        set line [lindex $lines 0]
+        set lines [lrange $lines 1 end]
+        return $line
+    }
+
+    method read_handler {} {
+        chan gets $sock line
+        set line [irc_tokenize $line]
+        $self handle_line $line
+
+        # Queue any read lines
+        lappend lines $line
+    }
+
     # This method receives all lines, uses them to update client state
+    # Handlers must never draw call get_line or otherwise edit $lines
     method handle_line {line} {
         global numerics
 
@@ -204,12 +232,6 @@ snit::type client {
         if {[$self info methods $method_name] != ""} {
             $self $method_name $prefix {*}$args
         }
-    }
-
-    # Consume one line
-    # Intended for waiting on state like channel membership
-    method consume_line {} {
-        $self handle_line [irc_tokenize [chan gets $sock]]
     }
 
     method handle_JOIN {prefix args} {
@@ -266,7 +288,7 @@ snit::type client {
         # This is to handle propagation of joins between servers
         foreach x $all_clients { if {[lsearch [$x chans] $channel] != -1} {
             while {[lsearch $channel_nicks($channel) [$x nick]] == -1} {
-                $self consume_line
+                vwait [myvar lines]
             }
         }}
     }
@@ -282,8 +304,7 @@ snit::type client {
         set match false
 
         while {$match != true} {
-            set line [irc_tokenize [chan gets $sock]]
-            $self handle_line $line
+            set line [$self get_line]
 
             set pos 0
 
