@@ -2,6 +2,12 @@ package require snit
 
 source lib/numeric.tcl
 
+namespace eval color {
+  set reset   [binary format a4 \x1b\x5b\x30\x6d]
+  set red     [binary format a5 \x1b\x5b\x33\x31\x6d]
+  set green   [binary format a5 \x1b\x5b\x33\x32\x6d]
+}
+
 # Test servers
 #   [name] {[ip/host] [port]}
 array set servers {
@@ -211,7 +217,7 @@ snit::type client {
     method handle_line {line} {
         global numerics
 
-        puts stdout "$self << $line"
+        puts stdout "$self ${color::green}<<${color::reset} $line"
 
         set pos 0
         set prefix ""
@@ -272,7 +278,7 @@ snit::type client {
         $self make_current
         set line [format_args {*}$args]
         chan puts $sock $line
-        puts stdout "$self >> $args"
+        puts stdout "${self} ${color::red}>>${color::reset} $args"
 
         set method_name "post_[lindex $args 0]"
 
