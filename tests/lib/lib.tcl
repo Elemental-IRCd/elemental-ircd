@@ -107,6 +107,11 @@ proc format_args {args} {
     return [join $out]
 }
 
+after idle { after 30000 {
+    puts "Test timed out"
+    exit 1
+}}
+
 set all_clients list
 
 snit::type client {
