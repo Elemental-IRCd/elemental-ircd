@@ -25,336 +25,346 @@
 
 # This file was derived from include/numeric.h
 
-set RPL_WELCOME             {001}
-set RPL_YOURHOST            {002}
-set RPL_CREATED             {003}
-set RPL_MYINFO              {004}
-set RPL_ISUPPORT            {005}
-
-set RPL_SNOMASK             {008}
-
-set RPL_REDIR               {010}
-set RPL_MAP                 {015}
-set RPL_MAPMORE             {016}
-set RPL_MAPEND              {017}
-set RPL_SAVENICK            {043}
-
-set RPL_TRACELINK           {200}
-set RPL_TRACECONNECTING     {201}
-set RPL_TRACEHANDSHAKE      {202}
-set RPL_TRACEUNKNOWN        {203}
-set RPL_TRACEOPERATOR       {204}
-set RPL_TRACEUSER           {205}
-set RPL_TRACESERVER         {206}
-set RPL_TRACENEWTYPE        {208}
-set RPL_TRACECLASS          {209}
-
-set RPL_STATSLINKINFO       {211}
-set RPL_STATSCOMMANDS       {212}
-set RPL_STATSCLINE          {213}
-set RPL_STATSNLINE          {214}
-set RPL_STATSILINE          {215}
-set RPL_STATSKLINE          {216}
-set RPL_STATSQLINE          {217}
-set RPL_STATSYLINE          {218}
-set RPL_ENDOFSTATS          {219}
-
-set RPL_STATSPLINE          {220}
-set RPL_UMODEIS             {221}
-
-set RPL_STATSFLINE          {224}
-set RPL_STATSDLINE          {225}
-
-set RPL_SERVLIST            {234}
-set RPL_SERVLISTEND         {235}
-
-set RPL_STATSLLINE          {241}
-set RPL_STATSUPTIME         {242}
-set RPL_STATSOLINE          {243}
-set RPL_STATSHLINE          {244}
-
-set RPL_STATSSLINE          {245}
-set RPL_STATSXLINE          {247}
-set RPL_STATSULINE          {248}
-set RPL_STATSDEBUG          {249}
-set RPL_STATSCONN           {250}
-set RPL_LUSERCLIENT         {251}
-set RPL_LUSEROP             {252}
-set RPL_LUSERUNKNOWN        {253}
-set RPL_LUSERCHANNELS       {254}
-set RPL_LUSERME             {255}
-set RPL_ADMINME             {256}
-set RPL_ADMINLOC1           {257}
-set RPL_ADMINLOC2           {258}
-set RPL_ADMINEMAIL          {259}
-
-set RPL_TRACELOG            {261}
-set RPL_ENDOFTRACE          {262}
-set RPL_LOAD2HI             {263}
-
-set RPL_LOCALUSERS          {265}
-set RPL_GLOBALUSERS         {266}
-
-set RPL_PRIVS               {270}
-
-set RPL_WHOISCERTFP         {276}
-
-set RPL_ACCEPTLIST          {281}
-set RPL_ENDOFACCEPT         {282}
-
-set RPL_NONE                {300}
-set RPL_AWAY                {301}
-set RPL_USERHOST            {302}
-set RPL_ISON                {303}
-set RPL_TEXT                {304}
-set RPL_UNAWAY              {305}
-set RPL_NOWAWAY             {306}
-
-set RPL_WHOISUSER           {311}
-set RPL_WHOISSERVER         {312}
-set RPL_WHOISOPERATOR       {313}
-
-set RPL_WHOWASUSER          {314}
-set RPL_ENDOFWHOWAS         {369}
-
-set RPL_WHOISCHANOP         {316}
-set RPL_WHOISIDLE           {317}
-
-set RPL_ENDOFWHOIS          {318}
-set RPL_WHOISCHANNELS       {319}
-
-set RPL_LISTSTART           {321}
-set RPL_LIST                {322}
-set RPL_LISTEND             {323}
-set RPL_CHANNELMODEIS       {324}
-set RPL_CHANNELMLOCK        {325}
-
-set RPL_CHANNELURL          {328}
-
-set RPL_CREATIONTIME        {329}
-set RPL_WHOISLOGGEDIN       {330}
-
-set RPL_NOTOPIC             {331}
-set RPL_TOPIC               {332}
-set RPL_TOPICWHOTIME        {333}
-
-set RPL_WHOISBOT            {335}
-
-set RPL_WHOISACTUALLY       {338}
-
-set RPL_INVITING            {341}
-set RPL_SUMMONING           {342}
-
-set RPL_INVITELIST          {346}
-set RPL_ENDOFINVITELIST     {347}
-set RPL_EXCEPTLIST          {348}
-set RPL_ENDOFEXCEPTLIST     {349}
-
-set RPL_VERSION             {351}
-
-set RPL_WHOREPLY            {352}
-set RPL_WHOSPCRPL           {354}
-set RPL_ENDOFWHO            {315}
-set RPL_NAMREPLY            {353}
-set RPL_WHOWASREAL          {360}
-set RPL_ENDOFNAMES          {366}
-
-set RPL_KILLDONE            {361}
-set RPL_CLOSING             {362}
-set RPL_CLOSEEND            {363}
-set RPL_LINKS               {364}
-set RPL_ENDOFLINKS          {365}
-set RPL_BANLIST             {367}
-set RPL_ENDOFBANLIST        {368}
-
-set RPL_INFO                {371}
-set RPL_MOTD                {372}
-set RPL_INFOSTART           {373}
-set RPL_ENDOFINFO           {374}
-set RPL_MOTDSTART           {375}
-set RPL_ENDOFMOTD           {376}
-set RPL_WHOISHOST           {378}
-
-set RPL_WHOISMODES          {379}
-
-set RPL_YOUREOPER           {381}
-set RPL_REHASHING           {382}
-set RPL_MYPORTIS            {384}
-set RPL_NOTOPERANYMORE      {385}
-set RPL_RSACHALLENGE        {386}
-
-set RPL_TIME                {391}
-set RPL_USERSSTART          {392}
-set RPL_USERS               {393}
-set RPL_ENDOFUSERS          {394}
-set RPL_NOUSERS             {395}
-set RPL_HOSTHIDDEN          {396}
-
-set ERR_NOSUCHNICK          {401}
-set ERR_NOSUCHSERVER        {402}
-set ERR_NOSUCHCHANNEL       {403}
-set ERR_CANNOTSENDTOCHAN    {404}
-set ERR_TOOMANYCHANNELS     {405}
-set ERR_WASNOSUCHNICK       {406}
-set ERR_TOOMANYTARGETS      {407}
-set ERR_NOORIGIN            {409}
+array set numerics {}
+
+proc def_numeric {name num} {
+    global $name
+    set $name $num
+
+    global numerics
+    set numerics($num) $name
+}
+
+def_numeric RPL_WELCOME             {001}
+def_numeric RPL_YOURHOST            {002}
+def_numeric RPL_CREATED             {003}
+def_numeric RPL_MYINFO              {004}
+def_numeric RPL_ISUPPORT            {005}
+
+def_numeric RPL_SNOMASK             {008}
+
+def_numeric RPL_REDIR               {010}
+def_numeric RPL_MAP                 {015}
+def_numeric RPL_MAPMORE             {016}
+def_numeric RPL_MAPEND              {017}
+def_numeric RPL_SAVENICK            {043}
+
+def_numeric RPL_TRACELINK           {200}
+def_numeric RPL_TRACECONNECTING     {201}
+def_numeric RPL_TRACEHANDSHAKE      {202}
+def_numeric RPL_TRACEUNKNOWN        {203}
+def_numeric RPL_TRACEOPERATOR       {204}
+def_numeric RPL_TRACEUSER           {205}
+def_numeric RPL_TRACESERVER         {206}
+def_numeric RPL_TRACENEWTYPE        {208}
+def_numeric RPL_TRACECLASS          {209}
+
+def_numeric RPL_STATSLINKINFO       {211}
+def_numeric RPL_STATSCOMMANDS       {212}
+def_numeric RPL_STATSCLINE          {213}
+def_numeric RPL_STATSNLINE          {214}
+def_numeric RPL_STATSILINE          {215}
+def_numeric RPL_STATSKLINE          {216}
+def_numeric RPL_STATSQLINE          {217}
+def_numeric RPL_STATSYLINE          {218}
+def_numeric RPL_ENDOFSTATS          {219}
+
+def_numeric RPL_STATSPLINE          {220}
+def_numeric RPL_UMODEIS             {221}
+
+def_numeric RPL_STATSFLINE          {224}
+def_numeric RPL_STATSDLINE          {225}
+
+def_numeric RPL_SERVLIST            {234}
+def_numeric RPL_SERVLISTEND         {235}
+
+def_numeric RPL_STATSLLINE          {241}
+def_numeric RPL_STATSUPTIME         {242}
+def_numeric RPL_STATSOLINE          {243}
+def_numeric RPL_STATSHLINE          {244}
+
+def_numeric RPL_STATSSLINE          {245}
+def_numeric RPL_STATSXLINE          {247}
+def_numeric RPL_STATSULINE          {248}
+def_numeric RPL_STATSDEBUG          {249}
+def_numeric RPL_STATSCONN           {250}
+def_numeric RPL_LUSERCLIENT         {251}
+def_numeric RPL_LUSEROP             {252}
+def_numeric RPL_LUSERUNKNOWN        {253}
+def_numeric RPL_LUSERCHANNELS       {254}
+def_numeric RPL_LUSERME             {255}
+def_numeric RPL_ADMINME             {256}
+def_numeric RPL_ADMINLOC1           {257}
+def_numeric RPL_ADMINLOC2           {258}
+def_numeric RPL_ADMINEMAIL          {259}
+
+def_numeric RPL_TRACELOG            {261}
+def_numeric RPL_ENDOFTRACE          {262}
+def_numeric RPL_LOAD2HI             {263}
+
+def_numeric RPL_LOCALUSERS          {265}
+def_numeric RPL_GLOBALUSERS         {266}
+
+def_numeric RPL_PRIVS               {270}
+
+def_numeric RPL_WHOISCERTFP         {276}
+
+def_numeric RPL_ACCEPTLIST          {281}
+def_numeric RPL_ENDOFACCEPT         {282}
+
+def_numeric RPL_NONE                {300}
+def_numeric RPL_AWAY                {301}
+def_numeric RPL_USERHOST            {302}
+def_numeric RPL_ISON                {303}
+def_numeric RPL_TEXT                {304}
+def_numeric RPL_UNAWAY              {305}
+def_numeric RPL_NOWAWAY             {306}
+
+def_numeric RPL_WHOISUSER           {311}
+def_numeric RPL_WHOISSERVER         {312}
+def_numeric RPL_WHOISOPERATOR       {313}
+
+def_numeric RPL_WHOWASUSER          {314}
+def_numeric RPL_ENDOFWHOWAS         {369}
+
+def_numeric RPL_WHOISCHANOP         {316}
+def_numeric RPL_WHOISIDLE           {317}
+
+def_numeric RPL_ENDOFWHOIS          {318}
+def_numeric RPL_WHOISCHANNELS       {319}
+
+def_numeric RPL_LISTSTART           {321}
+def_numeric RPL_LIST                {322}
+def_numeric RPL_LISTEND             {323}
+def_numeric RPL_CHANNELMODEIS       {324}
+def_numeric RPL_CHANNELMLOCK        {325}
+
+def_numeric RPL_CHANNELURL          {328}
+
+def_numeric RPL_CREATIONTIME        {329}
+def_numeric RPL_WHOISLOGGEDIN       {330}
+
+def_numeric RPL_NOTOPIC             {331}
+def_numeric RPL_TOPIC               {332}
+def_numeric RPL_TOPICWHOTIME        {333}
+
+def_numeric RPL_WHOISBOT            {335}
+
+def_numeric RPL_WHOISACTUALLY       {338}
+
+def_numeric RPL_INVITING            {341}
+def_numeric RPL_SUMMONING           {342}
+
+def_numeric RPL_INVITELIST          {346}
+def_numeric RPL_ENDOFINVITELIST     {347}
+def_numeric RPL_EXCEPTLIST          {348}
+def_numeric RPL_ENDOFEXCEPTLIST     {349}
+
+def_numeric RPL_VERSION             {351}
+
+def_numeric RPL_WHOREPLY            {352}
+def_numeric RPL_WHOSPCRPL           {354}
+def_numeric RPL_ENDOFWHO            {315}
+def_numeric RPL_NAMREPLY            {353}
+def_numeric RPL_WHOWASREAL          {360}
+def_numeric RPL_ENDOFNAMES          {366}
+
+def_numeric RPL_KILLDONE            {361}
+def_numeric RPL_CLOSING             {362}
+def_numeric RPL_CLOSEEND            {363}
+def_numeric RPL_LINKS               {364}
+def_numeric RPL_ENDOFLINKS          {365}
+def_numeric RPL_BANLIST             {367}
+def_numeric RPL_ENDOFBANLIST        {368}
+
+def_numeric RPL_INFO                {371}
+def_numeric RPL_MOTD                {372}
+def_numeric RPL_INFOSTART           {373}
+def_numeric RPL_ENDOFINFO           {374}
+def_numeric RPL_MOTDSTART           {375}
+def_numeric RPL_ENDOFMOTD           {376}
+def_numeric RPL_WHOISHOST           {378}
+
+def_numeric RPL_WHOISMODES          {379}
+
+def_numeric RPL_YOUREOPER           {381}
+def_numeric RPL_REHASHING           {382}
+def_numeric RPL_MYPORTIS            {384}
+def_numeric RPL_NOTOPERANYMORE      {385}
+def_numeric RPL_RSACHALLENGE        {386}
+
+def_numeric RPL_TIME                {391}
+def_numeric RPL_USERSSTART          {392}
+def_numeric RPL_USERS               {393}
+def_numeric RPL_ENDOFUSERS          {394}
+def_numeric RPL_NOUSERS             {395}
+def_numeric RPL_HOSTHIDDEN          {396}
+
+def_numeric ERR_NOSUCHNICK          {401}
+def_numeric ERR_NOSUCHSERVER        {402}
+def_numeric ERR_NOSUCHCHANNEL       {403}
+def_numeric ERR_CANNOTSENDTOCHAN    {404}
+def_numeric ERR_TOOMANYCHANNELS     {405}
+def_numeric ERR_WASNOSUCHNICK       {406}
+def_numeric ERR_TOOMANYTARGETS      {407}
+def_numeric ERR_NOORIGIN            {409}
 
-set ERR_INVALIDCAPCMD       {410}
+def_numeric ERR_INVALIDCAPCMD       {410}
 
-set ERR_NORECIPIENT         {411}
-set ERR_NOTEXTTOSEND        {412}
-set ERR_NOTOPLEVEL          {413}
-set ERR_WILDTOPLEVEL        {414}
+def_numeric ERR_NORECIPIENT         {411}
+def_numeric ERR_NOTEXTTOSEND        {412}
+def_numeric ERR_NOTOPLEVEL          {413}
+def_numeric ERR_WILDTOPLEVEL        {414}
 
-set ERR_TOOMANYMATCHES      {416}
+def_numeric ERR_TOOMANYMATCHES      {416}
 
-set ERR_UNKNOWNCOMMAND      {421}
-set ERR_NOMOTD              {422}
-set ERR_NOADMININFO         {423}
-set ERR_FILEERROR           {424}
+def_numeric ERR_UNKNOWNCOMMAND      {421}
+def_numeric ERR_NOMOTD              {422}
+def_numeric ERR_NOADMININFO         {423}
+def_numeric ERR_FILEERROR           {424}
 
-set ERR_NONICKNAMEGIVEN     {431}
-set ERR_ERRONEUSNICKNAME    {432}
-set ERR_NICKNAMEINUSE       {433}
-set ERR_BANNICKCHANGE       {435}
-set ERR_NICKCOLLISION       {436}
-set ERR_UNAVAILRESOURCE     {437}
-set ERR_NICKTOOFAST         {438}
+def_numeric ERR_NONICKNAMEGIVEN     {431}
+def_numeric ERR_ERRONEUSNICKNAME    {432}
+def_numeric ERR_NICKNAMEINUSE       {433}
+def_numeric ERR_BANNICKCHANGE       {435}
+def_numeric ERR_NICKCOLLISION       {436}
+def_numeric ERR_UNAVAILRESOURCE     {437}
+def_numeric ERR_NICKTOOFAST         {438}
 
-set ERR_SERVICESDOWN        {440}
-set ERR_USERNOTINCHANNEL    {441}
-set ERR_NOTONCHANNEL        {442}
-set ERR_USERONCHANNEL       {443}
-set ERR_NOLOGIN             {444}
-set ERR_SUMMONDISABLED      {445}
-set ERR_USERSDISABLED       {446}
+def_numeric ERR_SERVICESDOWN        {440}
+def_numeric ERR_USERNOTINCHANNEL    {441}
+def_numeric ERR_NOTONCHANNEL        {442}
+def_numeric ERR_USERONCHANNEL       {443}
+def_numeric ERR_NOLOGIN             {444}
+def_numeric ERR_SUMMONDISABLED      {445}
+def_numeric ERR_USERSDISABLED       {446}
 
-set ERR_NOINVITE            {447}
+def_numeric ERR_NOINVITE            {447}
 
-set ERR_NONICK              {449}
+def_numeric ERR_NONICK              {449}
 
-set ERR_NOTREGISTERED       {451}
+def_numeric ERR_NOTREGISTERED       {451}
 
-set ERR_ACCEPTFULL          {456}
-set ERR_ACCEPTEXIST         {457}
-set ERR_ACCEPTNOT           {458}
+def_numeric ERR_ACCEPTFULL          {456}
+def_numeric ERR_ACCEPTEXIST         {457}
+def_numeric ERR_ACCEPTNOT           {458}
 
-set ERR_NEEDMOREPARAMS      {461}
-set ERR_ALREADYREGISTRED    {462}
-set ERR_NOPERMFORHOST       {463}
-set ERR_PASSWDMISMATCH      {464}
-set ERR_YOUREBANNEDCREEP    {465}
-set ERR_YOUWILLBEBANNED     {466}
-set ERR_KEYSET              {467}
+def_numeric ERR_NEEDMOREPARAMS      {461}
+def_numeric ERR_ALREADYREGISTRED    {462}
+def_numeric ERR_NOPERMFORHOST       {463}
+def_numeric ERR_PASSWDMISMATCH      {464}
+def_numeric ERR_YOUREBANNEDCREEP    {465}
+def_numeric ERR_YOUWILLBEBANNED     {466}
+def_numeric ERR_KEYSET              {467}
 
-set ERR_LINKCHANNEL         {470}
-set ERR_CHANNELISFULL       {471}
-set ERR_UNKNOWNMODE         {472}
-set ERR_INVITEONLYCHAN      {473}
-set ERR_BANNEDFROMCHAN      {474}
-set ERR_BADCHANNELKEY       {475}
-set ERR_BADCHANMASK         {476}
-set ERR_NEEDREGGEDNICK      {477}
-set ERR_BANLISTFULL         {478}
-set ERR_BADCHANNAME         {479}
+def_numeric ERR_LINKCHANNEL         {470}
+def_numeric ERR_CHANNELISFULL       {471}
+def_numeric ERR_UNKNOWNMODE         {472}
+def_numeric ERR_INVITEONLYCHAN      {473}
+def_numeric ERR_BANNEDFROMCHAN      {474}
+def_numeric ERR_BADCHANNELKEY       {475}
+def_numeric ERR_BADCHANMASK         {476}
+def_numeric ERR_NEEDREGGEDNICK      {477}
+def_numeric ERR_BANLISTFULL         {478}
+def_numeric ERR_BADCHANNAME         {479}
 
-set ERR_THROTTLE            {480}
+def_numeric ERR_THROTTLE            {480}
 
-set ERR_NOPRIVILEGES        {481}
-set ERR_CHANOPRIVSNEEDED    {482}
-set ERR_CANTKILLSERVER      {483}
-set ERR_ISCHANSERVICE       {484}
-set ERR_BANNEDNICK          {485}
-set ERR_NONONREG            {486}
+def_numeric ERR_NOPRIVILEGES        {481}
+def_numeric ERR_CHANOPRIVSNEEDED    {482}
+def_numeric ERR_CANTKILLSERVER      {483}
+def_numeric ERR_ISCHANSERVICE       {484}
+def_numeric ERR_BANNEDNICK          {485}
+def_numeric ERR_NONONREG            {486}
 
-set ERR_VOICENEEDED         {489}
+def_numeric ERR_VOICENEEDED         {489}
 
-set ERR_NOOPERHOST          {491}
+def_numeric ERR_NOOPERHOST          {491}
 
-set ERR_NOCTCP              {492}
+def_numeric ERR_NOCTCP              {492}
 
-set ERR_KICKNOREJOIN        {495}
+def_numeric ERR_KICKNOREJOIN        {495}
 
-set ERR_OWNMODE             {494}
+def_numeric ERR_OWNMODE             {494}
 
-set ERR_UMODEUNKNOWNFLAG    {501}
-set ERR_USERSDONTMATCH      {502}
+def_numeric ERR_UMODEUNKNOWNFLAG    {501}
+def_numeric ERR_USERSDONTMATCH      {502}
 
-set ERR_GHOSTEDCLIENT       {503}
+def_numeric ERR_GHOSTEDCLIENT       {503}
 
-set ERR_USERNOTONSERV       {504}
+def_numeric ERR_USERNOTONSERV       {504}
 
-set ERR_WRONGPONG           {513}
+def_numeric ERR_WRONGPONG           {513}
 
-set ERR_DISABLED            {517}
+def_numeric ERR_DISABLED            {517}
 
-set ERR_NOKICK              {519}
+def_numeric ERR_NOKICK              {519}
 
-set ERR_HELPNOTFOUND        {524}
+def_numeric ERR_HELPNOTFOUND        {524}
 
-set RPL_WHOISSECURE         {671}
-set RPL_WHOISWEBIRC         {672}
+def_numeric RPL_WHOISSECURE         {671}
+def_numeric RPL_WHOISWEBIRC         {672}
 
-set RPL_MODLIST             {702}
-set RPL_ENDOFMODLIST        {703}
+def_numeric RPL_MODLIST             {702}
+def_numeric RPL_ENDOFMODLIST        {703}
 
-set RPL_HELPSTART           {704}
-set RPL_HELPTXT             {705}
-set RPL_ENDOFHELP           {706}
+def_numeric RPL_HELPSTART           {704}
+def_numeric RPL_HELPTXT             {705}
+def_numeric RPL_ENDOFHELP           {706}
 
-set ERR_TARGCHANGE          {707}
+def_numeric ERR_TARGCHANGE          {707}
 
-set RPL_ETRACEFULL          {708}
-set RPL_ETRACE              {709}
+def_numeric RPL_ETRACEFULL          {708}
+def_numeric RPL_ETRACE              {709}
 
-set RPL_KNOCK               {710}
-set RPL_KNOCKDLVR           {711}
+def_numeric RPL_KNOCK               {710}
+def_numeric RPL_KNOCKDLVR           {711}
 
-set ERR_TOOMANYKNOCK        {712}
-set ERR_CHANOPEN            {713}
-set ERR_KNOCKONCHAN         {714}
-set ERR_KNOCKDISABLED       {715}
+def_numeric ERR_TOOMANYKNOCK        {712}
+def_numeric ERR_CHANOPEN            {713}
+def_numeric ERR_KNOCKONCHAN         {714}
+def_numeric ERR_KNOCKDISABLED       {715}
 
-set ERR_TARGUMODEG          {716}
-set RPL_TARGNOTIFY          {717}
-set RPL_UMODEGMSG           {718}
+def_numeric ERR_TARGUMODEG          {716}
+def_numeric RPL_TARGNOTIFY          {717}
+def_numeric RPL_UMODEGMSG           {718}
 
-set RPL_OMOTDSTART          {720}
-set RPL_OMOTD               {721}
-set RPL_ENDOFOMOTD          {722}
+def_numeric RPL_OMOTDSTART          {720}
+def_numeric RPL_OMOTD               {721}
+def_numeric RPL_ENDOFOMOTD          {722}
 
-set ERR_NOPRIVS             {723}
+def_numeric ERR_NOPRIVS             {723}
 
-set RPL_TESTMASK            {724}
-set RPL_TESTLINE            {725}
-set RPL_NOTESTLINE          {726}
-set RPL_TESTMASKGECOS       {727}
+def_numeric RPL_TESTMASK            {724}
+def_numeric RPL_TESTLINE            {725}
+def_numeric RPL_NOTESTLINE          {726}
+def_numeric RPL_TESTMASKGECOS       {727}
 
-set RPL_QUIETLIST           {728}
-set RPL_ENDOFQUIETLIST      {729}
+def_numeric RPL_QUIETLIST           {728}
+def_numeric RPL_ENDOFQUIETLIST      {729}
 
-set RPL_MONONLINE           {730}
-set RPL_MONOFFLINE          {731}
-set RPL_MONLIST             {732}
-set RPL_ENDOFMONLIST        {733}
-set ERR_MONLISTFULL         {734}
+def_numeric RPL_MONONLINE           {730}
+def_numeric RPL_MONOFFLINE          {731}
+def_numeric RPL_MONLIST             {732}
+def_numeric RPL_ENDOFMONLIST        {733}
+def_numeric ERR_MONLISTFULL         {734}
 
-set ERR_NOCOMMONCHAN        {737}
+def_numeric ERR_NOCOMMONCHAN        {737}
 
-set RPL_RSACHALLENGE2       {740}
-set RPL_ENDOFRSACHALLENGE2  {741}
+def_numeric RPL_RSACHALLENGE2       {740}
+def_numeric RPL_ENDOFRSACHALLENGE2  {741}
 
-set ERR_MLOCKRESTRICTED     {742}
+def_numeric ERR_MLOCKRESTRICTED     {742}
 
-set RPL_SCANMATCHED         {750}
-set RPL_SCANUMODES          {751}
+def_numeric RPL_SCANMATCHED         {750}
+def_numeric RPL_SCANUMODES          {751}
 
-set RPL_LOGGEDIN            {900}
-set RPL_LOGGEDOUT           {901}
-set ERR_NICKLOCKED          {902}
+def_numeric RPL_LOGGEDIN            {900}
+def_numeric RPL_LOGGEDOUT           {901}
+def_numeric ERR_NICKLOCKED          {902}
 
-set RPL_SASLSUCCESS         {903}
-set ERR_SASLFAIL            {904}
-set ERR_SASLTOOLONG         {905}
-set ERR_SASLABORTED         {906}
-set ERR_SASLALREADY         {907}
+def_numeric RPL_SASLSUCCESS         {903}
+def_numeric ERR_SASLFAIL            {904}
+def_numeric ERR_SASLTOOLONG         {905}
+def_numeric ERR_SASLABORTED         {906}
+def_numeric ERR_SASLALREADY         {907}

@@ -739,7 +739,7 @@ static  const char *  replies[] = {
 /* 715 ERR_KNOCKDISABLED */	":%s 715 %s :KNOCKs are disabled.",
 /* 716 ERR_TARGUMODEG */	"%s :is in +g mode (server-side ignore.)",
 /* 717 RPL_TARGNOTIFY */	"%s :has been informed that you messaged them.",
-/* 718 RPL_UMODEGMSG */		":%s 718 %s %s %s@%s :is messaging you, and you have umode +g.",
+/* 718 RPL_UMODEGMSG */		":%s 718 %s %s %s@%s :is messaging you, and you have umode +g. To accept messages from this person, use /ACCEPT %s",
 /* 719 */	NULL,
 /* 720 RPL_OMOTDSTART */	":%s 720 %s :Start of OPER MOTD",
 /* 721 RPL_OMOTD */		":%s 721 %s :%s",

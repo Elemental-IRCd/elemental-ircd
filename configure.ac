@@ -9,7 +9,7 @@ AC_CONFIG_HEADERS([include/setup.h])
 AC_PREFIX_DEFAULT($HOME/ircd)
 AC_LANG(C)
 
-AM_INIT_AUTOMAKE([subdir-objects])
+AM_INIT_AUTOMAKE([])
 AM_SILENT_RULES([yes])
 AM_PROG_AR
 
@@ -39,6 +39,7 @@ AC_PROG_MAKE_SET
 AC_PROG_SED
 AC_PROG_YACC
 AC_PROG_LEX
+AC_PATH_PROG(TCLSH, tclsh)
 
 
 dnl AC_PROG_YACC defaults to yacc unconditionally if nothing can be found
@@ -302,17 +303,27 @@ AC_DEFINE_UNQUOTED([PROGRAM_PREFIX], ["$with_program_prefix"], [String with whic
 dnl Debug-related options
 dnl =====================
 
-dnl Debug-related options
-dnl =====================
+AC_ARG_ENABLE(assert, AS_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]),[],[enable_assert=no])
+AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug],[Enable debug build, enables asserts]),[],[enable_debug=no])
+AC_ARG_ENABLE(sanitize, AS_HELP_STRING([--enable-sanitize],[Enables address and undefined behaviour sanitizers if available, enables debug]),[],[enable_sanitize=no])
+AC_ARG_ENABLE(coverage, AS_HELP_STRING([--enable-coverage],[Enable gcov based code coverage]), [], [enable_coverage=no])
 
-AC_ARG_ENABLE(assert, AS_HELP_STRING([--enable-assert],[Enable assert(). Choose between soft(warnings) and hard(aborts the daemon)]))
-AC_ARG_ENABLE(debug, AS_HELP_STRING([--enable-debug],[Enable debug build, overrides --enable-assert]),[],[enable_debug=no])
+if test x"$enable_coverage" = x"yes"; then
+	AX_APPEND_LINK_FLAGS([-lgcov])
+	AX_APPEND_COMPILE_FLAGS([-fprofile-arcs])
+	AX_APPEND_COMPILE_FLAGS([-ftest-coverage])
+	enable_debug=yes
+fi
+
+if test x"$enable_sanitize" != x"no"; then
+	AX_APPEND_LINK_FLAGS([-fsanitize=address])
+	AX_APPEND_LINK_FLAGS([-fsanitize=undefined])
+	enable_debug="yes";
+fi
 
 if test x"$enable_debug" != x"no"; then
 	AX_APPEND_COMPILE_FLAGS([-g])
 	AX_APPEND_COMPILE_FLAGS([-Og])
-	AX_APPEND_LINK_FLAGS([-fsanitize=address])
-	AX_APPEND_LINK_FLAGS([-fsanitize=undefined])
 	enable_assert="hard";
 fi;
 
@@ -335,16 +346,6 @@ if test "$iodebug" = yes; then
 	AC_MSG_RESULT(yes)
 else
 	AC_MSG_RESULT(no)
-fi
-
-AC_ARG_ENABLE(profile,
-AS_HELP_STRING([--enable-profile],[Enable profiling]),
-[profile=$enableval], [profile=no])
-
-if test "$profile" = yes; then
-	AX_CHECK_COMPILE_FLAG([-pg], [AX_APPEND_FLAG([-pg])], [
-		AC_MSG_ERROR([Profiling not supported on this compiler])
-	])
 fi
 
 AC_ARG_ENABLE(balloc,
