@@ -32,11 +32,11 @@ install:
 
 script:
   - ./autogen.sh
-  - ./configure --enable-debug --enable-profile
+  - ./configure --enable-debug --enable-coverage
   - make
   - make install
   - testsuite/startall.sh
-  - make -j4 check
+  - make check
   - testsuite/killall.sh
 
 after_success:
