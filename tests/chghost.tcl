@@ -1,32 +1,21 @@
-#!/usr/bin/expect -f
+begin {Check chghost}
 
-source lib/lib.tcl
+set test_channel #chghost
 
-begin test chghost {Check chghost}
+client oper
+>> OPER oper testsuite
 
-set op [client new hub]
-oper
+client target
+client observer
 
-set hub  [client new hub]
-set leaf [client new leaf1]
+oper :
+ >> CHGHOST [target nick] chghost.test
+ << QUIT {Changing host}
+ >> "[target nick]!*@chghost.test" JOIN $test_channel
 
-$op   join_channel #chghost
-$hub  join_channel #chghost
-$leaf join_channel #chghost
+observer :
+ << QUIT {Changing host}
+ >> "[target nick]!*@chghost.test" JOIN $test_channel
 
-# wait for joins to propagate
-sleep 3
-
-$op send_cmd CHGHOST [$hub nick] chghost.test
-
-$op   expect "QUIT :Changing host"
-$leaf expect "QUIT :Changing host"
-
-$op   expect "@chghost.test JOIN #chghost"
-$leaf expect "@chghost.test JOIN #chghost"
-
-$hub  expect "chghost.test :is now your hidden host"
-
-$op   quit
-$hub  quit
-$leaf quit
+target :
+ << $RPL_HOSTHIDDEN [target nick] chghost.test "*is now your hidden host*"

@@ -1,45 +1,29 @@
-#!/usr/bin/expect -f
+begin {Check privmsg works and is routed}
 
-source lib/lib.tcl
+set test_channel #privmsg
 
-begin test privmsg {Check privmsg works and is routed}
+client client1
+client client2
 
-set hub1  [client new hub]
-set hub2  [client new hub]
+set message "This is sent by [client1 nick], [client2 nick] should see it"
+client1 >> PRIVMSG $test_channel $message
+client2 << PRIVMSG $test_channel $message
 
-$hub1 join_channel #privmsg
-$hub2 join_channel #privmsg
+set message "This is sent by [client2 nick], [client1 nick] should see it"
+client2 >> PRIVMSG $test_channel $message
+client1 << PRIVMSG $test_channel $message
 
-set message {This is sent by hub1, hub2 should see it}
-$hub1 send_cmd PRIVMSG #privmsg  $message
-$hub2 expect  "PRIVMSG #privmsg :$message"
+client client3
+client client4
 
-set message {This is sent by hub2, hub1 should see it}
-$hub2 send_cmd PRIVMSG #privmsg  $message
-$hub1 expect  "PRIVMSG #privmsg :$message"
+set message "This is sent by [client3 nick], everyone else should see it"
+client3 >> PRIVMSG $test_channel $message
+client1 << PRIVMSG $test_channel $message
+client2 << PRIVMSG $test_channel $message
+client4 << PRIVMSG $test_channel $message
 
-set leaf1 [client new leaf1]
-set leaf2 [client new leaf2]
-
-$leaf1 join_channel #privmsg
-$leaf2 join_channel #privmsg
-
-# wait for joins to propagate
-sleep 3
-
-set message {This is sent by hub1, everyone else should see it}
-$hub1  send_cmd PRIVMSG #privmsg  $message
-$hub2  expect  "PRIVMSG #privmsg :$message"
-$leaf1 expect  "PRIVMSG #privmsg :$message"
-$leaf2 expect  "PRIVMSG #privmsg :$message"
-
-set message {This is sent by leaf1, everyone else should see it}
-$leaf1 send_cmd PRIVMSG #privmsg  $message
-$hub1  expect  "PRIVMSG #privmsg :$message"
-$hub2  expect  "PRIVMSG #privmsg :$message"
-$leaf2 expect  "PRIVMSG #privmsg :$message"
-
-$hub1 quit
-$hub2 quit
-$leaf1 quit
-$leaf2 quit
+set message "This is sent by [client4 nick], everyone else should see it"
+client4 >> PRIVMSG $test_channel $message
+client1 << PRIVMSG $test_channel $message
+client2 << PRIVMSG $test_channel $message
+client3 << PRIVMSG $test_channel $message
