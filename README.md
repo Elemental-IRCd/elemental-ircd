@@ -17,11 +17,35 @@ following Debian packages:
  - `bison`
  - `build-essential`
  - `libsqlite3-dev`
+ - `libltdl7-dev`
+
+For an easy one-step install:
+
+### Ubuntu/Debian
+
+```console
+$ sudo apt-get install libssl-dev autoconf build-essential flex bison libsqlite3-dev automake
+```
+
+### Fedora/CentOS
+
+```console
+$ sudo (yum/dnf) groupinstall "Development Tools"
+$ sudo (yum/dnf) install openssl-devel autoconf build-essential automake flex
+  bison autoconf-archive sqlite3-devel
+```
+
+## Others
 
 ```
 Cassy | If you put something on a platform which cannot support it
       | it may tip and fall and become broken. Simple physics.
 ```
+
+This is known to work on OSX and Windows as well. These two targets are not 
+as fully supported as Linux.
+
+## Compilation
 
 Compilation will generally follow:
 
