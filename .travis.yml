@@ -33,7 +33,7 @@ install:
 script:
   - ./autogen.sh
   - ./configure --enable-debug --enable-coverage
-  - make
+  - make -j2
   - make install
   - testsuite/startall.sh
   - make check
