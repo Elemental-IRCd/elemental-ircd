@@ -356,8 +356,13 @@ int match_ips(const char *s1, const char *s2)
         } else
             return 0;
 
-    rb_inet_pton(aftype, address, ipptr);
-    rb_inet_pton(aftype, mask, maskptr);
+    if(rb_inet_pton(aftype, address, ipptr)) {
+        return 0;
+    }
+
+    if(rb_inet_pton(aftype, mask, maskptr)) {
+        return 0;
+    }
     if (comp_with_mask(ipptr, maskptr, cidrlen))
         return 1;
     else
@@ -420,8 +425,15 @@ int match_cidr(const char *s1, const char *s2)
         } else
             return 0;
 
-    rb_inet_pton(aftype, ip, ipptr);
-    rb_inet_pton(aftype, ipmask, maskptr);
+    if (rb_inet_pton(aftype, ip, ipptr) <= 0) {
+        return 0;
+    }
+
+
+    if(rb_inet_pton(aftype, ipmask, maskptr) <= 0) {
+        return 0;
+    }
+
     if (comp_with_mask(ipptr, maskptr, cidrlen) && match(mask, address))
         return 1;
     else
