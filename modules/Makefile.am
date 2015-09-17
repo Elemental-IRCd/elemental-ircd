@@ -63,7 +63,6 @@ automod_LTLIBRARIES =     \
     m_rehash.la           \
     m_restart.la          \
     m_resv.la             \
-    m_sasl.la             \
     m_scan.la             \
     m_services.la         \
     m_set.la              \
