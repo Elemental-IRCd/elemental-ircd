@@ -221,6 +221,20 @@ findmodule_byname(const char *name)
     return -1;
 }
 
+/* check if needle is a suffix of haystack */
+static
+int str_suffix(const char* haystack, const char *needle)
+{
+    const char *pos = strstr(haystack, needle);
+
+    /* needle not found */
+    if(!pos)
+        return 0;
+
+    /* return true if a null follows needle */
+    return pos[strlen(needle)] == 0;
+}
+
 /* load_all_modules()
  *
  * input        -
@@ -233,7 +247,6 @@ load_all_modules(int warn)
     DIR *system_module_dir = NULL;
     struct dirent *ldirent = NULL;
     char module_fq_name[PATH_MAX + 1];
-    int len;
 
     modules_init();
 
@@ -249,6 +262,8 @@ load_all_modules(int warn)
     }
 
     while ((ldirent = readdir(system_module_dir)) != NULL) {
+        if(!str_suffix(ldirent->d_name, LT_MODULE_EXT))
+            continue;
         snprintf(module_fq_name, sizeof(module_fq_name), "%s/%s", AUTOMODPATH, ldirent->d_name);
         load_a_module(module_fq_name, warn, 0);
     }
