@@ -5,7 +5,7 @@ install:
     - pacman --noconfirm -Sy
     - pacman --noconfirm --needed -S pacman-mirrors
     - pacman --noconfirm -Sy
-    - pacman --noconfirm --needed -S base-devel mingw-w64-x86_64-tcl mingw-w64-x86_64-tcllib mingw-w64-x86_64-openssl mingw-w64-x86_64-toolchain mingw-w64-x86_64-sqlite3
+    - pacman --noconfirm --needed -S base-devel zip mingw-w64-x86_64-tcl mingw-w64-x86_64-tcllib mingw-w64-x86_64-openssl mingw-w64-x86_64-toolchain mingw-w64-x86_64-sqlite3
     - ps: >-
         bash -c @"
           # Install autoconf-archive
