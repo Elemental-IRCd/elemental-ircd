@@ -17,6 +17,7 @@ following Debian packages:
  - `bison`
  - `build-essential`
  - `libsqlite3-dev`
+ - `libltdl7-dev`
 
 For an easy one-step install:
 
