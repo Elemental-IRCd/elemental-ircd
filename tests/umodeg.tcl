@@ -1,5 +1,7 @@
 begin {Check umode +g functionality and presence of help msg}
 
+set test_channel #umodeg
+
 client target
 client sender
 
