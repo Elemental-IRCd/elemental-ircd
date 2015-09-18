@@ -297,11 +297,19 @@ snit::type client {
         # For every other client in the channel we've just joined, wait
         # until we get a join for them
         # This is to handle propagation of joins between servers
-        foreach x $all_clients { if {[lsearch [$x chans] $channel] != -1} {
-            while {[lsearch $channel_nicks($channel) [$x nick]] == -1} {
-                vwait [myvar lines]
-            }
+        foreach other $all_clients { if {[lsearch [$other chans] $channel] != -1} {
+            # Wait until we see them
+            $self _wait_join [$other nick] $channel
+            # Wait until they see us
+            $other _wait_join $nickname $channel
         }}
+    }
+
+    method _wait_join {nick channel} {
+        # Go into the event loop until we see {nick} in {channel}
+        while {[lsearch $channel_nicks($channel) $nick] == -1} {
+            vwait [myvar lines]
+        }
     }
 
     method post_QUIT {args} {
