@@ -121,6 +121,8 @@ after idle { after 30000 {
 set all_clients list
 
 snit::type client {
+    option {-caps} {}
+
     variable sock
 
     variable nickname
@@ -136,9 +138,16 @@ snit::type client {
     # Array, list of nicks in each channel
     variable channel_nicks
 
-    constructor {{server hub}} {
+    # Capabilities available on the server
+    variable server_caps {}
+    # Capabilities we've got
+    variable caps {}
+
+    constructor {args} {
         global servers
         global all_clients
+
+        $self configurelist $args
 
         set nickname [get_nick]
         set username [get_user]
@@ -167,9 +176,14 @@ snit::type client {
         global RPL_WELCOME
         global test_channel
 
+        if {$options(-caps) != ""} {
+            $self >> CAP LS
+        }
+
         $self >> NICK $nickname
         $self >> USER $username * * $realname
         $self << $RPL_WELCOME
+
         if {$test_channel != ""} {
             $self >> JOIN $test_channel
         }
@@ -186,10 +200,12 @@ snit::type client {
     destructor {
         global all_clients
 
-        $self >> QUIT
-
         set all_clients [lsearch -not -inline $all_clients $self]
-        chan close $sock
+
+        if {[info exists sock]} {
+            $self >> QUIT
+            chan close $sock
+        }
     }
 
     # Wait for one line, then dequeue
@@ -243,6 +259,45 @@ snit::type client {
         if {[$self info methods $method_name] != ""} {
             $self $method_name $prefix {*}$args
         }
+    }
+
+    method handle_CAP {prefix args} {
+        set end [lindex $args 0]
+        if {$end == "*" || $end == $nickname} {
+            set end true
+            set args [lrange $args 1 end]
+        } else {
+            set end false
+        }
+
+        if {[lindex $args 0] == "LS"} {
+            lappend server_caps {*}[lindex $args 1]
+            if {$end == true} {
+                # Send the subset of requested and aquired caps
+                set req_caps [lmap cap $server_caps {expr {[lsearch $options(-caps) $cap] >= 0 ? $cap : [continue]}}]
+                if {[llength $req_caps]} {
+                    >> CAP REQ $req_caps
+                } else {
+                    >> CAP END
+                }
+            }
+        }
+
+        if {[lindex $args 0] == "ACK"} {
+            lappend caps {*}[lindex $args 1]
+            if {$end == true} {
+                >> CAP END
+            }
+        }
+    }
+
+    method have {cap} {
+        $self has $cap
+    }
+
+    # Check if a client has a capability
+    method has {cap} {
+        return [expr {[lsearch $caps $cap] >= 0}]
     }
 
     method handle_JOIN {prefix args} {
@@ -362,6 +417,8 @@ proc proxy_method {method} {
 
 proxy_method <<
 proxy_method >>
+proxy_method has
+proxy_method have
 
 puts {Beginning test}
 
