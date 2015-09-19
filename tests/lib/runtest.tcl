@@ -135,6 +135,9 @@ snit::type client {
     # List of channels we're in
     variable channels
 
+    # Set on RPL_WELCOME, so we can vwait for connect/disconnect
+    variable connected
+
     # Array, list of nicks in each channel
     variable channel_nicks
 
@@ -148,6 +151,8 @@ snit::type client {
         global all_clients
 
         $self configurelist $args
+
+        set connected 0
 
         set nickname [get_nick]
         set username [get_user]
@@ -182,7 +187,7 @@ snit::type client {
 
         $self >> NICK $nickname
         $self >> USER $username * * $realname
-        $self << $RPL_WELCOME
+        vwait [myvar connected]
 
         if {$test_channel != ""} {
             $self >> JOIN $test_channel
@@ -204,6 +209,7 @@ snit::type client {
 
         if {[info exists sock]} {
             $self >> QUIT
+            vwait [myvar connected]
             chan close $sock
         }
     }
@@ -259,6 +265,10 @@ snit::type client {
         if {[$self info methods $method_name] != ""} {
             $self $method_name $prefix {*}$args
         }
+    }
+
+    method handle_RPL_WELCOME {prefix args} {
+        set connected 1
     }
 
     method handle_CAP {prefix args} {
@@ -325,6 +335,10 @@ snit::type client {
         }
     }
 
+    method handle_ERROR {prefix args} {
+        set connected 0
+    }
+
     method make_current {} {
         global current_client
         set current_client $self
@@ -350,7 +364,10 @@ snit::type client {
 
         set channel [lindex $args 1]
 
-        $self << JOIN $channel
+        # Wait until we're in the channel
+        while {[lsearch $channels $channel] == -1} {
+            vwait [myvar channels]
+        }
 
         # For every other client in the channel we've just joined, wait
         # until we get a join for them
@@ -370,12 +387,8 @@ snit::type client {
         }
     }
 
-    method post_QUIT {args} {
-        # Wait until the server acknowledges our quit
-        $self << ERROR
-    }
-
     # << Expects waits for an irc command {args}
+    # Do not be use within the client class
     method << {args} {
         $self make_current
         set match false
