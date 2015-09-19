@@ -1423,7 +1423,7 @@ change_nick_user_host(struct Client *target_p,	const char *nick, const char *use
         vsnprintf(reason, 255, format, ap);
         va_end(ap);
 
-        sendto_common_channels_local_butone(target_p, NOCAPS, ":%s!%s@%s QUIT :%s",
+        sendto_common_channels_local_butone(target_p, NOCAPS, NOCAPS, ":%s!%s@%s QUIT :%s",
                                             target_p->name, target_p->username, target_p->host,
                                             reason);
 
@@ -1488,14 +1488,14 @@ change_nick_user_host(struct Client *target_p,	const char *nick, const char *use
             sendto_one(target_p, ":%s!%s@%s NICK %s",
                        target_p->name, target_p->username, target_p->host, nick);
     } else if(changed_case) {
-        sendto_common_channels_local(target_p, NOCAPS, ":%s!%s@%s NICK :%s",
+        sendto_common_channels_local(target_p, NOCAPS, NOCAPS, ":%s!%s@%s NICK :%s",
                                      target_p->name, target_p->username,
                                      target_p->host, nick);
     }
 
     //Needed check for away-notify
     if(target_p->user->away != NULL) {
-        sendto_common_channels_local_butone(target_p, CLICAP_AWAY_NOTIFY, ":%s!%s@%s AWAY :%s",
+        sendto_common_channels_local_butone(target_p, CLICAP_AWAY_NOTIFY, NOCAPS, ":%s!%s@%s AWAY :%s",
                                             target_p->name, target_p->username, host, target_p->user->away);
     }
 
