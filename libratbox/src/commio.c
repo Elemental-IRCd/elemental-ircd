@@ -128,7 +128,6 @@ rb_get_sockerr(rb_fde_t *F)
     if(!(F->type & RB_FD_SOCKET))
         return errno;
 
-    rb_get_errno();
     errtmp = errno;
 
 #ifdef SO_ERROR
@@ -290,7 +289,6 @@ rb_accept_tryaccept(rb_fde_t *F, __unused void *notused)
 
     while(1) {
         new_fd = accept(F->fd, (struct sockaddr *)&st, &addrlen);
-        rb_get_errno();
         if(new_fd < 0) {
             rb_setselect(F, RB_SELECT_ACCEPT, rb_accept_tryaccept, NULL);
             return;
@@ -307,7 +305,6 @@ rb_accept_tryaccept(rb_fde_t *F, __unused void *notused)
         }
 
         if(rb_unlikely(!rb_set_nb(new_F))) {
-            rb_get_errno();
             rb_lib_log("rb_accept: Couldn't set FD %d non blocking!", new_F->fd);
             rb_close(new_F);
         }
@@ -459,7 +456,6 @@ rb_connect_tryconnect(rb_fde_t *F, __unused void *notused)
          * which is a good thing.
          *   -- adrian
          */
-        rb_get_errno();
         if(errno == EISCONN)
             rb_connect_callback(F, RB_OK);
         else if(rb_ignore_errno(errno))
@@ -894,16 +890,11 @@ rb_read(rb_fde_t *F, void *buf, int count)
     /* This needs to be *before* RB_FD_SOCKET otherwise you'll process
      * an SSL socket as a regular socket
      */
-    if(F->type & RB_FD_SSL) {
+    if(F->type & RB_FD_SSL)
         return rb_ssl_read(F, buf, count);
-    }
-    if(F->type & RB_FD_SOCKET) {
-        ret = recv(F->fd, buf, count, 0);
-        if(ret < 0) {
-            rb_get_errno();
-        }
-        return ret;
-    }
+
+    if(F->type & RB_FD_SOCKET)
+        return recv(F->fd, buf, count, 0);
 
 
     /* default case */
@@ -921,13 +912,8 @@ rb_write(rb_fde_t *F, const void *buf, int count)
     if(F->type & RB_FD_SSL) {
         return rb_ssl_write(F, buf, count);
     }
-    if(F->type & RB_FD_SOCKET) {
-        ret = send(F->fd, buf, count, MSG_NOSIGNAL);
-        if(ret < 0) {
-            rb_get_errno();
-        }
-        return ret;
-    }
+    if(F->type & RB_FD_SOCKET)
+        return send(F->fd, buf, count, MSG_NOSIGNAL);
 
     return write(F->fd, buf, count);
 }
@@ -1546,11 +1532,9 @@ rb_inet_socketpair_udp(rb_fde_t **newF1, rb_fde_t **newF2)
     return 0;
 
 abort_failed:
-    rb_get_errno();
     errno = ECONNABORTED;
+
 failed:
-    if(errno != ECONNABORTED)
-        rb_get_errno();
     o_errno = errno;
     if(F[0] != NULL)
         rb_close(F[0]);

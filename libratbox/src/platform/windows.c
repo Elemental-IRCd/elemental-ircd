@@ -197,10 +197,9 @@ make_fde_from_wsaprotocol_info(void *data)
     WSAPROTOCOL_INFO *info = data;
     SOCKET t;
     t = WSASocket(FROM_PROTOCOL_INFO, FROM_PROTOCOL_INFO, FROM_PROTOCOL_INFO, info, 0, 0);
-    if(t == INVALID_SOCKET) {
-        rb_get_errno();
+    if(t == INVALID_SOCKET)
         return NULL;
-    }
+
     return rb_open(t, RB_FD_SOCKET, "remote_socket");
 }
 
