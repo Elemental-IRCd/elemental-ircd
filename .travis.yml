@@ -36,7 +36,7 @@ script:
   - make -j2
   - make install
   - testsuite/startall.sh
-  - make check
+  - make check -j8
   - testsuite/killall.sh
 
 after_success:

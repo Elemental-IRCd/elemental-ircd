@@ -32,6 +32,11 @@ proc begin {{text {Test suite client}}} {
     set test_channel ""
 }
 
+proc skip {reason} {
+    puts "Test skipped: $reason"
+    exit 77
+}
+
 set nick_counter 0
 
 proc get_nick {} {
@@ -121,6 +126,8 @@ after idle { after 30000 {
 set all_clients list
 
 snit::type client {
+    option {-caps} {}
+
     variable sock
 
     variable nickname
@@ -133,12 +140,24 @@ snit::type client {
     # List of channels we're in
     variable channels
 
+    # Set on RPL_WELCOME, so we can vwait for connect/disconnect
+    variable connected
+
     # Array, list of nicks in each channel
     variable channel_nicks
 
-    constructor {{server hub}} {
+    # Capabilities available on the server
+    variable server_caps {}
+    # Capabilities we've got
+    variable caps {}
+
+    constructor {args} {
         global servers
         global all_clients
+
+        $self configurelist $args
+
+        set connected 0
 
         set nickname [get_nick]
         set username [get_user]
@@ -167,9 +186,14 @@ snit::type client {
         global RPL_WELCOME
         global test_channel
 
+        if {$options(-caps) != ""} {
+            $self >> CAP LS
+        }
+
         $self >> NICK $nickname
         $self >> USER $username * * $realname
-        $self << $RPL_WELCOME
+        vwait [myvar connected]
+
         if {$test_channel != ""} {
             $self >> JOIN $test_channel
         }
@@ -186,10 +210,13 @@ snit::type client {
     destructor {
         global all_clients
 
-        $self >> QUIT
-
         set all_clients [lsearch -not -inline $all_clients $self]
-        chan close $sock
+
+        if {[info exists sock]} {
+            $self >> QUIT
+            vwait [myvar connected]
+            chan close $sock
+        }
     }
 
     # Wait for one line, then dequeue
@@ -231,7 +258,7 @@ snit::type client {
 
         set command [string toupper [lindex $line $pos]]
 
-        if {[string is integer $command]} {
+        if {[string is integer $command] && [array get numerics $command] != ""} {
             set command $numerics($command)
         }
 
@@ -243,6 +270,52 @@ snit::type client {
         if {[$self info methods $method_name] != ""} {
             $self $method_name $prefix {*}$args
         }
+    }
+
+    method handle_RPL_WELCOME {prefix args} {
+        set connected 1
+    }
+
+    method handle_CAP {prefix args} {
+        set end [lindex $args 0]
+        if {$end == "*" || $end == $nickname} {
+            set end true
+            set args [lrange $args 1 end]
+        } else {
+            set end false
+        }
+
+        if {[lindex $args 0] == "LS"} {
+            lappend server_caps {*}[lindex $args 1]
+            if {$end == true} {
+                # Send the subset of requested and aquired caps
+                set req_caps {}
+                foreach cap $server_caps {
+                    if {[lsearch $options(-caps) $cap] >= 0} {lappend req_caps $cap}
+                }
+                if {[llength $req_caps]} {
+                    >> CAP REQ $req_caps
+                } else {
+                    >> CAP END
+                }
+            }
+        }
+
+        if {[lindex $args 0] == "ACK"} {
+            lappend caps {*}[lindex $args 1]
+            if {$end == true} {
+                >> CAP END
+            }
+        }
+    }
+
+    method have {cap} {
+        $self has $cap
+    }
+
+    # Check if a client has a capability
+    method has {cap} {
+        return [expr {[lsearch $caps $cap] >= 0}]
     }
 
     method handle_JOIN {prefix args} {
@@ -265,6 +338,14 @@ snit::type client {
             regexp {[@]*(.*)} $nick -> nick
             lappend channel_nicks($channel) $nick
         }
+    }
+
+    method handle_PING {prefix args} {
+        >> PONG {*}$args
+    }
+
+    method handle_ERROR {prefix args} {
+        set connected 0
     }
 
     method make_current {} {
@@ -292,24 +373,31 @@ snit::type client {
 
         set channel [lindex $args 1]
 
-        $self << JOIN $channel
+        # Wait until we're in the channel
+        while {[lsearch $channels $channel] == -1} {
+            vwait [myvar channels]
+        }
 
         # For every other client in the channel we've just joined, wait
         # until we get a join for them
         # This is to handle propagation of joins between servers
-        foreach x $all_clients { if {[lsearch [$x chans] $channel] != -1} {
-            while {[lsearch $channel_nicks($channel) [$x nick]] == -1} {
-                vwait [myvar lines]
-            }
+        foreach other $all_clients { if {[lsearch [$other chans] $channel] != -1} {
+            # Wait until we see them
+            $self _wait_join [$other nick] $channel
+            # Wait until they see us
+            $other _wait_join $nickname $channel
         }}
     }
 
-    method post_QUIT {args} {
-        # Wait until the server acknowledges our quit
-        $self << ERROR
+    method _wait_join {nick channel} {
+        # Go into the event loop until we see {nick} in {channel}
+        while {[lsearch $channel_nicks($channel) $nick] == -1} {
+            vwait [myvar lines]
+        }
     }
 
     # << Expects waits for an irc command {args}
+    # Do not be use within the client class
     method << {args} {
         $self make_current
         set match false
@@ -354,6 +442,8 @@ proc proxy_method {method} {
 
 proxy_method <<
 proxy_method >>
+proxy_method has
+proxy_method have
 
 puts {Beginning test}
 

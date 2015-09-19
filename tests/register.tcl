@@ -2,7 +2,8 @@ begin {Test client registration}
 
 client new
 
-# Client constructor checks for RPL_WELCOME
+# Must receive RPL_WELCOME
+<< $RPL_WELCOME
 
 # Check that ISUPPORT is sent
 << $RPL_ISUPPORT

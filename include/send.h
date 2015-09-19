@@ -66,8 +66,8 @@ extern void sendto_channel_local_butone(struct Client *, int type, struct Channe
 extern void sendto_channel_local_with_capability(int type, int caps, int negcaps, struct Channel *, const char *, ...) __format_printf(5, 6);
 extern void sendto_channel_local_with_capability_butone(struct Client *, int type, int caps, int negcaps, struct Channel *, const char *, ...) __format_printf(6, 7);
 
-extern void sendto_common_channels_local(struct Client *, int cap, const char *, ...) __format_printf(3, 4);
-extern void sendto_common_channels_local_butone(struct Client *, int cap, const char *, ...) __format_printf(3, 4);
+extern void sendto_common_channels_local(struct Client *, int cap, int negcap, const char *, ...) __format_printf(4, 5);
+extern void sendto_common_channels_local_butone(struct Client *, int cap, int negcap, const char *, ...) __format_printf(4, 5);
 
 
 extern void sendto_match_butone(struct Client *, struct Client *,

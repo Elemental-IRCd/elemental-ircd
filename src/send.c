@@ -758,7 +758,7 @@ sendto_channel_local_with_capability_butone(struct Client *one, int type, int ca
  *		  used by m_nick.c and exit_one_client.
  */
 void
-sendto_common_channels_local(struct Client *user, int cap, const char *pattern, ...)
+sendto_common_channels_local(struct Client *user, int cap, int negcap, const char *pattern, ...)
 {
     va_list args;
     rb_dlink_node *ptr;
@@ -788,7 +788,8 @@ sendto_common_channels_local(struct Client *user, int cap, const char *pattern, 
 
             if(IsIOError(target_p) ||
                target_p->serial == current_serial ||
-               !IsCapable(target_p, cap))
+               !IsCapable(target_p, cap) ||
+               !NotCapable(target_p, negcap))
                 continue;
 
             target_p->serial = current_serial;
@@ -816,7 +817,7 @@ sendto_common_channels_local(struct Client *user, int cap, const char *pattern, 
  * 		  in same channel with user, except for user itself.
  */
 void
-sendto_common_channels_local_butone(struct Client *user, int cap, const char *pattern, ...)
+sendto_common_channels_local_butone(struct Client *user, int cap, int negcap, const char *pattern, ...)
 {
     va_list args;
     rb_dlink_node *ptr;
@@ -848,7 +849,8 @@ sendto_common_channels_local_butone(struct Client *user, int cap, const char *pa
 
             if(IsIOError(target_p) ||
                target_p->serial == current_serial ||
-               !IsCapable(target_p, cap))
+               !IsCapable(target_p, cap) ||
+               !NotCapable(target_p, negcap))
                 continue;
 
             target_p->serial = current_serial;

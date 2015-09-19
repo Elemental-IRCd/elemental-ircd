@@ -86,7 +86,7 @@ AC_DEFINE_DIR([PKGLIBEXECDIR], [pkglibexecdir], [Directory where binaries the IR
 dnl Checks for header files.
 AC_HEADER_STDC
 
-AC_CHECK_HEADERS([crypt.h sys/resource.h sys/param.h errno.h sys/syslog.h stddef.h sys/wait.h wait.h sys/epoll.h sys/uio.h machine/endian.h])
+AC_CHECK_HEADERS([sys/resource.h sys/param.h errno.h stddef.h sys/wait.h wait.h sys/uio.h])
 
 dnl Stuff that the memory manager (imalloc) depends on
 dnl ==================================================
@@ -108,18 +108,6 @@ dnl ====================
 
 AC_ARG_ENABLE(ipv6,
 AS_HELP_STRING([--enable-ipv6],[Enable IPv6 support]),[ipv6=$enableval],[ipv6=no])
-
-AC_SEARCH_LIBS(crypt, [crypt descrypt],,)
-
-CRYPT_LIB=$ac_cv_search_crypt
-
-if test "$CRYPT_LIB" = "none required"; then
-	unset CRYPT_LIB
-elif test "$CRYPT_LIB" = no; then
-	unset CRYPT_LIB
-fi
-
-AC_SUBST(CRYPT_LIB)
 
 if test x"$ac_cv_header_sys_wait_h" = yes -o x"$ac_cv_header_wait_h" = yes; then
 	VICONF=yes

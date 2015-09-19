@@ -6,4 +6,5 @@ TCL_LOG_COMPILER = $(TCLSH) lib/runtest.tcl
 TESTS = register.tcl \
         chghost.tcl \
         privmsg.tcl \
+        away-notify.tcl \
         umodeg.tcl
