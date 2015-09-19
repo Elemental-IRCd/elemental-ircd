@@ -32,6 +32,11 @@ proc begin {{text {Test suite client}}} {
     set test_channel ""
 }
 
+proc skip {reason} {
+    puts "Test skipped: $reason"
+    exit 77
+}
+
 set nick_counter 0
 
 proc get_nick {} {
