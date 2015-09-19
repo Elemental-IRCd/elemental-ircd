@@ -9,11 +9,16 @@ namespace eval color {
 }
 
 # Test servers
-#   [name] {[ip/host] [port]}
-array set servers {
-    hub    {127.0.0.1 6667}
-    leaf1  {127.0.0.1 6668}
-    leaf2  {127.0.0.1 6669}
+#  {[ip/host] [port]}
+set servers [list {*}{
+    {127.0.0.1 6667}
+    {127.0.0.1 6668}
+    {127.0.0.1 6669}
+}]
+
+# Take servers from the environment if provided
+if {[array get env TEST_SERVERS] != ""} {
+    set servers $env(TEST_SERVERS)
 }
 
 proc begin {{text {Test suite client}}} {
@@ -61,10 +66,9 @@ proc get_realname {} {
 proc get_server {} {
     global servers
 
-    set keys [array names servers]
-    set idx [expr {int(rand()*[llength $keys])}]
+    set idx [expr {int(rand()*[llength $servers])}]
 
-    return $servers([lindex $keys $idx])
+    return [lindex $servers $idx]
 }
 
 # Tokenize an irc message into a tcl list
