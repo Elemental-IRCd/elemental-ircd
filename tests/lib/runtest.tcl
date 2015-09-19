@@ -122,10 +122,16 @@ proc format_args {args} {
     return [join $out]
 }
 
-after idle { after 30000 {
-    puts "Test timed out"
-    exit 1
-}}
+set watchdog -1
+proc update_watchdog {} {
+    global watchdog
+    after cancel $watchdog
+    set watchdog [after 15000 {
+        puts "Test timed out"
+        exit 1
+    }]
+}
+update_watchdog
 
 set all_clients list
 
@@ -360,6 +366,7 @@ snit::type client {
     # >> Sends its arguemnts as an irc command
     # Concatenates and adds a trailing as needed
     method >> {args} {
+        update_watchdog
         $self make_current
         set line [format_args {*}$args]
         chan puts $sock $line
