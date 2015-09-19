@@ -274,7 +274,10 @@ snit::type client {
             lappend server_caps {*}[lindex $args 1]
             if {$end == true} {
                 # Send the subset of requested and aquired caps
-                set req_caps [lmap cap $server_caps {expr {[lsearch $options(-caps) $cap] >= 0 ? $cap : [continue]}}]
+                set req_caps {}
+                foreach cap $server_caps {
+                    if {[lsearch $options(-caps) $cap] >= 0} {lappend req_caps $cap}
+                }
                 if {[llength $req_caps]} {
                     >> CAP REQ $req_caps
                 } else {
