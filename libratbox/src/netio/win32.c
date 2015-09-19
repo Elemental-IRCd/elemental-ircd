@@ -180,10 +180,9 @@ rb_setup_fd_win32(rb_fde_t *F)
     switch (F->type) {
     case RB_FD_SOCKET: {
         u_long nonb = 1;
-        if(ioctlsocket((SOCKET) F->fd, FIONBIO, &nonb) == -1) {
-            rb_get_errno();
+        if(ioctlsocket((SOCKET) F->fd, FIONBIO, &nonb) == -1)
             return 0;
-        }
+
         return 1;
     }
     default:

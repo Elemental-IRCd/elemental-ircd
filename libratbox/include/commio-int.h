@@ -32,13 +32,6 @@
 
 #define FD_DESC_SZ 128		/* hostlen + comment */
 
-
-#ifdef _WIN32
-#define rb_get_errno() do { errno = WSAGetLastError(); WSASetLastError(errno); } while(0)
-#else
-#define rb_get_errno()
-#endif
-
 #define rb_hash_fd(x) ((x ^ (x >> RB_FD_HASH_BITS) ^ (x >> (RB_FD_HASH_BITS * 2))) & RB_FD_HASH_MASK)
 
 #ifdef HAVE_WRITEV

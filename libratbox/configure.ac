@@ -321,6 +321,7 @@ if test "$balloc" = no; then
 fi
 
 RB_CFLAGS
+RB_FORTIFY_SOURCE(1)
 
 AC_SUBST(LDFLAGS)
 AC_SUBST(PICFLAGS)

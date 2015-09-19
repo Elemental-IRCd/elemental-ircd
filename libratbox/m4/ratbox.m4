@@ -62,6 +62,15 @@ AC_DEFUN([RB_CFLAGS], [
   AX_APPEND_COMPILE_FLAGS([-Wunused-variable])
 ])
 
+AC_DEFUN([RB_FORTIFY_SOURCE], [
+  # Define _FORTIFY_SOURCE if it's not defined already
+  # stdio used since this is intended to find command line defines
+  AX_CHECK_DEFINE([stdio.h],[_FORTIFY_SOURCE], [], [
+    AX_APPEND_COMPILE_FLAGS(-D_FORTIFY_SOURCE=$1)
+  ])
+])
+
+
 
 dnl IPv6 support macros..pretty much swiped from wget
 

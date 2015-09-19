@@ -25,9 +25,6 @@ AM_CONDITIONAL([BUILD_LTDL], [test x"$build_ltdl" = x"yes"])
 
 GCC_STACK_PROTECT_CC
 
-dnl Checks for programs.
-CFLAGS="-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1 $CFLAGS"
-
 AC_CONFIG_SUBDIRS(libratbox)
 
 AC_SEARCH_LIBS([strerror],[cposix])
@@ -40,7 +37,6 @@ AC_PROG_SED
 AC_PROG_YACC
 AC_PROG_LEX
 AC_PATH_PROG(TCLSH, tclsh)
-
 
 dnl AC_PROG_YACC defaults to yacc unconditionally if nothing can be found
 if test "$YACC" = "yacc" -a -z "`which $YACC 2>/dev/null`"; then
@@ -415,6 +411,8 @@ AC_DEFINE_UNQUOTED(TOPICLEN, ${TOPICLEN}, [Maximum topic length (<=390)])
 AC_DEFINE_UNQUOTED(NICKLEN, (${NICKLEN}+1), [Nickname length])
 
 RB_CFLAGS
+RB_FORTIFY_SOURCE(1)
+
 AX_APPEND_LINK_FLAGS([-Wl,-rpath=\${libdir}])
 AX_APPEND_LINK_FLAGS([-Wl,--export-all-symbols])
 

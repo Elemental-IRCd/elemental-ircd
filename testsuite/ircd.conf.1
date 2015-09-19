@@ -38,7 +38,8 @@ connect "leaf1.local" {
 	host = "127.0.0.1";
 	send_password = "dev";
 	accept_password = "dev";
-	port = 6668;
+	port = 6698;
+	flags = topicburst, ssl;
 	class = "server";
 };
 
@@ -46,6 +47,7 @@ connect "leaf2.local" {
 	host = "127.0.0.1";
 	send_password = "dev";
 	accept_password = "dev";
-	port = 6669;
+	port = 6699;
+	flags = topicburst, ssl;
 	class = "server";
 };

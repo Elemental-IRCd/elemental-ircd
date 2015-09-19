@@ -9,11 +9,16 @@ namespace eval color {
 }
 
 # Test servers
-#   [name] {[ip/host] [port]}
-array set servers {
-    hub    {127.0.0.1 6667}
-    leaf1  {127.0.0.1 6668}
-    leaf2  {127.0.0.1 6669}
+#  {[ip/host] [port]}
+set servers [list {*}{
+    {127.0.0.1 6667}
+    {127.0.0.1 6668}
+    {127.0.0.1 6669}
+}]
+
+# Take servers from the environment if provided
+if {[array get env TEST_SERVERS] != ""} {
+    set servers $env(TEST_SERVERS)
 }
 
 proc begin {{text {Test suite client}}} {
@@ -61,10 +66,9 @@ proc get_realname {} {
 proc get_server {} {
     global servers
 
-    set keys [array names servers]
-    set idx [expr {int(rand()*[llength $keys])}]
+    set idx [expr {int(rand()*[llength $servers])}]
 
-    return $servers([lindex $keys $idx])
+    return [lindex $servers $idx]
 }
 
 # Tokenize an irc message into a tcl list
@@ -118,10 +122,16 @@ proc format_args {args} {
     return [join $out]
 }
 
-after idle { after 30000 {
-    puts "Test timed out"
-    exit 1
-}}
+set watchdog -1
+proc update_watchdog {} {
+    global watchdog
+    after cancel $watchdog
+    set watchdog [after 15000 {
+        puts "Test timed out"
+        exit 1
+    }]
+}
+update_watchdog
 
 set all_clients list
 
@@ -356,6 +366,7 @@ snit::type client {
     # >> Sends its arguemnts as an irc command
     # Concatenates and adds a trailing as needed
     method >> {args} {
+        update_watchdog
         $self make_current
         set line [format_args {*}$args]
         chan puts $sock $line
