@@ -258,7 +258,7 @@ snit::type client {
 
         set command [string toupper [lindex $line $pos]]
 
-        if {[string is integer $command]} {
+        if {[string is integer $command] && [array get numerics $command] != ""} {
             set command $numerics($command)
         }
 
@@ -338,6 +338,10 @@ snit::type client {
             regexp {[@]*(.*)} $nick -> nick
             lappend channel_nicks($channel) $nick
         }
+    }
+
+    method handle_PING {prefix args} {
+        >> PONG {*}$args
     }
 
     method handle_ERROR {prefix args} {
