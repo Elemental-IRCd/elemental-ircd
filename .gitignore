@@ -27,6 +27,7 @@ config.status
 config.guess
 config.sub
 configure
+cscope.*
 depcomp
 include/setup.h
 install-sh
