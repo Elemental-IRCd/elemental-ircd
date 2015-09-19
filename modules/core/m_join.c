@@ -243,6 +243,12 @@ ms_join(struct Client *client_p, struct Client *source_p, int parc, const char *
                                              source_p->name, source_p->username, source_p->host, chptr->chname,
                                              EmptyString(source_p->user->suser) ? "*" : source_p->user->suser,
                                              source_p->info);
+
+        if (source_p->user && source_p->user->away)
+            sendto_channel_local_with_capability_butone(source_p, ALL_MEMBERS, CLICAP_AWAY_NOTIFY, NOCAPS, chptr,
+                                                        ":%s!%s@%s AWAY :%s",
+                                                        source_p->name, source_p->username, source_p->host,
+                                                        source_p->user->away);
     }
 
     sendto_server(client_p, chptr, CAP_TS6, NOCAPS,
