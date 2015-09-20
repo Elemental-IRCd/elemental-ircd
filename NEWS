@@ -912,7 +912,3 @@ Please include a gdb backtrace and keep the core file, binaries and
 modules in case the developers need them.
 
 Other files recommended for reading: BUGS, README.FIRST, INSTALL
-
---------------------------------------------------------------------------------
-$Id$
-

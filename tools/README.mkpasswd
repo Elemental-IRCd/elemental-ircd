@@ -1,5 +1,4 @@
 mkpasswd.c documentation
-$Id$
 
 This is documentation for the updated mkpasswd.c included with a number
 of ircd, irc services, and non-IRC related programs

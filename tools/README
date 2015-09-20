@@ -1,5 +1,3 @@
-$Id$
-
 A directory of support programs for ircd.
 
 convertconf.c          - converts a Hybrid 5 or 6 conf file to the new

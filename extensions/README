@@ -1,5 +1,3 @@
-$Id$
-
 This directory contains extensions (modules) to charybdis ircd that
 have been contributed by other people, or written by our development
 team.  Unsupported extensions live under unsupported/.
