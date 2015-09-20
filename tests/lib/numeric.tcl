@@ -359,6 +359,16 @@ def_numeric ERR_MLOCKRESTRICTED     {742}
 def_numeric RPL_SCANMATCHED         {750}
 def_numeric RPL_SCANUMODES          {751}
 
+def_numeric RPL_WHOISKEYVALUE       {760}
+def_numeric RPL_KEYVALUE            {761}
+def_numeric RPL_METADATAEND         {762}
+def_numeric ERR_METADATALIMIT       {764}
+def_numeric ERR_TARGETINVALID       {765}
+def_numeric ERR_NOMATCHINGKEY       {766}
+def_numeric ERR_KEYINVALID          {767}
+def_numeric ERR_KEYNOTSET           {768}
+def_numeric ERR_KEYNOPERMISSION     {769}
+
 def_numeric RPL_LOGGEDIN            {900}
 def_numeric RPL_LOGGEDOUT           {901}
 def_numeric ERR_NICKLOCKED          {902}
