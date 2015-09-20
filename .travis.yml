@@ -14,7 +14,9 @@ script:
   - make
   - make install
   - testsuite/startall.sh
+  - cd tests
   - make check
+  - cd ..
   - testsuite/killall.sh
 
 addons:

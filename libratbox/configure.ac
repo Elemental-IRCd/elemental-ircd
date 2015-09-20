@@ -9,8 +9,10 @@ AC_PREREQ(2.63)
 AUTOMAKE_OPTIONS = 1.10
 dnl Sneaky way to get an Id tag into the configure script
 AC_COPYRIGHT([$Id: configure.ac 26260 2008-12-10 04:08:39Z androsyn $])
+AC_CONFIG_MACRO_DIR([m4])
 AC_INIT([libratbox],[devel])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([])
+AM_MAINTAINER_MODE([disable])
 
 AM_CONFIG_HEADER(include/libratbox_config.h)
 
@@ -36,7 +38,6 @@ GCJ=no
 
 AM_DISABLE_STATIC
 AM_ENABLE_SHARED
-AM_MAINTAINER_MODE
 
 AC_ISC_POSIX
 AC_C_INLINE
