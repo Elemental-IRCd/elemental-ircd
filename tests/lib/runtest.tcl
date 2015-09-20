@@ -137,6 +137,7 @@ set all_clients list
 
 snit::type client {
     option {-caps} {}
+    option {-nick} {}
 
     variable sock
 
@@ -169,7 +170,11 @@ snit::type client {
 
         set connected 0
 
-        set nickname [get_nick]
+        if {$options(-nick) != ""} {
+            set nickname $options(-nick)
+        } else {
+            set nickname [get_nick]
+        }
         set username [get_user]
         set realname [get_realname]
 
@@ -222,10 +227,8 @@ snit::type client {
 
         set all_clients [lsearch -not -inline $all_clients $self]
 
-        if {[info exists sock]} {
+        if {$connected == 1} {
             $self >> QUIT
-            vwait [myvar connected]
-            chan close $sock
         }
     }
 
@@ -355,6 +358,7 @@ snit::type client {
     }
 
     method handle_ERROR {prefix args} {
+        chan close $sock
         set connected 0
     }
 
@@ -405,6 +409,10 @@ snit::type client {
         while {[lsearch $channel_nicks($channel) $nick] == -1} {
             vwait [myvar lines]
         }
+    }
+
+    method post_QUIT {args} {
+        vwait [myvar connected]
     }
 
     # << Expects waits for an irc command {args}
