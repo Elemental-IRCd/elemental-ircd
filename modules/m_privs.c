@@ -70,7 +70,7 @@ static struct mode_table auth_client_table[] = {
     {NULL, 0}
 };
 
-DECLARE_MODULE_AV1(privs, NULL, NULL, privs_clist, NULL, NULL, "");
+DECLARE_MODULE_AV1(privs, NULL, NULL, privs_clist, NULL, NULL, "$Revision$");
 
 static void show_privs(struct Client *source_p, struct Client *target_p)
 {
