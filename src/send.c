@@ -767,8 +767,7 @@ sendto_common_channels_local(struct Client *user, int cap, int negcap, const cha
             msptr = uptr->data;
             target_p = msptr->client_p;
 
-            if(IsIOError(target_p) ||
-               target_p->serial == current_serial ||
+            if(target_p->serial == current_serial ||
                !IsCapable(target_p, cap) ||
                !NotCapable(target_p, negcap))
                 continue;
@@ -828,8 +827,7 @@ sendto_common_channels_local_butone(struct Client *user, int cap, int negcap, co
             msptr = uptr->data;
             target_p = msptr->client_p;
 
-            if(IsIOError(target_p) ||
-               target_p->serial == current_serial ||
+            if(target_p->serial == current_serial ||
                !IsCapable(target_p, cap) ||
                !NotCapable(target_p, negcap))
                 continue;
