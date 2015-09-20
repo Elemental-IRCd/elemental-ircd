@@ -13,7 +13,7 @@ LEX		= @LEX@
 LEXLIB		= @LEXLIB@
 PICFLAGS	= @PICFLAGS@
 CFLAGS		= @CFLAGS@
-LDFLAGS   	= @LDFLAGS@
+LDFLAGS   	= @LDFLAGS@ -rdynamic
 MKDEP		= @MKDEP@ -DIRCD_PREFIX=\"@prefix@\"
 MV		= @MV@
 RM		= @RM@
