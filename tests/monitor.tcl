@@ -9,11 +9,18 @@ watcher << $RPL_MONOFFLINE * $joiner_nick
 
 client joiner -nick $joiner_nick
 watcher << $RPL_MONONLINE * $joiner_nick
+
+watcher >> MONITOR S
+        << $RPL_MONONLINE * $joiner_nick
+        << $RPL_ENDOFMONLIST *
+
 joiner  >> QUIT
 watcher << $RPL_MONOFFLINE * $joiner_nick
 
-watcher :
+watcher >> MONITOR S
+        << $RPL_MONOFFLINE * $joiner_nick
+        << $RPL_ENDOFMONLIST *
 
->> MONITOR L
-<< $RPL_MONLIST * $joiner_nick
-<< $RPL_ENDOFMONLIST *
+watcher >> MONITOR L
+        << $RPL_MONLIST * $joiner_nick
+        << $RPL_ENDOFMONLIST *
