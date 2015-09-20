@@ -61,7 +61,7 @@ mapi_clist_av1 identify_clist[] = {
     NULL
 };
 
-DECLARE_MODULE_AV1(identify, NULL, NULL, identify_clist, NULL, NULL, "$Revision: 2729 $");
+DECLARE_MODULE_AV1(identify, NULL, NULL, identify_clist, NULL, NULL, "$Revision$");
 
 char *reconstruct_parv(int parc, const char *parv[])
 {

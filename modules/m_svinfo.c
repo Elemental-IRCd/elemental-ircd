@@ -44,7 +44,7 @@ struct Message svinfo_msgtab = {
 };
 
 mapi_clist_av1 svinfo_clist[] = { &svinfo_msgtab, NULL };
-DECLARE_MODULE_AV1(svinfo, NULL, NULL, svinfo_clist, NULL, NULL, "$Revision: 494 $");
+DECLARE_MODULE_AV1(svinfo, NULL, NULL, svinfo_clist, NULL, NULL, "$Revision$");
 
 /*
  * ms_svinfo - SVINFO message handler

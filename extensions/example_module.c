@@ -143,7 +143,7 @@ DECLARE_MODULE_AV1(
     /* Then the hook function list, if we have one */
     test_hfnlist,
     /* And finally the version number of this module. */
-    "$Revision: 3161 $");
+    "$Revision$");
 
 /* Any of the above arguments can be NULL to indicate they aren't used. */
 

@@ -62,7 +62,7 @@ struct Message webirc_msgtab = {
 };
 
 mapi_clist_av1 webirc_clist[] = { &webirc_msgtab, NULL };
-DECLARE_MODULE_AV1(webirc, NULL, NULL, webirc_clist, NULL, NULL, "$Revision: 20702 $");
+DECLARE_MODULE_AV1(webirc, NULL, NULL, webirc_clist, NULL, NULL, "$Revision$");
 
 /*
  * mr_webirc - webirc message handler

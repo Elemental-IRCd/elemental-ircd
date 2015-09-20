@@ -45,7 +45,7 @@ struct Message oquit_msgtab = {
 
 mapi_clist_av1 oquit_clist[] = { &oquit_msgtab, NULL };
 
-DECLARE_MODULE_AV1(oquit, NULL, NULL, oquit_clist, NULL, NULL, "$Revision: 1333 $");
+DECLARE_MODULE_AV1(oquit, NULL, NULL, oquit_clist, NULL, NULL, "$Revision$");
 
 /*
 ** m_oquit

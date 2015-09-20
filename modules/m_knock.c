@@ -44,7 +44,7 @@ struct Message knock_msgtab = {
 };
 
 mapi_clist_av1 knock_clist[] = { &knock_msgtab, NULL };
-DECLARE_MODULE_AV1(knock, NULL, NULL, knock_clist, NULL, NULL, "$Revision: 3570 $");
+DECLARE_MODULE_AV1(knock, NULL, NULL, knock_clist, NULL, NULL, "$Revision$");
 
 /* m_knock
  *    parv[1] = channel

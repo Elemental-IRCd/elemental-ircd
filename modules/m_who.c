@@ -67,7 +67,7 @@ struct Message who_msgtab = {
 };
 
 mapi_clist_av1 who_clist[] = { &who_msgtab, NULL };
-DECLARE_MODULE_AV1(who, NULL, NULL, who_clist, NULL, NULL, "$Revision: 3350 $");
+DECLARE_MODULE_AV1(who, NULL, NULL, who_clist, NULL, NULL, "$Revision$");
 
 static void do_who_on_channel(struct Client *source_p, struct Channel *chptr,
                               int server_oper, int member,

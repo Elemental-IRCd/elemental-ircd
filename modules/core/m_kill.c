@@ -53,7 +53,7 @@ struct Message kill_msgtab = {
 
 mapi_clist_av1 kill_clist[] = { &kill_msgtab, NULL };
 
-DECLARE_MODULE_AV1(kill, NULL, NULL, kill_clist, NULL, NULL, "$Revision: 3408 $");
+DECLARE_MODULE_AV1(kill, NULL, NULL, kill_clist, NULL, NULL, "$Revision$");
 
 /*
 ** mo_kill

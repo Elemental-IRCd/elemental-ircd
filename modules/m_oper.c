@@ -48,7 +48,7 @@ struct Message oper_msgtab = {
 };
 
 mapi_clist_av1 oper_clist[] = { &oper_msgtab, NULL };
-DECLARE_MODULE_AV1(oper, NULL, NULL, oper_clist, NULL, NULL, "$Revision: 1483 $");
+DECLARE_MODULE_AV1(oper, NULL, NULL, oper_clist, NULL, NULL, "$Revision$");
 
 static int match_oper_password(const char *password, struct oper_conf *oper_p);
 

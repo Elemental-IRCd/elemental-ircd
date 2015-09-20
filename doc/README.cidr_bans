@@ -1,4 +1,4 @@
-$Id: README.cidr_bans 6 2005-09-10 01:02:21Z nenolod $ 
+$Id$ 
 
 
 Basically what this patch does is allow for users to use cidr masks when

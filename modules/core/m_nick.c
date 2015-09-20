@@ -86,7 +86,7 @@ mapi_clist_av1 nick_clist[] = { &nick_msgtab, &uid_msgtab, &euid_msgtab,
                                 &save_msgtab, NULL
                               };
 
-DECLARE_MODULE_AV1(nick, NULL, NULL, nick_clist, NULL, NULL, "$Revision: 3518 $");
+DECLARE_MODULE_AV1(nick, NULL, NULL, nick_clist, NULL, NULL, "$Revision$");
 
 static int change_remote_nick(struct Client *, struct Client *, time_t,
                               const char *, int);

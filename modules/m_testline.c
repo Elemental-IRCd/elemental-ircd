@@ -53,7 +53,7 @@ struct Message testgecos_msgtab = {
 };
 
 mapi_clist_av1 testline_clist[] = { &testline_msgtab, &testgecos_msgtab, NULL };
-DECLARE_MODULE_AV1(testline, NULL, NULL, testline_clist, NULL, NULL, "$Revision: 3303 $");
+DECLARE_MODULE_AV1(testline, NULL, NULL, testline_clist, NULL, NULL, "$Revision$");
 
 static int
 mo_testline(struct Client *client_p, struct Client *source_p, int parc, const char *parv[])

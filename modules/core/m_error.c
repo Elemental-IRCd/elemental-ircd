@@ -46,7 +46,7 @@ mapi_clist_av1 error_clist[] = {
     &error_msgtab, NULL
 };
 
-DECLARE_MODULE_AV1(error, NULL, NULL, error_clist, NULL, NULL, "$Revision: 494 $");
+DECLARE_MODULE_AV1(error, NULL, NULL, error_clist, NULL, NULL, "$Revision$");
 
 /* Determine whether an ERROR message is safe to show (no IP address in it) */
 static int

@@ -27,7 +27,7 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * $Id: bandb.c 26094 2008-09-19 15:33:46Z androsyn $
+ * $Id$
  */
 #include "setup.h"
 #include <ratbox_lib.h>
@@ -293,7 +293,7 @@ main(int argc, char *argv[])
         fprintf(stderr,
                 "This is ircd-ratbox bandb.  You aren't supposed to run me directly. Maybe you want bantool?\n");
         fprintf(stderr,
-                "However I will print my Id tag $Id: bandb.c 26094 2008-09-19 15:33:46Z androsyn $\n");
+                "However I will print my Id tag $Id$\n");
         fprintf(stderr, "Have a nice day\n");
         exit(1);
     }

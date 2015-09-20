@@ -52,7 +52,7 @@ struct Message uhelp_msgtab = {
 };
 
 mapi_clist_av1 help_clist[] = { &help_msgtab, &uhelp_msgtab, NULL };
-DECLARE_MODULE_AV1(help, NULL, NULL, help_clist, NULL, NULL, "$Revision: 254 $");
+DECLARE_MODULE_AV1(help, NULL, NULL, help_clist, NULL, NULL, "$Revision$");
 
 /*
  * m_help - HELP message handler
