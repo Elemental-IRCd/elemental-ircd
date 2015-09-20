@@ -7,5 +7,6 @@ TESTS = register.tcl \
         chghost.tcl \
         privmsg.tcl \
         away-notify.tcl \
+        cprivmsg-cnotice.tcl \
         metadata.tcl \
         umodeg.tcl

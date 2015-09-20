@@ -66,3 +66,9 @@ from the spec by being **only** a server to server command. Support for client
 to server and server to client metadata setting/getting will come in a future
 version of elemental-ircd.
 
+### Removals
+
+#### `CPRIVMSG`/`CNOTICE`
+
+This was duplicated code and a search of code on github showed that nothing was
+using it outside of forks of ratbox, charybdis, shadowircd and elemental-ircd.

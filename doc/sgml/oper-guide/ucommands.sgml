@@ -33,61 +33,6 @@
 	</para>
       </sect2>
       <sect2>
-	<title>CNOTICE</title>
-	<cmdsynopsis><command>CNOTICE</command>
-	  <arg choice=plain><replaceable>nick</replaceable></arg>
-	  <arg choice=plain><replaceable>channel</replaceable></arg>
-	  <arg choice=plain>:<replaceable>text</replaceable></arg>
-	</cmdsynopsis>
-	<para>
-	  Providing you are opped (+o) or voiced (+v) in
-	  <replaceable>channel</replaceable>, and <replaceable>nick</replaceable>
-	  is a member of <replaceable>channel</replaceable>, CNOTICE generates a NOTICE towards
-	  <replaceable>nick</replaceable>.
-	</para>
-	<para>
-	  CNOTICE bypasses any anti-spam measures in place.
-	  If you get <quote>Targets changing too fast, message dropped</quote>,
-	  you should probably use this command, for example sending a
-	  notice to every user joining a certain channel.
-	</para>
-	<para>
-	  As of charybdis 3.1, NOTICE automatically behaves as CNOTICE
-	  if you are in a channel fulfilling the conditions.
-	</para>
-	<para>
-	  Support of this command is indicated by the CNOTICE token in
-	  RPL_ISUPPORT (005).
-	</para>
-      </sect2>
-      <sect2>
-	<title>CPRIVMSG</title>
-	<cmdsynopsis><command>CPRIVMSG</command>
-	  <arg choice=plain><replaceable>nick</replaceable></arg>
-	  <arg choice=plain><replaceable>channel</replaceable></arg>
-	  <arg choice=plain>:<replaceable>text</replaceable></arg>
-	</cmdsynopsis>
-	<para>
-	  Providing you are opped (+o) or voiced (+v) in
-	  <replaceable>channel</replaceable>, and <replaceable>nick</replaceable>
-	  is a member of <replaceable>channel</replaceable>, CPRIVMSG generates a PRIVMSG towards
-	  <replaceable>nick</replaceable>.
-	</para>
-	<para>
-	  CPRIVMSG bypasses any anti-spam measures in place.
-	  If you get <quote>Targets changing too fast, message dropped</quote>,
-	  you should probably use this command.
-	</para>
-	<para>
-	  As of charybdis 3.1, PRIVMSG automatically behaves as CPRIVMSG
-	  if you are in a channel fulfilling the conditions.
-	</para>
-	<para>
-	  Support of this command is indicated by the CPRIVMSG token in
-	  RPL_ISUPPORT (005).
-	</para>
-      </sect2>
-      <sect2>
 	<title>FINDFORWARDS</title>
 	<cmdsynopsis><command>FINDFORWARDS</command>
 	  <arg choice=plain><replaceable>channel</replaceable></arg>

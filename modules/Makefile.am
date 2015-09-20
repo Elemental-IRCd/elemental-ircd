@@ -35,7 +35,6 @@ automod_LTLIBRARIES =     \
     m_certfp.la           \
     m_chghost.la          \
     m_close.la            \
-    m_cmessage.la         \
     m_connect.la          \
     m_dline.la            \
     m_encap.la            \

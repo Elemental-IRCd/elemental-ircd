@@ -5,8 +5,6 @@ shared_help = opers/accept       \
               opers/admin        \
               opers/away         \
               opers/chantrace    \
-              opers/cnotice      \
-              opers/cprivmsg     \
               opers/credits      \
               opers/cycle        \
               opers/error        \
