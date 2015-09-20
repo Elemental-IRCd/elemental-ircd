@@ -9,13 +9,25 @@ env:
    #   via the "travis encrypt" command using the project repo's public key
    - secure: "Glbq3TqHAvxEiaxiTyV+pP+1aE+giEV7L5qJzQrUzs8k+XjvvgR6ixI7wezV4520lz8tHcvEakLJd2dD8YLJbjKnSEmamn4oSF0a0/Lvv/eoytHeKMKjN6LHZ/87DgA+gKGskJc4Ai6CYFliCwcqGlGVPmgcKDy9bZn28Csu6o0="
 
-before-install:
-- sudo apt-get update
-install:
-- sudo apt-get install build-essential libssl-dev flex bison astyle libsqlite3-dev
-script: "./configure --enable-assert && make"
+script:
+  - ./configure --enable-assert
+  - make
+  - make install
+  - testsuite/startall.sh
+  - make check
+  - testsuite/killall.sh
 
 addons:
+  apt:
+    packages:
+      - build-essential
+      - libssl-dev
+      - flex
+      - bison
+      - astyle
+      - libsqlite3-dev
+      - tcl
+      - tcllib
   coverity_scan:
     project:
       name: "Elemental-IRCd/elemental-ircd"

@@ -1,92 +1,45 @@
-loadmodule "extensions/extb_account.so";
-loadmodule "extensions/extb_channel.so";
-loadmodule "extensions/extb_oper.so";
-loadmodule "extensions/extb_realname.so";
-loadmodule "extensions/extb_server.so";
-#loadmodule "extensions/ip_cloaking.so";
-loadmodule "extensions/sno_farconnect.so";
-loadmodule "extensions/sno_globalkline.so";
-#loadmodule "extensions/sno_globaloper.so";
 
 serverinfo {
-	name = "testsuite3.";
+	name = "leaf2.local";
 	sid = "3TT";
 	description = "Testsuite";
 	network_name = "Testsuite";
 	network_desc = "Testing";
-	hub = yes;
+
+	hub = no;
 	vhost = "127.0.0.1";
+
+	ssl_private_key = "etc/ssl.key";
+	ssl_cert = "etc/ssl.cert";
+	ssl_dh_params = "etc/dh.pem";
 };
 
-admin {
-	name = "Here";
-	description = "Charybdis testsuite server";
-	email = "root@localhost";
+log {
+	fname_userlog    = "logs/userlog.3";
+	fname_fuserlog   = "logs/fuserlog.3";
+	fname_operlog    = "logs/operlog.3";
+	fname_foperlog   = "logs/foperlog.3";
+	fname_serverlog  = "logs/serverlog.3";
+	fname_klinelog   = "logs/klinelog.3";
+	fname_killlog    = "logs/killlog.3";
+	fname_operspylog = "logs/operspylog.3";
+	fname_ioerrorlog = "logs/ioerror.3";
 };
 
-class "users" {
-	ping_time = 5 minutes;
-	number_per_ip = 100;
-	max_number = 200;
-	sendq = 100kb;
-};
+.include <common.conf>
 
-class "server" {
-	ping_time = 5 minutes;
-	connectfreq = 5 minutes;
-	max_number = 3;
-	sendq = 5 megabytes;
-};
-
-listen { host = "127.0.0.1"; port = 7603; };
-
-auth { user = "*@127.0.0.0/8"; class = "users"; };
-
-operator "oper" {
-	user = "*@127.0.0.0/8";
-	password = "oper"; 
-	flags = global_kill, remote, kline, unkline, nick_changes,
-		die, rehash, admin, xline, operwall, oper_spy, ~encrypted;
-};
-
-connect "testsuite1." {
+listen {
 	host = "127.0.0.1";
-	port = 7601;
-	send_password = "testsuite";
-	accept_password = "testsuite";
-	hub_mask = "*";
-	class = "server";
-	flags = topicburst;
+	port = 6669;
+	port = 6699;
 };
 
-connect "testsuite2." {
+connect "hub.local" {
 	host = "127.0.0.1";
-	port = 7602;
-	send_password = "testsuite";
-	accept_password = "testsuite";
-	hub_mask = "*";
+	send_password = "dev";
+	accept_password = "dev";
+	port = 6697;
+	flags = topicburst, autoconn, ssl;
 	class = "server";
-	flags = topicburst;
-};
-
-shared {
-	oper = "*@*", "*";
-	flags = all;
-};
-
-alias "NickServ" {
-	target = "NickServ";
-};
-alias "ChanServ" {
-	target = "ChanServ";
-};
-alias "OperServ" {
-	target = "OperServ";
-};
-alias "MemoServ" {
-	target = "MemoServ";
-};
-
-service {
-	name = "services.";
+	hub_mask = "*";
 };
