@@ -57,7 +57,7 @@ struct Message forcejoin_msgtab = {
 
 mapi_clist_av1 force_clist[] = { &forcejoin_msgtab, NULL };
 
-DECLARE_MODULE_AV1(force, NULL, NULL, force_clist, NULL, NULL, "$Revision: 3297 $");
+DECLARE_MODULE_AV1(force, NULL, NULL, force_clist, NULL, NULL, "$Revision$");
 
 /*
  * m_forcejoin

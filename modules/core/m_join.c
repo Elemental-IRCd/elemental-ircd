@@ -63,7 +63,7 @@ struct Message sjoin_msgtab = {
 
 mapi_clist_av1 join_clist[] = { &join_msgtab, &svsjoin_msgtab, &sjoin_msgtab, NULL };
 
-DECLARE_MODULE_AV1(join, NULL, NULL, join_clist, NULL, NULL, "$Revision: 3494 $");
+DECLARE_MODULE_AV1(join, NULL, NULL, join_clist, NULL, NULL, "$Revision$");
 
 static void set_final_mode(struct Mode *mode, struct Mode *oldmode);
 static void remove_our_modes(struct Channel *chptr, struct Client *source_p);

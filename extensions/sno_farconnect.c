@@ -27,7 +27,7 @@ mapi_hfn_list_av1 gcn_hfnlist[] = {
     { NULL, NULL }
 };
 
-DECLARE_MODULE_AV1(globalconnexit, _modinit, _moddeinit, NULL, NULL, gcn_hfnlist, "$Revision: 1869 $");
+DECLARE_MODULE_AV1(globalconnexit, _modinit, _moddeinit, NULL, NULL, gcn_hfnlist, "$Revision$");
 
 static int
 _modinit(void)

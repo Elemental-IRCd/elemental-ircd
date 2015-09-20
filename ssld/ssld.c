@@ -17,8 +17,6 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
  *  USA
- *
- *  $Id$
  */
 
 
@@ -1092,7 +1090,7 @@ main(int argc, char **argv)
         fprintf(stderr,
                 "This is ircd-ratbox ssld.  You know you aren't supposed to run me directly?\n");
         fprintf(stderr,
-                "You get an Id tag for this: $Id$\n");
+                "You get an Id tag for this: $Revision$\n");
         fprintf(stderr, "Have a nice life\n");
         exit(1);
     }

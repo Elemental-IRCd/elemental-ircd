@@ -49,7 +49,7 @@ struct Message squit_msgtab = {
 
 mapi_clist_av1 squit_clist[] = { &squit_msgtab, NULL };
 
-DECLARE_MODULE_AV1(squit, NULL, NULL, squit_clist, NULL, NULL, "$Revision: 3161 $");
+DECLARE_MODULE_AV1(squit, NULL, NULL, squit_clist, NULL, NULL, "$Revision$");
 
 struct squit_parms {
     const char *server_name;

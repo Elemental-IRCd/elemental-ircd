@@ -65,7 +65,7 @@ mapi_hfn_list_av1 sasl_hfnlist[] = {
     { NULL, NULL }
 };
 
-DECLARE_MODULE_AV1(sasl, NULL, NULL, sasl_clist, NULL, sasl_hfnlist, "$Revision: 1409 $");
+DECLARE_MODULE_AV1(sasl, NULL, NULL, sasl_clist, NULL, sasl_hfnlist, "$Revision$");
 
 static int
 mr_authenticate(struct Client *client_p, struct Client *source_p,

@@ -1,6 +1,3 @@
-$Id: README.cidr_bans 6 2005-09-10 01:02:21Z nenolod $ 
-
-
 Basically what this patch does is allow for users to use cidr masks when
 setting bans, exceptions, and invite invex(modes beI respectively).  This
 works for both IPv4 and IPv6 addresses.  
@@ -13,5 +10,3 @@ do something like:
 
 Aaron Sethman <androsyn@ratbox.org>
 August 06, 2002
-
-

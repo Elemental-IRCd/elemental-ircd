@@ -1,5 +1,4 @@
-/* This code is in the public domain.
- */
+/* This code is in the public domain. */
 
 #include "stdinc.h"
 

@@ -49,7 +49,7 @@ struct Message part_msgtab = {
 
 mapi_clist_av1 part_clist[] = { &part_msgtab, NULL };
 
-DECLARE_MODULE_AV1(part, NULL, NULL, part_clist, NULL, NULL, "$Revision: 98 $");
+DECLARE_MODULE_AV1(part, NULL, NULL, part_clist, NULL, NULL, "$Revision$");
 
 static void part_one_client(struct Client *client_p,
                             struct Client *source_p, char *name, char *reason);

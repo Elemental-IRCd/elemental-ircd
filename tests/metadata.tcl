@@ -2,9 +2,11 @@ begin {Client and channel metadata}
 
 set test_channel #metadata
 
-skip {Metadata not implemented yet}
-
 client meta
+
+if {![meta supports METADATA]} {
+    skip {Metadata not available}
+}
 
 # Channel metadata
 >> METADATA $test_channel SET Key Value

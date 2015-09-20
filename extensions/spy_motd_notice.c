@@ -34,7 +34,7 @@ mapi_hfn_list_av1 motd_hfnlist[] = {
     {NULL, NULL}
 };
 
-DECLARE_MODULE_AV1(motd_spy, NULL, NULL, NULL, NULL, motd_hfnlist, "$Revision: 498 $");
+DECLARE_MODULE_AV1(motd_spy, NULL, NULL, NULL, NULL, motd_hfnlist, "$Revision$");
 
 void
 show_motd(hook_data *data)

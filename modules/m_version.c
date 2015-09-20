@@ -46,7 +46,7 @@ struct Message version_msgtab = {
 };
 
 mapi_clist_av1 version_clist[] = { &version_msgtab, NULL };
-DECLARE_MODULE_AV1(version, NULL, NULL, version_clist, NULL, NULL, "$Revision: 1887 $");
+DECLARE_MODULE_AV1(version, NULL, NULL, version_clist, NULL, NULL, "$Revision$");
 
 /*
  * m_version - VERSION command handler
