@@ -157,6 +157,10 @@ snit::type client {
     # Array, list of nicks in each channel
     variable channel_nicks
 
+
+    # Contains RPL_ISUPPORT contents
+    variable isupport
+
     # Capabilities available on the server
     variable server_caps {}
     # Capabilities we've got
@@ -191,6 +195,7 @@ snit::type client {
 
         set channels ""
         array set channel_nicks {}
+        array set isupport {}
 
         $self register
         $self make_current
@@ -351,6 +356,28 @@ snit::type client {
             regexp {[@]*(.*)} $nick -> nick
             lappend channel_nicks($channel) $nick
         }
+    }
+
+    method handle_RPL_ISUPPORT {prefix args} {
+        foreach supports [lrange $args 1 end-1] {
+            if {[string first = $supports] == -1} {
+                set isupport($supports) 1
+            } else {
+                set pos [string first = $supports]
+                set name [string range $supports 0 $pos-1]
+                set value [string range $supports $pos+1 end]
+                set isupport($name) $value
+            }
+        }
+    }
+
+    method supports {name} {
+        set name {*}$name
+
+        if {[array names isupport $name] == ""} {
+            return 0
+        }
+        return $isupport($name)
     }
 
     method handle_PING {prefix args} {
