@@ -10,13 +10,11 @@ env:
    - secure: "Glbq3TqHAvxEiaxiTyV+pP+1aE+giEV7L5qJzQrUzs8k+XjvvgR6ixI7wezV4520lz8tHcvEakLJd2dD8YLJbjKnSEmamn4oSF0a0/Lvv/eoytHeKMKjN6LHZ/87DgA+gKGskJc4Ai6CYFliCwcqGlGVPmgcKDy9bZn28Csu6o0="
 
 script:
-  - ./configure --enable-assert
+  - ./configure
   - make
   - make install
   - testsuite/startall.sh
-  - cd tests
   - make check
-  - cd ..
   - testsuite/killall.sh
 
 after_script:
