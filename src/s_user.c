@@ -414,6 +414,8 @@ register_local_user(struct Client *client_p, struct Client *source_p, const char
     /* kline exemption extends to xline too */
     if(!IsExemptKline(source_p) &&
        (xconf = find_xline(source_p->info, 1)) != NULL) {
+        sendto_realops_snomask(SNO_BANNED, L_NETWIDE,
+                "X-line: %s@%s %s (%s)", source_p->username, source_p->host, source_p->name, xconf->host);
         ServerStats.is_ref++;
         add_reject(source_p, xconf->host, NULL);
         exit_client(client_p, source_p, &me, "Bad user info");

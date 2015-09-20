@@ -52,7 +52,7 @@ int snomask_modes[256] = {
     0,                      /* H */
     0,                      /* I */
     0,                      /* J */
-    0,                      /* K */
+    SNO_BANNED,             /* K */
     0,                      /* L */
     0,                      /* M */
     0,                      /* N */
