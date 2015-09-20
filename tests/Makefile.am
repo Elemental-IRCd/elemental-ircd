@@ -8,4 +8,5 @@ TESTS = register.tcl \
         privmsg.tcl \
         away-notify.tcl \
         metadata.tcl \
+        monitor.tcl \
         umodeg.tcl
