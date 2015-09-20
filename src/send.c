@@ -239,9 +239,6 @@ sendto_one(struct Client *target_p, const char *pattern, ...)
     if(target_p->from != NULL)
         target_p = target_p->from;
 
-    if(IsIOError(target_p))
-        return;
-
     rb_linebuf_newbuf(&linebuf);
 
     va_start(args, pattern);
@@ -273,9 +270,6 @@ sendto_one_prefix(struct Client *target_p, struct Client *source_p,
         dest_p = target_p->from;
     else
         dest_p = target_p;
-
-    if(IsIOError(dest_p))
-        return;
 
     if(IsMe(dest_p)) {
         sendto_realops_snomask(SNO_GENERAL, L_ALL, "Trying to send to myself!");
@@ -314,9 +308,6 @@ sendto_one_notice(struct Client *target_p, const char *pattern, ...)
     else
         dest_p = target_p;
 
-    if(IsIOError(dest_p))
-        return;
-
     if(IsMe(dest_p)) {
         sendto_realops_snomask(SNO_GENERAL, L_ALL, "Trying to send to myself!");
         return;
@@ -353,9 +344,6 @@ sendto_one_numeric(struct Client *target_p, int numeric, const char *pattern, ..
         dest_p = target_p->from;
     else
         dest_p = target_p;
-
-    if(IsIOError(dest_p))
-        return;
 
     if(IsMe(dest_p)) {
         sendto_realops_snomask(SNO_GENERAL, L_ALL, "Trying to send to myself!");
@@ -478,7 +466,7 @@ sendto_channel_flags(struct Client *one, int type, struct Client *source_p,
         msptr = ptr->data;
         target_p = msptr->client_p;
 
-        if(IsIOError(target_p->from) || target_p->from == one)
+        if(target_p->from == one)
             continue;
 
         if(type && ((msptr->flags & type) == 0))
@@ -558,7 +546,7 @@ sendto_channel_opmod(struct Client *one, struct Client *source_p,
         msptr = ptr->data;
         target_p = msptr->client_p;
 
-        if(IsIOError(target_p->from) || target_p->from == one)
+        if(target_p->from == one)
             continue;
 
         if(!is_any_op(msptr))
@@ -616,9 +604,6 @@ sendto_channel_local(int type, struct Channel *chptr, const char *pattern, ...)
         msptr = ptr->data;
         target_p = msptr->client_p;
 
-        if(IsIOError(target_p))
-            continue;
-
         if(type == ONLY_OPERS) {
             if(!IsOper(target_p))
                 continue;
@@ -661,9 +646,6 @@ sendto_channel_local_butone(struct Client *one, int type, struct Channel *chptr,
         if(target_p == one)
             continue;
 
-        if(IsIOError(target_p))
-            continue;
-
         if(type && ((msptr->flags & type) == 0))
             continue;
 
@@ -698,8 +680,7 @@ _sendto_channel_local_with_capability_butone(struct Client *one, int type, int c
         if (target_p == one)
             continue;
 
-        if(IsIOError(target_p) ||
-           !IsCapable(target_p, caps) ||
+        if(!IsCapable(target_p, caps) ||
            !NotCapable(target_p, negcaps))
             continue;
 
@@ -1008,9 +989,6 @@ sendto_monitor(struct monitor *monptr, const char *pattern, ...)
 
     RB_DLINK_FOREACH_SAFE(ptr, next_ptr, monptr->users.head) {
         target_p = ptr->data;
-
-        if(IsIOError(target_p))
-            continue;
 
         _send_linebuf(target_p, &linebuf);
     }
