@@ -6,6 +6,7 @@ TCL_LOG_COMPILER = $(TCLSH) lib/runtest.tcl
 TESTS = away-notify.tcl \
         chghost.tcl \
         echo-message.tcl \
+        kick.tcl \
         metadata.tcl \
         mode-nooperkick.tcl \
         monitor.tcl \
