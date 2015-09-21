@@ -13,5 +13,6 @@ TESTS = away-notify.tcl \
         privmsg.tcl \
         register.tcl \
         snomask-kline.tcl \
+        topic.tcl \
         umodeg.tcl \
         yourid.tcl
