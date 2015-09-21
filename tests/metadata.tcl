@@ -17,7 +17,7 @@ if {![meta supports METADATA]} {
 
 >> METADATA $test_channel LIST
 << RPL_KEYVALUE [meta nick] Key * Value
-<< $RPL_METADATAEND
+<< RPL_METADATAEND
 
 # User metadata
 >> METADATA * SET UserKey UserValue
@@ -28,7 +28,7 @@ if {![meta supports METADATA]} {
 
 >> METADATA * LIST
 << RPL_KEYVALUE * UserKey * UserValue
-<< $RPL_METADATAEND
+<< RPL_METADATAEND
 
 # Check that we can fetch the same by nick instead of *
 >> METADATA [meta nick] GET UserKey
@@ -36,4 +36,4 @@ if {![meta supports METADATA]} {
 
 >> METADATA [meta nick] LIST
 << RPL_KEYVALUE [meta nick] UserKey * UserValue
-<< $RPL_METADATAEND
+<< RPL_METADATAEND

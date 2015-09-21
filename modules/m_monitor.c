@@ -251,7 +251,9 @@ show_monitor_status(struct Client *client_p)
                 cur_onlen++;
             }
 
-            arglen = sprintf(onptr, "%s", target_p->name);
+            arglen = sprintf(onptr, "%s!%s@%s",
+                             target_p->name, target_p->username,
+                             target_p->host);
             onptr += arglen;
             cur_onlen += arglen;
         } else {

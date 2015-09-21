@@ -68,7 +68,7 @@ Numeric replies
 
 730 - RPL_MONONLINE
 -------------------
-:<server> 730 <nick> :nick[,nick]*
+:<server> 730 <nick> :nick!user@host[,nick!user@host]*
 
 This numeric is used to indicate to a client that either a nickname has just
 become online, or that a nickname they have added to their monitor list is
