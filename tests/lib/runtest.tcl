@@ -399,6 +399,16 @@ snit::type client {
     method >> {args} {
         update_watchdog
         $self make_current
+
+        # Translate RPL_'s
+        foreach x {0 1} {
+            set verb [lindex $args $x]
+            if {[regexp {^(RPL_|ERR_).*} $verb]} {
+                global $verb
+                lset args $x [set $verb]
+            }
+        }
+
         set line [format_args {*}$args]
         chan puts $sock $line
         puts stdout "${self} ${color::red}>>${color::reset} $args"
@@ -457,6 +467,15 @@ snit::type client {
                 [string index $args 0] != ":"
             } then {
                 incr pos
+            }
+
+            # Translate RPL_'s
+            foreach x {0 1} {
+                set verb [lindex $args $x]
+                if {[regexp {^(RPL_|ERR_).*} $verb]} {
+                    global $verb
+                    lset args $x [set $verb]
+                }
             }
 
             set match true
