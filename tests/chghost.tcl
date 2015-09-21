@@ -24,4 +24,4 @@ if {[have chghost]} {
 }
 
 target :
- << $RPL_HOSTHIDDEN [target nick] chghost.test "*is now your hidden host*"
+ << RPL_HOSTHIDDEN [target nick] chghost.test "*is now your hidden host*"
