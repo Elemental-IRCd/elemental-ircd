@@ -47,6 +47,7 @@ def_numeric RPL_REDIR               {010}
 def_numeric RPL_MAP                 {015}
 def_numeric RPL_MAPMORE             {016}
 def_numeric RPL_MAPEND              {017}
+def_numeric RPL_YOURID              {042}
 def_numeric RPL_SAVENICK            {043}
 
 def_numeric RPL_TRACELINK           {200}
