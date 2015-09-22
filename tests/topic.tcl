@@ -13,7 +13,6 @@ chanop >> JOIN $test_channel
 oper :
   >> MODE [oper nick] +p
   >> MODE $test_channel +yo [chanop nick] [chanop nick]
-  << WALLOPS
 
 chanop :
   << MODE $test_channel
