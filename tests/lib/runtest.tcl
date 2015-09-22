@@ -394,6 +394,7 @@ snit::type client {
 
         if {[string match $nickname $nick] == 1} {
             set channels [lsearch -not -inline $channels $channel]
+            set channel_nicks($channel) {}
         }
     }
 
@@ -405,6 +406,7 @@ snit::type client {
 
         if {[string match $nickname $nick] == 1} {
             set channels [lsearch -not -inline $channels $channel]
+            set channel_nicks($channel) {}
         }
     }
 
