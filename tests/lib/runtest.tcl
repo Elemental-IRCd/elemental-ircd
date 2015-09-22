@@ -358,6 +358,28 @@ snit::type client {
         }
     }
 
+    method handle_PART {prefix args} {
+        regexp {:(.*)!(.*)@(.*)} $prefix -> nick user host
+        set channel [lindex $args 0]
+
+        set channel_nicks($channel) [lsearch -not -inline $channel_nicks($channel) $nick]
+
+        if {[string match $nickname $nick] == 1} {
+            set channels [lsearch -not -inline $channels $channel]
+        }
+    }
+
+    method handle_KICK {prefix args} {
+        set channel [lindex $args 0]
+        set nick [lindex $args 1]
+
+        set channel_nicks($channel) [lsearch -not -inline $channel_nicks($channel) $nick]
+
+        if {[string match $nickname $nick] == 1} {
+            set channels [lsearch -not -inline $channels $channel]
+        }
+    }
+
     method handle_RPL_ISUPPORT {prefix args} {
         foreach supports [lrange $args 1 end-1] {
             if {[string first = $supports] == -1} {
@@ -441,9 +463,33 @@ snit::type client {
         }}
     }
 
+    method post_PART {args} {
+        # Much the same as post_JOIN, but for part
+        global all_clients
+
+        set channel [lindex $args 1]
+
+        # Wait until we've left
+        while {[lsearch $channels $channel] != -1} {
+            vwait [myvar channels]
+        }
+
+        foreach other $all_clients { if {[lsearch [$other chans] $channel] != -1} {
+            # Wait until everyone has seen us leave
+            $other _wait_part $nickname $channel
+        }}
+    }
+
     method _wait_join {nick channel} {
         # Go into the event loop until we see {nick} in {channel}
         while {[lsearch $channel_nicks($channel) $nick] == -1} {
+            vwait [myvar lines]
+        }
+    }
+
+    method _wait_part {nick channel} {
+        # Go into the event loop until we see {nick} leave {channel}
+        while {[lsearch $channel_nicks($channel) $nick] != -1} {
             vwait [myvar lines]
         }
     }
