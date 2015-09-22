@@ -122,6 +122,34 @@ proc format_args {args} {
     return [join $out]
 }
 
+# Compare two lines
+proc compare_line {line args} {
+    set pos 0
+
+    if {[string index $line 0] == ":" &&
+        [string index $args 0] != ":"
+    } then {
+        incr pos
+    }
+
+    # Translate RPL_'s
+    foreach x {0 1} {
+        set verb [lindex $args $x]
+        if {[regexp {^(RPL_|ERR_).*} $verb]} {
+            global $verb
+            lset args $x [set $verb]
+        }
+    }
+
+    foreach arg $args {
+        if {[string match $arg [lindex $line $pos]] == 0} {
+            return 0
+        }
+        incr pos
+    }
+    return 1
+}
+
 set watchdog -1
 proc update_watchdog {} {
     global watchdog
@@ -502,37 +530,7 @@ snit::type client {
     # Do not be use within the client class
     method << {args} {
         $self make_current
-        set match false
-
-        while {$match != true} {
-            set line [$self get_line]
-
-            set pos 0
-
-            if {[string index $line 0] == ":" &&
-                [string index $args 0] != ":"
-            } then {
-                incr pos
-            }
-
-            # Translate RPL_'s
-            foreach x {0 1} {
-                set verb [lindex $args $x]
-                if {[regexp {^(RPL_|ERR_).*} $verb]} {
-                    global $verb
-                    lset args $x [set $verb]
-                }
-            }
-
-            set match true
-            foreach arg $args {
-                if {[string match $arg [lindex $line $pos]] == 0} {
-                    set match false
-                    break
-                }
-                incr pos
-            }
-        }
+        while {![compare_line [$self get_line] {*}$args]} {}
     }
 
     # Alternate syntax for make_current
