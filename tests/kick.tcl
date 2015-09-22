@@ -55,11 +55,10 @@ proc shouldkick {src dest} {
 
 proc cantkick {src dest} {
   global test_channel
-  global ERR_CHANOPRIVSNEEDED
 
   $src :
     >> KICK $test_channel [$dest nick] :Test kick!
-    << $ERR_CHANOPRIVSNEEDED
+    << ERR_CHANOPRIVSNEEDED
 }
 
 proc reset client {
@@ -67,9 +66,7 @@ proc reset client {
 
   $client :
     >> PART $test_channel :This game of tag is boring, I'm out of here
-    << PART
     >> JOIN $test_channel
-    << JOIN
 }
 
 # cantkickrange :: Client -> Client -> [Mode] -> IO ()

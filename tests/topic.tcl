@@ -22,7 +22,7 @@ chanop :
 victim :
   << TOPIC
   >> TOPIC $test_channel :No I think this should be the topic
-  << $ERR_CHANOPRIVSNEEDED
+  << ERR_CHANOPRIVSNEEDED
 
 chanop :
   >> MODE $test_channel +v [victim nick]
@@ -31,7 +31,7 @@ chanop :
 victim :
   << MODE $test_channel +v
   >> TOPIC $test_channel :No I think this should be the topic
-  << $ERR_CHANOPRIVSNEEDED
+  << ERR_CHANOPRIVSNEEDED
 
 chanop :
   >> MODE $test_channel +h [victim nick]
