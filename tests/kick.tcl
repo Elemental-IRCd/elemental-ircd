@@ -41,7 +41,7 @@ proc addrank {who rank} {
   global test_channel
 
   oper >> MODE $test_channel $rank [$who nick]
-  $who << MODE
+  $who << MODE $test_channel $rank [$who nick]
 }
 
 proc shouldkick {src dest} {
