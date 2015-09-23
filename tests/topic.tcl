@@ -20,7 +20,7 @@ chanop :
   << TOPIC $test_channel {This is a test topic}
 
 victim :
-  << TOPIC
+  << TOPIC $test_channel {This is a test topic}
   >> TOPIC $test_channel :No I think this should be the topic
   << ERR_CHANOPRIVSNEEDED
 
