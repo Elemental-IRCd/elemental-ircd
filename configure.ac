@@ -1,7 +1,7 @@
 AC_PREREQ([2.68])
 AC_COPYRIGHT([2014 elemental-ircd Team])
 
-AC_INIT([elemental-ircd],[6.6.2],[https://github.com/Elemental-IRCd/elemental-ircd/issues])
+AC_INIT([elemental-ircd],[7.0-experimental],[https://github.com/Elemental-IRCd/elemental-ircd/issues])
 AC_CONFIG_MACRO_DIR([libratbox/m4])
 AC_CONFIG_AUX_DIR([libratbox/tools])
 AC_CONFIG_SRCDIR([src/ircd.c])
