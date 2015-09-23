@@ -7,8 +7,11 @@ client oper
 oper :
     # set up m_omode.so
     >> OPER god testsuite
+    << $RPL_YOUREOPER
     >> MODLOAD extensions/m_omode.so
-    << NOTICE * "*** Notice -- Module m_omode.so \[version: \$Revision\$; MAPI version: 1\] loaded at"
+
+    # sleep a little just in case
+    after 125
 
     >> MODE [oper nick] +p
     << MODE [oper nick] +p
