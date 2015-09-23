@@ -8,6 +8,7 @@ TESTS = away-notify.tcl \
         echo-message.tcl \
         metadata.tcl \
         monitor.tcl \
+        omode.tcl \
         privmsg.tcl \
         register.tcl \
         umodeg.tcl
