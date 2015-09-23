@@ -26,7 +26,6 @@ victim :
 
 chanop :
   >> MODE $test_channel +v [victim nick]
-  << MODE $test_channel +v
 
 victim :
   << MODE $test_channel +v
@@ -35,32 +34,32 @@ victim :
 
 chanop :
   >> MODE $test_channel +h [victim nick]
-  << MODE $test_channel +h
 
 victim :
+  << MODE $test_channel +h
   >> TOPIC $test_channel :No I think this should be the topic
   << TOPIC $test_channel {No I think this should be the topic}
 
 chanop :
   >> MODE $test_channel +o [victim nick]
-  << MODE $test_channel +o
 
 victim :
+  << MODE $test_channel +o
   >> TOPIC $test_channel :No I think this should be the topic
   << TOPIC $test_channel {No I think this should be the topic}
 
 chanop :
   >> MODE $test_channel +a [victim nick]
-  << MODE $test_channel +a
 
 victim :
+  << MODE $test_channel +a
   >> TOPIC $test_channel :No I think this should be the topic
   << TOPIC $test_channel {No I think this should be the topic}
 
 chanop :
   >> MODE $test_channel +y [victim nick]
-  << MODE $test_channel +y
 
 victim :
+  << MODE $test_channel +y
   >> TOPIC $test_channel :No I think this should be the topic
   << TOPIC $test_channel {No I think this should be the topic}
