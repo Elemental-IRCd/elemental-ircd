@@ -564,6 +564,8 @@ proxy_method <<
 proxy_method >>
 proxy_method has
 proxy_method have
+proxy_method supports
+proxy_method nick
 
 puts {Beginning test}
 
