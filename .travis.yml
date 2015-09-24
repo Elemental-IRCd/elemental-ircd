@@ -26,9 +26,9 @@ addons:
       - bison
       - astyle
       - libsqlite3-dev
-      - expect
       - tcl
       - tcllib
+      - tcl-tls
       - lcov
 
 install:

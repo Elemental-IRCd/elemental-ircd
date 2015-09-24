@@ -1,4 +1,5 @@
 package require snit
+package require tls
 
 source lib/numeric.tcl
 
@@ -9,11 +10,14 @@ namespace eval color {
 }
 
 # Test servers
-#  {[ip/host] [port]}
+#  {?-ssl? [ip/host] [port]}
 set servers [list {*}{
     {127.0.0.1 6667}
     {127.0.0.1 6668}
     {127.0.0.1 6669}
+    {-ssl 127.0.0.1 6697}
+    {-ssl 127.0.0.1 6698}
+    {-ssl 127.0.0.1 6699}
 }]
 
 # Take servers from the environment if provided
@@ -67,8 +71,13 @@ proc get_server {} {
     global servers
 
     set idx [expr {int(rand()*[llength $servers])}]
+    set server [lindex $servers $idx]
 
-    return [lindex $servers $idx]
+    if {[lindex $server 0] == "-ssl"} {
+        return [tls::socket {*}[lrange $server 1 end]]
+    } else {
+        return [socket {*}$server]
+    }
 }
 
 # Tokenize an irc message into a tcl list
@@ -112,6 +121,9 @@ proc format_args {args} {
         if {[string first " " $arg] != -1} then {
             lappend out ":$arg"
             set sent_trailing true
+        } elseif {[string index $arg 0] == ":"} {
+            lappend out {*}[lrange args $i end]
+            break
         } else {
             lappend out $arg
         }
@@ -124,12 +136,13 @@ proc format_args {args} {
 
 # Compare two lines
 proc compare_line {line args} {
-    set pos 0
+    set linepos 0
+    set argpos 0
 
-    if {[string index $line 0] == ":" &&
-        [string index $args 0] != ":"
+    if {[string index $line $linepos] == ":" &&
+        [string index $args $argpos]  != ":"
     } then {
-        incr pos
+        incr linepos
     }
 
     # Translate RPL_'s
@@ -141,11 +154,23 @@ proc compare_line {line args} {
         }
     }
 
-    foreach arg $args {
-        if {[string match $arg [lindex $line $pos]] == 0} {
+    while {$argpos < [llength $args]} {
+        if {[llength $line] <= $linepos} {
+            # Not enough arguments
+            break
+        }
+        set arg [lindex $args $argpos]
+        if {$argpos != 0 && [string index $arg 0] == ":"} {
+            puts {Join args into the trailing parameter}
+            set arg [join [lrange $args $argpos end]]
+            # And strip the :
+            set arg [string range $arg 1 end]
+        }
+        if {[string match $arg [lindex $line $linepos]] == 0} {
             return 0
         }
-        incr pos
+        incr linepos
+        incr argpos
     }
     return 1
 }
@@ -210,7 +235,7 @@ snit::type client {
         set username [get_user]
         set realname [get_realname]
 
-        set sock [socket {*}[get_server]]
+        set sock [get_server]
         chan configure $sock {*}{
             -blocking false
             -buffering line
@@ -278,11 +303,16 @@ snit::type client {
 
     method read_handler {} {
         chan gets $sock line
-        set line [irc_tokenize $line]
-        $self handle_line $line
-
-        # Queue any read lines
-        lappend lines $line
+        if {[chan eof $sock]} {
+            puts "Connection for $self died"
+            exit 1
+        }
+        if {![chan blocked $sock]} {
+            set line [irc_tokenize $line]
+            $self handle_line $line
+            # Queue any read lines
+            lappend lines $line
+        }
     }
 
     # This method receives all lines, uses them to update client state
@@ -555,6 +585,10 @@ proxy_method <<
 proxy_method >>
 proxy_method has
 proxy_method have
+proxy_method supports
+proxy_method nick
+
+proc client: {} {client :}
 
 puts {Beginning test}
 

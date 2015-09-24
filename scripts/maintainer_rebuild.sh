@@ -10,4 +10,13 @@ set -e
 ./autogen.sh
 ./configure --prefix=$HOME/prefix/ircd
 
-make -j4
+my_uname=$(uname)
+
+case my_uname in
+    Darwin*)
+        cores=$(sysctl -n hw.ncpu) ;;
+    Linux*)
+        cores=$(awk '/^processor/ {++n} END {print n+1}' /proc/cpuinfo) ;;
+esac
+
+make -j"$cores"
