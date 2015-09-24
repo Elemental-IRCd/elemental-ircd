@@ -11,5 +11,6 @@ TESTS = away-notify.tcl \
         omode.tcl \
         privmsg.tcl \
         register.tcl \
+        test-164.tcl \
         umodeg.tcl \
         yourid.tcl
