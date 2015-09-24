@@ -87,4 +87,5 @@ automod_LTLIBRARIES =     \
     m_who.la              \
     m_whowas.la           \
     m_xline.la            \
+    m_yourid.la           \
     sno_routing.la
