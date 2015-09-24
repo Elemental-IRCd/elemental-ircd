@@ -180,7 +180,8 @@ proc update_watchdog {} {
     global watchdog
     after cancel $watchdog
     set watchdog [after 15000 {
-        puts "Test timed out"
+        global current_client
+        puts "Test timed out on $current_client"
         exit 1
     }]
 }
