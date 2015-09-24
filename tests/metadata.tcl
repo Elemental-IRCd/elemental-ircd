@@ -15,7 +15,7 @@ client :
     << RPL_KEYVALUE $test_channel Key * Value
 
     >> METADATA $test_channel LIST
-    << RPL_KEYVALUE [meta nick] Key * Value
+    << RPL_KEYVALUE [nick] Key * Value
     << RPL_METADATAEND
 
     # User metadata
