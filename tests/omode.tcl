@@ -2,12 +2,11 @@ begin {Check OMODE changes}
 
 set test_channel #omode
 
-client oper
+client myoper
 
-oper :
+myoper :
     # set up m_omode.so
-    >> OPER god testsuite
-    << $RPL_YOUREOPER
+    oper god
     >> MODLOAD extensions/m_omode.so
 
     # sleep a little just in case
