@@ -191,6 +191,8 @@ set all_clients list
 snit::type client {
     option {-caps} {}
     option {-nick} {}
+    option {-user} {}
+    option {-gecos} {}
 
     variable sock
 
@@ -232,8 +234,18 @@ snit::type client {
         } else {
             set nickname [get_nick]
         }
-        set username [get_user]
-        set realname [get_realname]
+
+        if {$options(-user) != ""} {
+            set username $options(-user)
+        } else {
+            set username [get_user]
+        }
+
+        if {$options(-gecos) != ""} {
+            set realname $options(-gecos)
+        } else {
+            set realname [get_realname]
+        }
 
         set sock [get_server]
         chan configure $sock {*}{
@@ -572,6 +584,12 @@ snit::type client {
     method : {} {
         $self make_current
     }
+
+    # makes this client oper up as the given name
+    method oper {name} {
+        $self >> OPER $name testsuite
+        $self << RPL_YOUREOPER
+    }
 }
 
 proc proxy_method {method} {
@@ -587,6 +605,7 @@ proxy_method has
 proxy_method have
 proxy_method supports
 proxy_method nick
+proxy_method oper
 
 proc client: {} {client :}
 
