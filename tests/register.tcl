@@ -1,6 +1,6 @@
 begin {Test client registration}
 
-client :
+client:
     # Must receive RPL_WELCOME
     << RPL_WELCOME
 

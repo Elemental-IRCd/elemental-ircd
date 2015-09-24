@@ -567,6 +567,8 @@ proxy_method have
 proxy_method supports
 proxy_method nick
 
+proc client: {} {client :}
+
 puts {Beginning test}
 
 source [lindex $argv 0]

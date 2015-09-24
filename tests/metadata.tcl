@@ -2,7 +2,7 @@ begin {Client and channel metadata}
 
 set test_channel #metadata
 
-client :
+client:
     if {![supports METADATA]} {
         skip {Metadata not available}
     }
