@@ -589,7 +589,6 @@ snit::type client {
     # makes this client oper up as the given name
     method oper {name} {
         $self >> OPER $name testsuite
-        $self << RPL_YOUREOPER
     }
 }
 

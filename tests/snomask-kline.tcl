@@ -5,11 +5,12 @@ after 750
 
 client god
     oper god
+    << RPL_YOUREOPER
     >> MODE [god nick] +s +K
 
     # Kline bansworth
     >> KLINE 5 ~bansworth@* ON * {Test}
-    << NOTICE
+    << NOTICE * {*K-Line*}
 
 after 150
 
@@ -20,7 +21,7 @@ client klined -user bansworth
 
 god :
     << NOTICE * {*** Notice -- K-line: bansworth@127.0.0.1 *}
-    >> UNKLINE ~bansworth@*
+    >> UNKLINE ~bansworth@* ON *
     << NOTICE * {*** * has removed the temporary K-Line *}
 
     # Now test an X-Line

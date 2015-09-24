@@ -7,6 +7,7 @@ client myoper
 myoper :
     # set up m_omode.so
     oper god
+    << RPL_YOUREOPER
     >> MODLOAD extensions/m_omode.so
 
     # sleep a little just in case
