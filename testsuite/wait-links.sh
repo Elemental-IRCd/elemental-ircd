@@ -2,6 +2,6 @@
 
 set -e
 
-cd ../tests
+cd tests
 
 tclsh ./lib/runtest.tcl ../testsuite/ensure-links.tcl
