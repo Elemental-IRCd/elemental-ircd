@@ -1,5 +1,8 @@
 begin {snomask for klines}
 
+# XXX HACK
+after 750
+
 client god
     oper god
     >> MODE [god nick] +s +K
