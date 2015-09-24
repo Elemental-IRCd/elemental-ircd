@@ -7,6 +7,7 @@ namespace eval color {
   set reset   [binary format a4 \x1b\x5b\x30\x6d]
   set red     [binary format a5 \x1b\x5b\x33\x31\x6d]
   set green   [binary format a5 \x1b\x5b\x33\x32\x6d]
+  set blue    [binary format a5 \x1b\x5b\x33\x34\x6d]
 }
 
 # Test servers
@@ -575,6 +576,7 @@ snit::type client {
     # Do not be use within the client class
     method << {args} {
         $self make_current
+        puts stdout "${self} ${color::blue}==${color::reset} $args"
         while {![compare_line [$self get_line] {*}$args]} {}
     }
 
