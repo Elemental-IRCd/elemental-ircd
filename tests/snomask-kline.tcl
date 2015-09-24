@@ -8,8 +8,10 @@ client god
     >> MODE [god nick] +s +K
 
     # Kline bansworth
-    >> KLINE 5 ~bansworth@* ON * :Test
+    >> KLINE 5 ~bansworth@* ON * {Test}
     << NOTICE
+
+after 150
 
 # ensure bansworth is banned (shocker!)
 client klined -user bansworth
@@ -22,7 +24,7 @@ god :
     << NOTICE * {*** * has removed the temporary K-Line *}
 
     # Now test an X-Line
-    >> XLINE 5 eggdrop?bot ON * :no bots
+    >> XLINE 5 eggdrop?bot ON * {no bots}
     << NOTICE * {*** * added temporary 5 min. X-Line for *}
 
 # ensure the xlined gecos doesn't work with the right error
