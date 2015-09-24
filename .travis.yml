@@ -29,6 +29,7 @@ addons:
       - expect
       - tcl
       - tcllib
+      - tcl-tls
       - lcov
 
 install:

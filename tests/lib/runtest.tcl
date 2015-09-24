@@ -1,4 +1,5 @@
 package require snit
+package require tls
 
 source lib/numeric.tcl
 
@@ -9,11 +10,14 @@ namespace eval color {
 }
 
 # Test servers
-#  {[ip/host] [port]}
+#  {?-ssl? [ip/host] [port]}
 set servers [list {*}{
     {127.0.0.1 6667}
     {127.0.0.1 6668}
     {127.0.0.1 6669}
+    {-ssl 127.0.0.1 6697}
+    {-ssl 127.0.0.1 6698}
+    {-ssl 127.0.0.1 6699}
 }]
 
 # Take servers from the environment if provided
@@ -67,8 +71,13 @@ proc get_server {} {
     global servers
 
     set idx [expr {int(rand()*[llength $servers])}]
+    set server [lindex $servers $idx]
 
-    return [lindex $servers $idx]
+    if {[lindex $server 0] == "-ssl"} {
+        return [tls::socket {*}[lrange $server 1 end]]
+    } else {
+        return [socket {*}$server]
+    }
 }
 
 # Tokenize an irc message into a tcl list
@@ -210,7 +219,7 @@ snit::type client {
         set username [get_user]
         set realname [get_realname]
 
-        set sock [socket {*}[get_server]]
+        set sock [get_server]
         chan configure $sock {*}{
             -blocking false
             -buffering line
