@@ -303,11 +303,16 @@ snit::type client {
 
     method read_handler {} {
         chan gets $sock line
-        set line [irc_tokenize $line]
-        $self handle_line $line
-
-        # Queue any read lines
-        lappend lines $line
+        if {[chan eof $sock]} {
+            puts "Connection for $self died"
+            exit 1
+        }
+        if {![chan blocked $sock]} {
+            set line [irc_tokenize $line]
+            $self handle_line $line
+            # Queue any read lines
+            lappend lines $line
+        }
     }
 
     # This method receives all lines, uses them to update client state
