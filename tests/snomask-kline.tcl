@@ -20,7 +20,7 @@ client klined -user bansworth
     << ERROR {*Banned*}
 
 god :
-    << NOTICE * {*** Notice -- K-line: bansworth@127.0.0.1 *}
+    << NOTICE * {*** K-line: *}
     >> UNKLINE ~bansworth@* ON *
     << NOTICE * {*** * has removed the temporary K-Line *}
 
