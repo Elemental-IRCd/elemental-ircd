@@ -121,6 +121,9 @@ proc format_args {args} {
         if {[string first " " $arg] != -1} then {
             lappend out ":$arg"
             set sent_trailing true
+        } elseif {[string index $arg 0] == ":"} {
+            lappend out {*}[lrange args $i end]
+            break
         } else {
             lappend out $arg
         }
@@ -133,12 +136,13 @@ proc format_args {args} {
 
 # Compare two lines
 proc compare_line {line args} {
-    set pos 0
+    set linepos 0
+    set argpos 0
 
-    if {[string index $line 0] == ":" &&
-        [string index $args 0] != ":"
+    if {[string index $line $linepos] == ":" &&
+        [string index $args $argpos]  != ":"
     } then {
-        incr pos
+        incr linepos
     }
 
     # Translate RPL_'s
@@ -150,11 +154,23 @@ proc compare_line {line args} {
         }
     }
 
-    foreach arg $args {
-        if {[string match $arg [lindex $line $pos]] == 0} {
+    while {$argpos < [llength $args]} {
+        if {[llength $line] <= $linepos} {
+            # Not enough arguments
+            break
+        }
+        set arg [lindex $args $argpos]
+        if {$argpos != 0 && [string index $arg 0] == ":"} {
+            puts {Join args into the trailing parameter}
+            set arg [join [lrange $args $argpos end]]
+            # And strip the :
+            set arg [string range $arg 1 end]
+        }
+        if {[string match $arg [lindex $line $linepos]] == 0} {
             return 0
         }
-        incr pos
+        incr linepos
+        incr argpos
     }
     return 1
 }

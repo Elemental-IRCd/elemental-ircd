@@ -11,11 +11,11 @@ client observerv3 -caps {chghost}
 
 oper :
  >> CHGHOST [target nick] chghost.test
- << QUIT {Changing host}
+ << QUIT :Changing host
  << ":[target nick]!*@chghost.test" JOIN $test_channel
 
 observer :
- << QUIT {Changing host}
+ << QUIT :Changing host
  << ":[target nick]!*@chghost.test" JOIN $test_channel
 
 observerv3 :
