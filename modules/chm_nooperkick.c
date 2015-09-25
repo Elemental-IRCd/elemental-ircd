@@ -49,7 +49,7 @@ chm_nooperkick_process(hook_data_channel_approval *data)
         return;
     }
 
-    if (MyClient(data->client) && data->chptr->mode.mode & mode_nooperkick && IsOper(data->target)) {
+    if (data->chptr->mode.mode & mode_nooperkick && IsOper(data->target)) {
         sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
                        "Overriding KICK from %s on %s in %s (channel is +M)",
                        data->client->name, data->target->name, data->chptr->chname);
