@@ -50,7 +50,7 @@ script:
   - testsuite/startall.sh
   - testsuite/wait-links.sh
   - sleep 2
-  - make check -j8
+  - make check -j1
   - testsuite/killall.sh
 
 after_success:
