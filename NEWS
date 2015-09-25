@@ -1,6 +1,10 @@
 This is elemental-ircd 6.6.1, Copyright (c) 2014 elemental-ircd team.
 See LICENSE for licensing details (GPL v2).
 
+-- elemental-ircd 6.6.3
+
+Import some changes from git branch master.
+
 -- elemental-ircd 6.6.2
 
 Fix ban logic
