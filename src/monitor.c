@@ -79,7 +79,25 @@ find_monitor(const char *name, int add)
 void
 free_monitor(struct monitor *monptr)
 {
-    rb_bh_free(monitor_heap, monptr);
+    assert(monptr);
+    assert(rb_dlink_list_length(&monptr->users) == 0);
+
+    unsigned int hashv = hash_monitor_nick(monptr->name);
+    struct monitor *ptr = monitorTable[hashv];
+
+    if(ptr == monptr) {
+        monitorTable[hashv] = NULL;
+        rb_bh_free(monitor_heap, monptr);
+        return;
+    }
+
+    for(; ptr; ptr = ptr->hnext) {
+        if(ptr->hnext == monptr) {
+            ptr->hnext = monptr->hnext;
+            rb_bh_free(monitor_heap, monptr);
+            return;
+        }
+    }
 }
 
 /* monitor_signon()
