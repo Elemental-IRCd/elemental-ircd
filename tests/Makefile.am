@@ -7,6 +7,7 @@ TESTS = away-notify.tcl \
         chghost.tcl \
         echo-message.tcl \
         metadata.tcl \
+        mode-nooperkick.tcl \
         monitor.tcl \
         omode.tcl \
         privmsg.tcl \

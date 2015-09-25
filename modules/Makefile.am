@@ -27,6 +27,7 @@ automod_LTLIBRARIES =     \
     chm_nocolour.la       \
     chm_noctcp.la         \
     chm_nonotice.la       \
+    chm_nooperkick.la     \
     m_accept.la           \
     m_admin.la            \
     m_away.la             \
