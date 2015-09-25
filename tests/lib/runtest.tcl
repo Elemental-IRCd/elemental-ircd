@@ -425,7 +425,7 @@ snit::type client {
 
         foreach nick $nicks {
             # Strip prefixes
-            regexp {[@]*(.*)} $nick -> nick
+            regexp {[~!@%+]*(.*)} $nick -> nick
             lappend channel_nicks($channel) $nick
         }
     }
