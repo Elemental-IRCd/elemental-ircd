@@ -1,6 +1,6 @@
 /*
  * elemental-ircd: it's a privilege, not a right
- * chm_noctcp: block non-action CTCP (+C mode).
+ * chm_nooperkick: block opers from being kicked (+M mode).
  *
  * Copyright (c) 2015 Christine Dodrill <xena@yolo-swag.com>
  *
