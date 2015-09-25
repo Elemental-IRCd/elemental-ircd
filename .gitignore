@@ -42,3 +42,19 @@ include/serno.h
 libratbox/src/version.c.last
 *.pyc
 .git
+
+# from master
+extra/libltdl/
+libratbox/libltdl/
+libratbox/m4/ltargz.m4
+libratbox/m4/ltdl.m4
+libratbox/src/netio/
+libratbox/src/platform/
+libratbox/src/ssl/
+libratbox/tools/
+libtool
+modules/core/.dirstamp
+src/ircd_lexer.c
+src/ircd_parser.c
+src/ircd_parser.h
+src/version.c
