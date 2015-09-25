@@ -53,6 +53,7 @@
 #define SNO_SPY			0x00000800
 #define SNO_OPERSPY		0x00001000
 #define SNO_SASLFAIL		0x00002000
+#define SNO_BANNED		0x00003000
 
 char *construct_snobuf(unsigned int val);
 unsigned int parse_snobuf_to_mask(unsigned int val, const char *sno);

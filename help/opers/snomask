@@ -13,6 +13,7 @@ Server notice masks: (? designates that the snomask is provided
        +f     - Clients refused due to limits
      ? +F     - Global client connections and exits
        +k     - Server and service kill messages
+       +K     - Banned client connections
        +n     - Local client nick changes
        +r     - Invalid usernames, DNSBL hits, and dumb HTTP proxies
        +s     - Generic server messages and oper kills

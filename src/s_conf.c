@@ -367,6 +367,8 @@ verify_access(struct Client *client_p, const char *username)
         }
         return (attach_iline(client_p, aconf));
     } else if(aconf->status & CONF_KILL) {
+        sendto_realops_snomask(SNO_BANNED, L_NETWIDE,
+                "K-line: %s@%s %s (%s@%s)", client_p->username, client_p->host, client_p->name, aconf->user, aconf->host);
         if(ConfigFileEntry.kline_with_reason)
             sendto_one(client_p,
                        form_str(ERR_YOUREBANNEDCREEP),

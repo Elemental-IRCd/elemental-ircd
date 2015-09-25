@@ -7,6 +7,7 @@ namespace eval color {
   set reset   [binary format a4 \x1b\x5b\x30\x6d]
   set red     [binary format a5 \x1b\x5b\x33\x31\x6d]
   set green   [binary format a5 \x1b\x5b\x33\x32\x6d]
+  set blue    [binary format a5 \x1b\x5b\x33\x34\x6d]
 }
 
 # Test servers
@@ -180,7 +181,8 @@ proc update_watchdog {} {
     global watchdog
     after cancel $watchdog
     set watchdog [after 15000 {
-        puts "Test timed out"
+        global current_client
+        puts "Test timed out on $current_client"
         exit 1
     }]
 }
@@ -191,6 +193,8 @@ set all_clients list
 snit::type client {
     option {-caps} {}
     option {-nick} {}
+    option {-user} {}
+    option {-gecos} {}
 
     variable sock
 
@@ -232,8 +236,18 @@ snit::type client {
         } else {
             set nickname [get_nick]
         }
-        set username [get_user]
-        set realname [get_realname]
+
+        if {$options(-user) != ""} {
+            set username $options(-user)
+        } else {
+            set username [get_user]
+        }
+
+        if {$options(-gecos) != ""} {
+            set realname $options(-gecos)
+        } else {
+            set realname [get_realname]
+        }
 
         set sock [get_server]
         chan configure $sock {*}{
@@ -562,6 +576,7 @@ snit::type client {
     # Do not be use within the client class
     method << {args} {
         $self make_current
+        puts stdout "${self} ${color::blue}==${color::reset} $args"
         while {![compare_line [$self get_line] {*}$args]} {}
     }
 
@@ -571,6 +586,11 @@ snit::type client {
     # << several lines in a row
     method : {} {
         $self make_current
+    }
+
+    # makes this client oper up as the given name
+    method oper {name} {
+        $self >> OPER $name testsuite
     }
 }
 
@@ -587,6 +607,7 @@ proxy_method has
 proxy_method have
 proxy_method supports
 proxy_method nick
+proxy_method oper
 
 proc client: {} {client :}
 

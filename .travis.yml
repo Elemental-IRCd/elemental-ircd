@@ -48,6 +48,8 @@ script:
   - make -j2
   - make install
   - testsuite/startall.sh
+  - testsuite/wait-links.sh
+  - sleep 2
   - make check -j8
   - testsuite/killall.sh
 

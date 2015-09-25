@@ -2,14 +2,14 @@ begin {Check chghost}
 
 set test_channel #chghost
 
-client oper
->> OPER oper testsuite
+client myoper
+    oper oper
 
 client target
 client observer
 client observerv3 -caps {chghost}
 
-oper :
+myoper :
  >> CHGHOST [target nick] chghost.test
  << QUIT :Changing host
  << ":[target nick]!*@chghost.test" JOIN $test_channel
