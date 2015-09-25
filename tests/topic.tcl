@@ -2,26 +2,29 @@ begin {Topic setting}
 
 set test_channel #topic
 
-client oper
-       >> OPER god testsuite
+# XXX HACK work around #164
+client:
+
+client god
+     oper god
 
 client chanop
 client victim
 
 chanop >> JOIN $test_channel
 
-oper :
-  >> MODE [oper nick] +p
+god :
+  >> MODE [god nick] +p
   >> MODE $test_channel +yo [chanop nick] [chanop nick]
 
 chanop :
   << MODE $test_channel
-  >> TOPIC $test_channel :This is a test topic
+  >> TOPIC $test_channel {This is a test topic}
   << TOPIC $test_channel {This is a test topic}
 
 victim :
   << TOPIC $test_channel {This is a test topic}
-  >> TOPIC $test_channel :No I think this should be the topic
+  >> TOPIC $test_channel {No I think this should be the topic}
   << ERR_CHANOPRIVSNEEDED
 
 chanop :
@@ -29,7 +32,7 @@ chanop :
 
 victim :
   << MODE $test_channel +v
-  >> TOPIC $test_channel :No I think this should be the topic
+  >> TOPIC $test_channel {No I think this should be the topic}
   << ERR_CHANOPRIVSNEEDED
 
 chanop :
@@ -37,7 +40,7 @@ chanop :
 
 victim :
   << MODE $test_channel +h
-  >> TOPIC $test_channel :No I think this should be the topic
+  >> TOPIC $test_channel {No I think this should be the topic}
   << TOPIC $test_channel {No I think this should be the topic}
 
 chanop :
@@ -45,7 +48,7 @@ chanop :
 
 victim :
   << MODE $test_channel +o
-  >> TOPIC $test_channel :No I think this should be the topic
+  >> TOPIC $test_channel {No I think this should be the topic}
   << TOPIC $test_channel {No I think this should be the topic}
 
 chanop :
@@ -53,7 +56,7 @@ chanop :
 
 victim :
   << MODE $test_channel +a
-  >> TOPIC $test_channel :No I think this should be the topic
+  >> TOPIC $test_channel {No I think this should be the topic}
   << TOPIC $test_channel {No I think this should be the topic}
 
 chanop :
@@ -61,5 +64,5 @@ chanop :
 
 victim :
   << MODE $test_channel +y
-  >> TOPIC $test_channel :No I think this should be the topic
+  >> TOPIC $test_channel {No I think this should be the topic}
   << TOPIC $test_channel {No I think this should be the topic}
