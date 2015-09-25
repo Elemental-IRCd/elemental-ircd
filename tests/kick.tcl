@@ -2,19 +2,17 @@ begin {kicking, etc}
 
 set test_channel #kickland
 
-client oper
-       >> OPER god testsuite
+# XXX HACK work around #164
+client:
+
+client god
+    oper god
+    >> MODE [god nick] +p
 
 client chanop
 client victim
 
 puts {TODO: clean this up: fix cantkickrange}
-
-# Set up client oper as god
-oper :
-  >> MODE [oper nick] +p
-
-##############
 
 # data Client = Peon
 #             | Voiced
@@ -37,10 +35,10 @@ oper :
 # kick Owner  _      = True
 
 proc addrank {who rank} {
-  global oper
+  global god
   global test_channel
 
-  oper >> MODE $test_channel $rank [$who nick]
+  god >> MODE $test_channel $rank [$who nick]
   $who << MODE $test_channel $rank [$who nick]
 }
 
