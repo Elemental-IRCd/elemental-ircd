@@ -1,18 +1,37 @@
-Extbans are all provided by extensions, some may not be present on this
-server.
+Extbans allow extending the standard `nick!user@host` into a different,
+more exteded ban selector. Usage of an extended ban is similar to a
+normal ban, except the following syntax is required:
 
-EXTBAN - DESCRIPTION
-------------------------------------------------------------------------
-     $o         Oper extban. Affects all operators.
-     $z         SSL extban. Affects all users connected via SSL.
-     $a[:mask]  Account extban. Affects anyone with an account that
-                matches. If the mask is omitted, it affects everyone
-                who is logged into services.
-     $j:mask    Banned from another channel extban. Affects anyone who
-                is banned from the specified channel.
-     $c:mask    Other channel extban. Affects anyone who is on the 
-                specified channel.
-     $x:mask    Extended extban. Matches a user's entire n!u@h gecos.
-     $r:mask    GECOS extban. Affects anyone with the realname/gecos
-                specified.
-     $s:mask    Server extban. Affects anyone on the specified server.
+    MODE #channel +b $a:Horp
+
+This sets a ban on `#channel` for any client logged into services with
+the account name `Horp`.
+
+An extban can be negated by specifying a `~` before the kind of extban
+to be negated. For example:
+
+    MODE #tor +I $~c:#lamers
+
+This will provide an invite exception in `#tor` to everybody not on
+channel `#lamers`.
+
+Extbans can be used anywhere a ban-like mode is used, a channel ban (+b),
+ban exception (+e), channel quiet (+q) or invite exception (+I).
+
+| Extban      | Descrption                                             |
+|:----------- |:------------------------------------------------------ |
+| `$a[:mask]` | Without a mask, `$a` will match any client logged into |
+|             | services under any account name                        |
+|             | With a mask, `$a` will match using normal irc string   |
+|             | comparison to the account name                         |
+| `$c:mask`   | Checks if a client is present in another channel (does |
+|             | not work if the other channel is +s/+p)                |
+| `$j:mask`   | Non-recursively checks if a client is banned from      |
+|             | another channel                                        |
+| `$m:mask`   | Affects anyone with the user mode string specified as  |
+|             | the mask                                               |
+| `$o`        | Affects IRC operators (umode +o)                       |
+| `$r:mask`   | Affects anyone with the realname/gecos specified       |
+| `$s:mask`   | Affects anyone on the specified server                 |
+| `$x:mask`   | Matches by the entire `nick!user@host gecos` string    |
+| `$z`        | Matches if the target user is connected over SSL       |

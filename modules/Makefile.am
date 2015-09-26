@@ -28,6 +28,15 @@ automod_LTLIBRARIES =     \
     chm_noctcp.la         \
     chm_nonotice.la       \
     chm_nooperkick.la     \
+    extb_account.la       \
+    extb_canjoin.la       \
+    extb_channel.la       \
+    extb_extgecos.la      \
+    extb_oper.la          \
+    extb_realname.la      \
+    extb_server.la        \
+    extb_ssl.la           \
+    extb_usermode.la      \
     m_accept.la           \
     m_admin.la            \
     m_away.la             \

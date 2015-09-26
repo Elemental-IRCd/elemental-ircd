@@ -19,15 +19,6 @@ extension_LTLIBRARIES =         \
     createauthonly.la           \
     createoperonly.la           \
     example_module.la           \
-    extb_account.la             \
-    extb_canjoin.la             \
-    extb_channel.la             \
-    extb_extgecos.la            \
-    extb_oper.la                \
-    extb_realname.la            \
-    extb_server.la              \
-    extb_ssl.la                 \
-    extb_usermode.la            \
     force_user_invis.la         \
     hurt.la                     \
     ip_cloaking.la              \
