@@ -15,8 +15,9 @@ to be negated. For example:
 This will provide an invite exception in `#tor` to everybody not on
 channel `#lamers`.
 
-Extbans can be used anywhere a ban-like mode is used, a channel ban (+b),
-ban exception (+e), channel quiet (+q) or invite exception (+I).
+Extbans can be used anywhere a ban-like mode is used such as: a channel
+ban (+b), ban exception (+e), channel quiet (+q) or invite exception
+(+I).
 
 | Extban      | Descrption                                             |
 |:----------- |:------------------------------------------------------ |
