@@ -19,20 +19,20 @@ Extbans can be used anywhere a ban-like mode is used such as: a channel
 ban (+b), ban exception (+e), channel quiet (+q) or invite exception
 (+I).
 
-| Extban      | Descrption                                             |
-|:----------- |:------------------------------------------------------ |
-| `$a[:mask]` | Without a mask, `$a` will match any client logged into |
-|             | services under any account name                        |
-|             | With a mask, `$a` will match using normal irc string   |
-|             | comparison to the account name                         |
-| `$c:mask`   | Checks if a client is present in another channel (does |
-|             | not work if the other channel is +s/+p)                |
-| `$j:mask`   | Non-recursively checks if a client is banned from      |
-|             | another channel                                        |
-| `$m:mask`   | Affects anyone with the user mode string specified as  |
-|             | the mask                                               |
-| `$o`        | Affects IRC operators (umode +o)                       |
-| `$r:mask`   | Affects anyone with the realname/gecos specified       |
-| `$s:mask`   | Affects anyone on the specified server                 |
-| `$x:mask`   | Matches by the entire `nick!user@host gecos` string    |
-| `$z`        | Matches if the target user is connected over SSL       |
+| Extban       | Descrption                                             |
+|:------------ |:------------------------------------------------------ |
+| `$a[:mask]`  | Without a mask, `$a` will match any client logged into |
+|              | services under any account name                        |
+|              | With a mask, `$a` will match using normal irc string   |
+|              | comparison to the account name                         |
+| `$c:mask`    | Checks if a client is present in another channel (does |
+|              | not work if the other channel is +s/+p)                |
+| `$j:mask`    | Non-recursively checks if a client is banned from      |
+|              | another channel                                        |
+| `$m:+-modes` | Affects anyone with the given user modes (must start   |
+|              | with a `+` or `-`)                                     |
+| `$o`         | Affects IRC operators (umode +o)                       |
+| `$r:mask`    | Affects anyone with the realname/gecos specified       |
+| `$s:server`  | Affects anyone on the specified server (wildcards too) |
+| `$x:mask`    | Matches by the entire `nick!user@host gecos` string    |
+| `$z`         | Matches if the target user is connected over SSL       |
