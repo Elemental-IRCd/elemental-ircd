@@ -7,6 +7,7 @@ TESTS = away-notify.tcl \
         chghost.tcl \
         echo-message.tcl \
         extb_account.tcl \
+        extb_canjoin.tcl \
         extb_channel.tcl \
         kick.tcl \
         metadata.tcl \
