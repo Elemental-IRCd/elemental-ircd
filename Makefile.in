@@ -153,6 +153,9 @@ install: install-mkdirs all
 		cd ..; \
 	done
 
+check:
+	cd tests && ${MAKE} check
+
 rsa_respond:
 	@cd tools;\
 	echo "Creating rsa_respond.tar.gz";\

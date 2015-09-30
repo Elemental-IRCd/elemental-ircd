@@ -11,6 +11,9 @@ echo "Using the pregenned cert"
 cp ssl* $prefix/etc
 cp dh.pem $prefix/etc
 
+# Copy common config somewhere the ircd can find it
+cp common.conf $prefix/
+
 echo "Starting ircd's"
 
 $prefix/bin/ircd -configfile $testdir/ircd.conf.1 -pidfile $testdir/ircd.pid.1 -logfile logs/ircd.log.1 &
