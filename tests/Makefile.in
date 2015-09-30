@@ -87,6 +87,7 @@ subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/charybdis.m4 \
 	$(top_srcdir)/m4/gcc_stack_protect.m4 \
+	$(top_srcdir)/m4/harden.m4 $(top_srcdir)/m4/ratbox.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)

@@ -427,6 +427,7 @@ AC_HELP_STRING([--enable-warnings],[Enable all sorts of warnings for debugging.]
 [CFLAGS="$CFLAGS -Wall -Werror -Wcast-qual -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -W -Wno-unused -Wunused-function -Wunused-variable"],[])
 
 GCC_STACK_PROTECT_CC
+HARDEN_RULES
 
 AC_SUBST(LDFLAGS)
 AC_SUBST(PICFLAGS)
