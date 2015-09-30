@@ -32,6 +32,9 @@
 /* Size of the dlink_node heap. */
 #undef DNODE_HEAP_SIZE
 
+/* Define if SSP C support is enabled. */
+#undef ENABLE_SSP_CC
+
 /* Prefix where config files are installed. */
 #undef ETC_DIR
 

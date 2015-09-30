@@ -11,7 +11,7 @@ dnl Sneaky way to get an Id tag into the configure script
 AC_COPYRIGHT([$Id: configure.ac 26260 2008-12-10 04:08:39Z androsyn $])
 AC_INIT([libratbox],[devel])
 AM_INIT_AUTOMAKE(AC_PACKAGE_TARNAME, AC_PACKAGE_VERSION, -)
-
+AC_CONFIG_MACRO_DIR([m4])
 AM_CONFIG_HEADER(include/libratbox_config.h)
 
 AC_PREFIX_DEFAULT(/usr/local/libratbox)
@@ -425,6 +425,8 @@ fi
 AC_ARG_ENABLE(warnings,
 AC_HELP_STRING([--enable-warnings],[Enable all sorts of warnings for debugging.]),
 [CFLAGS="$CFLAGS -Wall -Werror -Wcast-qual -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -W -Wno-unused -Wunused-function -Wunused-variable"],[])
+
+GCC_STACK_PROTECT_CC
 
 AC_SUBST(LDFLAGS)
 AC_SUBST(PICFLAGS)

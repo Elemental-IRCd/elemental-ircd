@@ -1187,3 +1187,4 @@ AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
 m4_include([m4/charybdis.m4])
+m4_include([m4/gcc_stack_protect.m4])
