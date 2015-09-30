@@ -14,7 +14,7 @@ AC_INIT([elemental-ircd],[6.6.3-rc2],[https://github.com/Elemental-IRCd/elementa
 AM_INIT_AUTOMAKE([])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADER(include/setup.h)
-
+AM_MAINTAINER_MODE([disable])
 AC_PREFIX_DEFAULT($HOME/ircd)
 
 AC_GNU_SOURCE
