@@ -20,7 +20,6 @@ client klined -user bansworth
     << ERROR {*Banned*}
 
 god :
-    << NOTICE * {*** K-line: *}
     >> UNKLINE ~bansworth@* ON *
     << NOTICE * {*** * has removed the temporary K-Line *}
 
@@ -33,6 +32,5 @@ client xlined -gecos "eggdrop bot"
     << ERROR {*Bad user info*}
 
 god :
-    << NOTICE * {*** X-line*}
     >> UNXLINE eggdrop?bot ON *
     << NOTICE * {X-Line for * is removed}
