@@ -10644,13 +10644,13 @@ $as_echo "$ssp_cv_lib" >&6; }
 
 
   if test "X$CC" != "X"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CC} accepts -fstack-protector" >&5
-$as_echo_n "checking whether ${CC} accepts -fstack-protector... " >&6; }
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CC} accepts -fstack-protector-all" >&5
+$as_echo_n "checking whether ${CC} accepts -fstack-protector-all... " >&6; }
 if ${ssp_cv_cc+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ssp_old_cflags="$CFLAGS"
-       CFLAGS="$CFLAGS -fstack-protector"
+       CFLAGS="$CFLAGS -fstack-protector-all"
        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -10675,7 +10675,7 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ssp_cv_cc" >&5
 $as_echo "$ssp_cv_cc" >&6; }
     if test $ssp_cv_cc = yes; then
-      CFLAGS="$CFLAGS -fstack-protector"
+      CFLAGS="$CFLAGS -fstack-protector-all"
 
 $as_echo "#define ENABLE_SSP_CC 1" >>confdefs.h
 

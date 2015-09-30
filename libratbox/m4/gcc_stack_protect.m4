@@ -53,15 +53,15 @@ AC_DEFUN([GCC_STACK_PROTECT_CC],[
   AC_LANG_ASSERT(C)
   GCC_STACK_PROTECT_LIB
   if test "X$CC" != "X"; then
-    AC_CACHE_CHECK([whether ${CC} accepts -fstack-protector],
+    AC_CACHE_CHECK([whether ${CC} accepts -fstack-protector-all],
       ssp_cv_cc,
       [ssp_old_cflags="$CFLAGS"
-       CFLAGS="$CFLAGS -fstack-protector"
+       CFLAGS="$CFLAGS -fstack-protector-all"
        AC_LINK_IFELSE([AC_LANG_PROGRAM], [ssp_cv_cc=yes], [ssp_cv_cc=no])
        CFLAGS="$ssp_old_cflags"
       ])
     if test $ssp_cv_cc = yes; then
-      CFLAGS="$CFLAGS -fstack-protector"
+      CFLAGS="$CFLAGS -fstack-protector-all"
       AC_DEFINE([ENABLE_SSP_CC], 1, [Define if SSP C support is enabled.])
     fi
   fi
@@ -71,15 +71,15 @@ AC_DEFUN([GCC_STACK_PROTECT_CXX],[
   AC_LANG_ASSERT(C++)
   GCC_STACK_PROTECT_LIB
   if test "X$CXX" != "X"; then
-    AC_CACHE_CHECK([whether ${CXX} accepts -fstack-protector],
+    AC_CACHE_CHECK([whether ${CXX} accepts -fstack-protector-all],
       ssp_cv_cxx,
       [ssp_old_cxxflags="$CXXFLAGS"
-       CXXFLAGS="$CXXFLAGS -fstack-protector"
+       CXXFLAGS="$CXXFLAGS -fstack-protector-all"
        AC_LINK_IFELSE([AC_LANG_PROGRAM], [ssp_cv_cxx=yes], [ssp_cv_cxx=no])
        CXXFLAGS="$ssp_old_cxxflags"
       ])
     if test $ssp_cv_cxx = yes; then
-      CXXFLAGS="$CXXFLAGS -fstack-protector"
+      CXXFLAGS="$CXXFLAGS -fstack-protector-all"
       AC_DEFINE([ENABLE_SSP_CXX], 1, [Define if SSP C++ support is enabled.])
     fi
   fi
