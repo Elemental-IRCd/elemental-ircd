@@ -1,12 +1,82 @@
 language: c
+
+os:
+  - linux
+
 compiler:
-- gcc
+  - gcc
+  - clang
 
-before-install:
-- sudo apt-get update
-install:
-- sudo apt-get install build-essential libssl-dev flex bison
-script: "./configure && make"
+#See http://docs.travis-ci.com/user/migrating-from-legacy/
+sudo: false
 
-notifications:
-  irc: "irc.yolo-swag.com#elemental-ircd"
+addons:
+  apt:
+    packages:
+      - build-essential
+      - autoconf-archive
+      - libssl-dev
+      - flex
+      - bison
+      - astyle
+      - libsqlite3-dev
+      - tcl
+      - tcllib
+      - tcl-tls
+
+script:
+  - ./autogen.sh
+  - ./configure
+  - make -j2
+  - make install
+  - testsuite/startall.sh
+  - sleep 2
+  - make check -j1
+  - testsuite/killall.sh
+
+after_script:
+  - |
+    echo Test Suite log:
+    cat tests/test-suite.log
+  - |
+    echo Hub logs:
+    cd ~/ircd
+    tail -n +1 \
+      logs/ircd.log.1 \
+      logs/userlog.1 \
+      logs/fuserlog.1 \
+      logs/operlog.1 \
+      logs/foperlog.1 \
+      logs/serverlog.1 \
+      logs/klinelog.1 \
+      logs/killlog.1 \
+      logs/operspylog.1 \
+      logs/ioerror.1 \
+  - |
+    echo Leaf1 logs:
+    cd ~/ircd
+    tail -n +1 \
+      logs/ircd.log.2 \
+      logs/userlog.2 \
+      logs/fuserlog.2 \
+      logs/operlog.2 \
+      logs/foperlog.2 \
+      logs/serverlog.2 \
+      logs/klinelog.2 \
+      logs/killlog.2 \
+      logs/operspylog.2 \
+      logs/ioerror.2 \
+  - |
+    echo Leaf2 logs:
+    cd ~/ircd
+    tail -n +1 \
+      logs/ircd.log.3 \
+      logs/userlog.3 \
+      logs/fuserlog.3 \
+      logs/operlog.3 \
+      logs/foperlog.3 \
+      logs/serverlog.3 \
+      logs/klinelog.3 \
+      logs/killlog.3 \
+      logs/operspylog.3 \
+      logs/ioerror.3 \

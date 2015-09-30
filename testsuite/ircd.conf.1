@@ -1,92 +1,53 @@
-loadmodule "extensions/extb_account.so";
-loadmodule "extensions/extb_channel.so";
-loadmodule "extensions/extb_oper.so";
-loadmodule "extensions/extb_realname.so";
-loadmodule "extensions/extb_server.so";
-#loadmodule "extensions/ip_cloaking.so";
-loadmodule "extensions/sno_farconnect.so";
-loadmodule "extensions/sno_globalkline.so";
-#loadmodule "extensions/sno_globaloper.so";
 
 serverinfo {
-	name = "testsuite1.";
+	name = "hub.local";
 	sid = "1TT";
 	description = "Testsuite";
 	network_name = "Testsuite";
 	network_desc = "Testing";
+
 	hub = yes;
 	vhost = "127.0.0.1";
+
+	ssl_private_key = "etc/ssl.key";
+	ssl_cert = "etc/ssl.cert";
+	ssl_dh_params = "etc/dh.pem";
 };
 
-admin {
-	name = "Here";
-	description = "Charybdis testsuite server";
-	email = "root@localhost";
+log {
+	fname_userlog    = "logs/userlog.1";
+	fname_fuserlog   = "logs/fuserlog.1";
+	fname_operlog    = "logs/operlog.1";
+	fname_foperlog   = "logs/foperlog.1";
+	fname_serverlog  = "logs/serverlog.1";
+	fname_klinelog   = "logs/klinelog.1";
+	fname_killlog    = "logs/killlog.1";
+	fname_operspylog = "logs/operspylog.1";
+	fname_ioerrorlog = "logs/ioerror.1";
 };
 
-class "users" {
-	ping_time = 5 minutes;
-	number_per_ip = 100;
-	max_number = 200;
-	sendq = 100kb;
-};
+.include <common.conf>
 
-class "server" {
-	ping_time = 5 minutes;
-	connectfreq = 5 minutes;
-	max_number = 3;
-	sendq = 5 megabytes;
-};
-
-listen { host = "127.0.0.1"; port = 7601; };
-
-auth { user = "*@127.0.0.0/8"; class = "users"; };
-
-operator "oper" {
-	user = "*@127.0.0.0/8";
-	password = "oper"; 
-	flags = global_kill, remote, kline, unkline, nick_changes,
-		die, rehash, admin, xline, operwall, oper_spy, ~encrypted;
-};
-
-connect "testsuite2." {
+listen {
 	host = "127.0.0.1";
-	port = 7602;
-	send_password = "testsuite";
-	accept_password = "testsuite";
-	hub_mask = "*";
-	class = "server";
-	flags = topicburst;
+	port = 6667;
+	sslport = 6697;
 };
 
-connect "testsuite3." {
+connect "leaf1.local" {
 	host = "127.0.0.1";
-	port = 7603;
-	send_password = "testsuite";
-	accept_password = "testsuite";
-	hub_mask = "*";
+	send_password = "dev";
+	accept_password = "dev";
+	port = 6698;
+	flags = topicburst, ssl;
 	class = "server";
-	flags = topicburst;
 };
 
-shared {
-	oper = "*@*", "*";
-	flags = all;
-};
-
-alias "NickServ" {
-	target = "NickServ";
-};
-alias "ChanServ" {
-	target = "ChanServ";
-};
-alias "OperServ" {
-	target = "OperServ";
-};
-alias "MemoServ" {
-	target = "MemoServ";
-};
-
-service {
-	name = "services.";
+connect "leaf2.local" {
+	host = "127.0.0.1";
+	send_password = "dev";
+	accept_password = "dev";
+	port = 6699;
+	flags = topicburst, ssl;
+	class = "server";
 };

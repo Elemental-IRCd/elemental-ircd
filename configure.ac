@@ -10,8 +10,9 @@ AC_PREREQ(2.57)
 dnl Sneaky way to get an Id tag into the configure script
 AC_COPYRIGHT([2014 elemental-ircd Team])
 
-AC_INIT([elemental-ircd],[6.6.2])
-
+AC_INIT([elemental-ircd],[6.6.3-rc2],[https://github.com/Elemental-IRCd/elemental-ircd/issues])
+AM_INIT_AUTOMAKE([])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADER(include/setup.h)
 
 AC_PREFIX_DEFAULT($HOME/ircd)
@@ -211,6 +212,7 @@ AC_PATH_PROG(AR, ar)
 AC_PATH_PROG(LD, ld)
 AC_PATH_PROG(RANLIB, ranlib)
 AC_PATH_PROG(TOUCH, touch)
+AC_PATH_PROG(TCLSH, tclsh)
 
 AC_PROG_YACC
 
@@ -1210,6 +1212,7 @@ AC_CONFIG_FILES(			\
 	tools/genssl.sh			\
 	doc/Makefile			\
 	help/Makefile			\
+	tests/Makefile
 )
 AC_CONFIG_COMMANDS([tools/genssl.sh_chmod], [chmod 755 tools/genssl.sh])
 
