@@ -1844,6 +1844,9 @@ user_metadata_add(struct Client *target, const char *name, const char *value, in
 {
     struct Metadata *md;
 
+    /* Remove a value if we have one already */
+    user_metadata_delete(target, name, 0);
+
     md = rb_malloc(sizeof(struct Metadata));
     md->name = rb_strdup(name);
     md->value = rb_strdup(value);
