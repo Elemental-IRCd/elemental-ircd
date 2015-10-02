@@ -1951,6 +1951,8 @@ channel_metadata_add(struct Channel *target, const char *name, const char *value
 {
     struct Metadata *md;
 
+    channel_metadata_delete(target, name, 0);
+
     md = rb_malloc(sizeof(struct Metadata));
     md->name = rb_strdup(name);
     md->value = rb_strdup(value);
@@ -1978,6 +1980,8 @@ struct Metadata *
 channel_metadata_time_add(struct Channel *target, const char *name, time_t timevalue, const char *value)
 {
     struct Metadata *md;
+
+    channel_metadata_delete(target, name, 0);
 
     md = rb_malloc(sizeof(struct Metadata));
     md->name = rb_strdup(name);
