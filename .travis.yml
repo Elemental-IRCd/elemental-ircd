@@ -25,7 +25,7 @@ addons:
       - tcl-tls
 
 script:
-  - ./configure
+  - ./configure --enable-assert=soft
   - make -j2
   - make install
   - testsuite/startall.sh
