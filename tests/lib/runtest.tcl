@@ -219,6 +219,15 @@ snit::type base_client {
         chan event $sock readable [mymethod read_handler]
     }
 
+    destructor {
+        chan close $sock
+    }
+
+    method dead {} {
+        # ERROR has been received or similar, stop reading
+        chan event $sock readable {}
+    }
+
     # Waits until a line is received by this client
     method wait_line {} {
         vwait [myvar lines]
@@ -238,7 +247,7 @@ snit::type base_client {
     method read_handler {} {
         chan gets $sock line
         if {[chan eof $sock]} {
-            puts "Connection for $self died"
+            puts "Connection for $options(-name) died"
             exit 1
         }
         if {![chan blocked $sock]} {
@@ -395,9 +404,10 @@ snit::type client {
 
         set all_clients [lsearch -not -inline $all_clients $self]
 
-        if {$connected == 1} {
+        if {$connected} {
             $self >> QUIT
         }
+        $base destroy
     }
 
     # This method handles all sent and received line, calling the
@@ -555,7 +565,7 @@ snit::type client {
     }
 
     method handle_ERROR {prefix args} {
-        $base destroy
+        $base dead
         set connected 0
     }
 
