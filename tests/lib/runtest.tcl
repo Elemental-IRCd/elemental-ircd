@@ -162,7 +162,7 @@ proc compare_line {line args} {
         }
         set arg [lindex $args $argpos]
         if {$argpos != 0 && [string index $arg 0] == ":"} {
-            puts {Join args into the trailing parameter}
+            # Join args into the trailing parameter
             set arg [join [lrange $args $argpos end]]
             # And strip the :
             set arg [string range $arg 1 end]
@@ -190,20 +190,114 @@ update_watchdog
 
 set all_clients list
 
+snit::type base_client {
+    variable sock
+
+    # Queued lines
+    variable lines
+
+    # Name printed to the console
+    option {-name} {::Unnamed}
+
+    # Called asynchrynously with a line when its sent/received
+    option {-onsend} {eval {$self sent_line}}
+    option {-onrecv} {eval {$self handle_line}}
+
+    constructor {in_sock args} {
+        $self configurelist $args
+
+        set sock $in_sock
+
+        chan configure $sock {*}{
+            -blocking false
+            -buffering line
+            -translation crlf
+        }
+
+        set lines [list]
+
+        chan event $sock readable [mymethod read_handler]
+    }
+
+    # Waits until a line is received by this client
+    method wait_line {} {
+        vwait [myvar lines]
+    }
+
+    # Wait for one line, then dequeue
+    method get_line {} {
+        while {[llength $lines] == 0} {
+            $self wait_line
+        }
+
+        set line [lindex $lines 0]
+        set lines [lrange $lines 1 end]
+        return $line
+    }
+
+    method read_handler {} {
+        chan gets $sock line
+        if {[chan eof $sock]} {
+            puts "Connection for $self died"
+            exit 1
+        }
+        if {![chan blocked $sock]} {
+            set line [irc_tokenize $line]
+            puts stdout "$options(-name) ${color::green}<<${color::reset} $line"
+            # Queue any read lines
+            lappend lines $line
+
+            # Callback
+            {*}$options(-onrecv) $line
+        }
+    }
+
+    # Default line handler, no-op
+    method handle_line {args} {}
+
+    # Default sent line handler, no-op
+    method sent_line {args} {}
+
+    # >> Sends its arguemnts as an irc command
+    # Concatenates and adds a trailing as needed
+    method >> {args} {
+        update_watchdog
+
+        # Translate RPL_'s
+        foreach x {0 1} {
+            set verb [lindex $args $x]
+            if {[regexp {^(RPL_|ERR_).*} $verb]} {
+                global $verb
+                lset args $x [set $verb]
+            }
+        }
+
+        set line [format_args {*}$args]
+        chan puts $sock $line
+        puts stdout "$options(-name) ${color::red}>>${color::reset} $args"
+
+        # Callback
+        {*}$options(-onsend) $args
+    }
+
+    # << Expects waits for an irc command {args}
+    # Do not be use within the client class
+    method << {args} {
+        puts stdout "$options(-name) ${color::blue}==${color::reset} $args"
+        while {![compare_line [$self get_line] {*}$args]} {}
+    }
+
+}
+
 snit::type client {
     option {-caps} {}
     option {-nick} {}
     option {-user} {}
     option {-gecos} {}
 
-    variable sock
-
     variable nickname
     variable username
     variable realname
-
-    # Queued lines
-    variable lines
 
     # List of channels we're in
     variable channels
@@ -214,7 +308,6 @@ snit::type client {
     # Array, list of nicks in each channel
     variable channel_nicks
 
-
     # Contains RPL_ISUPPORT contents
     variable isupport
 
@@ -223,13 +316,17 @@ snit::type client {
     # Capabilities we've got
     variable caps {}
 
+    # base_client handles the io and line comparison
+    variable base
+
     constructor {args} {
-        global servers
         global all_clients
 
         $self configurelist $args
 
         set connected 0
+
+        set base [base_client %AUTO% [get_server] -name $self -onsend [mymethod sent_line] -onrecv [mymethod handle_line]]
 
         if {$options(-nick) != ""} {
             set nickname $options(-nick)
@@ -249,17 +346,6 @@ snit::type client {
             set realname [get_realname]
         }
 
-        set sock [get_server]
-        chan configure $sock {*}{
-            -blocking false
-            -buffering line
-            -translation crlf
-        }
-
-        set lines [list]
-
-        chan event $sock readable [list $self read_handler]
-
         set channels ""
         array set channel_nicks {}
         array set isupport {}
@@ -267,6 +353,16 @@ snit::type client {
         $self register
         $self make_current
         lappend all_clients $self
+    }
+
+    method >> {args} {
+        $self make_current
+        $base >> {*}$args
+    }
+
+    method << {args} {
+        $self make_current
+        $base << {*}$args
     }
 
     method register {} {
@@ -304,37 +400,10 @@ snit::type client {
         }
     }
 
-    # Wait for one line, then dequeue
-    method get_line {} {
-        while {[llength $lines] == 0} {
-            vwait [myvar lines]
-        }
-
-        set line [lindex $lines 0]
-        set lines [lrange $lines 1 end]
-        return $line
-    }
-
-    method read_handler {} {
-        chan gets $sock line
-        if {[chan eof $sock]} {
-            puts "Connection for $self died"
-            exit 1
-        }
-        if {![chan blocked $sock]} {
-            set line [irc_tokenize $line]
-            $self handle_line $line
-            # Queue any read lines
-            lappend lines $line
-        }
-    }
-
-    # This method receives all lines, uses them to update client state
-    # Handlers must never draw call get_line or otherwise edit $lines
-    method handle_line {line} {
+    # This method handles all sent and received line, calling the
+    # appropriate callbacks for both
+    method line_callback {cb_prefix line} {
         global numerics
-
-        puts stdout "$self ${color::green}<<${color::reset} $line"
 
         set pos 0
         set prefix ""
@@ -355,11 +424,18 @@ snit::type client {
         incr pos
         set args [lrange $line $pos end]
 
-        set method_name "handle_$command"
+        set method_name "${cb_prefix}_${command}"
 
         if {[$self info methods $method_name] != ""} {
             $self $method_name $prefix {*}$args
         }
+    }
+
+    method handle_line {args} {
+        $self line_callback handle {*}$args
+    }
+    method sent_line {args} {
+        $self line_callback post {*}$args
     }
 
     method handle_RPL_WELCOME {prefix args} {
@@ -418,7 +494,6 @@ snit::type client {
             lappend channels $channel
         }
     }
-
     method handle_RPL_NAMREPLY {prefix args} {
         set nicks [lindex $args 3]
         set channel [lindex $args 2]
@@ -429,7 +504,6 @@ snit::type client {
             lappend channel_nicks($channel) $nick
         }
     }
-
     method handle_PART {prefix args} {
         regexp {:(.*)!(.*)@(.*)} $prefix -> nick user host
         set channel [lindex $args 0]
@@ -481,39 +555,13 @@ snit::type client {
     }
 
     method handle_ERROR {prefix args} {
-        chan close $sock
+        $base destroy
         set connected 0
     }
 
     method make_current {} {
         global current_client
         set current_client $self
-    }
-
-    # >> Sends its arguemnts as an irc command
-    # Concatenates and adds a trailing as needed
-    method >> {args} {
-        update_watchdog
-        $self make_current
-
-        # Translate RPL_'s
-        foreach x {0 1} {
-            set verb [lindex $args $x]
-            if {[regexp {^(RPL_|ERR_).*} $verb]} {
-                global $verb
-                lset args $x [set $verb]
-            }
-        }
-
-        set line [format_args {*}$args]
-        chan puts $sock $line
-        puts stdout "${self} ${color::red}>>${color::reset} $args"
-
-        set method_name "post_[lindex $args 0]"
-
-        if {[$self info methods $method_name] != ""} {
-            $self $method_name {*}$args
-        }
     }
 
     method post_JOIN {args} {
@@ -557,27 +605,19 @@ snit::type client {
     method _wait_join {nick channel} {
         # Go into the event loop until we see {nick} in {channel}
         while {[lsearch $channel_nicks($channel) $nick] == -1} {
-            vwait [myvar lines]
+            $base wait_line
         }
     }
 
     method _wait_part {nick channel} {
         # Go into the event loop until we see {nick} leave {channel}
         while {[lsearch $channel_nicks($channel) $nick] != -1} {
-            vwait [myvar lines]
+            $base wait_line
         }
     }
 
     method post_QUIT {args} {
         vwait [myvar connected]
-    }
-
-    # << Expects waits for an irc command {args}
-    # Do not be use within the client class
-    method << {args} {
-        $self make_current
-        puts stdout "${self} ${color::blue}==${color::reset} $args"
-        while {![compare_line [$self get_line] {*}$args]} {}
     }
 
     # Alternate syntax for make_current
