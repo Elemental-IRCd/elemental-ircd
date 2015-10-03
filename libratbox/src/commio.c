@@ -44,7 +44,6 @@ struct timeout_data {
     void *timeout_data;
 };
 
-rb_dlink_list rb_fd_table[RB_FD_HASH_SIZE];
 static rb_bh *fd_heap;
 
 static rb_dlink_list timeout_list;
@@ -73,6 +72,17 @@ static void mangle_mapped_sockaddr(struct sockaddr *in);
 static int rb_inet_socketpair(int d, int type, int protocol, int sv[2]);
 static int rb_inet_socketpair_udp(rb_fde_t **newF1, rb_fde_t **newF2);
 #endif
+
+#define RB_FD_HASH_BITS 12
+#define RB_FD_HASH_SIZE (1UL << RB_FD_HASH_BITS)
+#define RB_FD_HASH_MASK (RB_FD_HASH_SIZE-1)
+
+#define rb_hash_fd(x) ((x ^ (x >> RB_FD_HASH_BITS) ^ (x >> (RB_FD_HASH_BITS * 2))) & RB_FD_HASH_MASK)
+
+static rb_dlink_list rb_fd_table[RB_FD_HASH_SIZE];
+
+/* Hashmap of fd->fde_t, for io loops that
+ * don't return a pointer with the fd */
 
 static inline rb_fde_t *
 add_fd(int fd)
@@ -109,6 +119,28 @@ free_fds(void)
         rb_dlinkDelete(ptr, &closed_list);
         rb_bh_free(fd_heap, F);
     }
+}
+
+rb_fde_t *
+rb_find_fd(int fd)
+{
+    rb_dlink_list *hlist;
+    rb_dlink_node *ptr;
+
+    if(rb_unlikely(fd < 0))
+        return NULL;
+
+    hlist = &rb_fd_table[rb_hash_fd(fd)];
+
+    if(hlist->head == NULL)
+        return NULL;
+
+    RB_DLINK_FOREACH(ptr, hlist->head) {
+        rb_fde_t *F = ptr->data;
+        if(F->fd == fd)
+            return F;
+    }
+    return NULL;
 }
 
 /*

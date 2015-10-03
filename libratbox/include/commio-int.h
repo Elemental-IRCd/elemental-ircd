@@ -26,13 +26,7 @@
 #ifndef _COMMIO_INT_H
 #define _COMMIO_INT_H 1
 
-#define RB_FD_HASH_BITS 12
-#define RB_FD_HASH_SIZE (1UL << RB_FD_HASH_BITS)
-#define RB_FD_HASH_MASK (RB_FD_HASH_SIZE-1)
-
 #define FD_DESC_SZ 128		/* hostlen + comment */
-
-#define rb_hash_fd(x) ((x ^ (x >> RB_FD_HASH_BITS) ^ (x >> (RB_FD_HASH_BITS * 2))) & RB_FD_HASH_MASK)
 
 #ifdef HAVE_WRITEV
 #ifndef UIO_MAXIOV
@@ -112,30 +106,7 @@ struct _fde {
 
 typedef void (*comm_event_cb_t) (void *);
 
-extern rb_dlink_list rb_fd_table[RB_FD_HASH_SIZE];
-
-static inline __must_check rb_fde_t *
-rb_find_fd(int fd)
-{
-    rb_dlink_list *hlist;
-    rb_dlink_node *ptr;
-
-    if(rb_unlikely(fd < 0))
-        return NULL;
-
-    hlist = &rb_fd_table[rb_hash_fd(fd)];
-
-    if(hlist->head == NULL)
-        return NULL;
-
-    RB_DLINK_FOREACH(ptr, hlist->head) {
-        rb_fde_t *F = ptr->data;
-        if(F->fd == fd)
-            return F;
-    }
-    return NULL;
-}
-
+__must_check rb_fde_t * rb_find_fd(int fd);
 
 int rb_setup_fd(rb_fde_t *F);
 void rb_connect_callback(rb_fde_t *F, int status);
