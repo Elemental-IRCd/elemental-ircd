@@ -396,6 +396,11 @@ snit::type client {
         $self >> USER $username * * $realname
         vwait [myvar connected]
 
+        if {!$connected} {
+            # ERROR happened before registration finished, exit
+            return
+        }
+
         if {$options(-oper) != ""} {
             $self >> OPER $options(-oper) testsuite
             $self >> MODE $nickname +p
