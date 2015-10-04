@@ -1,7 +1,6 @@
 begin {snomask for klines}
 
-# XXX HACK
-after 750
+# NOTE: This test breaks if there's an identd on the test runner
 
 client god
     oper god
@@ -11,8 +10,6 @@ client god
     # Kline bansworth
     >> KLINE 5 ~bansworth@* ON * {Test}
     << NOTICE * {*K-Line*}
-
-after 150
 
 # ensure bansworth is banned (shocker!)
 client klined -user bansworth
