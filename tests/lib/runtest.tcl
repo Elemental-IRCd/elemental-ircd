@@ -122,7 +122,7 @@ proc format_args {args} {
         if {[string first " " $arg] != -1} then {
             lappend out ":$arg"
             set sent_trailing true
-        } elseif {[string index $arg 0] == ":"} {
+        } elseif {$i != 0 && [string index $arg 0] == ":"} {
             lappend out {*}[lrange args $i end]
             break
         } else {
@@ -187,8 +187,6 @@ proc update_watchdog {} {
     }]
 }
 update_watchdog
-
-set all_clients list
 
 snit::type base_client {
     variable sock
@@ -298,6 +296,9 @@ snit::type base_client {
 
 }
 
+# All active clients, the client type adds/remoevs itself as needed
+set all_clients [list]
+
 snit::type client {
     option {-caps} {}
     option {-nick} {}
@@ -307,6 +308,7 @@ snit::type client {
     variable nickname
     variable username
     variable realname
+    variable hostname
 
     # List of channels we're in
     variable channels
@@ -354,6 +356,8 @@ snit::type client {
         } else {
             set realname [get_realname]
         }
+
+        set hostname *
 
         set channels ""
         array set channel_nicks {}
@@ -422,6 +426,7 @@ snit::type client {
 
         if {[string match :* [lindex $line $pos]] != 0} {
             set prefix [lindex $line $pos]
+            $self handle_prefix $prefix
             incr pos
         }
 
@@ -446,6 +451,20 @@ snit::type client {
     }
     method sent_line {args} {
         $self line_callback post {*}$args
+    }
+
+    method handle_prefix {prefix} {
+        set nick ""
+        regexp {:(.*)!(.*)@(.*)} $prefix -> nick user host
+
+        if {[string match $nickname $nick] == 1} {
+            set username $user
+            set hostname $host
+        }
+    }
+
+    method hostmask {} {
+        return "${nickname}!${username}@${hostname}"
     }
 
     method handle_RPL_WELCOME {prefix args} {
@@ -660,6 +679,9 @@ proxy_method nick
 proxy_method oper
 
 proc client: {} {client :}
+proc from {client} {
+    $client hostmask
+}
 
 puts {Beginning test}
 
