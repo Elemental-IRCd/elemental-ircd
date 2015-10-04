@@ -41,7 +41,7 @@ libratbox/m4/libtool.m4
 libratbox/m4/lt*
 libratbox/m4/argz.m4
 libratbox/src/version.c
-libratbox/tools/*
+libratbox/aux
 libtool
 libltdl/
 ltmain.sh

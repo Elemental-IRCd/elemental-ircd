@@ -3,7 +3,7 @@ AC_COPYRIGHT([2014 elemental-ircd Team])
 
 AC_INIT([libratbox],[devel])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_AUX_DIR([tools])
+AC_CONFIG_AUX_DIR([aux])
 AC_CONFIG_SRCDIR([include/ratbox_lib.h])
 AC_CONFIG_HEADERS([include/libratbox_config.h])
 AC_LANG(C)
