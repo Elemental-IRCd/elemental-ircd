@@ -123,7 +123,7 @@ proc format_args {args} {
             lappend out ":$arg"
             set sent_trailing true
         } elseif {$i != 0 && [string index $arg 0] == ":"} {
-            lappend out {*}[lrange args $i end]
+            lappend out {*}[lrange $args $i end]
             break
         } else {
             lappend out $arg
