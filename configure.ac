@@ -413,9 +413,6 @@ AC_DEFINE_UNQUOTED(NICKLEN, (${NICKLEN}+1), [Nickname length])
 RB_CFLAGS
 RB_FORTIFY_SOURCE(1)
 
-AX_APPEND_LINK_FLAGS([-Wl,-rpath=\${libdir}])
-AX_APPEND_LINK_FLAGS([-Wl,--export-all-symbols])
-
 AC_DEFINE_UNQUOTED(EXEEXT, "${EXEEXT}", [Executable extension])
 
 AC_SUBST(MODULES_LIBS)
