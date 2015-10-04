@@ -5,13 +5,9 @@ set test_channel #topic
 # XXX HACK work around #164
 client:
 
-client god
-     oper god
-
+client god -oper god
 client chanop
 client victim
-
-chanop >> JOIN $test_channel
 
 god :
   >> MODE [god nick] +p

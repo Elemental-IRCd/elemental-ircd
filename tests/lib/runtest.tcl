@@ -304,6 +304,7 @@ snit::type client {
     option {-nick} {}
     option {-user} {}
     option {-gecos} {}
+    option {-oper} {}
 
     variable nickname
     variable username
@@ -330,12 +331,16 @@ snit::type client {
     # base_client handles the io and line comparison
     variable base
 
+    # flag for detecting the prefix, either from JOIN or a privmsg
+    variable grab_hostmask
+
     constructor {args} {
         global all_clients
 
         $self configurelist $args
 
         set connected 0
+        set grab_hostmask 0
 
         set base [base_client %AUTO% [get_server] -name $self -onsend [mymethod sent_line] -onrecv [mymethod handle_line]]
 
@@ -357,16 +362,13 @@ snit::type client {
             set realname [get_realname]
         }
 
+        set hostname *
+
         set channels ""
         array set channel_nicks {}
         array set isupport {}
 
         $self register
-
-        # We can't controll either of these, so accept anything until
-        # the server tells us what they are
-        set hostname *
-        set username *
 
         $self make_current
         lappend all_clients $self
@@ -394,8 +396,21 @@ snit::type client {
         $self >> USER $username * * $realname
         vwait [myvar connected]
 
+        if {$options(-oper) != ""} {
+            $self >> OPER $options(-oper) testsuite
+            $self >> MODE $nickname +p
+        }
+
+        # Detect hostname
+        # Use the JOIN if there's a test channel, otherwise msg ourself
+        set grab_hostmask 1
         if {$test_channel != ""} {
             $self >> JOIN $test_channel
+        } else {
+            $self >> PRIVMSG $nickname {Detecting hostmask}
+        }
+        if {$grab_hostmask} {
+            vwait [myvar grab_hostmask]
         }
     }
 
@@ -458,12 +473,15 @@ snit::type client {
     }
 
     method handle_prefix {prefix} {
+        if {!$grab_hostmask} return
+
         set nick ""
         regexp {:(.*)!(.*)@(.*)} $prefix -> nick user host
 
         if {[string match $nickname $nick] == 1} {
             set username $user
             set hostname $host
+            set grab_hostmask 0
         }
     }
 

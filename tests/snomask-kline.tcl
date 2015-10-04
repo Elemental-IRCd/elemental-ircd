@@ -2,9 +2,7 @@ begin {snomask for klines}
 
 # NOTE: This test breaks if there's an identd on the test runner
 
-client god
-    oper god
-    << RPL_YOUREOPER
+client god -oper god
     >> MODE [god nick] +s +K
 
     # Kline bansworth
