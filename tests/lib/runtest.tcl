@@ -574,6 +574,15 @@ snit::type client {
         }
     }
 
+    method handle_RPL_HOSTHIDDEN {prefix args} {
+        set hostname [lindex $args 1]
+    }
+
+    method handle_CHGHOST {prefix args} {
+        set username [lindex $args 0]
+        set hostname [lindex $args 1]
+    }
+
     method supports {name} {
         set name {*}$name
 
