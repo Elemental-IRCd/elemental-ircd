@@ -12,7 +12,7 @@ client god -oper god
 # ensure bansworth is banned (shocker!)
 client klined -user bansworth
     << ERR_YOUREBANNEDCREEP
-    << ERROR {*Banned*}
+    << ERROR
 
 god :
     << NOTICE * {*** K-line: *}
