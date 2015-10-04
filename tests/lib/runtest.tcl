@@ -357,13 +357,17 @@ snit::type client {
             set realname [get_realname]
         }
 
-        set hostname *
-
         set channels ""
         array set channel_nicks {}
         array set isupport {}
 
         $self register
+
+        # We can't controll either of these, so accept anything until
+        # the server tells us what they are
+        set hostname *
+        set username *
+
         $self make_current
         lappend all_clients $self
     }
