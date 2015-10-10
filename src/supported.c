@@ -334,8 +334,7 @@ init_isupport(void)
     add_isupport("NICKLEN", isupport_intptr, &nicklen);
     add_isupport("CHANNELLEN", isupport_intptr, &channellen);
     add_isupport("TOPICLEN", isupport_intptr, &topiclen);
-    add_isupport("CPRIVMSG", isupport_string, "");
-    add_isupport("CNOTICE", isupport_string, "");
+    add_isupport("ETRACE", isupport_string, "");
     add_isupport("DEAF", isupport_string, "D");
     add_isupport("MONITOR", isupport_intptr, &ConfigFileEntry.max_monitor);
     add_isupport("FNC", isupport_string, "");
