@@ -185,6 +185,10 @@ del_monitor(struct Client *client_p, const char *nicks)
 
         rb_dlinkFindDestroy(client_p, &monptr->users);
         rb_dlinkFindDestroy(monptr, &client_p->localClient->monitor_list);
+
+        if(rb_dlink_list_length(&monptr->users) == 0) {
+            free_monitor(monptr);
+        }
     }
 }
 
