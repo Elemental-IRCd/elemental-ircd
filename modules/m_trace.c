@@ -40,10 +40,12 @@
 #include "msg.h"
 #include "parse.h"
 #include "modules.h"
+#include "supported.h"
 
 static int m_trace(struct Client *, struct Client *, int, const char **);
-
 static void trace_spy(struct Client *, struct Client *);
+static int _modinit(void);
+static void _moddeinit(void);
 
 struct Message trace_msgtab = {
     "TRACE", 0, 0, 0, MFLG_SLOW,
@@ -57,12 +59,26 @@ mapi_hlist_av1 trace_hlist[] = {
     { "doing_trace",	&doing_trace_hook },
     { NULL, NULL }
 };
-DECLARE_MODULE_AV1(trace, NULL, NULL, trace_clist, trace_hlist, NULL, "$Revision$");
+DECLARE_MODULE_AV1(trace, _modinit, _moddeinit, trace_clist, trace_hlist, NULL, "$Revision$");
 
 static void count_downlinks(struct Client *server_p, int *pservcount, int *pusercount);
 static int report_this_status(struct Client *source_p, struct Client *target_p);
 
 static const char *empty_sockhost = "255.255.255.255";
+
+static int
+_modinit(void)
+{
+    add_isupport("ETRACE", isupport_string, "");
+
+    return 0;
+}
+
+static void
+_moddeinit(void)
+{
+    delete_isupport("ETRACE");
+}
 
 /*
  * m_trace
