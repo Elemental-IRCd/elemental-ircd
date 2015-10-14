@@ -25,7 +25,7 @@ For an easy one-step install:
 ### Ubuntu/Debian
 
 ```console
-$ sudo apt-get install libssl-dev autoconf build-essential flex bison libsqlite3-dev automake libtool
+$ sudo apt-get install libssl-dev autoconf autoconf-archive build-essential flex bison libsqlite3-dev automake libtool
 ```
 
 ### Fedora/CentOS
