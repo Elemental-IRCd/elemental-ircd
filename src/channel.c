@@ -2008,6 +2008,8 @@ channel_metadata_delete(struct Channel *target, const char *name, int propagate)
 
     irc_dictionary_delete(target->metadata, md->name);
 
+    rb_free(md->name);
+    rb_free(md->value);
     rb_free(md);
 
     if(propagate)
