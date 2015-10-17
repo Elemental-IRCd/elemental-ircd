@@ -1879,6 +1879,8 @@ user_metadata_delete(struct Client *target, const char *name, int propagate)
 
     irc_dictionary_delete(target->user->metadata, md->name);
 
+    rb_free(md->name);
+    rb_free(md->value);
     rb_free(md);
 
     if(propagate)
