@@ -10,10 +10,7 @@ TESTS = away-notify.tcl \
         metadata.tcl \
         mode-nooperkick.tcl \
         monitor.tcl \
-        omode.tcl \
         privmsg.tcl \
         register.tcl \
-        snomask-kline.tcl \
         topic.tcl \
-        umodeg.tcl \
-        yourid.tcl
+        umodeg.tcl
