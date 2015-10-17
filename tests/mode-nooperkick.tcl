@@ -2,8 +2,7 @@ begin {test MODE_NOOPERKICK (+M)}
 
 set test_channel #modenooperkick
 
-client god
-    oper god
+client god -oper god
     >> MODE [god nick] +p
     << MODE [god nick] +p
 

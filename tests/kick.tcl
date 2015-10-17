@@ -5,10 +5,7 @@ set test_channel #kickland
 # XXX HACK work around #164
 client:
 
-client god
-    oper god
-    >> MODE [god nick] +p
-
+client god -oper god
 client chanop
 client victim
 
@@ -99,6 +96,14 @@ addrank victim +o
 cantkick chanop victim
 reset victim
 
+addrank victim +a
+cantkick chanop victim
+reset victim
+
+addrank victim +y
+cantkick chanop victim
+reset victim
+
 puts {A voiced user cannot kick anyone either}
 addrank chanop +v
 cantkick chanop victim
@@ -113,6 +118,14 @@ cantkick chanop victim
 reset victim
 
 addrank victim +o
+cantkick chanop victim
+reset victim
+
+addrank victim +a
+cantkick chanop victim
+reset victim
+
+addrank victim +y
 cantkick chanop victim
 reset victim
 
@@ -135,9 +148,17 @@ addrank victim +o
 cantkick chanop victim
 reset victim
 
+addrank victim +a
+cantkick chanop victim
+reset victim
+
+addrank victim +y
+cantkick chanop victim
+reset victim
+
 reset chanop
 
-puts {A chanop can kick everything}
+puts {A chanop can kick everything but admin and owner}
 addrank chanop +o
 shouldkick chanop victim
 reset victim
@@ -154,4 +175,64 @@ addrank victim +o
 shouldkick chanop victim
 reset victim
 
+addrank victim +a
+cantkick chanop victim
+reset victim
+
+addrank victim +y
+cantkick chanop victim
+reset victim
+
 reset chanop
+
+puts {An admin can kick anyone but an owner}
+addrank chanop +a
+shouldkick chanop victim
+reset victim
+
+addrank victim +v
+shouldkick chanop victim
+reset victim
+
+addrank victim +h
+shouldkick chanop victim
+reset victim
+
+addrank victim +o
+shouldkick chanop victim
+reset victim
+
+addrank victim +a
+shouldkick chanop victim
+reset victim
+
+addrank victim +y
+cantkick chanop victim
+reset victim
+
+reset chanop
+
+puts {An owner can kick anyone. Period.}
+addrank chanop +y
+shouldkick chanop victim
+reset victim
+
+addrank victim +v
+shouldkick chanop victim
+reset victim
+
+addrank victim +h
+shouldkick chanop victim
+reset victim
+
+addrank victim +o
+shouldkick chanop victim
+reset victim
+
+addrank victim +a
+shouldkick chanop victim
+reset victim
+
+addrank victim +y
+shouldkick chanop victim
+reset victim
