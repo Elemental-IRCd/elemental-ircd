@@ -35,8 +35,11 @@
 #include "parse.h"
 #include "modules.h"
 #include "s_serv.h"
+#include "supported.h"
 
 static int m_knock(struct Client *, struct Client *, int, const char **);
+static int _modinit(void);
+static void _moddeinit(void);
 
 struct Message knock_msgtab = {
     "KNOCK", 0, 0, 0, MFLG_SLOW,
@@ -44,7 +47,21 @@ struct Message knock_msgtab = {
 };
 
 mapi_clist_av1 knock_clist[] = { &knock_msgtab, NULL };
-DECLARE_MODULE_AV1(knock, NULL, NULL, knock_clist, NULL, NULL, "$Revision$");
+DECLARE_MODULE_AV1(knock, _modinit, _moddeinit, knock_clist, NULL, NULL, "$Revision$");
+
+static int
+_modinit(void)
+{
+    add_isupport("KNOCK", isupport_boolean, &ConfigChannel.use_knock);
+
+    return 0;
+}
+
+static void
+_moddeinit(void)
+{
+    delete_isupport("KNOCK");
+}
 
 /* m_knock
  *    parv[1] = channel

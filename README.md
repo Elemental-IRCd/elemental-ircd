@@ -18,13 +18,14 @@ following Debian packages:
  - `build-essential`
  - `libsqlite3-dev`
  - `libltdl7-dev`
+ - `libtool`
 
 For an easy one-step install:
 
 ### Ubuntu/Debian
 
 ```console
-$ sudo apt-get install libssl-dev autoconf build-essential flex bison libsqlite3-dev automake
+$ sudo apt-get install libssl-dev autoconf autoconf-archive build-essential flex bison libsqlite3-dev automake libtool
 ```
 
 ### Fedora/CentOS
@@ -32,7 +33,7 @@ $ sudo apt-get install libssl-dev autoconf build-essential flex bison libsqlite3
 ```console
 $ sudo (yum/dnf) groupinstall "Development Tools"
 $ sudo (yum/dnf) install openssl-devel autoconf build-essential automake flex
-  bison autoconf-archive sqlite3-devel
+  bison autoconf-archive sqlite3-devel libtool-ltdl-devel libtool
 ```
 
 ## Others

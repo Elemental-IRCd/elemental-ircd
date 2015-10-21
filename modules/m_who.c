@@ -39,6 +39,7 @@
 #include "modules.h"
 #include "packet.h"
 #include "s_newconf.h"
+#include "supported.h"
 
 #define FIELD_CHANNEL    0x0001
 #define FIELD_HOP        0x0002
@@ -60,6 +61,8 @@ struct who_format {
 };
 
 static int m_who(struct Client *, struct Client *, int, const char **);
+static int _modinit(void);
+static void _moddeinit(void);
 
 struct Message who_msgtab = {
     "WHO", 0, 0, 0, MFLG_SLOW,
@@ -67,7 +70,21 @@ struct Message who_msgtab = {
 };
 
 mapi_clist_av1 who_clist[] = { &who_msgtab, NULL };
-DECLARE_MODULE_AV1(who, NULL, NULL, who_clist, NULL, NULL, "$Revision$");
+DECLARE_MODULE_AV1(who, _modinit, _moddeinit, who_clist, NULL, NULL, "$Revision$");
+
+static int
+_modinit(void)
+{
+    add_isupport("WHOX", isupport_string, "");
+
+    return 0;
+}
+
+static void
+_moddeinit(void)
+{
+    delete_isupport("WHOX");
+}
 
 static void do_who_on_channel(struct Client *source_p, struct Channel *chptr,
                               int server_oper, int member,

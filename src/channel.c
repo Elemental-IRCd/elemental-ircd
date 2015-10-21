@@ -105,6 +105,7 @@ void
 free_channel(struct Channel *chptr)
 {
     channel_metadata_clear(chptr);
+    irc_dictionary_destroy(chptr->metadata, NULL, NULL);
     rb_free(chptr->chname);
     rb_free(chptr->mode_lock);
     rb_bh_free(channel_heap, chptr);
@@ -2008,6 +2009,8 @@ channel_metadata_delete(struct Channel *target, const char *name, int propagate)
 
     irc_dictionary_delete(target->metadata, md->name);
 
+    rb_free(md->name);
+    rb_free(md->value);
     rb_free(md);
 
     if(propagate)
