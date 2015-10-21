@@ -1625,11 +1625,10 @@ make_server(struct Client *client_p)
 void
 free_user(struct User *user, struct Client *client_p)
 {
-    free_away(client_p);
-
     if(--user->refcnt <= 0) {
-        if(user->away)
-            rb_free((char *) user->away);
+        free_away(client_p);
+        if(user->metadata)
+            irc_dictionary_destroy(user->metadata, NULL, NULL);
 
         /*
          * sanity check
