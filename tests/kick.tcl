@@ -5,10 +5,7 @@ set test_channel #kickland
 # XXX HACK work around #164
 client:
 
-client god
-    oper god
-    >> MODE [god nick] +p
-
+client god -oper god
 client chanop
 client victim
 

@@ -2,26 +2,38 @@ begin {Check chghost}
 
 set test_channel #chghost
 
-client myoper
-    oper oper
-
-client target
+client myoper -oper god
+client target -caps chghost
 client observer
-client observerv3 -caps {chghost}
+client observerv3 -caps chghost
 
 myoper :
+ >> MODE #chghost +v [target nick]
  >> CHGHOST [target nick] chghost.test
- << QUIT :Changing host
- << ":[target nick]!*@chghost.test" JOIN $test_channel
+
+set old_mask [target hostmask]
+
+target :
+if {[have chghost]} {
+ << :$old_mask CHGHOST * chghost.test
+} else {
+ << RPL_HOSTHIDDEN [nick] chghost.test
+}
+
+set new_mask [target hostmask]
+
+myoper :
+ << :$old_mask QUIT :Changing host
+ << :$new_mask JOIN $test_channel
+ << MODE #chghost +v [target nick]
 
 observer :
- << QUIT :Changing host
- << ":[target nick]!*@chghost.test" JOIN $test_channel
+ << :$old_mask QUIT :Changing host
+ << :$new_mask JOIN $test_channel
+ << MODE #chghost +v [target nick]
 
 observerv3 :
 if {[have chghost]} {
- << ":[target nick]!*@*" CHGHOST * chghost.test
+ << :$old_mask CHGHOST * chghost.test
 }
 
-target :
- << RPL_HOSTHIDDEN [target nick] chghost.test "*is now your hidden host*"

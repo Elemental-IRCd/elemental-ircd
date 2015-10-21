@@ -2,8 +2,8 @@ AC_PREREQ([2.68])
 AC_COPYRIGHT([2014 elemental-ircd Team])
 
 AC_INIT([elemental-ircd],[7.0-experimental],[https://github.com/Elemental-IRCd/elemental-ircd/issues])
-AC_CONFIG_MACRO_DIR([libratbox/m4])
-AC_CONFIG_AUX_DIR([libratbox/tools])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_AUX_DIR([libratbox/aux])
 AC_CONFIG_SRCDIR([src/ircd.c])
 AC_CONFIG_HEADERS([include/setup.h])
 AC_PREFIX_DEFAULT($HOME/ircd)
@@ -412,9 +412,6 @@ AC_DEFINE_UNQUOTED(NICKLEN, (${NICKLEN}+1), [Nickname length])
 
 RB_CFLAGS
 RB_FORTIFY_SOURCE(1)
-
-AX_APPEND_LINK_FLAGS([-Wl,-rpath=\${libdir}])
-AX_APPEND_LINK_FLAGS([-Wl,--export-all-symbols])
 
 AC_DEFINE_UNQUOTED(EXEEXT, "${EXEEXT}", [Executable extension])
 
