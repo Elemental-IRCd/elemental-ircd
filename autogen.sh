@@ -3,5 +3,5 @@
 set -e
 
 autoreconf --version
-autoreconf --install --verbose --warnings=portability,no-unsupported
+autoreconf --install --verbose --force --warnings=portability,no-unsupported
 scripts/version.sh
