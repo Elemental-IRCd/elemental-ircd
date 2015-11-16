@@ -18,6 +18,7 @@ Makefile.in
 .libs
 aclocal.m4
 autom4te.cache
+aux/
 bandb/bandb
 bandb/bantool
 compile
