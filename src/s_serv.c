@@ -772,7 +772,7 @@ server_estab(struct Client *client_p)
         sendto_one(client_p, "SERVER %s 1 :%s%s",
                    me.name,
                    ConfigServerHide.hidden ? "(H) " : "",
-                   (me.info[0]) ? (me.info) : "IRCers United");
+                   me.info);
     }
 
     if(!rb_set_buffers(client_p->localClient->F, READBUF_SIZE))
