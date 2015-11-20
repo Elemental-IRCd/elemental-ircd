@@ -736,15 +736,6 @@ server_estab(struct Client *client_p)
         return exit_client(client_p, client_p, client_p, "Lost connect{} block!");
     }
 
-    /* We shouldn't have to check this, it should already done before
-     * server_estab is called. -A1kmm
-     */
-    if(client_p->localClient->passwd) {
-        memset(client_p->localClient->passwd, 0, strlen(client_p->localClient->passwd));
-        rb_free(client_p->localClient->passwd);
-        client_p->localClient->passwd = NULL;
-    }
-
     /* Its got identd , since its a server */
     SetGotId(client_p);
 
