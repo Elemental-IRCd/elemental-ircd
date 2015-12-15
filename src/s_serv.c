@@ -279,6 +279,7 @@ check_server(const char *name, struct Client *client_p)
     struct server_conf *tmp_p;
     rb_dlink_node *ptr;
     int error = -1;
+    int server_test = 1;
 
     s_assert(NULL != client_p);
     if(client_p == NULL)
@@ -340,8 +341,9 @@ check_server(const char *name, struct Client *client_p)
 
     /* clear ZIP/TB if they support but we dont want them */
 #ifdef HAVE_LIBZ
-    if(!ServerConfCompressed(server_p))
+    server_test = !ServerConfCompressed(server_p);
 #endif
+    if (server_test)
         ClearCap(client_p, CAP_ZIP);
 
     if(!ServerConfTb(server_p))
