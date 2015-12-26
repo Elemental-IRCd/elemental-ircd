@@ -19,6 +19,7 @@ following Debian packages:
  - `libsqlite3-dev`
  - `libltdl7-dev`
  - `libtool`
+ - `pkg-config`
 
 For an easy one-step install:
 
