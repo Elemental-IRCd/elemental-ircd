@@ -78,6 +78,7 @@ automod_LTLIBRARIES =     \
     m_time.la             \
     m_topic.la            \
     m_trace.la            \
+    m_webirc.la           \
     m_unreject.la         \
     m_userhost.la         \
     m_user.la             \

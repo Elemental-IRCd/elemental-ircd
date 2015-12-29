@@ -47,7 +47,6 @@ extension_LTLIBRARIES =         \
     m_oquit.la                  \
     m_roleplay.la               \
     m_sendbans.la               \
-    m_webirc.la                 \
     no_locops.la                \
     no_oper_invis.la            \
     sno_farconnect.la           \
