@@ -451,6 +451,7 @@ accept_precallback(rb_fde_t *F, struct sockaddr *addr, rb_socklen_t addrlen, voi
     static time_t last_oper_notice = 0;
     int len;
 
+    /* connection on an ssl port, but we cant ssl */
     if(listener->ssl && (!ssl_ok || !get_ssld_count())) {
         rb_close(F);
         return 0;

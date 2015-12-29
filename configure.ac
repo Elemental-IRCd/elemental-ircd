@@ -180,29 +180,6 @@ else
 	 AC_DEFINE([HAVE_NANOSLEEP], 1, [Define if nanosleep exists])
 fi
 
-dnl Specialized functions and libraries
-dnl ===================================
-
-AC_ARG_WITH(zlib-path,
-AS_HELP_STRING([--with-zlib-path=DIR],[Path to libz.so for ziplinks support.]),
-[LIBS="$LIBS -L$withval"],)
-
-AC_ARG_ENABLE(zlib,
-AS_HELP_STRING([--disable-zlib],[Disable ziplinks support]),
-[zlib=$enableval],[zlib=yes])
-
-if test "$zlib" = yes; then
-
-AC_CHECK_HEADER(zlib.h, [
-	AC_CHECK_LIB(z, zlibVersion,
-	[
-		AC_SUBST(ZLIB_LD, -lz)
-		AC_DEFINE(HAVE_LIBZ, 1, [Define to 1 if zlib (-lz) is available.])
-	], zlib=no)
-], zlib=no)
-
-fi
-
 dnl **********************************************************************
 dnl --with-confdir Deprecated, use --sysconfdir
 dnl **********************************************************************
@@ -455,7 +432,6 @@ echo "
 Configuration:
 	Install directory  : $prefix
 
-	Ziplinks           : $zlib
 	Small network      : $small_net
 	Block allocator    : $balloc
 

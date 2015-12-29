@@ -130,11 +130,6 @@ Info MyInformation[] = {
         "Anti SpamBot Parameter"
     },
 
-#ifdef HAVE_LIBZ
-    {"HAVE_LIBZ", "YES", 0, "zlib (ziplinks) support"},
-#else
-    {"HAVE_LIBZ", "NO", 0, "zlib (ziplinks)  support"},
-#endif /* HAVE_LIBZ */
 
 #ifdef PPATH
     {"PPATH", PPATH, 0, "Path to Pid File"},
