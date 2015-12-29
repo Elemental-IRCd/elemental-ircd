@@ -19,6 +19,67 @@
  *  USA
  */
 
+/**
+ * IPC format
+ *
+ * a dgram socket is created and inherited by to ssld.
+ *
+ * s_ctlfd = getenv("CTL_FD");
+ *
+ *----------------------------------------------------------------------
+ * Commands passed via ctl fd to ssld:
+ *
+ * Accept and Connect:
+ *  u8   u32
+ * ['A'|connection id]
+ * ['C'|connection id]
+ *
+ * Descriptors:
+ * [0]: mod_fd, ssl socket
+ * [1]: plain_fd, socket to the ircd for plaintext
+ *
+ *
+ * New keys:
+ *  u8  char[]
+ * ['K'|cert\0priv key\0(opt)dh params\0]
+ *
+ * Certificates and keys are passed as concantenated null terminated
+ * ascii (probably openssl format).
+ * dh params are optional
+ *
+ * Init PRNG:
+ *  u8  u8        char[]
+ * ['I'|seed_type|path'\0']
+ *
+ * This is intended to be passed to rb_init_prng pretty much unmodified
+ * seed_type is of type prng_seed_t, defined in rb_commio.h
+ *
+ *----------------------------------------------------------------------
+ * Commands passed via ctl fd from the ssld:
+ *
+ * Dead fd:
+ *  u8  u32           char[]
+ * ['D'|connection id|reason\0]
+ *
+ * Indicates a session has disconnected
+ *
+ * Cert fp:
+ *  u8  u32           u8[RB_SSL_CERTFP_LEN]
+ * ['F'|connection id|fingerprint]
+ *
+ * Certificate fingerprint for sasl authentication
+ *
+ * Nossl/I am useless/cannot initialize:
+ *  u8
+ * ['N']
+ * ['U']
+ * ['I']
+ *
+ * indicates that ssld can't do ssl (?)
+ * 'N' unknown
+ * 'U' ssld compiled without ssl support
+ * 'I' configuration error
+ **/
 
 #include "stdinc.h"
 

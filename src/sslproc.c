@@ -365,6 +365,10 @@ ssl_process_certfp(ssl_ctl_t * ctl, ssl_ctl_buf_t * ctl_buf)
     client_p->certfp = certfp_string;
 }
 
+/**
+ * See ssld.c for documentation on the ipc used here
+ **/
+
 static void
 ssl_process_cmd_recv(ssl_ctl_t * ctl)
 {
