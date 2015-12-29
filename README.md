@@ -64,8 +64,8 @@ The official channel for Elemental-IRCd is `#elemental-ircd` on
 `irc.yolo-swag.com`. Anyone with push access to the repository will have halfop 
 (`+h`, `%`) or higher.
 
-Atheme and Anope (1.8 and 2.0) modules are included in the source tree of 
-Elemental-IRCd. For most cases the default `protocol/elemental-ircd` module in 
-Atheme should be fine, but this version will always be more up-to-date.
+Atheme and Anope 2.0 modules are included in the source tree of Elemental-IRCd. 
+For most cases the default `protocol/elemental-ircd` module in Atheme should be 
+fine, but this version will always be more up-to-date.
 
 To report bugs, please use the GitHub issue tracker.
