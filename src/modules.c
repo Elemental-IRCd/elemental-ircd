@@ -821,12 +821,8 @@ load_a_module(const char *path, int warn, int core)
     num_mods++;
 
     if(warn == 1) {
-        sendto_realops_snomask(SNO_GENERAL, L_NETWIDE,
-                               "Module %s [version: %s; MAPI version: %d] loaded at 0x%lx",
-                               mod_basename, ver, MAPI_VERSION(*mapi_version),
-                               (unsigned long) mapi_version);
-        ilog(L_MAIN, "Module %s [version: %s; MAPI version: %d] loaded at 0x%lx",
-             mod_basename, ver, MAPI_VERSION(*mapi_version), (unsigned long) mapi_version);
+        sendto_realops_snomask(SNO_GENERAL, L_NETWIDE, "Module %s loaded", mod_basename);
+        ilog(L_MAIN, "Module %s loaded", mod_basename);
     }
     rb_free(mod_basename);
     return 0;
