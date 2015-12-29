@@ -275,7 +275,7 @@ static  const char *  replies[] = {
 /* 253 RPL_LUSERUNKNOWN, */     "%d :unknown connection(s)",
 /* 254 RPL_LUSERCHANNELS, */    "%d :channels formed",
 /* 255 RPL_LUSERME, */          ":I have %d clients and %d servers",
-/* 256 RPL_ADMINME, */          ":Administrative info about %s",
+/* 256 RPL_ADMINME, */          "%s :Administrative info",
 /* 257 RPL_ADMINLOC1, */        ":%s",
 /* 258 RPL_ADMINLOC2, */        ":%s",
 /* 259 RPL_ADMINEMAIL, */       ":%s",
