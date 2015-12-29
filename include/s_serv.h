@@ -79,11 +79,7 @@ struct Capability {
 			 CAP_RSFNC | CAP_SAVE | CAP_EUID | CAP_EOPMOD | \
 			 CAP_BAN | CAP_MLOCK)
 
-#ifdef HAVE_LIBZ
-#define CAP_ZIP_SUPPORTED       CAP_ZIP
-#else
 #define CAP_ZIP_SUPPORTED       0
-#endif
 
 /*
  * Capability macros.
