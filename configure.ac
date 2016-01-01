@@ -36,7 +36,7 @@ AC_PROG_MAKE_SET
 AC_PROG_SED
 AC_PROG_YACC
 AC_PROG_LEX
-AC_PATH_PROG(TCLSH, tclsh)
+AC_CHECK_PROGS(TCLSH, [tclsh tclsh8.6 tclsh8.5])
 
 dnl AC_PROG_YACC defaults to yacc unconditionally if nothing can be found
 if test "$YACC" = "yacc" -a -z "`which $YACC 2>/dev/null`"; then
