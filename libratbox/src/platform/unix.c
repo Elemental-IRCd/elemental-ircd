@@ -39,7 +39,7 @@
 #define MSG_NOSIGNAL 0
 #endif
 
-#ifndef HAVE_DECL_ENVIRON
+#if !HAVE_DECL_ENVIRON
 extern char **environ;
 #endif
 pid_t
