@@ -54,9 +54,15 @@ script:
   - testsuite/killall.sh
 
 after_success:
-  - lcov --compat-libtool --directory . --capture --output-file coverage.info
-  - lcov --remove coverage.info "/usr/*" --output-file coveralls.info
-  - coveralls-lcov coveralls.info
+  - |
+    if [[ ( $TRAVIS_BRANCH == master || $TRAVIS_PULL_REQUEST != false )
+         && $TRAVIS_JOB_NUMBER =~ .*\.1 ]]
+    then
+    # Run coverage only on the first job (gcc+linux) for master and pr's
+      lcov --compat-libtool --directory . --capture --output-file coverage.info
+      lcov --remove coverage.info "/usr/*" --output-file coveralls.info
+      coveralls-lcov coveralls.info
+    fi
 
 after_script:
   - |
