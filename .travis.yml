@@ -53,7 +53,7 @@ before_script:
         # Run coverage only on the first job (gcc+linux) for master and pr's
         COVERAGE=--enable-coverage
       fi
-      if [[ ${TRAVIS_BRANCH} == master ]]; then
+      if [[ ${TRAVIS_BRANCH} == master && ${TRAVIS_PULL_REQUEST} == false ]]; then
         # Check we're allowed to build
         COVERITY=$(scripts/coverity.sh --build-command)
       fi
