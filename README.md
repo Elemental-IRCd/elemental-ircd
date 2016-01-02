@@ -26,15 +26,33 @@ For an easy one-step install:
 ### Ubuntu/Debian
 
 ```console
-$ sudo apt-get install libssl-dev autoconf autoconf-archive build-essential flex bison libsqlite3-dev automake libtool
+$ sudo apt-get install libssl-dev autoconf autoconf-archive
+                       build-essential flex bison libsqlite3-dev
+                       automake libtool
 ```
 
 ### Fedora/CentOS
 
 ```console
 $ sudo (yum/dnf) groupinstall "Development Tools"
-$ sudo (yum/dnf) install openssl-devel autoconf build-essential automake flex
-  bison autoconf-archive sqlite3-devel libtool-ltdl-devel libtool
+$ sudo (yum/dnf) install openssl-devel autoconf automake flex bison
+                         autoconf-archive sqlite-devel libtool-ltdl-devel
+                         libtool pkgconfig tcl tcllib tcltls
+```
+
+### OSX
+
+```console
+$ brew install autoconf-archive
+$ brew install sqlite
+$ export PKG_CONFIG_PATH=/usr/local/opt/sqlite/lib/pkgconfig
+```
+
+### FreeBSD (Untested)
+
+```console
+$ pkg install autotools autoconf-archive pkgconf tcl86 tcllib tcltls
+              flex bison sqlite3 libltdl openssl
 ```
 
 ## Others
@@ -43,9 +61,6 @@ $ sudo (yum/dnf) install openssl-devel autoconf build-essential automake flex
 Cassy | If you put something on a platform which cannot support it
       | it may tip and fall and become broken. Simple physics.
 ```
-
-This is known to work on OSX and Windows as well. These two targets are not 
-as fully supported as Linux.
 
 ## Compilation
 
