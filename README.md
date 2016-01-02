@@ -48,8 +48,8 @@ $ brew install sqlite
 $ export PKG_CONFIG_PATH=/usr/local/opt/sqlite/lib/pkgconfig
 ```
 
-### FreeBSD (Untested)
-
+### FreeBSD
+Untested, may break
 ```console
 $ pkg install autotools autoconf-archive pkgconf tcl86 tcllib tcltls
               flex bison sqlite3 libltdl openssl
