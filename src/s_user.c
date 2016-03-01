@@ -714,7 +714,6 @@ int
 valid_hostname(const char *hostname)
 {
     const char *p = hostname, *last_slash = 0;
-    int found_sep = 0;
 
     s_assert(NULL != p);
 
@@ -727,17 +726,10 @@ valid_hostname(const char *hostname)
     while (*p) {
         if(!IsHostChar(*p))
             return NO;
-        if(*p == '.' || *p == ':')
-            found_sep++;
-        else if(*p == '/') {
-            found_sep++;
+        else if(*p == '/')
             last_slash = p;
-        }
         p++;
     }
-
-    if(found_sep == 0)
-        return NO;
 
     if(last_slash && IsDigit(last_slash[1]))
         return NO;
