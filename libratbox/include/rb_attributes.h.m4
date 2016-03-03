@@ -55,7 +55,7 @@ attribute(__must_check, warn_unused_result)
 attribute(__noreturn, noreturn)
 
 /* Validate and Type-check printf arguments */
-attribute(__format_printf(fmt, args), [format(printf, fmt, args)])
+attribute(__format(type, fmt, args), [format(type, fmt, args)])
 
 /* Mark argument as unused */
 attribute(__unused, unused)
