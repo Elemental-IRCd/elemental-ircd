@@ -22,6 +22,7 @@ AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 AC_PATH_PROG(RM, rm)
 AC_PATH_PROG(CP, cp)
+AC_PATH_PROG(M4, m4)
 
 LT_INIT([dlopen disable-static])
 
@@ -519,6 +520,7 @@ fi
 
 
 AC_CONFIG_FILES(		\
+	include/Makefile	\
 	src/Makefile		\
 	Makefile		\
 	libratbox.pc

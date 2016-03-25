@@ -44,9 +44,9 @@ rb_helper __must_check *rb_helper_child(rb_helper_cb * read_cb, rb_helper_cb * e
 
 void rb_helper_restart(rb_helper *helper);
 void rb_helper_write(rb_helper *helper, const char *format, ...)
-__format_printf(2, 3);
+__format(printf, 2, 3);
 void rb_helper_write_queue(rb_helper *helper, const char *format, ...)
-__format_printf(2, 3);
+__format(printf, 2, 3);
 void rb_helper_write_flush(rb_helper *helper);
 
 void rb_helper_run(rb_helper *helper);
