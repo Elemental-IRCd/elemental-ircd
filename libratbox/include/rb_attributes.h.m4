@@ -21,53 +21,55 @@
  *
  */
 
+changequote([,])
+changecom()
+
 #ifndef RB_ATTRIB_H
 #define RB_ATTRIB_H 1
 
 #ifdef __GNUC__
-
 /* Optimize for true or false branches */
 #define rb_likely(x)       __builtin_expect(!!(x), 1)
 #define rb_unlikely(x)     __builtin_expect(!!(x), 0)
+#else
+#define rb_likely(x)       (!!(x))
+#define rb_unlikely(x)     (!!(x))
+#endif
+
+define(attribute, [dnl
+define([m_name], [regexp($1, [^[^(]+], [\&])])dnl
+#if !defined(m_name)
+#define [$1] __attribute__(([$2]))
+#endif
+divert(1)dnl
+#if !defined(m_name)
+#define [$1]
+#endif
+divert(0)dnl
+])
 
 /* Warn on unchecked returns */
-#define __must_check    __attribute__((warn_unused_result))
+attribute(__must_check, warn_unused_result)
 
 /* Function never returns */
-#define __noreturn       __attribute__((noreturn))
+attribute(__noreturn, noreturn)
 
 /* Validate and Type-check printf arguments */
-#define __format_printf(fmt, args) __attribute__((format(printf, fmt, args)));
+attribute(__format(type, fmt, args), [format(type, fmt, args)])
 
 /* Mark argument as unused */
-#define __unused __attribute__((unused))
+attribute(__unused, unused)
 
 /* Mark a function as depricated */
-#define __deprecated __attribute__((deprecated))
+attribute(__deprecated, deprecated)
 
 /* Non-null return value */
-#ifdef __COVERITY__
-#define __returns_nonnull __attribute__((returns_nonnull))
-#else
-#define __returns_nonnull
+#if defined(__COVERITY__)
+attribute(__returns_nonnull, returns_nonnull)
 #endif
+
 /* function returns new memory (and warn on unchecked return) */
-#define __malloc __attribute__((malloc)) __attribute__((warn_unused_result))
+attribute(__malloc, [malloc, warn_unused_result])
 
-#else  /* __GNUC__ */
-
-#define rb_likely(x)       (x)
-#define rb_unlikely(x)     (x)
-
-#define __must_check
-#define __nonull
-#define __noreturn
-#define __format_printf
-#define __unused
-#define __deprecated
-#define __returns_nonnull
-#define __malloc
-
-#endif /* __GNUC__ */
-
-#endif /* RB_ATTRIB_H */
+undivert(1)
+#endif

@@ -15,6 +15,10 @@ env:
   global:
    # Needed for osx builds
    - PKG_CONFIG_PATH: /usr/local/opt/sqlite/lib/pkgconfig
+   # Coverity settings
+   - COVERITY_SCAN_NOTIFICATION_EMAIL=xena@yolo-swag.com
+   - COVERITY_SCAN_PROJECT_NAME=Elemental-IRCd/elemental-ircd
+   - secure: "AcXAKlENjYOxhgZUs3dW+3LOkvGfoiJbC/NCEi7YnHcPz2GAa98oTIDMfoDi0dFFbWUiXha9BWv1vsewcxNba4fuIJBbUwtMWtntYZ13c6S9Seym8faO3qE+PbKVScfbbu1FwXV9GyC45zVeFVudemlHg1zxkoQ98jk4XIbREUs="
 
 addons:
   apt:
@@ -42,10 +46,28 @@ install:
     esac
     gem install coveralls-lcov
 
+before_script:
+  - |
+    if [[ ${TRAVIS_JOB_NUMBER##*.} == 1 ]]; then
+      if [[ ${TRAVIS_BRANCH} == master || ${TRAVIS_PULL_REQUEST} != false ]]; then
+        # Run coverage only on the first job (gcc+linux) for master and pr's
+        COVERAGE=--enable-coverage
+      fi
+      if [[ ${TRAVIS_BRANCH} == master && ${TRAVIS_PULL_REQUEST} == false ]]; then
+        # Check we're allowed to build
+        COVERITY=$(scripts/coverity.sh --build-command)
+      fi
+      if [[ ${COVERITY} ]]; then
+        # We are, install coverity
+        scripts/coverity.sh --download
+      fi
+    fi
+
+
 script:
   - ./autogen.sh
-  - ./configure --enable-debug --enable-coverage
-  - make -j2
+  - ./configure --enable-debug $COVERAGE
+  - $COVERITY make -j2
   - make install
   - testsuite/startall.sh
   - testsuite/wait-links.sh
@@ -55,13 +77,13 @@ script:
 
 after_success:
   - |
-    if [[ ( $TRAVIS_BRANCH == master || $TRAVIS_PULL_REQUEST != false )
-         && $TRAVIS_JOB_NUMBER =~ .*\.1 ]]
-    then
-    # Run coverage only on the first job (gcc+linux) for master and pr's
+    if [[ "${COVERAGE}" ]]; then
       lcov --compat-libtool --directory . --capture --output-file coverage.info
       lcov --remove coverage.info "/usr/*" --output-file coveralls.info
       coveralls-lcov coveralls.info
+    fi
+    if [[ ${COVERITY} ]]; then
+      scripts/coverity.sh --upload
     fi
 
 after_script:
