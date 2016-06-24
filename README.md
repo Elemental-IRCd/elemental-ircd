@@ -17,7 +17,7 @@ following Debian packages:
  - `bison`
  - `build-essential`
  - `libsqlite3-dev`
- - `libltdl7-dev`
+ - `libltdl-dev`
  - `libtool`
  - `pkg-config`
 
@@ -28,7 +28,7 @@ For an easy one-step install:
 ```console
 $ sudo apt-get install libssl-dev autoconf autoconf-archive
                        build-essential flex bison libsqlite3-dev
-                       automake libtool
+                       automake libtool libltdl-dev pkg-config
 ```
 
 ### Fedora/CentOS
