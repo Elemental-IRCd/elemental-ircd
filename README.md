@@ -26,8 +26,8 @@ For an easy one-step install:
 ### Ubuntu/Debian
 
 ```console
-$ sudo apt-get install libssl-dev autoconf autoconf-archive
-                       build-essential flex bison libsqlite3-dev
+$ sudo apt-get install libssl-dev autoconf autoconf-archive \
+                       build-essential flex bison libsqlite3-dev \
                        automake libtool libltdl-dev pkg-config
 ```
 
@@ -35,8 +35,8 @@ $ sudo apt-get install libssl-dev autoconf autoconf-archive
 
 ```console
 $ sudo (yum/dnf) groupinstall "Development Tools"
-$ sudo (yum/dnf) install openssl-devel autoconf automake flex bison
-                         autoconf-archive sqlite-devel libtool-ltdl-devel
+$ sudo (yum/dnf) install openssl-devel autoconf automake flex bison \
+                         autoconf-archive sqlite-devel libtool-ltdl-devel \
                          libtool pkgconfig tcl tcllib tcltls
 ```
 
@@ -51,7 +51,7 @@ $ export PKG_CONFIG_PATH=/usr/local/opt/sqlite/lib/pkgconfig
 ### FreeBSD
 Untested, may break
 ```console
-$ pkg install autotools autoconf-archive pkgconf tcl86 tcllib tcltls
+$ pkg install autotools autoconf-archive pkgconf tcl86 tcllib tcltls \
               flex bison sqlite3 libltdl openssl
 ```
 
